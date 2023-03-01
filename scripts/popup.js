@@ -123,20 +123,14 @@ chrome.runtime.onMessage.addListener(function (Message, sender, sendResponse) {
                 http('Video/SaveVideo', {
                     platform: 1,
                     title: realData.preview_title ? realData.preview_title : realData.desc,
-                    resouce_link: (function () {
+                    resouce_url: (function () {
                         if (realData.video.download_addr?.url_list[0]) {
                             return realData.video.download_addr?.url_list[0]
                         } else {
                             return realData.video.play_addr?.url_list[0]
                         }
                     })(),
-                    video_url: (function () {
-                        if (realData.video.download_addr?.url_list[0]) {
-                            return realData.video.download_addr?.url_list[0]
-                        } else {
-                            return realData.video.play_addr?.url_list[0]
-                        }
-                    })(),
+                    resouce_link:'' ,
                     times: realData.video.duration / 1000,
                     play_count: realData.statistics.play_count,
                     like_count: realData.statistics.digg_count,
@@ -156,7 +150,7 @@ chrome.runtime.onMessage.addListener(function (Message, sender, sendResponse) {
         } else {
             http('Video/SaveVideo', {
                 platform: 1,
-                video_url: domData.video,
+                resouce_link: domData.video,
                 author_url: domData.author_url,
                 title: domData.title,
                 author_name: domData.author
