@@ -130,7 +130,7 @@ chrome.runtime.onMessage.addListener(function (Message, sender, sendResponse) {
                             return realData.video.play_addr?.url_list[0]
                         }
                     })(),
-                    resouce_link:'' ,
+                    resource_link:'' ,
                     times: realData.video.duration / 1000,
                     play_count: realData.statistics.play_count,
                     like_count: realData.statistics.digg_count,
@@ -150,7 +150,7 @@ chrome.runtime.onMessage.addListener(function (Message, sender, sendResponse) {
         } else {
             http('Video/SaveVideo', {
                 platform: 1,
-                resouce_link: domData.video,
+                resource_link: domData.video,
                 author_url: domData.author_url,
                 title: domData.title,
                 author_name: domData.author
