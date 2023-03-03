@@ -53,7 +53,6 @@ if (location.href.indexOf("douyin") !== -1) {
     })
 }
 
-
 chrome.storage.local.set({iframeVisible: true});
 
 
