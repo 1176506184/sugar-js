@@ -3,6 +3,7 @@ const {VueLoaderPlugin} = require('vue-loader')
 const AutoImport = require('unplugin-auto-import/webpack')
 const Components = require('unplugin-vue-components/webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const {
     ElementPlusResolver
 } = require('unplugin-vue-components/resolvers')
@@ -14,6 +15,7 @@ module.exports = {
     output: {
         filename: 'main.js',
         path: path.resolve(__dirname, 'dist/scripts/vue'),
+        clean: true
     },
     mode: "development",
     module: {
@@ -35,6 +37,7 @@ module.exports = {
         }]
     },
     plugins: [
+        new CleanWebpackPlugin(),
         AutoImport({
             resolvers: [ElementPlusResolver()],
         }),
@@ -63,6 +66,9 @@ module.exports = {
                 to: path.join(__dirname, 'dist')
             },{
                 from: path.join(__dirname, 'manifest.json'),
+                to: path.join(__dirname, 'dist')
+            },{
+                from: path.join(__dirname, 'icon.png'),
                 to: path.join(__dirname, 'dist')
             }]
         })

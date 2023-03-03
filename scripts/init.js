@@ -49,7 +49,7 @@ if (location.href.indexOf("douyin") !== -1) {
         Message: "loadScript",
         script: 'empty.js'
     }).then(() => {
-        console.log("注入完成")
+        console.log("注入empty完成")
     })
 }
 
