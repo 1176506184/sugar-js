@@ -37,6 +37,20 @@ if (location.href.indexOf("douyin") !== -1) {
     }).then(() => {
         console.log("注入完成")
     })
+} else if (location.href.indexOf("twitter") !== -1) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'twitter.js'
+    }).then(() => {
+        console.log("注入完成")
+    })
+} else {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'empty.js'
+    }).then(() => {
+        console.log("注入完成")
+    })
 }
 
 

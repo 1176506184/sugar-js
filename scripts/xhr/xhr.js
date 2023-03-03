@@ -101,7 +101,6 @@ var ajax_tools_space = {
             } else if (attr === 'onload') {
                 xhr.onload = (...args) => {
                     // 开启拦截
-                    // console.log(args[0].currentTarget)
                     let currentTarget = args[0].currentTarget;
                     window.postMessage({
                         Message: 'ajax',
@@ -236,13 +235,22 @@ var ajax_tools_space = {
                 return responseProxy;
             }
 
+            response.clone()
+                .json()
+                .then((data) => {
+                    console.log(...data);
+                }).catch(e => {
+                    console.log(e);
+                });
+
+
             return response;
         })
     }
 }
-if(location.href.indexOf('douyin')!==-1){
+if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1) {
     window.XMLHttpRequest = ajax_tools_space.myXHR;
-    window.fetch = ajax_tools_space.myXHR;
+    window.fetch = ajax_tools_space.myFetch;
     console.log("注入XHR 完成")
 }
 

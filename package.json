@@ -1,0 +1,45 @@
+{
+  "name": "collectchrome",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://codeup.aliyun.com/6241563173909d64dcfa8e7f/CollectChrome.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^9.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.7.3",
+    "element-plus": "^2.2.32",
+    "node-sass": "^8.0.0",
+    "sass": "^1.58.3",
+    "sass-loader": "^13.2.0",
+    "style-loader": "^3.3.1",
+    "unplugin-auto-import": "^0.15.0",
+    "unplugin-vue-components": "^0.24.0",
+    "vue": "^3.2.47",
+    "vue-loader": "^17.0.1",
+    "vue-router": "^4.1.6",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-babel": "^6.0.3",
+    "@vitejs/plugin-legacy": "^4.0.1",
+    "@vitejs/plugin-react-refresh": "^1.3.6",
+    "vite": "^4.1.4",
+    "vite-plugin-importer": "^0.2.5"
+  }
+}

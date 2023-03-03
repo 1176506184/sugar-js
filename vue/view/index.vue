@@ -1,0 +1,285 @@
+<template>
+  <div v-loading="loading">
+    <div class="layout_top">
+      <!--        <button id="collect">一键采集</button>-->
+      <!--        <button>一键发布</button>-->
+      <!--        <button id="video">抓取视频</button>-->
+      <!--        <div style="clear: both"></div>-->
+      <span style="font-size: 18px;font-weight: bold">通用采集工具</span>
+
+      <el-button id="username" class="linear" style="font-size: 14px;margin-right:15px;">
+        {{ state.loginText }}
+      </el-button>
+
+    </div>
+    <!--    <div class="title_viewer">-->
+    <!--        <div id="username"></div>-->
+    <!--    </div>-->
+    <div class="layout_viewer" id="layout_viewer">
+      <div id="login_container" v-if="state.isLogin === false">
+
+      </div>
+      <div id="menu" v-if="state.isLogin">
+        <!--            <p>抖音图集</p>-->
+        <!--            <div>-->
+        <!--                <button id="trumpet_pic">小号素材库</button>-->
+        <!--            </div>-->
+        <!--            <div class="border"></div>-->
+        <p>抖音视频</p>
+        <div>
+          <el-button @click="trumpet_video" type="primary" :disabled="canUseBtn.trumpetVideo">小号素材库</el-button>
+        </div>
+        <div class="border"></div>
+        <p>推特图片</p>
+        <div>
+          <el-button @click="twitter_trumpet" type="primary" :disabled="canUseBtn.twitterImage">小号素材库</el-button>
+        </div>
+        <div class="border"></div>
+      </div>
+    </div>
+    <div id="version">
+      <p id="v_p">Version:{{ state.version }}</p>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import router from "../router"
+
+const dingTalkAppId = 'dingoac12xjewgmuqs2sea'
+import {nextTick, onMounted, reactive, ref} from "vue";
+import {parseDate} from "../../utils/formatDate";
+
+
+let data = {
+  facebook: {},
+  video: '',
+  name: '',
+  uid: 0,
+  tk: ''
+}
+
+
+let state = reactive({
+  isLogin: false,
+  loginText: '钉钉未登录',
+  version: '1.0'
+})
+
+const loading = ref(false);
+
+const canUseBtn = reactive({
+  trumpetVideo: true,
+  twitterImage: true
+})
+
+let privateHref = {
+  'trumpet': 'http://autoplus.ytd3.com/'
+}
+
+
+onMounted(() => {
+  if (!localStorage.getItem("tk")) {
+    nextTick(()=>{
+      setTimeout(()=>{
+        initDingLogin()
+      })
+      state.loginText = '钉钉未登录';
+    })
+  } else {
+    state.loginText = `已登录：${localStorage.getItem("name")}`
+    state.isLogin = true;
+  }
+  checkType();
+})
+
+function initDingLogin() {
+  let origin = location.origin
+  let base = origin + '/login'
+  let redirectUrl = encodeURIComponent(base + '?type=dingding')
+  const reUrl = 'http://192.168.205.34:57968/';
+  let goto = encodeURIComponent(`https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${dingTalkAppId}&response_type=code&scope=snsapi_login&state=${reUrl}&redirect_uri=http://ddlogin.anyelse.com/logincallback.ashx`)
+  DDLogin({
+    id: 'login_container', // 这里需要你在自己的页面定义一个HTML标签并设置id，例如<div id="login_container"></div>或<span id="login_container"></span>
+    goto: goto, // 请参考注释里的方式
+    style: 'border:none;background-color:#FFFFFF;',
+    width: '365',
+    height: '300'
+  })
+  let handleMessage = function (event) {
+    let origin = event.origin
+    if (origin === 'https://login.dingtalk.com') { // 判断是否来自ddLogin扫码事件。
+      let loginTmpCode = event.data // 拿到loginTmpCode后就可以在这里构造跳转链接进行跳转了
+      let redirectURL = new URL('/connect/oauth2/sns_authorize', 'https://oapi.dingtalk.com')
+      redirectURL.searchParams.set('appid', dingTalkAppId)
+      redirectURL.searchParams.set('response_type', 'code')
+      redirectURL.searchParams.set('scope', 'snsapi_login')
+      redirectURL.searchParams.set('state', reUrl)
+      redirectURL.searchParams.set('redirect_uri', goto)
+      redirectURL.searchParams.set('loginTmpCode', loginTmpCode)
+      $.ajax({
+        url: redirectURL.href,
+        type: 'get'
+        // , beforeSend: function (XMLHttpRequest) {
+        //     XMLHttpRequest.setRequestHeader("token", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxOD…");
+        // }
+        , success: function (data) {
+          if (data.StatusCode === 200) {
+            localStorage.setItem("name", data.Data.username);
+            localStorage.setItem("uid", data.Data.id);
+            localStorage.setItem("tk", data.Data.token);
+            state.isLogin = true;
+            state.loginText = `已登录：${localStorage.getItem("name")}`
+          }
+        }
+      })
+    }
+  }
+  if (typeof window.addEventListener !== 'undefined') {
+    window.addEventListener('message', handleMessage, false)
+  }
+}
+
+function trumpet_video() {
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      Message: 'video'
+    }, function (response) {
+      if (response?.state !== 200) {
+        alert("插件已重新加载，请刷新页面")
+      }
+    });
+
+  });
+}
+
+function twitter_trumpet() {
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      Message: 'image'
+    }, function (response) {
+      if (response?.state !== 200) {
+        alert("插件已重新加载，请刷新页面")
+      }
+    });
+  });
+}
+
+function openBtn(BtnKey) {
+  console.log(BtnKey);
+  Object.keys(canUseBtn).forEach(key => {
+    if (key === BtnKey) {
+      canUseBtn[BtnKey] = false;
+    } else {
+      canUseBtn[key] = true;
+    }
+  })
+}
+
+
+chrome.runtime.onMessage.addListener(function (Message, sender, sendResponse) {
+
+  if (Message.Message === 'callbackData') {
+    data.facebook = Message.data;
+    sendResponse("ok");
+  } else if (Message.Message === 'initBtn') {
+    if (Message.type === 'douyin') {
+      openBtn('trumpetVideo');
+    } else if (Message.type === 'twitter') {
+      openBtn('twitterImage');
+    } else if (Message.type === 'empty') {
+      openBtn('empty');
+    }
+  } else if (Message.Message === 'video') {
+    loading.value = true;
+    data.video = Message.url;
+    let realData = Message.data;
+    let domData = Message.domData
+    if (Object.keys(realData).length > 0) {
+      try {
+        http('Video/SaveVideo', {
+          platform: 1,
+          title: realData.preview_title ? realData.preview_title : realData.desc,
+          resource_link: realData.reUrl,
+          resource_url: (function () {
+            return realData.video.play_addr?.url_list[0]
+          })(),
+          times: realData.video.duration / 1000,
+          play_count: realData.statistics.play_count,
+          like_count: realData.statistics.digg_count,
+          share_count: realData.statistics.share_count,
+          collect_count: realData.statistics.collect_count,
+          comment_count: realData.statistics.comment_count,
+          publish_time: parseDate(realData.create_time),
+          author_name: realData.author.nickname,
+          author_url: `https://douyin.com/user/${realData.author.sec_uid}?vid=${realData.group_id}`,
+          author_id: realData.group_id,
+          pic: realData.pic
+        }).then(res => {
+          // window.open(`${privateHref.trumpet}post_material/videos?id=${res.newid}&resource_type=1`)
+          router.push({
+            name: 'TrumpetVideo',
+            query: {
+              id: res.newid,
+              resource_type:1
+            }
+          })
+        })
+
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      http('Video/SaveVideo', {
+        platform: 1,
+        resource_url: domData.video,
+        author_url: domData.author_url,
+        title: domData.title,
+        author_name: domData.author,
+        resource_link: domData.url,
+        pic: domData.pic
+      }).then(res => {
+        // window.open(`${privateHref.trumpet}post_material/videos?id=${res.newid}&resource_type=1`)
+        console.log(router);
+        router.push({
+          name: 'TrumpetVideo',
+          query: {
+            id: res.newid,
+            resource_type:1
+          }
+        })
+      });
+    }
+
+    loading.value = false;
+  }
+});
+
+function checkType() {
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      Message: 'checkType'
+    }, function (response) {
+      if (response?.state !== 200) {
+        alert("插件已重新加载，请刷新页面")
+      }
+    });
+
+  });
+}
+
+
+</script>
+
+<style scoped>
+
+</style>
