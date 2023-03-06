@@ -11,7 +11,6 @@ async function injectedScript(path) {
 
 injectedScript('scripts/xhr/xhr.js')
 
-
 var G = {};
 var cacheData = {init: true};
 chrome.storage.local.set({iframeVisible: true});
