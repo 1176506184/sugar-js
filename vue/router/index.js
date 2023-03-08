@@ -1,18 +1,33 @@
 import Home from "../view/index.vue"
 import TrumpetVideo from "../view/trumpetVideo.vue";
-
+import TwitterImage from "../view/twitterImage.vue"
 const VueRouter = require("vue-router")
 const routes = [
     {
         name:'Home',
         path: '/',
-        component: Home
+        component: Home,
+        meta:{
+            keepAlive:true
+        }
     },
     {
         name: 'TrumpetVideo',
         path: '/TrumpetVideo',
         component: TrumpetVideo,
-        props: route => ({ query: route.query.q })
+        props: route => ({ query: route.query.q }),
+        meta:{
+
+        }
+    },
+    {
+        name: 'TwitterImage',
+        path: '/TwitterImage',
+        component: TwitterImage,
+        props: route => ({ query: route.query.q }),
+        meta:{
+
+        }
     }
 ]
 

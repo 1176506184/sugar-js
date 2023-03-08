@@ -18,20 +18,36 @@ function getVideo() {
 
     let author = document.querySelector('div[data-e2e="feed-active-video"] div[data-e2e="feed-video-nickname"]')?.innerText;
 
-    if(!author){
+    if (!author) {
         author = document.querySelector('div[data-e2e="feed-video-nickname"]')?.innerText;
+    }
+
+    if (!author) {
+        document.querySelectorAll('div[data-e2e="user-info"] a[href*="/user/"]').forEach(d => {
+            if (d.innerText) {
+                author = d.innerText
+            }
+        })
     }
 
     let author_url = document.querySelector('div[data-e2e="feed-active-video"] a[href*="/user/"][data-e2e="video-avatar"]')?.href;
 
-    if(!author_url){
+    if (!author_url) {
         author_url = document.querySelector('a[href*="/user/"][data-e2e="video-avatar"]')?.href;
     }
 
     let title = document.querySelector('div[data-e2e="feed-active-video"] div.title')?.innerText;
 
-    if(!title){
+    if (!title) {
         title = document.querySelector('div.title')?.innerText;
+    }
+
+    if (!title) {
+        title = document.querySelector(`div[data-e2e="detail-video-info"] h2`)?.innerText;
+    }
+
+    if (!title) {
+        title = document.querySelector(`div[data-e2e="detail-video-info"] h1`)?.innerText;
     }
 
     let realVideoData = {}
@@ -44,10 +60,15 @@ function getVideo() {
         reUrl = location.href;
     }
 
+    let aweme_id = document.querySelector('div[data-e2e="feed-active-video"] div[data-e2e="video-info"]')?.getAttribute("data-e2e-aweme-id");
+    if (!aweme_id) {
+        document.querySelector('div[data-e2e="detail-video-info"]')?.getAttribute("data-e2e-aweme-id")
+    }
+
     videoData.forEach(d => {
         let aweme_list = d.aweme_list;
         aweme_list.forEach((item) => {
-            if (document.querySelector('div[data-e2e="feed-active-video"] div[data-e2e="video-info"]').getAttribute("data-e2e-aweme-id").toString() === item.aweme_id.toString()) {
+            if (aweme_id.toString() === item.aweme_id.toString()) {
                 realVideoData = item;
                 realVideoData.reUrl = reUrl;
                 realVideoData.pic = pic?.src;
@@ -58,8 +79,13 @@ function getVideo() {
     try {
 
 
-        if(!realVideoData && !url){
+        if (Object.keys(realVideoData).length === 0 && !url) {
             alert("未检测到video标签下的素材院地址，请刷新当前页面");
+            return;
+        }
+
+        if (!aweme_id && document.body.innerText.indexOf("直播中") !== -1) {
+            alert("未检测到当前为直播");
             return;
         }
 
@@ -92,14 +118,14 @@ window.addEventListener('message', function (res) {
 })
 
 
-
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'video') {
+        console.log("获取任务");
         getVideo();
         sendResponse({state: 200});
     } else if (Message.Message === 'xhr') {
         sendResponse({state: 200});
-    } else if (Message.Message === 'checkType'){
+    } else if (Message.Message === 'checkType') {
         chrome.runtime.sendMessage({
             Message: 'initBtn',
             type: 'douyin',

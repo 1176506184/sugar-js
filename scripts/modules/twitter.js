@@ -1,8 +1,19 @@
 var imgData = [];
+var user = {};
 
 function getImage() {
 
-    console.log(imgData)
+    imgData.forEach(r=>{
+        r.author_url = `https://twitter.com/${user.screen_name}`;
+        r.resource_link = `https://twitter.com/${user.screen_name}/status/${r.id_str}`;
+        r.author_name = user.name
+        // r.author_name =
+    })
+
+    chrome.runtime.sendMessage({
+        Message: 'image',
+        data: imgData
+    })
 
 }
 
@@ -16,10 +27,18 @@ window.addEventListener('message', function (res) {
 
                     if (key === 'tweets') {
                         Object.keys(data[key]).forEach(k=>{
-                            imgData.push(data[key][k]);
+                            if(data[key][k].entities?.media){
+                                imgData.unshift(data[key][k]);
+                            }
                         })
                     } else if(key === 'tweet_results'){
-                        imgData.push(data[key]['result']['legacy']);
+                        if(data[key]['result']['legacy'].entities?.media){
+                            imgData.unshift(data[key]['result']['legacy']);
+                        }
+                    }else if(key === 'legacy'){
+                        if(data[key]?.name && data[key]?.friends_count){
+                            user = data[key];
+                        }
                     }else {
 
                         if(data[key] !==null && data[key] !==undefined){

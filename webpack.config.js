@@ -13,7 +13,7 @@ module.exports = {
     node: false,
     devtool: "source-map",
     output: {
-        filename: 'main.js',
+        filename: 'vMin.js',
         path: path.resolve(__dirname, 'dist/scripts/vue'),
         clean: true
     },
@@ -61,9 +61,6 @@ module.exports = {
             },{
                 from: path.join(__dirname, 'assets'),
                 to: path.join(__dirname, 'dist/assets')
-            },{
-                from: path.join(__dirname, 'index.js'),
-                to: path.join(__dirname, 'dist')
             },{
                 from: path.join(__dirname, 'manifest.json'),
                 to: path.join(__dirname, 'dist')

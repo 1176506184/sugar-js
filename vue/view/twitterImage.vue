@@ -5,17 +5,30 @@
       <!--        <button>一键发布</button>-->
       <!--        <button id="video">抓取视频</button>-->
       <!--        <div style="clear: both"></div>-->
-      <span style="font-size: 18px;font-weight: bold">小号视频素材</span>
+      <span style="font-size: 18px;font-weight: bold">推特图片素材</span>
 
     </div>
 
     <div style="padding: 10px;">
-      <el-form ref="editFormRef" label-position="top" :model="form" v-loading="loading" :rules="rules"
+
+      <el-form ref="editFormRef" label-position="top" :model="form" v-loading="loading"
                label-width="140px">
 
-        <el-form-item label="素材标题" prop="resource_title">
-          <el-input v-model="form.resource_title" placeholder="请输入"></el-input>
-        </el-form-item>
+        <el-row :gutter="5">
+          <el-col :span="12">
+            <el-form-item label="贴文数量">
+               <el-input v-model="form.pageNum" disabled></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="图片数量">
+              <el-input v-model="form.imageNum" disabled></el-input>
+            </el-form-item>
+          </el-col>
+
+        </el-row>
+
 
         <el-row :gutter="5">
           <el-col :span="12">
@@ -36,16 +49,6 @@
           </el-col>
         </el-row>
 
-        <el-form-item label="素材文件地址" prop="resource_url">
-          <el-input v-model="form.resource_url" placeholder="请输入" disabled></el-input>
-        </el-form-item>
-
-        <el-form-item label="素材博主" prop="resource_author">
-          <el-input v-model="form.resource_author" placeholder="请输入" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="采集源地址" prop="resource_link" v-if="false">
-          <el-input v-model="form.resource_link" placeholder="请输入" disabled></el-input>
-        </el-form-item>
         <el-row :gutter="5">
           <el-col :span="8">
             <el-form-item label="关联人设FB账号名" prop="fb_person_id">
@@ -107,7 +110,6 @@
 
         </el-row>
 
-
         <el-form-item>
           <div class="dialog-footer" style="text-align: right">
             <el-button @click="close">取消</el-button>
@@ -118,6 +120,7 @@
         </el-form-item>
 
       </el-form>
+
     </div>
   </div>
 </template>
@@ -125,20 +128,26 @@
 <script setup>
 
 import {onMounted, reactive, ref} from "vue";
+import {GetQueryString} from "../utils/utils.js";
 import router from "../router";
 import {ElMessage} from "element-plus";
 
 
 const form = reactive({
-  resource_url: '',
-  resource_type: 0,
-  resource_author: '',
-  resource_link: '',
+  group_guid:'',
   fb_person_id: '',
   page_person_id: '',
   twitter_person_id: '',
-  lang: 1
+  lang: 1,
+  resource_type: 2,
+  pageNum:0,
+  imageNum:0
 })
+
+const loading = ref(false);
+const optionsFB = ref([])
+const optionsTW = ref([])
+const optionsClub = ref([])
 
 const state = reactive({
   langList: [],
@@ -150,61 +159,94 @@ const state = reactive({
       value: 2,
       label: '图片'
     }],
-  newid: 0
+  newid: 0,
+  imageData:[]
 })
 
-const props = defineProps(["id"]);
-const optionsFB = ref([])
-const optionsTW = ref([])
-const optionsClub = ref([])
-const loading = ref(false);
-const rules = reactive({
-  resource_title: [{
-    required: true,
-    message: '请输入素材标题'
-  }],
-})
 
-onMounted(() => {
+onMounted(()=>{
   getLangList()
-  const url = location.href;
-  const params = queryURLParams(url);
-  state.newid = params['id'];
-  form.resource_type = parseInt(params['resource_type']);
-  http("Resource/GetCollectCatch", params).then(res => {
+  state.group_guid = GetQueryString("guid");
+  console.log(state.group_guid)
+  getData();
 
-    form.resource_link = res.resource_link
-    form.resource_url = res.resource_url
-    form.resource_author = res.author_name
-    form.resource_title = res.title
-    form.resource_img = res.pic
-    const pre_accounts = localStorage.getItem('pre_accounts')
-    if (pre_accounts) {
-      const pre_accounts_obj = JSON.parse(pre_accounts)
-      if (pre_accounts_obj.fb_person_id) {
-        form.fb_person_id = pre_accounts_obj.fb_person_id
-        optionsFB.value.push({
-          value: pre_accounts_obj.fb_person_id,
-          label: pre_accounts_obj.fb_person_name
-        })
-      }
-      if (pre_accounts_obj.page_person_id) {
-        form.page_person_id = pre_accounts_obj.page_person_id
-        optionsClub.value.push({
-          value: pre_accounts_obj.page_person_id,
-          label: pre_accounts_obj.page_person_name
-        })
-      }
-      if (pre_accounts_obj.twitter_person_id) {
-        form.twitter_person_id = pre_accounts_obj.twitter_person_id
-        optionsTW.value.push({
-          value: pre_accounts_obj.twitter_person_id,
-          label: pre_accounts_obj.twitter_person_name
-        })
-      }
-    }
-  })
 })
+
+
+
+
+
+function getData() {
+  loading.value = true;
+  http(`ImageCollect/GetImageCollectListByGroupGuid?group_guid=${state.group_guid}`).then(res=>{
+    loading.value = false;
+    console.log(res);
+    state.imageData = res.result;
+    form.pageNum = state.imageData.length;
+    state.imageData.forEach(r=>{
+      form.imageNum += r.resource_url.split('|||').length;
+    })
+  })
+}
+
+function close() {
+  router.push({
+    name:'Home'
+  });
+}
+
+async function confirm() {
+  loading.value = true;
+  // console.log('form:', form)
+  try {
+    updateLocaleStorage(form);
+    if (!form.fb_person_id) {
+      form.fb_person_id = 0
+    }
+    if (!form.page_person_id) {
+      form.page_person_id = 0
+    }
+    if (!form.twitter_person_id) {
+      form.twitter_person_id = 0
+    }
+
+    let formData = state.imageData.map(d=>{
+
+      d.title = d.title.split('http')[0];
+
+      return {
+        resource_link:d.resource_link,
+        resource_url:d.resource_url,
+        resource_author:d.author_name,
+        resource_title:d.title,
+        resource_type:2,
+        lang:form.lang,
+        fb_person_id:form.fb_person_id,
+        page_person_id:form.page_person_id,
+        twitter_person_id:form.twitter_person_id
+      }
+    })
+
+    http('Resource/AddList', {
+        list:formData
+    }).then(res => {
+      loading.value = false;
+      ElMessage({
+        message: "提交成功",
+        duration: 1000,
+        type: "success"
+      })
+      router.push({
+        name:'Home'
+      });
+    });
+  } catch (e) {
+    loading.value = false;
+    alert(e);
+  }
+
+}
+
 
 
 // 获取语言列表
@@ -277,52 +319,6 @@ function getTW(query) {
   }
 }
 
-function queryURLParams(url) {
-  let pattern = /(\w+)=(\w+)/ig; //定义正则表达式
-  let parames = {}; // 定义参数对象
-  url.replace(pattern, ($, $1, $2) => {
-    parames[$1] = $2;
-  });
-  return parames;
-}
-
-function close() {
-  router.push({
-    name:'Home'
-  });
-}
-
-async function confirm() {
-  loading.value = true;
-  // console.log('form:', form)
-  try {
-    updateLocaleStorage(form);
-    if (!form.fb_person_id) {
-      form.fb_person_id = 0
-    }
-    if (!form.page_person_id) {
-      form.page_person_id = 0
-    }
-    if (!form.twitter_person_id) {
-      form.twitter_person_id = 0
-    }
-    http('Resource/Save', form).then(res => {
-      loading.value = false;
-      ElMessage({
-        message: "提交成功",
-        duration: 1000,
-        type: "success"
-      })
-      router.push({
-        name:'Home'
-      });
-    });
-  } catch (e) {
-    loading.value = false;
-    alert(e);
-  }
-
-}
 
 function updateLocaleStorage(obj) {
   const {fb_person_id, page_person_id, twitter_person_id} = obj
@@ -355,10 +351,8 @@ function getLabelByid(arr, labelName, idName, id) {
   return label
 }
 
-
 </script>
 
 <style scoped>
-
 
 </style>
