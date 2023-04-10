@@ -17,7 +17,7 @@
         <el-row :gutter="5">
           <el-col :span="12">
             <el-form-item label="贴文数量">
-               <el-input v-model="form.pageNum" disabled></el-input>
+              <el-input v-model="form.pageNum" disabled></el-input>
             </el-form-item>
           </el-col>
 
@@ -131,17 +131,18 @@ import {onMounted, reactive, ref} from "vue";
 import {GetQueryString} from "../utils/utils.js";
 import router from "../router";
 import {ElMessage} from "element-plus";
+import {http,xhrHttp,sHttp} from "../utils/request";
 
 
 const form = reactive({
-  group_guid:'',
+  group_guid: '',
   fb_person_id: '',
   page_person_id: '',
   twitter_person_id: '',
   lang: 1,
   resource_type: 2,
-  pageNum:0,
-  imageNum:0
+  pageNum: 0,
+  imageNum: 0
 })
 
 const loading = ref(false);
@@ -160,11 +161,11 @@ const state = reactive({
       label: '图片'
     }],
   newid: 0,
-  imageData:[]
+  imageData: []
 })
 
 
-onMounted(()=>{
+onMounted(() => {
   getLangList()
   state.group_guid = GetQueryString("guid");
   console.log(state.group_guid)
@@ -173,17 +174,14 @@ onMounted(()=>{
 })
 
 
-
-
-
 function getData() {
   loading.value = true;
-  http(`ImageCollect/GetImageCollectListByGroupGuid?group_guid=${state.group_guid}`).then(res=>{
+  http(`ImageCollect/GetImageCollectListByGroupGuid?group_guid=${state.group_guid}`).then(res => {
     loading.value = false;
     console.log(res);
     state.imageData = res.result;
     form.pageNum = state.imageData.length;
-    state.imageData.forEach(r=>{
+    state.imageData.forEach(r => {
       form.imageNum += r.resource_url.split('|||').length;
     })
   })
@@ -191,7 +189,7 @@ function getData() {
 
 function close() {
   router.push({
-    name:'Home'
+    name: 'Home'
   });
 }
 
@@ -210,34 +208,39 @@ async function confirm() {
       form.twitter_person_id = 0
     }
 
-    let formData = state.imageData.map(d=>{
+    let formData = state.imageData.map(d => {
 
       d.title = d.title.split('http')[0];
 
       return {
-        resource_link:d.resource_link,
-        resource_url:d.resource_url,
-        resource_author:d.author_name,
-        resource_title:d.title,
-        resource_type:2,
-        lang:form.lang,
-        fb_person_id:form.fb_person_id,
-        page_person_id:form.page_person_id,
-        twitter_person_id:form.twitter_person_id
+        resource_link: d.resource_link,
+        resource_url: d.resource_url,
+        screen_shot_list: d.resource_url.split('|||').map(r => {
+          return {
+            img_url: r
+          }
+        }),
+        resource_author: d.author_name,
+        resource_title: d.title,
+        resource_type: 2,
+        lang: form.lang,
+        fb_person_id: form.fb_person_id,
+        page_person_id: form.page_person_id,
+        twitter_person_id: form.twitter_person_id
       }
     })
 
     http('Resource/AddList', {
-        list:formData
+      list: formData
     }).then(res => {
       loading.value = false;
       ElMessage({
-        message: "提交成功",
-        duration: 1000,
+        message: res.Message,
+        duration: 2000,
         type: "success"
       })
       router.push({
-        name:'Home'
+        name: 'Home'
       });
     });
   } catch (e) {
@@ -246,7 +249,6 @@ async function confirm() {
   }
 
 }
-
 
 
 // 获取语言列表

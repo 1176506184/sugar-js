@@ -1,7 +1,16 @@
+const NODE_ENV = process.env.NODE_ENV;
 let PrivateLink = {
     'trumpet': 'http://23.91.101.251/',
-    // 'trumpet': 'http://192.168.205.34:57968/',
-    's': 'http://107.150.124.12/'
+    's': 'http://107.150.124.12/',
+}
+
+console.log(NODE_ENV)
+
+if(NODE_ENV === 'development'){
+    PrivateLink = {
+        'trumpet': 'http://192.168.205.34:57968/',
+        's': 'http://192.168.205.34:44346'
+    }
 }
 
 
@@ -37,6 +46,12 @@ function http(url, params, type = 'post') {
             }
             , success: function (data) {
                 if (data.StatusCode === 200) {
+                    if (data.Message) {
+                        if (!data.Data) {
+                            data.Data = {};
+                        }
+                        data.Data.Message = data.Message
+                    }
                     resolve(data.Data);
                 } else {
                     alert(data.Message);
@@ -72,4 +87,11 @@ function sHttp(url, params, type = 'post') {
             }
         })
     })
+}
+
+
+export {
+    http,
+    xhrHttp,
+    sHttp
 }

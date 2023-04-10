@@ -249,9 +249,15 @@ var ajax_tools_space = {
     }
 }
 if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1) {
-    window.XMLHttpRequest = ajax_tools_space.myXHR;
-    window.fetch = ajax_tools_space.myFetch;
-    console.log("注入XHR 完成")
+
+    if(location.href.indexOf('twtest.anyelse.com')===-1){
+        window.XMLHttpRequest = ajax_tools_space.myXHR;
+        window.fetch = ajax_tools_space.myFetch;
+        console.log("注入XHR 完成")
+    }else{
+        console.log("不注入")
+    }
+
 }
 
 

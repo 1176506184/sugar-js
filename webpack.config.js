@@ -4,6 +4,8 @@ const AutoImport = require('unplugin-auto-import/webpack')
 const Components = require('unplugin-vue-components/webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+console.log(process.env.NODE_ENV)
+
 const {
     ElementPlusResolver
 } = require('unplugin-vue-components/resolvers')
@@ -17,7 +19,6 @@ module.exports = {
         path: path.resolve(__dirname, 'dist/scripts/vue'),
         clean: true
     },
-    mode: "development",
     module: {
         rules: [{
             test: /.vue$/,

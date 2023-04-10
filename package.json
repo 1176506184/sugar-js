@@ -4,10 +4,9 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "watch": "webpack --watch",
-    "vb": "rollup -c"
+    "dev": "cross-env NODE_ENV=development webpack",
+    "build": "cross-env NODE_ENV=production webpack",
+    "watch": "cross-env NODE_ENV=development webpack --watch"
   },
   "repository": {
     "type": "git",
@@ -23,7 +22,6 @@
     "babel-preset-stage-2": "^6.24.1",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
-    "cross-env": "^7.0.3",
     "css-loader": "^6.7.3",
     "element-plus": "^2.2.32",
     "keep-alive": "^0.1.0",
@@ -39,5 +37,7 @@
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
 }

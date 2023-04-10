@@ -1,6 +1,9 @@
 const videoData = [];
+const godComment = [];
 
 function getVideo() {
+
+    console.log(godComment);
 
     let video = document.querySelector('div[data-e2e="feed-active-video"] video');
 
@@ -98,8 +101,9 @@ function getVideo() {
                 author_url: author_url,
                 title: title,
                 author: author,
-                pic: pic?.src
-            }
+                pic: pic?.src,
+            },
+            godComment: godComment
         })
     } catch (e) {
         console.log(e);
@@ -114,9 +118,27 @@ window.addEventListener('message', function (res) {
         if (res.data.url && (res.data.url.indexOf("aweme/v1/web/aweme/post/?device_platform=webapp") !== -1 || res.data.url.indexOf("/aweme/v1/web/tab/feed/?device_platform=webapp") !== -1)) {
             videoData.push(JSON.parse(res.data.data))
         }
+        try {
+            getComment(JSON.parse(res.data.data))
+        } catch (e) {
+            // console.log(e);
+        }
     }
 })
 
+
+function getComment(data) {
+    if (typeof data === 'object' && data !== null && data !== undefined) {
+        Object.keys(data).forEach(key => {
+            if (key === "comments") {
+                console.log(data[key])
+                godComment.push(...data[key]);
+            } else if (typeof data[key] === 'object') {
+                getComment(data[key]);
+            }
+        })
+    }
+}
 
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'video') {

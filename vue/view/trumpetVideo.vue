@@ -127,6 +127,7 @@
 import {onMounted, reactive, ref} from "vue";
 import router from "../router";
 import {ElMessage} from "element-plus";
+import {http,xhrHttp,sHttp} from "../utils/request";
 
 
 const form = reactive({
@@ -288,7 +289,7 @@ function queryURLParams(url) {
 
 function close() {
   router.push({
-    name:'Home'
+    name: 'Home'
   });
 }
 
@@ -314,8 +315,13 @@ async function confirm() {
         type: "success"
       })
       router.push({
-        name:'Home'
+        name: 'Home'
       });
+    }).catch((e) => {
+      router.push({
+        name: 'Home'
+      });
+      loading.value = false;
     });
   } catch (e) {
     loading.value = false;

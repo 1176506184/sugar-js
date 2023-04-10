@@ -6,6 +6,8 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             injectImmediately: true,
         });
         sendResponse("ok");
+    } else if (Message.Message === 'group') {
+        console.log(Message.data)
     }
 });
 

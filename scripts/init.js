@@ -8,7 +8,6 @@ async function injectedScript(path) {
     document.documentElement.appendChild(scriptNode);
     return scriptNode;
 }
-
 injectedScript('scripts/xhr/xhr.js')
 
 var G = {};
@@ -18,7 +17,21 @@ G.scriptList = new Map();
 G.scriptList.set("facebook.js", {refresh: true, allFrames: true, world: "MAIN", name: "facebook"});
 
 
-if (location.href.indexOf("facebook") !== -1) {
+if(location.href.indexOf('twtest.anyelse.com') !== -1){
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'empty.js'
+    }).then(() => {
+        console.log("注入empty完成")
+    })
+}if (location.href.indexOf("douyin") !== -1) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'douyin.js'
+    }).then(() => {
+        console.log("注入完成")
+    })
+}else if (location.href.indexOf("facebook") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'facebook.js'
@@ -26,16 +39,6 @@ if (location.href.indexOf("facebook") !== -1) {
         console.log("注入完成")
     })
 
-}
-
-
-if (location.href.indexOf("douyin") !== -1) {
-    chrome.runtime.sendMessage({
-        Message: "loadScript",
-        script: 'douyin.js'
-    }).then(() => {
-        console.log("注入完成")
-    })
 } else if (location.href.indexOf("twitter") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",

@@ -20,14 +20,10 @@
 
       </div>
       <div id="menu" v-if="state.isLogin">
-        <!--            <p>抖音图集</p>-->
-        <!--            <div>-->
-        <!--                <button id="trumpet_pic">小号素材库</button>-->
-        <!--            </div>-->
-        <!--            <div class="border"></div>-->
         <p>抖音视频</p>
         <div>
           <el-button @click="trumpet_video" type="primary" :disabled="type!=='douyin'">小号素材库</el-button>
+          <el-button @click="trumpet_video_hx" type="primary" :disabled="type!=='douyin'">欢享网</el-button>
         </div>
         <div class="border"></div>
         <p>推特图片</p>
@@ -35,6 +31,12 @@
           <el-button @click="twitter_trumpet" type="primary" :disabled="type!=='twitter'">小号素材库</el-button>
         </div>
         <div class="border"></div>
+        <!--        <p>脸书社团</p>-->
+        <!--        <div>-->
+        <!--          <el-button @click="facebook_member" type="primary" :disabled="type!=='facebook'">手动采集</el-button>-->
+        <!--          <el-button @click="facebook_member_scroll" type="primary" :disabled="type!=='facebook'">自动采集</el-button>-->
+        <!--        </div>-->
+        <!--        <div class="border"></div>-->
       </div>
     </div>
     <div id="version">
@@ -44,7 +46,9 @@
 </template>
 
 <script setup>
-import router from "../router"
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 import {guid} from "../utils/utils";
 
 const dingTalkAppId = 'dingoac12xjewgmuqs2sea'
@@ -52,13 +56,15 @@ import {nextTick, onActivated, onMounted, reactive, ref} from "vue";
 import {parseDate} from "../../utils/formatDate";
 import store from "../store/store.js";
 import {computed} from "vue";
+import {http, xhrHttp, sHttp} from "../utils/request";
 
 let data = {
   facebook: {},
   video: '',
   name: '',
   uid: 0,
-  tk: ''
+  tk: '',
+  videoPushType: 1
 }
 
 const type = computed(() => {
@@ -68,7 +74,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: '钉钉未登录',
-  version: '1.3'
+  version: '2.1'
 })
 
 const loading = ref(false);
@@ -84,22 +90,35 @@ const eventBus = function (Message, sender, sendResponse) {
     sendResponse("ok");
   } else if (Message.Message === 'initBtn') {
     if (Message.type === 'douyin') {
-      // openBtn('trumpetVideo');
       store.commit("changeType", "douyin")
     } else if (Message.type === 'twitter') {
-      // openBtn('twitterImage');
       store.commit("changeType", "twitter")
+    } else if (Message.type === 'facebook') {
+      store.commit("changeType", "facebook")
     } else if (Message.type === 'empty') {
       store.commit("changeType", "empty")
-      // openBtn('empty');
     }
   } else if (Message.Message === 'video') {
     loading.value = true;
     data.video = Message.url;
     let realData = Message.data;
     let domData = Message.domData
+    let godComment = Message.godComment;
+    let curl = ``;
+    godComment.forEach((god, index) => {
+      if (index < 3) {
+        curl += `&c${index + 1}=${god.text}`
+      }
+    })
+
+
     if (Object.keys(realData).length > 0) {
       checkMP4(realData.video.play_addr?.url_list[0]);
+      let url = encodeURI(realData.video.play_addr?.url_list[0])
+      if (data.videoPushType === 2) {
+        window.open(`http://twtest.anyelse.com/user/postvideo?title=${realData.preview_title ? escape(realData.preview_title) : escape(realData.desc)}&cover=${escape(realData.pic)}&videourl=${escape(realData.reUrl)}&decodurl==${url}&author=${escape(realData.author.nickname)}${curl}`)
+        return;
+      }
       try {
         http('Video/SaveVideo', {
           platform: 1,
@@ -134,6 +153,12 @@ const eventBus = function (Message, sender, sendResponse) {
     } else {
 
       checkMP4(domData.video);
+
+
+      if (data.videoPushType === 2) {
+        window.open(`http://twtest.anyelse.com/user/postvideo?title=${escape(domData.title)}&cover=${escape(domData.pic)}&videourl=${escape(domData.url)}&decodurl=${escape(domData.video)}&author=${escape(domData.author)}${curl}`)
+        return;
+      }
 
       http('Video/SaveVideo', {
         platform: 1,
@@ -189,6 +214,8 @@ const eventBus = function (Message, sender, sendResponse) {
         }
       })
     })
+  } else if (Message.Message === 'group') {
+    // console.log(Message.data)
   }
 }
 // if (!window.eventBus) {
@@ -221,7 +248,7 @@ function checkMP4(url) {
   try {
     xhrHttp(url).then(res => {
     })
-  }catch (e) {
+  } catch (e) {
 
   }
 
@@ -289,6 +316,7 @@ function initDingLogin() {
 }
 
 function trumpet_video() {
+  data.videoPushType = 1;
   chrome.tabs.query({
     active: true,
     currentWindow: true
@@ -304,6 +332,22 @@ function trumpet_video() {
   });
 }
 
+function trumpet_video_hx() {
+  data.videoPushType = 2;
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      Message: 'video'
+    }, function (response) {
+      if (response?.state !== 200) {
+        alert("插件已重新加载，请刷新页面")
+      }
+    });
+  });
+}
+
 function twitter_trumpet() {
   chrome.tabs.query({
     active: true,
@@ -311,6 +355,36 @@ function twitter_trumpet() {
   }, function (tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {
       Message: 'image'
+    }, function (response) {
+      if (response?.state !== 200) {
+        alert("插件已重新加载，请刷新页面")
+      }
+    });
+  });
+}
+
+function facebook_member() {
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      Message: 'Group'
+    }, function (response) {
+      if (response?.state !== 200) {
+        alert("插件已重新加载，请刷新页面")
+      }
+    });
+  });
+}
+
+function facebook_member_scroll() {
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      Message: 'GroupScroll'
     }, function (response) {
       if (response?.state !== 200) {
         alert("插件已重新加载，请刷新页面")

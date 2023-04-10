@@ -10,8 +10,6 @@
 </template>
 
 <script setup>
-import router from "./router";
-const route = router.getRoutes();
 
 
 </script>
