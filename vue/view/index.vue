@@ -336,7 +336,7 @@ const eventBus = function (Message, sender, sendResponse) {
     // 调接口，传采集数据
     loading.value = true;
     let data = Message.data;
-    alert(JSON.stringify(data));
+    alert(data.length);
     loading.value = false;
   }
   else if (Message.Message === "stop" && Message.type === "facebook") {
