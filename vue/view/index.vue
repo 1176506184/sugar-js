@@ -79,7 +79,7 @@
               <el-input
                   placeholder="最大采集文章数"
                   style="width: 140px; margin-right: 15px"
-                  v-model="toutiaoMax"
+                  v-model="sohuMax"
               ></el-input>
               <el-button
                 type="primary"
@@ -331,7 +331,8 @@ const eventBus = function (Message, sender, sendResponse) {
     // console.log(Message.data)
   } else if (Message.Message === "stop" && Message.type === "toutiao") {
     toutiaoPending.value = "lock";
-  } else if (Message.Message === "stop" && Message.type === "sohu") {
+  }
+  else if (Message.Message === "stop" && Message.type === "sohu") {
     sohuPending.value = "lock";
     // 调接口，传采集数据
     loading.value = true;
