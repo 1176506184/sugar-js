@@ -1,5 +1,6 @@
 
 var souhuData = []
+
 window.addEventListener('message', function (res) {
 
     if (res.data.Message === 'ajax') {
