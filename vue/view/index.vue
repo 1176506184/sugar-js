@@ -670,6 +670,7 @@ function stopCollectToutiao() {
 }
 
 const sohuMax = ref("");
+const sohuPending = ref("lock")
 
 function collectSohu() {
   chrome.tabs.query(
