@@ -16,6 +16,8 @@ window.addEventListener('message', function (res) {
                                     var tempObj = {}
                                     if (resList[i].resourceData && resList[i].resourceData.contentData) {
                                         var contentData = resList[i].resourceData.contentData
+                                        tempObj.id = contentData.id
+                                        tempObj.url = contentData.url
                                         tempObj.author = contentData.authorName
                                         tempObj.title = contentData.title
                                         tempObj.postTime = contentData.postTime
@@ -50,16 +52,17 @@ function startCollect(max) {
     timer = setInterval(() => {
         if ((souhuData.length < num && pending === "start") || (!num && pending === "start")) {
             scrollBottom()
+            sendData(souhuData);
         } else {
             // souhuData数据量一下子超过max
             var postData = souhuData
             if (souhuData.length > num) {
                 postData = souhuData.slice(0, num)
             }
+            sendData(postData);
             chrome.runtime.sendMessage({
                 Message: 'stop',
-                type: 'sohu',
-                data: postData
+                type: 'sohu'
             }).then(r => {
                 pending = "lock";
             })
@@ -69,8 +72,51 @@ function startCollect(max) {
     }, 5000)
 }
 
+function sendData(data) {
+    data.forEach((t) => {
+        if (!t['isSend']) {
+            t['isSend'] = true;
+
+            let postdata = {
+                "source": 2,
+                "article_id": t.id,
+                "article_url": 'https://www.sohu.com' + t.url,
+                "author": t.author,
+                "title": t.title,
+                "publish_time": t2t(t.postTime),
+                "cover": 'https:' + t.cover,
+                "read": t.pv,
+                "comment": t.comment,
+                "upvote": t.like,
+                "share": t.share
+            }
+
+            chrome.runtime.sendMessage({
+                Message: 'sendData',
+                type: 'sohu',
+                data: postdata
+            }).then(r => {
+
+            })
+
+        }
+    })
+}
+
 function scrollBottom() {
     window.scrollTo(0, document.documentElement.scrollHeight)
+}
+
+function t2t(timestamp) {
+    // 此处时间戳以毫秒为单位
+    let date = new Date(parseInt(timestamp));
+    let Year = date.getFullYear();
+    let Moth = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+    let Day = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate());
+    let Hour = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours());
+    let Minute = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+    let Sechond = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+    return Year + '-' + Moth + '-' + Day + ' ' + Hour + ':' + Minute + ':' + Sechond;
 }
 
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
