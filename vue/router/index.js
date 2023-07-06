@@ -1,7 +1,7 @@
 import Home from "../view/index.vue"
 import TrumpetVideo from "../view/trumpetVideo.vue";
 import TwitterImage from "../view/twitterImage.vue"
-import {createRouter,createWebHashHistory} from "vue-router";
+import {createRouter, createWebHashHistory} from "vue-router";
 const routes = [
     {
         name:'Home',
