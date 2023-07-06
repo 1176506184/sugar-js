@@ -35,9 +35,8 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'checkType') {
         chrome.runtime.sendMessage({
             Message: 'initBtn',
-            type: 'souhu',
+            type: 'sohu',
         }).then(r => {
-
         })
         sendResponse({ state: 200 });
     }

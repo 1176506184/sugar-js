@@ -60,7 +60,7 @@ if (location.href.indexOf("douyin") !== -1) {
 } else if (location.href.indexOf("sohu") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
-        script: 'souhu.js'
+        script: 'sohu.js'
     }).then(() => {
         console.log("注入完成")
     })

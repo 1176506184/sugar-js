@@ -84,6 +84,7 @@
               <el-button
                   type="primary"
                   @click="collectToutiao"
+                  :disabled="type !== 'sohu'"
                   v-if="toutiaoPending !== 'start'"
               >开始采集
               </el-button
@@ -174,9 +175,9 @@ const eventBus = function (Message, sender, sendResponse) {
     } else if (Message.type === "toutiao") {
       activeNames.value.push('3')
       store.commit("changeType", "toutiao");
-    } else if (Message.type === "souhu") {
+    } else if (Message.type === "sohu") {
       activeNames.value.push('4')
-      store.commit("changeType", "souhu");
+      store.commit("changeType", "sohu");
     }else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
