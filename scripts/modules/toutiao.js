@@ -51,7 +51,8 @@ function sendData() {
                 "read": t.read_count,
                 "comment": t.comment_count,
                 "upvote": t.like_count,
-                "share": 0
+                "share": 0,
+                "article_id": t.id
             }
 
             chrome.runtime.sendMessage({
