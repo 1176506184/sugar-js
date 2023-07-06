@@ -248,7 +248,7 @@ var ajax_tools_space = {
         })
     }
 }
-if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1) {
+if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1) {
 
     if(location.href.indexOf('twtest.anyelse.com')===-1){
         window.XMLHttpRequest = ajax_tools_space.myXHR;
