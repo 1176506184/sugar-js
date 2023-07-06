@@ -72,3 +72,62 @@ function startGetPageTask() {
 
 
 }
+
+
+var pending = "lock"
+var fbMax = ""
+var timer = null;
+
+function startCollect(max) {
+    // console.log(max)
+    timer = setInterval(() => {
+        if ((facebookData.length < max && pending === "start") || (!max && pending === "start")) {
+            scrollBottom()
+        } else {
+            // facebookData数据量一下子超过max
+            console.log('fb停了')
+            // 需要进行处理
+            chrome.runtime.sendMessage({
+                Message: 'stop',
+                type: 'facebook',
+                data: facebookData
+            }).then(r => {
+                pending = "lock";
+            })
+
+            clearInterval(timer)
+        }
+    }, 5000)
+}
+
+function scrollBottom() {
+    window.scrollTo(0, document.documentElement.scrollHeight)
+}
+
+chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
+    if (Message.Message === 'article') {
+        console.log("获取任务");
+        pending = "start";
+        startCollect(Message.fbMax)
+        fbMax = Message.fbMax
+        sendResponse({ state: 200 });
+    } else if (Message.Message === 'stop') {
+        pending = "end";
+        sendResponse({ state: 200 });
+    } else if (Message.Message === 'getPending') {
+        sendResponse({
+            state: 200,
+            pending: pending,
+            fbMax: fbMax
+        });
+    } else if (Message.Message === 'xhr') {
+        sendResponse({ state: 200 });
+    } else if (Message.Message === 'checkType') {
+        chrome.runtime.sendMessage({
+            Message: 'initBtn',
+            type: 'facebook',
+        }).then(r => {
+        })
+        sendResponse({ state: 200 });
+    }
+})

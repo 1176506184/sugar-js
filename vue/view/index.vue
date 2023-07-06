@@ -98,15 +98,15 @@
               <el-input
                   placeholder="最大采集文章数"
                   style="width: 140px; margin-right: 15px"
-                  v-model="toutiaoMax"
+                  v-model="fbMax"
               ></el-input>
               <el-button
                   type="primary"
-                  @click="collectToutiao"
-                  v-if="toutiaoPending !== 'start'"
+                  @click="collectFacebook"
+                  v-if="fbPending !== 'start'"
               >开始采集
               </el-button>
-              <el-button type="danger" @click="stopCollectToutiao" v-else>停止采集
+              <el-button type="danger" @click="stopCollectFacebook" v-else>停止采集
               </el-button>
             </div>
           </el-collapse-item>
@@ -171,7 +171,6 @@ const canUseBtn = reactive({
   twitterImage: true,
 });
 
-const toutiaoPending = ref("lock");
 const eventBus = function (Message, sender, sendResponse) {
   if (Message.Message === "callbackData") {
     data.facebook = Message.data;
@@ -340,6 +339,10 @@ const eventBus = function (Message, sender, sendResponse) {
     alert(JSON.stringify(data));
     loading.value = false;
   }
+  else if (Message.Message === "stop" && Message.type === "facebook") {
+    fbPending.value = "lock";
+    alert('111223');
+  }
 };
 // if (!window.eventBus) {
 //   chrome.runtime.onMessage.addListener(eventBus);
@@ -389,6 +392,11 @@ function getPending() {
               try {
                 sohuPending.value = response.pending;
                 sohuMax.value = response.sohuMax;
+              } catch (e) {}
+
+              try {
+                fbPending.value = response.pending;
+                fbMax.value = response.fbMax;
               } catch (e) {}
             }
           }
@@ -622,6 +630,7 @@ function checkType() {
 }
 
 const toutiaoMax = ref("");
+const toutiaoPending = ref("lock");
 
 function collectToutiao() {
   chrome.tabs.query(
@@ -674,7 +683,7 @@ function stopCollectToutiao() {
 }
 
 const sohuMax = ref("");
-const sohuPending = ref("lock")
+const sohuPending = ref("lock");
 
 function collectSohu() {
   chrome.tabs.query(
@@ -719,6 +728,59 @@ function stopCollectSohu() {
             alert("插件已重新加载，请刷新页面");
           } else {
             sohuPending.value = "stop";
+          }
+        }
+      );
+    }
+  );
+}
+
+const fbMax = ref("");
+const fbPending = ref("lock");
+
+function collectFacebook() {
+  chrome.tabs.query(
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "article",
+          fbMax: fbMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            fbPending.value = "start";
+          }
+        }
+      );
+    }
+  );
+}
+
+function stopCollectFacebook() {
+  chrome.tabs.query(
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "stop",
+          fbMax: fbMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            fbPending.value = "stop";
           }
         }
       );

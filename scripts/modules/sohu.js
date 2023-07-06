@@ -51,6 +51,8 @@ function startCollect(max) {
         if ((souhuData.length < max && pending === "start") || (!max && pending === "start")) {
             scrollBottom()
         } else {
+            // souhuData数据量一下子超过max
+            // 需要进行处理
             chrome.runtime.sendMessage({
                 Message: 'stop',
                 type: 'sohu',
