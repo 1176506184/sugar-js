@@ -228,3 +228,25 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({state: 200});
     }
 })
+
+window.addEventListener('message', function (res) {
+
+    if (res.data.Message === 'ajax') {
+        if (res.data.url && (res.data.url.indexOf("/api/graphql/") !== -1)) {
+            try {
+                let data = res.data.data;
+
+
+                data = data.substring(0, data.indexOf('{"label":"ProfileCometTimelineFeed_user$stream$ProfileCometTimelineFeed_user_timeline_list_feed_units"'));
+
+
+            } catch (e) {
+
+            }
+        }
+    }
+})
+
+function str(str, data) {
+
+}
