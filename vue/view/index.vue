@@ -53,11 +53,13 @@
           <el-input
             placeholder="最大采集文章数"
             style="width: 140px; margin-right: 15px"
+            :disabled="type !== 'toutiao'"
             v-model="toutiaoMax"
           ></el-input>
           <el-button
             type="primary"
             @click="collectToutiao"
+            :disabled="type !== 'toutiao'"
             v-if="toutiaoPending !== 'start'"
             >开始采集</el-button
           >
@@ -152,7 +154,9 @@ const eventBus = function (Message, sender, sendResponse) {
       store.commit("changeType", "twitter");
     } else if (Message.type === "facebook") {
       store.commit("changeType", "facebook");
-    } else if (Message.type === "empty") {
+    } else if (Message.type === "toutiao") {
+      store.commit("changeType", "toutiao");
+    }else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
   } else if (Message.Message === "video") {
