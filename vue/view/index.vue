@@ -172,8 +172,6 @@ const canUseBtn = reactive({
 });
 
 const toutiaoPending = ref("lock");
-const souhuPending = ref("lock");
-
 const eventBus = function (Message, sender, sendResponse) {
   if (Message.Message === "callbackData") {
     data.facebook = Message.data;
