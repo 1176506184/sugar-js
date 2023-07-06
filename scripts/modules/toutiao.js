@@ -87,6 +87,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     if (Message.Message === 'article') {
         console.log("获取任务");
         pending = "start";
+        toutiaoData = []
         startCollect(Message.toutiaoMax)
         toutiaoMax = Message.toutiaoMax
         sendResponse({state: 200});

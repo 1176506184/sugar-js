@@ -332,7 +332,8 @@ const eventBus = function (Message, sender, sendResponse) {
   } else if (Message.Message === "stop" && Message.type === "toutiao") {
     toutiaoPending.value = "lock";
   } else if (Message.Message === "sendData" && Message.type === "toutiao") {
-    dHttp("CaptureSpecial/SaveOrUpdate", Message.data).then(() => {
+    console.log(Message.data);
+    dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
       ElMessage('上传成功一条');
     })
   } else if (Message.Message === "stop" && Message.type === "sohu") {

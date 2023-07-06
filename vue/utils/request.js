@@ -96,7 +96,10 @@ function dHttp(url, params, type = 'post') {
         $.ajax({
             url: PrivateLink['dataCollect'] + url,
             data: params,
-            type: type
+            type: type,
+            headers:{
+              "content-type":'application/json'
+            }
             , beforeSend: function (XMLHttpRequest) {
                 XMLHttpRequest.setRequestHeader("token", localStorage.getItem("tk"));
             }
