@@ -82,12 +82,14 @@
                   v-model="toutiaoMax"
               ></el-input>
               <el-button
-                  type="primary"
-                  @click="collectToutiao"
-                  v-if="toutiaoPending !== 'start'"
-              >开始采集
+                type="primary"
+                @click="collectSohu"
+                :disabled="type !== 'sohu'"
+                v-if="sohuPending !== 'start'"
+                >开始采集
               </el-button>
-              <el-button type="danger" @click="stopCollectToutiao" v-else>停止采集
+              <el-button type="danger" @click="stopCollectSohu" v-else
+                >停止采集
               </el-button>
             </div>
           </el-collapse-item>
@@ -189,9 +191,9 @@ const eventBus = function (Message, sender, sendResponse) {
     } else if (Message.type === "toutiao") {
       activeNames.value.push('3')
       store.commit("changeType", "toutiao");
-    } else if (Message.type === "souhu") {
-      activeNames.value.push('4')
-      store.commit("changeType", "souhu");
+    } else if (Message.type === "sohu") {
+      activeNames.value.push("4");
+      store.commit("changeType", "sohu");
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
@@ -331,6 +333,8 @@ const eventBus = function (Message, sender, sendResponse) {
     // console.log(Message.data)
   } else if (Message.Message === "stop" && Message.type === "toutiao") {
     toutiaoPending.value = "lock";
+  } else if (Message.Message === "stop" && Message.type === "sohu") {
+    sohuPending.value = "lock";
   }
 };
 // if (!window.eventBus) {
@@ -358,28 +362,35 @@ onMounted(() => {
 
 function getPending() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "getPending",
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              } else {
-                if (response.pending) {
-                  toutiaoPending.value = response.pending;
-                  toutiaoMax.value = response.toutiaoMax;
-                }
-              }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "getPending",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            if (response.pending) {
+              try {
+                toutiaoPending.value = response.pending;
+                toutiaoMax.value = response.toutiaoMax;
+              } catch (e) {}
+
+              try {
+                sohuPending.value = response.pending;
+                sohuMax.value = response.sohuMax;
+              } catch (e) {}
             }
-        );
-      }
+          }
+        }
+      );
+    }
   );
 }
 
@@ -655,6 +666,58 @@ function stopCollectToutiao() {
             }
         );
       }
+  );
+}
+
+const sohuMax = ref("");
+
+function collectSohu() {
+  chrome.tabs.query(
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "article",
+          sohuMax: sohuMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            sohuPending.value = "start";
+          }
+        }
+      );
+    }
+  );
+}
+
+function stopCollectSohu() {
+  chrome.tabs.query(
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "stop",
+          sohuMax: sohuMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            sohuPending.value = "stop";
+          }
+        }
+      );
+    }
   );
 }
 </script>

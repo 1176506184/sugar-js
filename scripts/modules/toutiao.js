@@ -1,6 +1,5 @@
 var toutiaoData = []
 
-
 window.addEventListener('message', function (res) {
 
     if (res.data.Message === 'ajax') {
