@@ -6,8 +6,34 @@ window.addEventListener('message', function (res) {
     if (res.data.Message === 'ajax') {
         if (res.data.url && (res.data.url.indexOf("/cisv4/feeds") !== -1)) {
             try {
-                souhuData.push(JSON.parse(res.data.data))
-                console.log(souhuData)
+                function handleData(data) {
+                    if (typeof data === 'object') {
+                        Object.keys(data).forEach(key => {
+                            if (typeof data[key] === 'object') {
+                                // console.log(data[key].data)
+                                var resList = data[key].data
+                                for (var i in resList) {
+                                    var tempObj = {}
+                                    if (resList[i].resourceData && resList[i].resourceData.contentData) {
+                                        var contentData = resList[i].resourceData.contentData
+                                        tempObj.author = contentData.authorName
+                                        tempObj.title = contentData.title
+                                        tempObj.postTime = contentData.postTime
+                                        tempObj.cover = contentData.templateInfo ? contentData.templateInfo.url :''
+                                        tempObj.pv = contentData.pv
+                                        tempObj.like = contentData.likeCount
+                                        tempObj.comment = contentData.comments
+                                        tempObj.share = 0
+                                        // console.log(tempObj)
+                                        souhuData.push(tempObj)
+                                    }
+                                }
+                            }
+                        })
+                    }
+                }
+
+                handleData(JSON.parse(res.data.data))
             } catch (e) {
 
             }
@@ -28,6 +54,7 @@ function startCollect(max) {
             chrome.runtime.sendMessage({
                 Message: 'stop',
                 type: 'sohu',
+                data: souhuData
             }).then(r => {
                 pending = "lock";
             })

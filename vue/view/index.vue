@@ -335,6 +335,11 @@ const eventBus = function (Message, sender, sendResponse) {
     toutiaoPending.value = "lock";
   } else if (Message.Message === "stop" && Message.type === "sohu") {
     sohuPending.value = "lock";
+    // 调接口，传采集数据
+    loading.value = true;
+    let data = Message.data;
+    alert(JSON.stringify(data));
+    loading.value = false;
   }
 };
 // if (!window.eventBus) {
