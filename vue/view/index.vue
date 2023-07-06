@@ -82,14 +82,14 @@
                   v-model="sohuMax"
               ></el-input>
               <el-button
-                type="primary"
-                @click="collectSohu"
-                :disabled="type !== 'sohu'"
-                v-if="sohuPending !== 'start'"
-                >开始采集
+                  type="primary"
+                  @click="collectSohu"
+                  :disabled="type !== 'sohu'"
+                  v-if="sohuPending !== 'start'"
+              >开始采集
               </el-button>
               <el-button type="danger" @click="stopCollectSohu" v-else
-                >停止采集
+              >停止采集
               </el-button>
             </div>
           </el-collapse-item>
@@ -138,7 +138,8 @@ import {nextTick, onActivated, onMounted, reactive, ref} from "vue";
 import {parseDate} from "../../utils/formatDate";
 import store from "../store/store.js";
 import {computed} from "vue";
-import {http, xhrHttp, sHttp} from "../utils/request";
+import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
+import {ElMessage} from "element-plus";
 
 const activeNames = ref([])
 const handleChange = (val) => {
@@ -330,16 +331,18 @@ const eventBus = function (Message, sender, sendResponse) {
     // console.log(Message.data)
   } else if (Message.Message === "stop" && Message.type === "toutiao") {
     toutiaoPending.value = "lock";
-  }
-  else if (Message.Message === "stop" && Message.type === "sohu") {
+  } else if (Message.Message === "sendData" && Message.type === "toutiao") {
+    dHttp("CaptureSpecial/SaveOrUpdate", Message.data).then(() => {
+      ElMessage('上传成功一条');
+    })
+  } else if (Message.Message === "stop" && Message.type === "sohu") {
     sohuPending.value = "lock";
     // 调接口，传采集数据
     loading.value = true;
     let data = Message.data;
     alert(JSON.stringify(data));
     loading.value = false;
-  }
-  else if (Message.Message === "stop" && Message.type === "facebook") {
+  } else if (Message.Message === "stop" && Message.type === "facebook") {
     fbPending.value = "lock";
     alert('111223');
   }
@@ -369,40 +372,43 @@ onMounted(() => {
 
 function getPending() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "getPending",
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          } else {
-            if (response.pending) {
-              try {
-                toutiaoPending.value = response.pending;
-                toutiaoMax.value = response.toutiaoMax;
-              } catch (e) {}
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "getPending",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              } else {
+                if (response.pending) {
+                  try {
+                    toutiaoPending.value = response.pending;
+                    toutiaoMax.value = response.toutiaoMax;
+                  } catch (e) {
+                  }
 
-              try {
-                sohuPending.value = response.pending;
-                sohuMax.value = response.sohuMax;
-              } catch (e) {}
+                  try {
+                    sohuPending.value = response.pending;
+                    sohuMax.value = response.sohuMax;
+                  } catch (e) {
+                  }
 
-              try {
-                fbPending.value = response.pending;
-                fbMax.value = response.fbMax;
-              } catch (e) {}
+                  try {
+                    fbPending.value = response.pending;
+                    fbMax.value = response.fbMax;
+                  } catch (e) {
+                  }
+                }
+              }
             }
-          }
-        }
-      );
-    }
+        );
+      }
   );
 }
 
@@ -687,51 +693,51 @@ const sohuPending = ref("lock");
 
 function collectSohu() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "article",
-          sohuMax: sohuMax.value,
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          } else {
-            sohuPending.value = "start";
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "article",
+              sohuMax: sohuMax.value,
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              } else {
+                sohuPending.value = "start";
+              }
+            }
+        );
+      }
   );
 }
 
 function stopCollectSohu() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "stop",
-          sohuMax: sohuMax.value,
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          } else {
-            sohuPending.value = "stop";
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "stop",
+              sohuMax: sohuMax.value,
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              } else {
+                sohuPending.value = "stop";
+              }
+            }
+        );
+      }
   );
 }
 
@@ -740,51 +746,51 @@ const fbPending = ref("lock");
 
 function collectFacebook() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "article",
-          fbMax: fbMax.value,
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          } else {
-            fbPending.value = "start";
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "article",
+              fbMax: fbMax.value,
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              } else {
+                fbPending.value = "start";
+              }
+            }
+        );
+      }
   );
 }
 
 function stopCollectFacebook() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "stop",
-          fbMax: fbMax.value,
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          } else {
-            fbPending.value = "stop";
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "stop",
+              fbMax: fbMax.value,
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              } else {
+                fbPending.value = "stop";
+              }
+            }
+        );
+      }
   );
 }
 </script>

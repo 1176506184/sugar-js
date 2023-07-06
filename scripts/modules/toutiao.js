@@ -22,21 +22,64 @@ function startCollect(max) {
     timer = setInterval(() => {
         if ((toutiaoData.length < max && pending === "start") || (!max && pending === "start")) {
             scrollBottom()
+            sendData();
+
         } else {
+            sendData();
             chrome.runtime.sendMessage({
                 Message: 'stop',
                 type: 'toutiao',
             }).then(r => {
-
+                pending = "lock"
             })
             clearInterval(timer)
         }
     }, 5000)
 }
 
+function sendData() {
+    toutiaoData.forEach((t) => {
+        if (!t['isSend']) {
+            t['isSend'] = true;
+
+            let data = {
+                "source": 1,
+                "author": t.source,
+                "title": t.title,
+                "publish_time": t2t(t.publish_time),
+                "cover": t?.middle_image?.url,
+                "read": t.read_count,
+                "comment": t.comment_count,
+                "upvote": t.like_count,
+                "share": 0
+            }
+
+            chrome.runtime.sendMessage({
+                Message: 'sendData',
+                type: 'toutiao',
+                data: data
+            }).then(r => {
+
+            })
+
+        }
+    })
+}
 
 function scrollBottom() {
     window.scrollTo(0, document.documentElement.scrollHeight)
+}
+
+function t2t(timestamp) {
+// 此处时间戳以毫秒为单位
+    let date = new Date(parseInt(timestamp) * 1000);
+    let Year = date.getFullYear();
+    let Moth = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+    let Day = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate());
+    let Hour = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours());
+    let Minute = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+    let Sechond = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+    return Year + '-' + Moth + '-' + Day + '   ' + Hour + ':' + Minute + ':' + Sechond;
 }
 
 
@@ -48,10 +91,10 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         toutiaoMax = Message.toutiaoMax
         sendResponse({state: 200});
     } else if (Message.Message === 'stop') {
-        try{
+        try {
             clearInterval(timer);
-        }catch(e){
-            
+        } catch (e) {
+
         }
         pending = "end";
         sendResponse({state: 200});

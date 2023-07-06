@@ -2,14 +2,16 @@ const NODE_ENV = process.env.NODE_ENV;
 let PrivateLink = {
     'trumpet': 'http://23.91.101.251/',
     's': 'http://107.150.124.12/',
+    'dataCollect': 'http://test.44finefood.com/'
 }
 
 console.log(NODE_ENV)
 
-if(NODE_ENV === 'development'){
+if (NODE_ENV === 'development') {
     PrivateLink = {
         'trumpet': 'http://192.168.205.34:57968/',
-        's': 'http://192.168.205.34:44346'
+        's': 'http://192.168.205.34:44346',
+        'dataCollect': 'http://test.44finefood.com/'
     }
 }
 
@@ -89,9 +91,33 @@ function sHttp(url, params, type = 'post') {
     })
 }
 
+function dHttp(url, params, type = 'post') {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: PrivateLink['dataCollect'] + url,
+            data: params,
+            type: type
+            , beforeSend: function (XMLHttpRequest) {
+                XMLHttpRequest.setRequestHeader("token", localStorage.getItem("tk"));
+            }
+            , success: function (data) {
+                if (data.StatusCode === 200) {
+                    resolve(data.Data);
+                } else {
+                    reject(data);
+                }
+            },
+            error: function (res) {
+                reject(res);
+            }
+        })
+    })
+}
+
 
 export {
     http,
     xhrHttp,
-    sHttp
+    sHttp,
+    dHttp
 }
