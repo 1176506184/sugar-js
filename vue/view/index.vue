@@ -86,12 +86,26 @@
                   @click="collectToutiao"
                   v-if="toutiaoPending !== 'start'"
               >开始采集
-              </el-button
-              >
-              <el-button type="danger" @click="stopCollectToutiao" v-else
-              >停止采集
-              </el-button
-              >
+              </el-button>
+              <el-button type="danger" @click="stopCollectToutiao" v-else>停止采集
+              </el-button>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item title="脸书博主" name="5">
+            <div style="display: flex">
+              <el-input
+                  placeholder="最大采集文章数"
+                  style="width: 140px; margin-right: 15px"
+                  v-model="toutiaoMax"
+              ></el-input>
+              <el-button
+                  type="primary"
+                  @click="collectToutiao"
+                  v-if="toutiaoPending !== 'start'"
+              >开始采集
+              </el-button>
+              <el-button type="danger" @click="stopCollectToutiao" v-else>停止采集
+              </el-button>
             </div>
           </el-collapse-item>
 
@@ -170,6 +184,7 @@ const eventBus = function (Message, sender, sendResponse) {
       activeNames.value.push('2')
       store.commit("changeType", "twitter");
     } else if (Message.type === "facebook") {
+      activeNames.value.push('5')
       store.commit("changeType", "facebook");
     } else if (Message.type === "toutiao") {
       activeNames.value.push('3')
@@ -177,7 +192,7 @@ const eventBus = function (Message, sender, sendResponse) {
     } else if (Message.type === "souhu") {
       activeNames.value.push('4')
       store.commit("changeType", "souhu");
-    }else if (Message.type === "empty") {
+    } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
   } else if (Message.Message === "video") {

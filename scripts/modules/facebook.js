@@ -3,7 +3,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     if (Message.Message === 'Group') {
         await getGroup();
         sendResponse({state: 200});
-    }else if(Message.Message === 'GroupScroll'){
+    } else if (Message.Message === 'GroupScroll') {
         await getGroupAndScroll();
         sendResponse({state: 200});
     } else if (Message.Message === 'checkType') {
@@ -21,8 +21,8 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     }
 })
 
-function getGroupAndScroll(){
-    setInterval(()=>{
+function getGroupAndScroll() {
+    setInterval(() => {
         let members = []
         let temp = Array.from(document.querySelectorAll('.xt0psk2 .x1s688f')).map(r => {
             let userRealId = r.href.split('user/')[1]
@@ -37,11 +37,11 @@ function getGroupAndScroll(){
             Message: 'group',
             data: members
         })
-        document.querySelectorAll('.xt0psk2 .x1s688f').forEach(r=>{
+        document.querySelectorAll('.xt0psk2 .x1s688f').forEach(r => {
             r.remove();
         })
         window.scrollTo(0, document.documentElement.scrollHeight)
-    },3000);
+    }, 3000);
 }
 
 function getGroup() {
@@ -62,8 +62,13 @@ function getGroup() {
 
 }
 
-window.addEventListener('message', function (res) {
-    if (res.data.Message === 'ajax') {
 
-    }
-});
+var facebookData = []
+
+function startGetPageTask() {
+
+    let pages = document.querySelectorAll('div[aria-posinset]');
+    pages.forEach()
+
+
+}
