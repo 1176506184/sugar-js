@@ -17,9 +17,10 @@ window.addEventListener('message', function (res) {
 
 var pending = "lock"
 var toutiaoMax = ""
+var timer = null;
 
 function startCollect(max) {
-    let timer = setInterval(() => {
+    timer = setInterval(() => {
         if ((toutiaoData.length < max && pending === "start") || (!max && pending === "start")) {
             scrollBottom()
         } else {
@@ -48,6 +49,11 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         toutiaoMax = Message.toutiaoMax
         sendResponse({state: 200});
     } else if (Message.Message === 'stop') {
+        try{
+            clearInterval(timer);
+        }catch(e){
+            
+        }
         pending = "end";
         sendResponse({state: 200});
     } else if (Message.Message === 'getPending') {
