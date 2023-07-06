@@ -8,9 +8,9 @@
       <span style="font-size: 18px; font-weight: bold">通用采集工具</span>
 
       <el-button
-        id="username"
-        class="linear"
-        style="font-size: 14px; margin-right: 15px"
+          id="username"
+          class="linear"
+          style="font-size: 14px; margin-right: 15px"
       >
         {{ state.loginText }}
       </el-button>
@@ -19,79 +19,91 @@
     <!--        <div id="username"></div>-->
     <!--    </div>-->
     <div class="layout_viewer" id="layout_viewer">
+
       <div id="login_container" v-if="state.isLogin === false"></div>
       <div id="menu" v-if="state.isLogin">
-        <p>抖音视频</p>
-        <div>
-          <el-button
-            @click="trumpet_video"
-            type="primary"
-            :disabled="type !== 'douyin'"
-            >小号素材库</el-button
-          >
-          <el-button
-            @click="trumpet_video_hx"
-            type="primary"
-            :disabled="type !== 'douyin'"
-            >欢享网</el-button
-          >
-        </div>
-        <div class="border"></div>
-        <p>推特图片</p>
-        <div>
-          <el-button
-            @click="twitter_trumpet"
-            type="primary"
-            :disabled="type !== 'twitter'"
-            >小号素材库</el-button
-          >
-        </div>
-        <div class="border"></div>
-        <p>头条博主</p>
+        <el-collapse v-model="activeNames" @change="handleChange" style="border-top: 0">
+          <el-collapse-item title="抖音视频" name="1">
+            <div>
+              <el-button
+                  @click="trumpet_video"
+                  type="primary"
+                  :disabled="type !== 'douyin'"
+              >小号素材库
+              </el-button
+              >
+              <el-button
+                  @click="trumpet_video_hx"
+                  type="primary"
+                  :disabled="type !== 'douyin'"
+              >欢享网
+              </el-button
+              >
+            </div>
+          </el-collapse-item>
+          <el-collapse-item title="推特图片" name="2">
+            <div>
+              <el-button
+                  @click="twitter_trumpet"
+                  type="primary"
+                  :disabled="type !== 'twitter'"
+              >小号素材库
+              </el-button
+              >
+            </div>
+          </el-collapse-item>
+          <el-collapse-item title="头条博主" name="3">
+            <div style="display: flex">
+              <el-input
+                  placeholder="最大采集文章数"
+                  style="width: 140px; margin-right: 15px"
+                  :disabled="type !== 'toutiao'"
+                  v-model="toutiaoMax"
+              ></el-input>
+              <el-button
+                  type="primary"
+                  @click="collectToutiao"
+                  :disabled="type !== 'toutiao'"
+                  v-if="toutiaoPending !== 'start'"
+              >开始采集
+              </el-button
+              >
+              <el-button type="danger" @click="stopCollectToutiao" v-else
+              >停止采集
+              </el-button
+              >
+            </div>
+          </el-collapse-item>
+          <el-collapse-item title="搜狐博主" name="4">
+            <div style="display: flex">
+              <el-input
+                  placeholder="最大采集文章数"
+                  style="width: 140px; margin-right: 15px"
+                  v-model="toutiaoMax"
+              ></el-input>
+              <el-button
+                  type="primary"
+                  @click="collectToutiao"
+                  v-if="toutiaoPending !== 'start'"
+              >开始采集
+              </el-button
+              >
+              <el-button type="danger" @click="stopCollectToutiao" v-else
+              >停止采集
+              </el-button
+              >
+            </div>
+          </el-collapse-item>
 
-        <div style="display: flex">
-          <el-input
-            placeholder="最大采集文章数"
-            style="width: 140px; margin-right: 15px"
-            v-model="toutiaoMax"
-          ></el-input>
-          <el-button
-            type="primary"
-            @click="collectToutiao"
-            v-if="toutiaoPending !== 'start'"
-            >开始采集</el-button
-          >
-          <el-button type="danger" @click="stopCollectToutiao" v-else
-            >停止采集</el-button
-          >
-        </div>
-        <div class="border"></div>
-        <p>搜狐博主</p>
-         <div style="display: flex">
-          <el-input
-            placeholder="最大采集文章数"
-            style="width: 140px; margin-right: 15px"
-            v-model="toutiaoMax"
-          ></el-input>
-          <el-button
-            type="primary"
-            @click="collectToutiao"
-            v-if="toutiaoPending !== 'start'"
-            >开始采集</el-button
-          >
-          <el-button type="danger" @click="stopCollectToutiao" v-else
-            >停止采集</el-button
-          >
-        </div>
-        <div class="border"></div>
-
-        <!--        <p>脸书社团</p>-->
-        <!--        <div>-->
-        <!--          <el-button @click="facebook_member" type="primary" :disabled="type!=='facebook'">手动采集</el-button>-->
-        <!--          <el-button @click="facebook_member_scroll" type="primary" :disabled="type!=='facebook'">自动采集</el-button>-->
-        <!--        </div>-->
-        <!--        <div class="border"></div>-->
+          <!--        <p>脸书社团</p>-->
+          <!--        <div>-->
+          <!--          <el-button @click="facebook_member" type="primary" :disabled="type!=='facebook'">手动采集</el-button>-->
+          <!--          <el-button @click="facebook_member_scroll" type="primary" :disabled="type!=='facebook'">自动采集</el-button>-->
+          <!--        </div>-->
+          <!--        <div class="border"></div>-->
+        </el-collapse>
       </div>
+
     </div>
     <div id="version">
       <p id="v_p" style="cursor: pointer">{{ state.version }}</p>
@@ -100,17 +112,22 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
 
 const router = useRouter();
-import { guid } from "../utils/utils";
+import {guid} from "../utils/utils";
 
 const dingTalkAppId = "dingoac12xjewgmuqs2sea";
-import { nextTick, onActivated, onMounted, reactive, ref } from "vue";
-import { parseDate } from "../../utils/formatDate";
+import {nextTick, onActivated, onMounted, reactive, ref} from "vue";
+import {parseDate} from "../../utils/formatDate";
 import store from "../store/store.js";
-import { computed } from "vue";
-import { http, xhrHttp, sHttp } from "../utils/request";
+import {computed} from "vue";
+import {http, xhrHttp, sHttp} from "../utils/request";
+
+const activeNames = ref([])
+const handleChange = (val) => {
+  console.log(val)
+}
 
 let data = {
   facebook: {},
@@ -147,12 +164,20 @@ const eventBus = function (Message, sender, sendResponse) {
     sendResponse("ok");
   } else if (Message.Message === "initBtn") {
     if (Message.type === "douyin") {
+      activeNames.value.push('1')
       store.commit("changeType", "douyin");
     } else if (Message.type === "twitter") {
+      activeNames.value.push('2')
       store.commit("changeType", "twitter");
     } else if (Message.type === "facebook") {
       store.commit("changeType", "facebook");
-    } else if (Message.type === "empty") {
+    } else if (Message.type === "toutiao") {
+      activeNames.value.push('3')
+      store.commit("changeType", "toutiao");
+    } else if (Message.type === "souhu") {
+      activeNames.value.push('4')
+      store.commit("changeType", "souhu");
+    }else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
   } else if (Message.Message === "video") {
@@ -173,13 +198,13 @@ const eventBus = function (Message, sender, sendResponse) {
       let url = encodeURI(realData.video.play_addr?.url_list[0]);
       if (data.videoPushType === 2) {
         window.open(
-          `http://twtest.anyelse.com/user/postvideo?title=${
-            realData.preview_title
-              ? escape(realData.preview_title)
-              : escape(realData.desc)
-          }&cover=${escape(realData.pic)}&videourl=${escape(
-            realData.reUrl
-          )}&decodurl==${url}&author=${escape(realData.author.nickname)}${curl}`
+            `http://twtest.anyelse.com/user/postvideo?title=${
+                realData.preview_title
+                    ? escape(realData.preview_title)
+                    : escape(realData.desc)
+            }&cover=${escape(realData.pic)}&videourl=${escape(
+                realData.reUrl
+            )}&decodurl==${url}&author=${escape(realData.author.nickname)}${curl}`
         );
         return;
       }
@@ -187,8 +212,8 @@ const eventBus = function (Message, sender, sendResponse) {
         http("Video/SaveVideo", {
           platform: 1,
           title: realData.preview_title
-            ? realData.preview_title
-            : realData.desc,
+              ? realData.preview_title
+              : realData.desc,
           resource_link: realData.reUrl,
           resource_url: (function () {
             return realData.video.play_addr?.url_list[0];
@@ -213,19 +238,20 @@ const eventBus = function (Message, sender, sendResponse) {
             },
           });
         });
-      } catch (e) {}
+      } catch (e) {
+      }
     } else {
       checkMP4(domData.video);
 
       if (data.videoPushType === 2) {
         window.open(
-          `http://twtest.anyelse.com/user/postvideo?title=${escape(
-            domData.title
-          )}&cover=${escape(domData.pic)}&videourl=${escape(
-            domData.url
-          )}&decodurl=${escape(domData.video)}&author=${escape(
-            domData.author
-          )}${curl}`
+            `http://twtest.anyelse.com/user/postvideo?title=${escape(
+                domData.title
+            )}&cover=${escape(domData.pic)}&videourl=${escape(
+                domData.url
+            )}&decodurl=${escape(domData.video)}&author=${escape(
+                domData.author
+            )}${curl}`
         );
         return;
       }
@@ -257,10 +283,10 @@ const eventBus = function (Message, sender, sendResponse) {
     data = data.map((d) => {
       return {
         resource_url: d.entities?.media
-          ?.map((e) => {
-            return e.media_url_https;
-          })
-          .join("|||"),
+            ?.map((e) => {
+              return e.media_url_https;
+            })
+            .join("|||"),
         platform: 4,
         like_count: d.favorite_count,
         share_count: d.retweet_count,
@@ -317,37 +343,40 @@ onMounted(() => {
 
 function getPending() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "getPending",
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          } else {
-            if (response.pending) {
-              toutiaoPending.value = response.pending;
-              toutiaoMax.value = response.toutiaoMax;
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "getPending",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              } else {
+                if (response.pending) {
+                  toutiaoPending.value = response.pending;
+                  toutiaoMax.value = response.toutiaoMax;
+                }
+              }
             }
-          }
-        }
-      );
-    }
+        );
+      }
   );
 }
 
-onActivated(() => {});
+onActivated(() => {
+});
 
 function checkMP4(url) {
   try {
-    xhrHttp(url).then((res) => {});
-  } catch (e) {}
+    xhrHttp(url).then((res) => {
+    });
+  } catch (e) {
+  }
 }
 
 function getVersion() {
@@ -370,7 +399,7 @@ function initDingLogin() {
   let redirectUrl = encodeURIComponent(base + "?type=dingding");
   const reUrl = "http://107.150.124.12/";
   let goto = encodeURIComponent(
-    `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${dingTalkAppId}&response_type=code&scope=snsapi_login&state=${reUrl}&redirect_uri=http://ddlogin.anyelse.com/logincallback.ashx`
+      `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${dingTalkAppId}&response_type=code&scope=snsapi_login&state=${reUrl}&redirect_uri=http://ddlogin.anyelse.com/logincallback.ashx`
   );
   DDLogin({
     id: "login_container", // 这里需要你在自己的页面定义一个HTML标签并设置id，例如<div id="login_container"></div>或<span id="login_container"></span>
@@ -385,8 +414,8 @@ function initDingLogin() {
       // 判断是否来自ddLogin扫码事件。
       let loginTmpCode = event.data; // 拿到loginTmpCode后就可以在这里构造跳转链接进行跳转了
       let redirectURL = new URL(
-        "/connect/oauth2/sns_authorize",
-        "https://oapi.dingtalk.com"
+          "/connect/oauth2/sns_authorize",
+          "https://oapi.dingtalk.com"
       );
       redirectURL.searchParams.set("appid", dingTalkAppId);
       redirectURL.searchParams.set("response_type", "code");
@@ -420,112 +449,112 @@ function initDingLogin() {
 function trumpet_video() {
   data.videoPushType = 1;
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "video",
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "video",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
+      }
   );
 }
 
 function trumpet_video_hx() {
   data.videoPushType = 2;
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "video",
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "video",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
+      }
   );
 }
 
 function twitter_trumpet() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "image",
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "image",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
+      }
   );
 }
 
 function facebook_member() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "Group",
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "Group",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
+      }
   );
 }
 
 function facebook_member_scroll() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "GroupScroll",
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "GroupScroll",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
+      }
   );
 }
 
@@ -542,23 +571,23 @@ function openBtn(BtnKey) {
 
 function checkType() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "checkType",
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "checkType",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
+      }
   );
 }
 
@@ -566,51 +595,51 @@ const toutiaoMax = ref("");
 
 function collectToutiao() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "article",
-          toutiaoMax: toutiaoMax.value,
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          } else {
-            toutiaoPending.value = "start";
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "article",
+              toutiaoMax: toutiaoMax.value,
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              } else {
+                toutiaoPending.value = "start";
+              }
+            }
+        );
+      }
   );
 }
 
 function stopCollectToutiao() {
   chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        {
-          Message: "stop",
-          toutiaoMax: toutiaoMax.value,
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            alert("插件已重新加载，请刷新页面");
-          } else {
-            toutiaoPending.value = "stop";
-          }
-        }
-      );
-    }
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "stop",
+              toutiaoMax: toutiaoMax.value,
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              } else {
+                toutiaoPending.value = "stop";
+              }
+            }
+        );
+      }
   );
 }
 </script>
