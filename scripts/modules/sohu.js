@@ -116,7 +116,7 @@ function t2t(timestamp) {
     let Hour = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours());
     let Minute = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
     let Sechond = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
-    return Year + '-' + Moth + '-' + Day + '   ' + Hour + ':' + Minute + ':' + Sechond;
+    return Year + '-' + Moth + '-' + Day + ' ' + Hour + ':' + Minute + ':' + Sechond;
 }
 
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {

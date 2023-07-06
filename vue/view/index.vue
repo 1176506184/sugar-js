@@ -172,7 +172,7 @@ const canUseBtn = reactive({
   twitterImage: true,
 });
 
-const eventBus = function (Message, sender, sendResponse) {
+const eventBus = async function (Message, sender, sendResponse) {
   if (Message.Message === "callbackData") {
     data.facebook = Message.data;
     sendResponse("ok");
@@ -339,10 +339,12 @@ const eventBus = function (Message, sender, sendResponse) {
   } else if (Message.Message === "stop" && Message.type === "sohu") {
     sohuPending.value = "lock";
   } else if (Message.Message === "sendData" && Message.type === "sohu") {
-    console.log(JSON.stringify(Message.data))
-    dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
-      ElMessage('上传成功一条');
-    })
+    try{
+      let res = await dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data))
+      console.log(res)
+    }catch(err){
+      console.log(err)
+    }
   } else if (Message.Message === "stop" && Message.type === "facebook") {
     fbPending.value = "lock";
   } else if (Message.Message === "sendData" && Message.type === "facebook") {
