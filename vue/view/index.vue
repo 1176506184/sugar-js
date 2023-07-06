@@ -162,7 +162,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "2.1",
+  version: "v2.1",
 });
 
 const loading = ref(false);
@@ -340,7 +340,7 @@ const eventBus = function (Message, sender, sendResponse) {
     // 调接口，传采集数据
     loading.value = true;
     let data = Message.data;
-    alert(JSON.stringify(data));
+    alert(data.length);
     loading.value = false;
   } else if (Message.Message === "stop" && Message.type === "facebook") {
     fbPending.value = "lock";

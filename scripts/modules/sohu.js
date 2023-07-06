@@ -10,7 +10,7 @@ window.addEventListener('message', function (res) {
                     if (typeof data === 'object') {
                         Object.keys(data).forEach(key => {
                             if (typeof data[key] === 'object') {
-                                // console.log(data[key].data)
+                                console.log(data[key].data)
                                 var resList = data[key].data
                                 for (var i in resList) {
                                     var tempObj = {}
@@ -46,17 +46,20 @@ var sohuMax = ""
 var timer = null;
 
 function startCollect(max) {
-    // console.log(max)
+    var num = max? parseInt(max): 0
     timer = setInterval(() => {
-        if ((souhuData.length < max && pending === "start") || (!max && pending === "start")) {
+        if ((souhuData.length < num && pending === "start") || (!num && pending === "start")) {
             scrollBottom()
         } else {
             // souhuData数据量一下子超过max
-            // 需要进行处理
+            var postData = souhuData
+            if (souhuData.length > num) {
+                postData = souhuData.slice(0, num)
+            }
             chrome.runtime.sendMessage({
                 Message: 'stop',
                 type: 'sohu',
-                data: souhuData
+                data: postData
             }).then(r => {
                 pending = "lock";
             })

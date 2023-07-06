@@ -1,6 +1,5 @@
 let toutiaoPending = "lock";
 
-
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'loadScript') {
         await chrome.scripting.executeScript({
@@ -13,8 +12,6 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         console.log(Message.data)
     }
 })
-
-
 
 
 // chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((e)=>{
