@@ -72,8 +72,19 @@ async function startGetPageTask() {
     for (let i = 0; i < pages.length; i++) {
         let p = pages[i];
 
+        let title = p.querySelector(dealClass("xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs"))?.innerHTML
+
+        if (findDivWithText('展开', p)) {
+            findDivWithText('展开', p).click();
+            await wait(0.3);
+        }
+
+        if (!title) {
+            title = p.querySelector(dealClass("x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h"))?.innerText
+        }
+
         if (facebookData.filter(f => {
-            return f.title === p.querySelector(dealClass("xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs"))?.innerHTML
+            return f.title === title
         }).length === 0) {
 
             FireEvent(p.querySelector('a' + dealClass("x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm")), 'pointerover')
@@ -90,7 +101,7 @@ async function startGetPageTask() {
             let data = {
                 author: p.querySelector(`h2${dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz x1gslohp x1yc453h")} a span`)?.innerText,
                 href: p.querySelector('a' + dealClass("x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm"))?.href,
-                title: p.querySelector(dealClass("xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs"))?.innerHTML,
+                title: title,
                 publish_time: timeOk(str),
                 good: good,
                 comment: comment,
@@ -107,6 +118,21 @@ async function startGetPageTask() {
     }
 
 }
+
+function findDivWithText(text, el = document.body, css = null) {
+    if (el && el.innerText === text && !css) {
+        return el;
+    } else if (css && el && el.innerText === text && css === el.className) {
+        return el;
+    } else {
+
+        for (var i = 0; i < el.children.length; i++) {
+            let result = findDivWithText(text, el.children[i], css);
+            if (result) return result
+        }
+    }
+}
+
 
 function dealClass(className) {
     className = className.replaceAll(' ', '.');
@@ -229,82 +255,3 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     }
 })
 
-window.addEventListener('message', function (res) {
-
-    if (res.data.Message === 'ajax') {
-        if (res.data.url && (res.data.url.indexOf("/api/graphql/") !== -1)) {
-            try {
-                let data = res.data.data;
-
-                if (data.indexOf('{"label":"ProfileCometTimelineFeed_user$stream$ProfileCometTimelineFeed_user_timeline_list_feed_units"') !== -1) {
-                    try {
-                        data = data.substring(0, data.indexOf('{"label":"ProfileCometTimelineFeed_user$stream$ProfileCometTimelineFeed_user_timeline_list_feed_units"'));
-                        data = JSON.parse(data);
-                        let result = getData(data);
-                        console.log(result);
-                    } catch (e) {
-
-                    }
-                }
-
-
-            } catch (e) {
-
-            }
-        }
-    }
-})
-
-
-function getData(data) {
-
-    let result = {
-        source: 3,
-        upvote: 0,
-        comment: 0,
-        author: '',
-        title: ''
-    }
-
-    function work(d) {
-
-        if (typeof d === 'object') {
-
-            Object.keys(d).forEach(o => {
-                if (o === 'reaction_count') {
-                    result.upvote = d[o];
-                }
-
-                if (o === 'total_comment_count') {
-                    result.comment = d[o];
-                }
-
-                if (o === 'owning_profile') {
-                    if (d[o]?.name) {
-                        result.author = d[o].name
-                    }
-                }
-
-                if (o === 'title_with_entities') {
-                    if (d[o]?.text) {
-                        result.title = d[o]?.text
-                    }
-                }
-
-                work(d);
-
-            })
-
-        }
-
-    }
-
-    work(data);
-
-    return result;
-
-}
-
-function str(str, data) {
-
-}
