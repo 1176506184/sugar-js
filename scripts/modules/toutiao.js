@@ -1,4 +1,7 @@
 var toutiaoData = []
+var pending = "lock"
+var toutiaoMax = ""
+var timer = null;
 
 window.addEventListener('message', function (res) {
 
@@ -14,9 +17,7 @@ window.addEventListener('message', function (res) {
     }
 })
 
-var pending = "lock"
-var toutiaoMax = ""
-var timer = null;
+
 
 function startCollect(max) {
     timer = setInterval(() => {
@@ -34,7 +35,7 @@ function startCollect(max) {
             })
             clearInterval(timer)
         }
-    }, 5000)
+    }, 2000)
 }
 
 function sendData() {

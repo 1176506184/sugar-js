@@ -1,3 +1,6 @@
+var pending = "lock"
+var fbMax = ""
+var timer = null;
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     console.log(Message)
     if (Message.Message === 'Group') {
@@ -83,35 +86,43 @@ async function startGetPageTask() {
             title = p.querySelector(dealClass("x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h"))?.innerText
         }
 
-        if (facebookData.filter(f => {
+        if (!!title && facebookData.filter(f => {
             return f.title === title
         }).length === 0) {
 
             FireEvent(p.querySelector('a' + dealClass("x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm")), 'pointerover')
-            await wait(5);
+            await wait(1);
             var str = document.querySelector("[role='tooltip']")?.innerText  // 日期
 
-            let good = p.querySelector(dealClass("xt0b8zv x1jx94hy xrbpyxo xl423tq")).innerText;
+            let good = p.querySelector(dealClass("xt0b8zv x1jx94hy xrbpyxo xl423tq"))?.innerText;
             let comment = p.querySelector(dealClass("x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w xeuugli xsyo7zv x16hj40l x10b6aqq x1yrsyyn") + " [id]")?.innerText
             let share = 0;
-            if (p.querySelector(dealClass("x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w xeuugli xg83lxy x1h0ha7o x10b6aqq x1yrsyyn")).length > p.querySelector(dealClass("x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w xeuugli xsyo7zv x16hj40l x10b6aqq x1yrsyyn") + " [id]").length) {
+            if (p.querySelector(dealClass("x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w xeuugli xg83lxy x1h0ha7o x10b6aqq x1yrsyyn"))?.length > p.querySelector(dealClass("x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w xeuugli xsyo7zv x16hj40l x10b6aqq x1yrsyyn") + " [id]")?.length) {
                 share = p.querySelector(dealClass("x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w xeuugli xg83lxy x1h0ha7o x10b6aqq x1yrsyyn"))?.innerText
             }
 
             let data = {
+                "source": 3,
+                isSend: false,
                 author: p.querySelector(`h2${dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz x1gslohp x1yc453h")} a span`)?.innerText,
-                href: p.querySelector('a' + dealClass("x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm"))?.href,
+                articleUrl: p.querySelector('a' + dealClass("x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm"))?.href,
                 title: title,
                 publish_time: timeOk(str),
-                good: good,
+                upvote: good,
                 comment: comment,
-                share: share
+                share: share,
+                articleId: 0
             }
 
             facebookData.push(data);
-            await wait(5);
+            await wait(1);
             FireEvent(p.querySelector('a' + dealClass("x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm")), 'pointerout')
             console.log(data);
+
+            if ((facebookData.length < fbMax && pending === "start") || (!fbMax && pending === "start")) {
+                sendData();
+            }
+
         }
 
 
@@ -199,19 +210,18 @@ function timeOk(str) {
 }
 
 
-var pending = "lock"
-var fbMax = ""
-var timer = null;
-
 async function startCollect(max) {
     // console.log(max)
     if ((facebookData.length < max && pending === "start") || (!max && pending === "start")) {
+        sendData();
         await scrollBottom()
-        await wait(5);
+        await wait(2);
         await startCollect(max);
     } else {
         // facebookData数据量一下子超过max
         // 需要进行处理
+        facebookData = []
+        sendData();
         chrome.runtime.sendMessage({
             Message: 'stop',
             type: 'facebook',
@@ -223,7 +233,7 @@ async function startCollect(max) {
 }
 
 async function scrollBottom() {
-    await startGetPageTask();
+    // await startGetPageTask();
     window.scrollTo(0, document.documentElement.scrollHeight)
 }
 
@@ -235,6 +245,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         fbMax = Message.fbMax
         sendResponse({state: 200});
     } else if (Message.Message === 'stop') {
+        facebookData = []
         pending = "end";
         sendResponse({state: 200});
     } else if (Message.Message === 'getPending') {
@@ -255,3 +266,166 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     }
 })
 
+function sendData() {
+    facebookData.forEach((t) => {
+        if (!t['isSend']) {
+            t['isSend'] = true;
+            chrome.runtime.sendMessage({
+                Message: 'sendData',
+                type: 'toutiao',
+                data: t
+            }).then(r => {
+
+            })
+
+        }
+    })
+}
+
+
+window.addEventListener('message', function (res) {
+
+    if (res.data.Message === 'ajax') {
+        if (res.data.url && (res.data.url.indexOf("/api/graphql/") !== -1)) {
+            try {
+                let data = res.data.data;
+
+                if (data.indexOf('{"label":"ProfileCometTimelineFeed_user$stream$ProfileCometTimelineFeed_user_timeline_list_feed_units"') !== -1) {
+                    try {
+                        data = data.substring(0, data.indexOf('{"label":"ProfileCometTimelineFeed_user$stream$ProfileCometTimelineFeed_user_timeline_list_feed_units"'));
+                        data = JSON.parse(data);
+                        console.log(data);
+                        let result = getData(data);
+                        if (result.articleId > 0) {
+                            facebookData.push(result);
+                            console.log(result);
+                        }
+                    } catch (e) {
+
+                    }
+                } else {
+                    try {
+                        data = JSON.parse(data);
+                        console.log(data);
+                        let result = getData(data);
+
+                        if (result.articleId > 0) {
+                            facebookData.push(result);
+                            console.log(result);
+                        }
+
+
+                    } catch (e) {
+
+                    }
+                }
+
+
+            } catch (e) {
+
+            }
+        }
+    }
+})
+
+
+function getData(data) {
+
+    let result = {
+        isSend: false,
+        source: 3,
+        upvote: 0,
+        comment: 0,
+        author: '',
+        title: '',
+        articleId: 0,
+        share: 0,
+        articleUrl: '',
+        cover: '',
+        "publish_time": ''
+    }
+
+    function work(d) {
+
+        if (typeof d === 'object' && !!d) {
+
+            Object.keys(d).forEach(o => {
+                if (o === 'reactors') {
+                    if (d[o]?.count > result.upvote) {
+                        result.upvote = d[o]?.count;
+                    }
+                }
+
+                if (o === 'photo_image' && !result.cover) {
+                    result.cover = d[o]?.uri;
+                }
+
+                if (o === 'creation_time' && !result.publish_time) {
+                    result.publish_time = t2t(d[o]);
+                }
+
+                if (o === 'total_comment_count') {
+                    if (d[o] > result.comment) {
+                        result.comment = d[o];
+                    }
+                }
+
+                if (o === 'share_count') {
+                    if (d[o]?.count > result.share) {
+                        result.share = d[o]?.count;
+                    }
+                }
+
+
+                if (o === 'owning_profile') {
+                    if (d[o]?.name) {
+                        result.author = d[o].name
+                    }
+                }
+
+                if (o === 'preferred_body') {
+                    if (d[o]?.text) {
+                        result.title = d[o]?.text
+                    }
+                }
+
+                if (o === 'message') {
+                    if (d[o]?.text) {
+                        result.title = d[o]?.text
+                    }
+                }
+
+                if (o === 'post_id') {
+                    result.articleId = d[o];
+                    result.articleUrl = `https://www.facebook.com/${d[o]}`
+                }
+
+                if (typeof d[o] === 'object' && !!d[o]) {
+                    work(d[o]);
+                }
+
+
+            })
+
+        }
+
+    }
+
+    work(data);
+
+    return result
+
+}
+
+
+function t2t(timestamp) {
+// 此处时间戳以毫秒为单位
+    let date = new Date(parseInt(timestamp) * 1000);
+    let Year = date.getFullYear();
+    let Moth = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+    let Day = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate());
+    let Hour = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours());
+    let Minute = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+    let Sechond = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+    return Year + '-' + Moth + '-' + Day + '   ' + Hour + ':' + Minute + ':' + Sechond;
+}
