@@ -80,11 +80,11 @@ function sendData(data) {
             let postdata = {
                 "source": 2,
                 "articleId": t.id.toString(),
-                "articleUrl": t.url? 'https://www.sohu.com' + t.url: '',
+                "articleUrl": t.url ? (t.url.indexOf('http') > -1 ? t.url :'https://www.sohu.com' + t.url ): '',
                 "author": t.author,
                 "title": t.title,
                 "publish_time": t.postTime? t2t(t.postTime): '',
-                "cover": t.cover? 'https:' + t.cover : '',
+                "cover": t.cover ? (t.cover.indexOf('http') > -1 ? t.cover : 'https:' + t.cover) : '',
                 "read": t.pv,
                 "comment": t.comment,
                 "upvote": t.like,

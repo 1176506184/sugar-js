@@ -103,6 +103,7 @@
               <el-button
                   type="primary"
                   @click="collectFacebook"
+                  :disabled="type !== 'facebook'"
                   v-if="fbPending !== 'start'"
               >开始采集
               </el-button>
