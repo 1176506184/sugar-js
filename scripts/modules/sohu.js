@@ -79,8 +79,8 @@ function sendData(data) {
 
             let postdata = {
                 "source": 2,
-                "article_id": t.id,
-                "article_url": 'https://www.sohu.com' + t.url,
+                "articleId": t.id.toString(),
+                "articleUrl": 'https://www.sohu.com' + t.url,
                 "author": t.author,
                 "title": t.title,
                 "publish_time": t2t(t.postTime),
