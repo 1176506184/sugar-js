@@ -236,8 +236,16 @@ window.addEventListener('message', function (res) {
             try {
                 let data = res.data.data;
 
+                if (data.indexOf('{"label":"ProfileCometTimelineFeed_user$stream$ProfileCometTimelineFeed_user_timeline_list_feed_units"') !== -1) {
+                    try {
+                        data = data.substring(0, data.indexOf('{"label":"ProfileCometTimelineFeed_user$stream$ProfileCometTimelineFeed_user_timeline_list_feed_units"'));
+                        data = JSON.parse(data);
+                        let result = getData(data);
+                        console.log(result);
+                    } catch (e) {
 
-                data = data.substring(0, data.indexOf('{"label":"ProfileCometTimelineFeed_user$stream$ProfileCometTimelineFeed_user_timeline_list_feed_units"'));
+                    }
+                }
 
 
             } catch (e) {
@@ -246,6 +254,56 @@ window.addEventListener('message', function (res) {
         }
     }
 })
+
+
+function getData(data) {
+
+    let result = {
+        source: 3,
+        upvote: 0,
+        comment: 0,
+        author: '',
+        title: ''
+    }
+
+    function work(d) {
+
+        if (typeof d === 'object') {
+
+            Object.keys(d).forEach(o => {
+                if (o === 'reaction_count') {
+                    result.upvote = d[o];
+                }
+
+                if (o === 'total_comment_count') {
+                    result.comment = d[o];
+                }
+
+                if (o === 'owning_profile') {
+                    if (d[o]?.name) {
+                        result.author = d[o].name
+                    }
+                }
+
+                if (o === 'title_with_entities') {
+                    if (d[o]?.text) {
+                        result.title = d[o]?.text
+                    }
+                }
+
+                work(d);
+
+            })
+
+        }
+
+    }
+
+    work(data);
+
+    return result;
+
+}
 
 function str(str, data) {
 
