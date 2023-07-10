@@ -5,15 +5,24 @@
       <!--        <button>一键发布</button>-->
       <!--        <button id="video">抓取视频</button>-->
       <!--        <div style="clear: both"></div>-->
+
       <span style="font-size: 18px; font-weight: bold">通用采集工具</span>
+
 
       <el-button
           id="username"
           class="linear"
-          style="font-size: 14px; margin-right: 15px"
+          style="font-size: 14px; float:right"
       >
         {{ state.loginText }}
       </el-button>
+
+      <el-select style="width: 110px;float: right;margin-right: 15px;display: none" placeholder="请选择系统" v-model="state.system"
+                 @change="tipReload">
+        <el-option :value="1" label="小号系统"></el-option>
+        <el-option :value="2" label="数据系统"></el-option>
+      </el-select>
+
     </div>
     <!--    <div class="title_viewer">-->
     <!--        <div id="username"></div>-->
@@ -135,7 +144,7 @@ const router = useRouter();
 import {guid} from "../utils/utils";
 
 const dingTalkAppId = "dingoac12xjewgmuqs2sea";
-import {nextTick, onActivated, onMounted, reactive, ref} from "vue";
+import {nextTick, onActivated, onMounted, reactive, ref, watchEffect} from "vue";
 import {parseDate} from "../../utils/formatDate";
 import store from "../store/store.js";
 import {computed} from "vue";
@@ -164,6 +173,7 @@ let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
   version: "v2.2",
+  system: 1
 });
 
 const loading = ref(false);
@@ -172,6 +182,13 @@ const canUseBtn = reactive({
   trumpetVideo: true,
   twitterImage: true,
 });
+
+function tipReload() {
+  localStorage.clear();
+  location.reload();
+}
+
+const reUrl = ref("");
 
 const eventBus = async function (Message, sender, sendResponse) {
   if (Message.Message === "callbackData") {
@@ -340,10 +357,10 @@ const eventBus = async function (Message, sender, sendResponse) {
   } else if (Message.Message === "stop" && Message.type === "sohu") {
     sohuPending.value = "lock";
   } else if (Message.Message === "sendData" && Message.type === "sohu") {
-    try{
+    try {
       let res = await dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data))
       console.log(res)
-    }catch(err){
+    } catch (err) {
       console.log(err)
     }
   } else if (Message.Message === "stop" && Message.type === "facebook") {
@@ -361,6 +378,22 @@ const eventBus = async function (Message, sender, sendResponse) {
 // window.eventBus = eventBus;
 
 onMounted(() => {
+
+  console.log(localStorage.getItem("system"))
+
+  state.system = isNaN(parseInt(localStorage.getItem("system"))) ? 1 : parseInt(localStorage.getItem("system"))
+
+  watchEffect(() => {
+    console.log(state.system)
+    localStorage.setItem("system", state.system);
+    if (state.system === 1) {
+      reUrl.value = 'http://107.150.124.12/'
+    } else {
+      reUrl.value = 'http://test.44finefood.com/'
+    }
+  })
+
+
   if (!localStorage.getItem("tk")) {
     nextTick(() => {
       setTimeout(() => {
@@ -449,9 +482,8 @@ function initDingLogin() {
   let origin = location.origin;
   let base = origin + "/login";
   let redirectUrl = encodeURIComponent(base + "?type=dingding");
-  const reUrl = "http://107.150.124.12/";
   let goto = encodeURIComponent(
-      `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${dingTalkAppId}&response_type=code&scope=snsapi_login&state=${reUrl}&redirect_uri=http://ddlogin.anyelse.com/logincallback.ashx`
+      `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${dingTalkAppId}&response_type=code&scope=snsapi_login&state=${reUrl.value}&redirect_uri=http://ddlogin.anyelse.com/logincallback.ashx`
   );
   DDLogin({
     id: "login_container", // 这里需要你在自己的页面定义一个HTML标签并设置id，例如<div id="login_container"></div>或<span id="login_container"></span>
@@ -472,7 +504,7 @@ function initDingLogin() {
       redirectURL.searchParams.set("appid", dingTalkAppId);
       redirectURL.searchParams.set("response_type", "code");
       redirectURL.searchParams.set("scope", "snsapi_login");
-      redirectURL.searchParams.set("state", reUrl);
+      redirectURL.searchParams.set("state", reUrl.value);
       redirectURL.searchParams.set("redirect_uri", goto);
       redirectURL.searchParams.set("loginTmpCode", loginTmpCode);
       $.ajax({
@@ -488,8 +520,13 @@ function initDingLogin() {
             localStorage.setItem("tk", data.Data.token);
             state.isLogin = true;
             state.loginText = `已登录：${localStorage.getItem("name")}`;
+          } else {
+            alert(`请先询问系统管理员添加权限后刷新重试`);
           }
         },
+        error: function () {
+          alert("登录失败，网络无连接")
+        }
       });
     }
   };
