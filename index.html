@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:s-use="http://www.w3.org/1999/xhtml" xmlns:s-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+
+    input {
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        width: 200px;
+        height: 30px;
+        outline: none;
+    }
+
+    button {
+        border: 0;
+        outline: none;
+        width: 100px;
+        height: 30px;
+        border-radius: 3px;
+        background-color: #4faee8;
+        display: block;
+        color: #fff;
+        margin-top: 3px;
+    }
+
+    button:hover {
+        background-color: rgba(79, 174, 232, 0.85);
+    }
+
+
+    [s-load="false"] {
+        display: none;
+    }
+
+</style>
+<script src="/dist/sugar.js"></script>
+<script src="/dist/Home.js"></script>
+<body s-load="false">
+<div id="app">
+
+    <label>
+        <input s-model="test.data" s-on:change="testMethod">
+    </label>
+
+    <button s-on:click="update" s-if="test.data < 20"></button>
+
+    {{test.son.d}}
+    {{test.data}}
+
+    <div s-for="item in test.list">
+        {{item.d}}
+    </div>
+
+</div>
+</body>
+
+<script>
+
+    var sugar = makeSugar({
+        bulk() {
+
+            const test = reactive({
+                data: 0,
+                data2: 1,
+                show: false,
+                list: [{d: 1}, {d: 2}],
+                son: {
+                    d: "深层对象"
+                }
+            })
+
+
+            onMounted(() => {
+                test.data = 2;
+                test.list.push({
+                    d: 3
+                })
+            })
+
+            function update() {
+                test.data += 1;
+            }
+
+            function testMethod() {
+                test.list.push({
+                    d: test.data
+                })
+            }
+
+            return {
+                test,
+                update,
+                testMethod
+            }
+
+        }
+    })
+
+    sugar.mount('#app')
+</script>
+</html>
