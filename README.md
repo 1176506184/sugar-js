@@ -19,7 +19,7 @@ This is a library that provides responsive capabilities
     </div>
 
     var sugar = makeSugar({
-    bulk() {
+        bulk() {
 
             const state = reactive({
                 num: 0,
@@ -40,7 +40,6 @@ This is a library that provides responsive capabilities
                 state,
                 update
             }
-
         }
     })
 
