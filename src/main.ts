@@ -13,3 +13,10 @@ window['installSugar'] = installSugar
 window['installComponent'] = installComponent
 window['reactive'] = reactive
 window['makeSugar'] = makeSugar
+
+export {
+    makeSugar,
+    reactive,
+    onMounted,
+    createEffect
+}
