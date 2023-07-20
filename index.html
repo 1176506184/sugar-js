@@ -40,11 +40,7 @@
 <body s-load="false">
 <div id="app">
 
-    <title>
-
-    </title>
-
-    <title>
+    <title :title="test.data">
 
     </title>
 
@@ -99,7 +95,8 @@
 
             return {
                 test,
-                update
+                update,
+                testMethod
             }
 
         }
@@ -109,7 +106,9 @@
 
     sugar.use({
         name: 'title',
-        render: `<div s-on:click="update">{{state.title}}</div>`,
+        render: `<div s-on:click="update">{{state.title}}
+                    <div>{{prop.title}}</div>
+                 </div>`,
         bulk() {
 
             const state = reactive({

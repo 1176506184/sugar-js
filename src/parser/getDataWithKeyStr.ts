@@ -16,6 +16,9 @@ export default function getDataWithKeyStr(keyStr,
 
     try {
         let result = data ? data : window[`sugarBulk_${appId}`][keyStr[0]];
+        if (keyStr[0] === 'prop') {
+            result = eval2(window[`sugarBulkProp_${appId}`]);
+        }
         for (let i = 1; i < keyStr.length; i++) {
             result = result[keyStr[i]];
             if (!result) {
@@ -23,10 +26,47 @@ export default function getDataWithKeyStr(keyStr,
             }
         }
 
+        if (keyStr[0] === 'prop') {
+            return eval2(result)
+        }
+
         return result;
     } catch (e) {
         return "this result is not defined"
     }
+
+
+}
+
+export function getDataWithKey(keyStr, appId: any | null = null) {
+
+    try {
+        keyStr = keyStr.split('.');
+        let result = window[`sugarBulk_${appId}`][keyStr[0]];
+        if (keyStr[0] === 'prop') {
+            result = eval2(window[`sugarBulkProp_${appId}`]);
+        }
+        for (let i = 1; i < keyStr.length; i++) {
+            result = result[keyStr[i]];
+            if (!result) {
+                break;
+            }
+        }
+
+
+        if (keyStr[0] === 'prop') {
+            return eval2(result)
+        }
+
+        return result;
+    } catch (e) {
+        return "this result is not defined"
+    }
+
+
+}
+
+export function getKey(keyStr, appId: any | null = null) {
 
 
 }

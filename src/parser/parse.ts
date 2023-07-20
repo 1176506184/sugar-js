@@ -1,5 +1,5 @@
 import {createEffect} from "../signal/createEffect";
-import getDataWithKeyStr from "./getDataWithKeyStr";
+import getDataWithKeyStr, {getDataWithKey} from "./getDataWithKeyStr";
 import ListUpdate from "./ListUpdate";
 import {BindModelElement} from "./sModel";
 import {BindEvent} from "../event/event";
@@ -15,7 +15,7 @@ export default function parse(node?, data?, appId?, type = 1) {
 
 
             if (n.nodeType === 1 && checkIsComponent(n.nodeName.toLocaleLowerCase(), appId)) {
-                console.log(n.nodeName.toLocaleLowerCase())
+
                 let componentNode = document.createElement('div');
                 let componentSugar = window[`sugarBulkComponents_${appId}`].filter(c => {
                     return c.name === n.nodeName.toLocaleLowerCase();
@@ -24,6 +24,20 @@ export default function parse(node?, data?, appId?, type = 1) {
                 n.after(componentNode);
                 n.remove();
                 componentSugar.renderDom = componentNode;
+
+                let attributes = n.attributes;
+                let prop = {}
+                Array.from(attributes).forEach((a: any) => {
+                    if (a.name.charAt(0) === ':') {
+                        let reactiveSon = `window['sugarBulk_${appId}'].${a.value}`;
+                        if (reactiveSon) {
+                            prop[a.name.slice(1)] = reactiveSon;
+                        } else {
+                            console.warn(`are you ture ${a.name.slice(1)} should use at there?`)
+                        }
+                    }
+                })
+                componentSugar.prop = prop
                 makeSugar(componentSugar)
 
                 return;
@@ -81,7 +95,7 @@ function BindTextElement(n, index, node, appId?) {
             let text = stack.keystore;
             stack.reactive.forEach(r => {
                 let effectKey = r.match(/{{(.+?)}}/)[1];
-                text = text.replace(r, getDataWithKeyStr(effectKey, null, null, null, null, appId));
+                text = text.replace(r, getDataWithKey(effectKey, appId));
             })
             stack['textNodeParent'].childNodes[stack['textNodeIndex']].textContent = text;
         })
@@ -147,7 +161,7 @@ function bindSForElement(n, appId?) {
 
 
     createEffect(() => {
-        let list = getDataWithKeyStr(directive[1], null, null, null, null, appId);
+        let list = getDataWithKey(directive[1], appId);
         // let sIf = getDataWithKeyStr(stack.if);
         ListUpdate(list, stack, appId);
     })

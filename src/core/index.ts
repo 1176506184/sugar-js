@@ -12,8 +12,6 @@ const makeSugar = function (options: Core) {
     let Components = []
     window[`sugarBulkComponents_${appId}`] = [];
 
-    console.log(options)
-
     function mount(node) {
 
         if (typeof node === 'string') {
@@ -43,13 +41,18 @@ const makeSugar = function (options: Core) {
     function use(options: Core) {
         Components.push(options)
         window[`sugarBulkComponents_${appId}`].push(options)
-        if(initNode){
+        if (initNode) {
             parse(initNode, data, appId, 2);
         }
     }
 
     if (!!options.renderDom) {
+        window[`sugarBulkProp_${appId}`] = options.prop
         mount(options.renderDom);
+    }
+
+    function updateProp() {
+
     }
 
     return {
@@ -57,7 +60,8 @@ const makeSugar = function (options: Core) {
         data,
         unmount,
         appId,
-        use
+        use,
+        updateProp
     }
 }
 
