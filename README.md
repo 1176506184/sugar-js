@@ -4,6 +4,8 @@ This is a library that provides responsive capabilities
 
     <div id="app">
 
+        <title></title>
+
         <label>
             <input s-model="state.num">
         </label>
@@ -44,3 +46,23 @@ This is a library that provides responsive capabilities
     })
 
     sugar.mount('#app')
+
+    sugar.use({
+        name: 'title',
+        render: `<div s-on:click="update">{{state.title}}</div>`,
+        bulk() {
+
+            const state = reactive({
+                title: '测试组件'
+            })
+
+            function update() {
+                state.title = "测试组件UPDATE"
+            }
+
+            return {
+                state,
+                update
+            }
+        }
+    })
