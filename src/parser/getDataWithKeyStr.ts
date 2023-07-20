@@ -3,7 +3,7 @@ export default function getDataWithKeyStr(keyStr,
                                           data: any | null = null,
                                           dataKey: any | null = null,
                                           indexStr: any | null = null,
-                                          indexVal: any | null = null) {
+                                          indexVal: any | null = null, appId: any | null = null) {
 
     if (!!indexStr && keyStr === indexStr) {
         return indexVal
@@ -15,7 +15,7 @@ export default function getDataWithKeyStr(keyStr,
     }
 
     try {
-        let result = data ? data : window['sugarBulk'][keyStr[0]];
+        let result = data ? data : window[`sugarBulk_${appId}`][keyStr[0]];
         for (let i = 1; i < keyStr.length; i++) {
             result = result[keyStr[i]];
             if (!result) {

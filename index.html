@@ -40,6 +40,14 @@
 <body s-load="false">
 <div id="app">
 
+    <title>
+
+    </title>
+
+    <title>
+
+    </title>
+
     <label>
         <input s-model="test.data" s-on:change="testMethod">
     </label>
@@ -98,5 +106,27 @@
     })
 
     sugar.mount('#app')
+
+    sugar.use({
+        name: 'title',
+        render: `<div s-on:click="update">{{state.title}}</div>`,
+        bulk() {
+
+            const state = reactive({
+                title: '测试组件'
+            })
+
+            function update() {
+                state.title = "测试组件UPDATE"
+            }
+
+            return {
+                state,
+                update
+            }
+        }
+    })
+
+
 </script>
 </html>

@@ -1,7 +1,7 @@
 import {BindIfElement, bindSForElement, BindTextElement} from "../parser/parse";
 import getSlot from "./getSlot";
 
-export function componentUpdate(n, node, index, work: Function, CacheNode) {
+export function componentUpdate(n, node, index, work: Function, CacheNode, appId) {
 
 
     if (n.nodeType === 1 && !!n.getAttribute('s-if') && !n.getAttribute('s-for')) {

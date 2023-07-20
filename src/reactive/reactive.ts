@@ -20,7 +20,6 @@ const makeReactive = function (value) {
     }
 
     const createSetter = function (target, propKey, value, receiver) {
-        console.log(target, propKey, value)
         let result = Reflect.set(target, propKey, value, receiver);
         subscribers.forEach((subscriber: Function) => subscriber());
         return result;

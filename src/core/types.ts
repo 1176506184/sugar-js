@@ -1,6 +1,9 @@
 interface Core {
 
-    bulk: Function
+    bulk: Function,
+    name?: String,
+    render?: String | HTMLElement,
+    renderDom: HTMLElement
 
 }
 

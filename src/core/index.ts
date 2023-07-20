@@ -2,11 +2,17 @@ import {Core} from "./types";
 import parse from "../parser/parse";
 import {mountHandleList} from "../hooks/onMounted";
 import {clearReactive} from "../reactive/reactive";
+import {guid} from "../utils/guid";
 
 const makeSugar = function (options: Core) {
     let data = options.bulk();
     let initHTML = ``;
     let initNode;
+    let appId = guid();
+    let Components = []
+    window[`sugarBulkComponents_${appId}`] = [];
+
+    console.log(options)
 
     function mount(node) {
 
@@ -18,9 +24,11 @@ const makeSugar = function (options: Core) {
             }
         }
 
+
         initHTML = node.innerHTML;
         initNode = node;
-        parse(node, data);
+        parse(node, data, appId);
+
         document.body.setAttribute('s-load', "true")
         mountHandleList.map(m => {
             m();
@@ -32,10 +40,24 @@ const makeSugar = function (options: Core) {
         clearReactive();
     }
 
+    function use(options: Core) {
+        Components.push(options)
+        window[`sugarBulkComponents_${appId}`].push(options)
+        if(initNode){
+            parse(initNode, data, appId, 2);
+        }
+    }
+
+    if (!!options.renderDom) {
+        mount(options.renderDom);
+    }
+
     return {
         mount,
         data,
-        unmount
+        unmount,
+        appId,
+        use
     }
 }
 

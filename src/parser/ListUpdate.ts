@@ -5,7 +5,7 @@ import {bindSForElement} from "./parse";
 
 const pattern = /[`~!@#$^\-&*()=|{}':;',\\\[\]\.<>\/?~！@#￥……&*（）——|{}【】'；：""'。，、？\s]/g;
 const eval2 = eval;
-export default function ListUpdate(list, stack) {
+export default function ListUpdate(list, stack, appId) {
     const notNeedUp = [] as any[]
 
     let sIf = true
@@ -51,7 +51,7 @@ export default function ListUpdate(list, stack) {
             let div = document.createElement("div");
             let NewHtml = stack.html;
             stack.reactive?.forEach(s => {
-                let reactiveResult = getDataWithKeyStr(s.match(/{{(.+?)}}/)[1], item, stack.direction, stack.indexStr, index)
+                let reactiveResult = getDataWithKeyStr(s.match(/{{(.+?)}}/)[1], item, stack.direction, stack.indexStr, index, appId)
                 if (reactiveResult != "this result is not defined") {
                     NewHtml = NewHtml.replace(s, reactiveResult);
                 }
@@ -68,8 +68,8 @@ export default function ListUpdate(list, stack) {
             })
             div.innerHTML = NewHtml;
 
-            forUpdate(div);
-            ifUpdate(div, stack);
+            forUpdate(div, appId);
+            ifUpdate(div, stack, appId);
         }
     })
 
@@ -79,14 +79,14 @@ export default function ListUpdate(list, stack) {
 }
 
 
-function forUpdate(el: HTMLElement) {
+function forUpdate(el: HTMLElement, appId) {
     function work(node) {
 
         node.childNodes.forEach((n, index) => {
 
 
             if (n.nodeType === 1 && !!n.getAttribute('s-for')) {
-                bindSForElement(n);
+                bindSForElement(n, appId);
             }
 
             if (n.nodeType === 1 && n.childNodes.length > 0) {
@@ -101,7 +101,7 @@ function forUpdate(el: HTMLElement) {
 }
 
 
-function ifUpdate(el: HTMLElement, stack) {
+function ifUpdate(el: HTMLElement, stack, appId) {
 
 
     function work(node) {
@@ -111,7 +111,7 @@ function ifUpdate(el: HTMLElement, stack) {
 
 
             if (n.nodeType === 1 && !!n.getAttribute('s-if') && !n.getAttribute('s-for')) {
-                BindIfElement(n, stack);
+                BindIfElement(n, stack, appId);
             }
             if (n.nodeType === 1 && n.childNodes.length > 0) {
                 work(n);
@@ -124,15 +124,15 @@ function ifUpdate(el: HTMLElement, stack) {
     work(el);
 }
 
-function BindIfElement(n, stack) {
-
-    console.log(stack)
+function BindIfElement(n, stack, appId) {
 
     let reactiveIf = n.getAttribute('s-if')
     n.removeAttribute('s-if');
     let _display = n.style.display
     createEffect(() => {
-        let state = eval2(`${reactiveIf}()`)
+        let keys = Object.keys(window['sugarBulk']).toString()
+        window[`sugarValues_${appId}`] = Object.values(window[`sugarBulk_${appId}`])
+        let state = eval2(`(function(${keys}){return ${reactiveIf}}).call(window['sugarBulk_${appId}'],...window['sugarValues_${appId}'])`);
         if (state) {
             n.style.display = _display ? _display : ''
         } else {
