@@ -4,7 +4,7 @@ This is a library that provides responsive capabilities
 
     <div id="app">
 
-        <title></title>
+        <title :title="state.num"></title>
 
         <label>
             <input s-model="state.num">
@@ -49,7 +49,9 @@ This is a library that provides responsive capabilities
 
     sugar.use({
         name: 'title',
-        render: `<div s-on:click="update">{{state.title}}</div>`,
+        render: `<div s-on:click="update">{{state.title}}
+                    <span>{{prop.title}}</span>
+                </div>`,
         bulk() {
 
             const state = reactive({
