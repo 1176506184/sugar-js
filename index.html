@@ -40,20 +40,19 @@
 <body s-load="false">
 <div id="app">
 
-    <title :title="test.data">
+    {{title.value}}
 
-    </title>
+    <title :title="state.num"></title>
 
     <label>
-        <input s-model="test.data" s-on:change="testMethod">
+        <input s-model="state.num">
     </label>
 
-    <button s-on:click="update" s-if="test.data < 20"></button>
+    <button s-on:click="update" s-if="state.num < 20"></button>
 
-    {{test.son.d}}
-    {{test.data}}
+    {{state.num}}
 
-    <div s-for="item in test.list">
+    <div s-for="item in state.list">
         {{item.d}}
     </div>
 
@@ -65,40 +64,31 @@
     var sugar = makeSugar({
         bulk() {
 
-            const test = reactive({
-                data: 0,
-                data2: 1,
-                show: false,
-                list: [{d: 1}, {d: 2}],
-                son: {
-                    d: "深层对象"
-                }
+            const state = reactive({
+                num: 0,
+                list: [{d: 0}]
             })
 
+            const title = reckon(() => {
+                return state.num + '计算属性测试'
+            })
+
+            console.log(title)
 
             onMounted(() => {
-                test.data = 2;
-                test.list.push({
-                    d: 3
-                })
+                state.num = 1
             })
 
             function update() {
-                test.data += 1;
+                state.num += 1
             }
 
-            function testMethod() {
-                test.list.push({
-                    d: test.data
-                })
-            }
 
             return {
-                test,
+                state,
                 update,
-                testMethod
+                title
             }
-
         }
     })
 
@@ -107,8 +97,8 @@
     sugar.use({
         name: 'title',
         render: `<div s-on:click="update">{{state.title}}
-                    <div>{{prop.title}}</div>
-                 </div>`,
+                    <span>{{prop.title}}</span>
+                </div>`,
         bulk() {
 
             const state = reactive({

@@ -4,6 +4,8 @@ This is a library that provides responsive capabilities
 
     <div id="app">
 
+        {{title.value}}
+
         <title :title="state.num"></title>
 
         <label>
@@ -27,6 +29,10 @@ This is a library that provides responsive capabilities
                 num: 0,
                 list:[{d:0}]
             })
+            
+            const title = reckon(() => {
+                return state.num + '计算属性测试'
+            })
 
 
             onMounted(() => {
@@ -40,7 +46,8 @@ This is a library that provides responsive capabilities
 
             return {
                 state,
-                update
+                update,
+                title
             }
         }
     })
