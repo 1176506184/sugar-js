@@ -1,7 +1,7 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.2",
+  "description": "增加了计算属性reckon，增加了父传子参 prop",
   "devDependencies": {
     "cross-env": "^7.0.3",
     "rollup": "^3.12.0"

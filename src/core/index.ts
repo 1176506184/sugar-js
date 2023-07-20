@@ -51,17 +51,12 @@ const makeSugar = function (options: Core) {
         mount(options.renderDom);
     }
 
-    function updateProp() {
-
-    }
-
     return {
         mount,
         data,
         unmount,
         appId,
-        use,
-        updateProp
+        use
     }
 }
 
