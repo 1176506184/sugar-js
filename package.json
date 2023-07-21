@@ -1,7 +1,7 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.0.5",
-  "description": "将一些不必要的包移入开发包",
+  "version": "1.0.6",
+  "description": "提供简单的响应式UI能力",
   "devDependencies": {
     "cross-env": "^7.0.3",
     "rollup": "^3.12.0",
