@@ -22,16 +22,10 @@ export default {
         babel({
             exclude: "node_modules/**"
         }),
-        commonjs({
-            include: /node_modules/
-        }),
+        // commonjs({
+        //     include: /node_modules/
+        // }),
         resolve(),
-        terser({
-            // compress: {
-            //     drop_console: !isDev
-            // },
-
-        }),
         typescript(),
         replace({
             ENV: JSON.stringify(process.env.NODE_ENV || 'development')

@@ -4,6 +4,7 @@ import ListUpdate from "./ListUpdate";
 import {BindModelElement} from "./sModel";
 import {BindEvent} from "../event/event";
 import makeSugar from "../core";
+import {guid} from "../utils/guid";
 
 const eval2 = eval;
 export default function parse(node?, data?, appId?, type = 1) {
@@ -108,14 +109,25 @@ function BindIfElement(n, appId?) {
     let reactiveIf = n.getAttribute('s-if')
     n.removeAttribute('s-if');
     let _display = n.style.display
+    let ifNode = n;
+    let comment = document.createComment(`s-if ${reactiveIf}`)
+    let seatComment = document.createComment(`s-if-seat ${guid()}`)
+    let stateReactive = true;
+    ifNode.before(comment);
     createEffect(() => {
         let keys = Object.keys(window[`sugarBulk_${appId}`]).toString()
         window[`sugarValues_${appId}`] = Object.values(window[`sugarBulk_${appId}`])
         let state = eval2(`(function(${keys}){return ${reactiveIf}}).call(window['sugarBulk_${appId}'],...window['sugarValues_${appId}'])`);
-        if (state) {
-            n.style.display = _display ? _display : ''
-        } else {
-            n.style.display = 'none'
+        if (state && !stateReactive) {
+            stateReactive = true;
+            seatComment.remove();
+            comment.after(ifNode);
+            // n.style.display = _display ? _display : ''
+        } else if (!state && stateReactive) {
+            stateReactive = false;
+            ifNode.before(seatComment)
+            ifNode.remove();
+            // n.style.display = 'none'
         }
     })
 
@@ -140,7 +152,8 @@ function bindSForElement(n, appId?) {
         if: null as any,
         attrs: [] as any[],
         oldValue: [],
-        indexStr: directive[0].split(',')[1]
+        indexStr: directive[0].split(',')[1],
+        directive: directive
     }
     let comment = document.createComment('s-for')
     stack.node.before(comment);

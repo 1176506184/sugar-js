@@ -52,8 +52,12 @@
 
     {{state.num}}
 
-    <div s-for="item in state.list">
+    <div s-for="item in state.list" s-if="item.d != ''">
+        <p>{{state.num}}</p>
         {{item.d}}
+        <div s-for="items in state.listTwo">
+            {{items.c}}
+        </div>
     </div>
 
 </div>
@@ -66,17 +70,17 @@
 
             const state = reactive({
                 num: 0,
-                list: [{d: 0}]
+                list: [{d: "列表A的数据1"}, {d: "列表A的数据2"}],
+                listTwo: [{c: "列表B的数据1"}, {c: "列表B的数据2"}]
             })
 
             const title = reckon(() => {
                 return state.num + '计算属性测试'
             })
 
-            console.log(title)
 
             onMounted(() => {
-                state.num = 1
+
             })
 
             function update() {
@@ -96,7 +100,8 @@
 
     sugar.use({
         name: 'title',
-        render: `<div s-on:click="update">{{state.title}}
+        render: `<div s-on:click="update">
+                    {{state.title}}
                     <span>{{prop.title}}</span>
                 </div>`,
         bulk() {
