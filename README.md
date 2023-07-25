@@ -2,6 +2,10 @@
 
 This is a library that provides responsive capabilities
 
+## Install
+npm install sugar-reactive-js
+
+## Use
     <div id="app">
 
         {{title.value}}
@@ -56,6 +60,8 @@ This is a library that provides responsive capabilities
     })
 
     sugar.mount('#app')
+
+## Component
 
     sugar.use({
         name: 'title',
