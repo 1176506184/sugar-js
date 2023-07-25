@@ -1,5 +1,13 @@
-const mountHandleList = []
+let mountHandleList = []
 export default function (handle) {
-    mountHandleList.push(handle)
+    mountHandleList.push({
+        used: false,
+        fun: handle
+    })
 }
-export {mountHandleList}
+
+function clearMounted() {
+    mountHandleList = [];
+}
+
+export {mountHandleList, clearMounted}

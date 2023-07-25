@@ -25,9 +25,7 @@ export default function ListUpdate(list, stack, appId) {
             if (getFirstKey(stack.if, appId) === stack.direction) {
 
                 let key = stack.if.replaceAll(stack.direction, `${stack.directive[1]}[${i}]`);
-                console.log(key, appId)
                 let result = getDataWithKeyExtra(key, appId);
-                console.log(result)
                 if (!result) {
                     continue
                 }

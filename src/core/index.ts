@@ -1,6 +1,6 @@
 import {Core} from "./types";
 import parse from "../parser/parse";
-import {mountHandleList} from "../hooks/onMounted";
+import {mountHandleList, clearMounted} from "../hooks/onMounted";
 import {clearReactive} from "../reactive/reactive";
 import {guid} from "../utils/guid";
 
@@ -29,13 +29,17 @@ const makeSugar = function (options: Core) {
 
         document.body.setAttribute('s-load', "true")
         mountHandleList.map(m => {
-            m();
+            if (!m.used) {
+                m.fun();
+                m.used = true;
+            }
         })
     }
 
     function unmount() {
         initNode.innerHTML = initHTML
         clearReactive();
+        clearMounted();
     }
 
     function use(options: Core) {

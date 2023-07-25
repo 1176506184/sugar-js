@@ -1,7 +1,7 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.0.6",
-  "description": "提供简单的响应式UI能力",
+  "version": "1.0.7",
+  "description": "提供简单的响应式UI能力，修复onMounted多次执行的问题",
   "devDependencies": {
     "cross-env": "^7.0.3",
     "rollup": "^3.12.0",
