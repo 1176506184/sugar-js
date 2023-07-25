@@ -1,4 +1,5 @@
-import getDataWithKeyStr from "../parser/getDataWithKeyStr";
+import getDataWithKeyStr, {getDataWithKey} from "../parser/getDataWithKeyStr";
+import {createEffect} from "../main";
 
 function BindEvent(node, appId) {
 
@@ -17,6 +18,16 @@ function BindEvent(node, appId) {
 
             node.removeAttribute(a.name);
         }
+
+        if (a.name.charAt(0) === ':') {
+
+            createEffect(()=>{
+                node.setAttribute(a.name.replace(':', ''), getDataWithKey(a.value, appId));
+            })
+
+        }
+
+
     })
 
 }
