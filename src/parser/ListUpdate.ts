@@ -17,7 +17,6 @@ export default function ListUpdate(list, stack, appId) {
         stack.ListNodes = []
     }
 
-    console.log(stack)
 
     for (let i = 0; i < list.length; i++) {
 

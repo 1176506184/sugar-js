@@ -32,7 +32,7 @@ export default function getDataWithKeyStr(keyStr,
 
         return result;
     } catch (e) {
-        return "this result is not defined"
+        return ""
     }
 
 
@@ -49,13 +49,15 @@ export function getDataWithKey(keyStr, appId: any | null = null) {
             let keys = Object.keys(result).toString()
             window[`sugarValues_${appId}`] = Object.values(result)
             result = eval2(`(function(${keys}){return ${keyStr}}).call(window['sugarBulkProp_${appId}'],...window['sugarValues_${appId}'])`);
-            return eval2(result)
+            // console.log(result)
+            // console.log(eval2(result))
+            return result
         }
         let keys = Object.keys(window[`sugarBulk_${appId}`]).toString()
         window[`sugarValues_${appId}`] = Object.values(window[`sugarBulk_${appId}`])
         return eval2(`(function(${keys}){return ${keyStr}}).call(window['sugarBulk_${appId}'],...window['sugarValues_${appId}'])`)
     } catch (e) {
-        return "this result is not defined and error in sugar-js"
+        return ""
     }
 
 }

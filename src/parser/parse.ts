@@ -5,6 +5,8 @@ import {BindModelElement} from "./sModel";
 import {BindEvent} from "../event/event";
 import makeSugar from "../core";
 import {guid} from "../utils/guid";
+import parseComponents from "./parseComponents"
+import deepClone from "../utils/deepClone";
 
 const eval2 = eval;
 export default function parse(node?, data?, appId?, type = 1) {
@@ -16,31 +18,7 @@ export default function parse(node?, data?, appId?, type = 1) {
 
 
             if (n.nodeType === 1 && checkIsComponent(n.nodeName.toLocaleLowerCase(), appId)) {
-
-                let componentNode = document.createElement('div');
-                let componentSugar = window[`sugarBulkComponents_${appId}`].filter(c => {
-                    return c.name === n.nodeName.toLocaleLowerCase();
-                })[0];
-                componentNode.innerHTML = componentSugar.render
-                n.after(componentNode);
-                n.remove();
-                componentSugar.renderDom = componentNode;
-
-                let attributes = n.attributes;
-                let prop = {}
-                Array.from(attributes).forEach((a: any) => {
-                    if (a.name.charAt(0) === ':') {
-                        let reactiveSon = `window['sugarBulk_${appId}'].${a.value}`;
-                        if (reactiveSon) {
-                            prop[a.name.slice(1)] = reactiveSon;
-                        } else {
-                            console.warn(`are you ture ${a.name.slice(1)} should use at there?`)
-                        }
-                    }
-                })
-                componentSugar.prop = prop
-                makeSugar(componentSugar)
-
+                parseComponents(n, appId)
                 return;
             }
 
@@ -92,11 +70,16 @@ function BindTextElement(n, index, node, appId?) {
         textNodeIndex: index
     }
     if (stack.reactive) {
+
+
         createEffect(() => {
             let text = stack.keystore;
+
             stack.reactive.forEach(r => {
                 let effectKey = r.match(/{{(.+?)}}/)[1];
+
                 text = text.replace(r, getDataWithKey(effectKey, appId));
+
             })
             stack['textNodeParent'].childNodes[stack['textNodeIndex']].textContent = text;
         })

@@ -5,13 +5,13 @@ import {clearReactive} from "../reactive/reactive";
 import {guid} from "../utils/guid";
 
 const makeSugar = function (options: Core) {
-    let data = options.bulk();
     let initHTML = ``;
     let initNode;
     let appId = guid();
     let Components = []
     window[`sugarBulkComponents_${appId}`] = [];
-
+    options.appId = appId;
+    let data = options.bulk();
     function mount(node) {
 
         if (typeof node === 'string') {
@@ -42,11 +42,24 @@ const makeSugar = function (options: Core) {
         clearMounted();
     }
 
-    function use(options: Core) {
-        Components.push(options)
-        window[`sugarBulkComponents_${appId}`].push(options)
-        if (initNode) {
-            parse(initNode, data, appId, 2);
+    function use(options: Core | Core[]) {
+        if (options instanceof Array) {
+
+            options.forEach((o: Core) => {
+                Components.push(o)
+                window[`sugarBulkComponents_${appId}`].push(o)
+            })
+
+            if (initNode) {
+                parse(initNode, data, appId, 2);
+            }
+
+        } else {
+            Components.push(options)
+            window[`sugarBulkComponents_${appId}`].push(options)
+            if (initNode) {
+                parse(initNode, data, appId, 2);
+            }
         }
     }
 

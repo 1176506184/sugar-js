@@ -1,7 +1,7 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.0.8",
-  "description": "提供简单的响应式UI能力，修复onMounted多次执行的问题",
+  "version": "1.0.9",
+  "description": "提供简单的响应式UI能力，增加emit子组件调用父组件方法，增加样式穿透",
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/plugin-external-helpers": "^7.18.6",

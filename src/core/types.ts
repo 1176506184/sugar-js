@@ -4,7 +4,8 @@ interface Core {
     name?: String,
     render?: String | HTMLElement,
     renderDom: HTMLElement,
-    prop?: any
+    prop?: any,
+    appId?: any
 
 }
 

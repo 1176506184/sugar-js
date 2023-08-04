@@ -18,6 +18,8 @@ npm install sugar-reactive-js
     
         <button s-on:click="update" s-if="state.num < 20" :style="styleText.value"></button>
     
+        <sugar-button label="测试" emit:click="update" :style="styleText.value"></sugar-button>        
+
         {{state.num}}
     
         <div s-for="item in state.list">
@@ -84,3 +86,25 @@ npm install sugar-reactive-js
             }
         }
     })
+
+## Sugar-UI
+    sugar.use(sugarUI);
+## Sugar-UI example
+
+    const button = {
+            name: 'sugar-button',
+            render: `<button s-on:click="click">
+            {{prop.label}}
+            </button>`,
+            bulk() {
+                    const emits = findEmits(this);
+            
+                    function click() {
+                        emits['click']();
+                    }
+            
+                    return {
+                        click
+                    }
+            }
+    }
