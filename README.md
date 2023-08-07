@@ -3,9 +3,11 @@
 This is a library that provides responsive capabilities
 
 ## Install
+
 npm install sugar-reactive-js
 
 ## Use
+
     <div id="app">
 
         {{title.value}}
@@ -16,8 +18,8 @@ npm install sugar-reactive-js
             <input s-model="state.num">
         </label>
     
-        <button s-on:click="update" s-if="state.num < 20" :style="styleText.value"></button>
-    
+        <sugar-input :value="state.num" emit:change="changeNum"></sugar-input>
+
         <sugar-button label="测试" emit:click="update" :style="styleText.value"></sugar-button>        
 
         {{state.num}}
@@ -53,10 +55,16 @@ npm install sugar-reactive-js
                 state.num += 1
             }
 
+            function changeNum(e) {
+                console.log(e)
+                state.num = e.target.value
+            }
+
             return {
                 state,
                 update,
-                title
+                title,
+                changeNum
             }
         }
     })
@@ -88,7 +96,9 @@ npm install sugar-reactive-js
     })
 
 ## Sugar-UI
+
     sugar.use(sugarUI);
+
 ## Sugar-UI example
 
     const button = {
@@ -107,4 +117,20 @@ npm install sugar-reactive-js
                         click
                     }
             }
+    }
+
+    const input = {
+        name: 'sugar-input',
+        render: `<input  class="sugar-input"  :value="prop.value" s-on:change="change"/>`,
+        bulk() {
+            const emits = findEmits(this);
+    
+            function change(e) {
+                emits['change'](e);
+            }
+    
+            return {
+                change
+            }
+        }
     }

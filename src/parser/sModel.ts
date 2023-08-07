@@ -1,5 +1,5 @@
 import {createEffect} from "../signal/createEffect";
-import getDataWithKeyStr, {getDataWithKey} from "./getDataWithKeyStr";
+import {getDataWithKeyExtra} from "./getDataWithKeyStr";
 
 const eval2 = eval;
 
@@ -14,7 +14,7 @@ export function BindModelElement(n, appId) {
         })
 
         createEffect(() => {
-            n.value = getDataWithKey(model, appId);
+            n.value = getDataWithKeyExtra(model, appId);
         })
 
     } else if (n.nodeName === 'TEXTAREA') {

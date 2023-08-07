@@ -1,4 +1,3 @@
-import {reactive} from "../main";
 import {findEmits} from "../event/findEmits";
 
 const button = {

@@ -1,5 +1,5 @@
 import {createEffect} from "../signal/createEffect";
-import getDataWithKeyStr, {getDataWithKey} from "./getDataWithKeyStr";
+import {getDataWithKey} from "./getDataWithKeyStr";
 import ListUpdate from "./ListUpdate";
 import {BindModelElement} from "./sModel";
 import {BindEvent} from "../event/event";
@@ -158,7 +158,6 @@ function bindSForElement(n, appId?) {
 
     createEffect(() => {
         let list = getDataWithKey(directive[1], appId);
-        // let sIf = getDataWithKeyStr(stack.if);
         ListUpdate(list, stack, appId);
     })
 }

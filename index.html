@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="/src/css/sugar-css.css">
 </head>
 <style>
 
@@ -14,17 +15,6 @@
         outline: none;
     }
 
-    button {
-        border: 0;
-        outline: none;
-        width: 100px;
-        height: 30px;
-        border-radius: 3px;
-        background-color: #4faee8;
-        display: block;
-        color: #fff;
-        margin-top: 3px;
-    }
 
     button:hover {
         background-color: rgba(79, 174, 232, 0.85);
@@ -47,15 +37,14 @@
         <input s-model="state.num">
     </label>
 
+    <sugar-input :value="state.num" emit:change="changeNum"></sugar-input>
+
     <sugar-button label="测试" emit:click="update" :style="styleText.value"></sugar-button>
-
-
 
 
     <div s-for="item in state.list" s-if="item.d != ''">
         {{item.d}}
     </div>
-
 
 
 </div>
@@ -93,11 +82,17 @@
                 state.num += 1
             }
 
+            function changeNum(e) {
+                console.log(e)
+                state.num = e.target.value
+            }
+
             return {
                 state,
                 update,
                 title,
-                styleText
+                styleText,
+                changeNum
             }
         }
     })

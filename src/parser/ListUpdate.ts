@@ -1,4 +1,4 @@
-import getDataWithKeyStr, {getDataWithKey, getDataWithKeyExtra} from "./getDataWithKeyStr";
+import  {getDataWithKey, getDataWithKeyExtra} from "./getDataWithKeyStr";
 import {createEffect} from "../signal/createEffect";
 import {bindSForElement} from "./parse";
 
