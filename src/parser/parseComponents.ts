@@ -1,11 +1,19 @@
 import makeSugar from "../core";
+import deepClone from "../utils/deepClone";
 
 function parseComponents(n, appId) {
     let componentNode = document.createElement('div');
     let componentSugar = window[`sugarBulkComponents_${appId}`].filter(c => {
         return c.name === n.nodeName.toLocaleLowerCase();
     })[0];
-    componentNode.innerHTML = componentSugar.render
+    componentSugar = deepClone(componentSugar)
+    let SlotTemplate = n.innerHTML;
+    let renderHtml = componentSugar.render;
+    if (!!SlotTemplate) {
+        renderHtml = renderHtml.replace('#default', SlotTemplate)
+    }
+
+    componentNode.innerHTML = renderHtml
     n.after(componentNode);
     n.remove();
 
@@ -40,8 +48,8 @@ function parseComponents(n, appId) {
         }
     })
 
-    console.log(prop)
     componentSugar.prop = prop
+    componentSugar.components = window[`sugarBulkComponents_${appId}`]
     makeSugar(componentSugar)
 
 }

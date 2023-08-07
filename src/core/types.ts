@@ -5,7 +5,8 @@ interface Core {
     render?: String | HTMLElement,
     renderDom: HTMLElement,
     prop?: any,
-    appId?: any
+    appId?: any,
+    components?: any
 
 }
 

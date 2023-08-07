@@ -1,5 +1,5 @@
 import {createEffect} from "../signal/createEffect";
-import {getDataWithKey} from "./getDataWithKeyStr";
+import {getDataWithKey, getDataWithKeyExtra} from "./getDataWithKeyStr";
 import ListUpdate from "./ListUpdate";
 import {BindModelElement} from "./sModel";
 import {BindEvent} from "../event/event";
@@ -92,25 +92,12 @@ function BindIfElement(n, appId?) {
     let reactiveIf = n.getAttribute('s-if')
     n.removeAttribute('s-if');
     let _display = n.style.display
-    let ifNode = n;
-    let comment = document.createComment(`s-if ${reactiveIf}`)
-    let seatComment = document.createComment(`s-if-seat ${guid()}`)
-    let stateReactive = true;
-    ifNode.before(comment);
     createEffect(() => {
-        let keys = Object.keys(window[`sugarBulk_${appId}`]).toString()
-        window[`sugarValues_${appId}`] = Object.values(window[`sugarBulk_${appId}`])
-        let state = eval2(`(function(${keys}){return ${reactiveIf}}).call(window['sugarBulk_${appId}'],...window['sugarValues_${appId}'])`);
-        if (state && !stateReactive) {
-            stateReactive = true;
-            seatComment.remove();
-            comment.after(ifNode);
-            // n.style.display = _display ? _display : ''
-        } else if (!state && stateReactive) {
-            stateReactive = false;
-            ifNode.before(seatComment)
-            ifNode.remove();
-            // n.style.display = 'none'
+        let state = getDataWithKeyExtra(reactiveIf, appId);
+        if (state) {
+            n.style.display = _display ? _display : ''
+        } else if (!state) {
+            n.style.display = 'none'
         }
     })
 

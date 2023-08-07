@@ -4,22 +4,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/src/css/sugar-css.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <style>
-
-    input {
-        margin-top: 10px;
-        border: 1px solid #ccc;
-        width: 200px;
-        height: 30px;
-        outline: none;
-    }
-
-
-    button:hover {
-        background-color: rgba(79, 174, 232, 0.85);
-    }
-
 
     [s-load="false"] {
         display: none;
@@ -29,17 +16,19 @@
 <script src="/dist/sugar.js"></script>
 <body s-load="false">
 <div id="app">
-    {{state.num}}
-
-    <title :title="state.num"></title>
-
-    <label>
-        <input s-model="state.num">
-    </label>
+    {{title.value}}
 
     <sugar-input :value="state.num" emit:change="changeNum"></sugar-input>
 
-    <sugar-button label="测试" emit:click="update" :style="styleText.value"></sugar-button>
+    <sugar-select :value="state.choose" emit:change="changeChoose">
+
+        <sugar-option label="选项一" value="1"></sugar-option>
+
+        <sugar-option label="选项二" value="2"></sugar-option>
+
+    </sugar-select>
+
+    <sugar-button label="更新" emit:click="update" :style="styleText.value"></sugar-button>
 
 
     <div s-for="item in state.list" s-if="item.d != ''">
@@ -58,9 +47,10 @@
 
             const state = reactive({
                 num: 0,
-                list: [{d: "列表A的数据1"}, {d: "列表A的数据2"}],
+                list: [{d: "列表A的数据1"}, {d: "列表A的数据2"}, {d: ""}],
                 classText: 'font-size:17px',
-                fontSize: 15
+                fontSize: 15,
+                choose: 0
             })
 
             const title = reckon(() => {
@@ -87,41 +77,22 @@
                 state.num = e.target.value
             }
 
+            function changeChoose(e) {
+                console.log(e)
+            }
+
             return {
                 state,
                 update,
                 title,
                 styleText,
-                changeNum
+                changeNum,
+                changeChoose
             }
         }
     })
 
     sugar.mount('#app')
-
-    sugar.use([{
-        name: 'title',
-        render: `<div s-on:click="update">
-                    {{state.title}}结果：
-                    <span>{{prop.title}}</span>
-                </div>`,
-        bulk() {
-
-            const state = reactive({
-                title: '测试组件'
-            })
-
-            function update() {
-                state.title = "测试组件UPDATE"
-            }
-
-            return {
-                state,
-                update
-            }
-        }
-    }])
-
     sugar.use(sugarUI);
 
 

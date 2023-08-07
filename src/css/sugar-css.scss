@@ -7,9 +7,13 @@
   background-color: #4faee8;
   display: block;
   color: #fff;
-  margin-top: 3px;
+  margin-top: 10px;
 }
 
+
+.sugar-button:hover {
+  background-color: rgba(79, 174, 232, 0.85);
+}
 
 .sugar-input {
   margin-top: 10px;
@@ -17,4 +21,32 @@
   width: 200px;
   height: 30px;
   outline: none;
+  padding-left: 10px;
+}
+
+
+.sugar-select {
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  width: 200px;
+  height: 30px;
+  outline: none;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+
+.sugar-select-options-box {
+  position: absolute;
+  background: white;
+  margin-top: 8px;
+  border-radius: 2px;
+  border: 1px solid #ccc;
+  border-bottom: 0;
+}
+
+.sugar-option {
+  width: calc(100% - 20px);
+  padding: 5px 10px;
+  border-bottom: 1px solid #ccc;
 }

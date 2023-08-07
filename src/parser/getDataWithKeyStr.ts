@@ -10,8 +10,14 @@ export function getDataWithKey(keyStr, appId: any | null = null) {
             let result = window[`sugarBulkProp_${appId}`];
             let keys = Object.keys(result).toString()
             window[`sugarValues_${appId}`] = Object.values(result)
-            result = eval2(`(function(${keys}){return ${keyStr}}).call(window['sugarBulkProp_${appId}'],...window['sugarValues_${appId}'])`);
-            return eval2(result)
+            let resultFun = eval2(`(function(${keys}){return ${keyStr}}).call(window['sugarBulkProp_${appId}'],...window['sugarValues_${appId}'])`);
+
+            try {
+                return eval2(resultFun)
+            } catch (e) {
+                return resultFun
+            }
+
         }
         let keys = Object.keys(window[`sugarBulk_${appId}`]).toString()
         window[`sugarValues_${appId}`] = Object.values(window[`sugarBulk_${appId}`])
@@ -32,7 +38,13 @@ export function getDataWithKeyExtra(keyStr, appId: any) {
         let result = window[`sugarBulkProp_${appId}`];
         let keys = Object.keys(result).toString()
         window[`sugarValues_${appId}`] = Object.values(result);
-        return eval2(eval2(`(function(${keys}){return ${keyStr}}).call(window['sugarBulk_${appId}'],...window['sugarValues_${appId}'])`))
+        let resultFun = eval2(`(function(${keys}){return ${keyStr}}).call(window['sugarBulk_${appId}'],...window['sugarValues_${appId}'])`);
+        try {
+            return eval2(resultFun)
+        } catch (e) {
+            return resultFun
+        }
+
     }
     let keys = Object.keys(window[`sugarBulk_${appId}`]).toString()
     window[`sugarValues_${appId}`] = Object.values(window[`sugarBulk_${appId}`])

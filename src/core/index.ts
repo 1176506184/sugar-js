@@ -12,6 +12,7 @@ const makeSugar = function (options: Core) {
     window[`sugarBulkComponents_${appId}`] = [];
     options.appId = appId;
     let data = options.bulk();
+
     function mount(node) {
 
         if (typeof node === 'string') {
@@ -66,6 +67,10 @@ const makeSugar = function (options: Core) {
     if (!!options.renderDom) {
         window[`sugarBulkProp_${appId}`] = options.prop
         mount(options.renderDom);
+        if (options.components.length > 0) {
+            use(options.components)
+        }
+
     }
 
     return {
@@ -73,7 +78,9 @@ const makeSugar = function (options: Core) {
         data,
         unmount,
         appId,
-        use
+        use,
+        Components
+
     }
 }
 
