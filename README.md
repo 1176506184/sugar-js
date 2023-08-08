@@ -22,6 +22,14 @@ npm install sugar-reactive-js
 
         <sugar-button label="测试" emit:click="update" :style="styleText.value"></sugar-button>        
 
+        <sugar-select :value="state.choose" emit:change="changeChoose">
+
+            <sugar-option label="选项一" value="1"></sugar-option>
+    
+            <sugar-option label="选项二" value="2"></sugar-option>
+
+        </sugar-select>
+
         {{state.num}}
     
         <div s-for="item in state.list">
@@ -36,7 +44,8 @@ npm install sugar-reactive-js
             const state = reactive({
                 num: 0,
                 list:[{d:0}],
-                fontSize:15
+                fontSize:15,
+                choose: 1
             })
             
             const title = reckon(() => {
@@ -60,11 +69,16 @@ npm install sugar-reactive-js
                 state.num = e.target.value
             }
 
+            function changeChoose(e) {
+                state.choose = e
+            }
+
             return {
                 state,
                 update,
                 title,
-                changeNum
+                changeNum,
+                changeChoose
             }
         }
     })

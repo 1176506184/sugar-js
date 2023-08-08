@@ -11,7 +11,7 @@ const makeSugar = function (options: Core) {
     let Components = []
     window[`sugarBulkComponents_${appId}`] = [];
     options.appId = appId;
-    let data = options.bulk();
+    let data = options.bulk(options.parent, options.prop);
 
     function mount(node) {
 

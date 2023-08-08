@@ -1,7 +1,7 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.1.0",
-  "description": "提供简单的响应式UI能力，增加了默认插槽的功能",
+  "version": "1.1.1",
+  "description": "提供简单的响应式UI能力，优化了prop传参和调用父组件方法的形式，组件暂不支持s-for，下个版本支持",
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/plugin-external-helpers": "^7.18.6",
