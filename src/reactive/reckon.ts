@@ -1,9 +1,15 @@
+const eval2 = eval;
+
 function reckon(fun: Function) {
 
     let result = {};
     return new Proxy(result, {
         get: () => {
-            return fun();
+            try {
+                return eval2(fun());
+            } catch (e) {
+                return fun();
+            }
         }
     })
 }

@@ -6,7 +6,10 @@ interface Core {
     renderDom: HTMLElement,
     prop?: any,
     appId?: any,
-    components?: any
+    components?: any,
+    pId?: any,
+    parent?: Object,
+    ctx?: Object
 
 }
 

@@ -50,6 +50,8 @@ function parseComponents(n, appId) {
 
     componentSugar.prop = prop
     componentSugar.components = window[`sugarBulkComponents_${appId}`]
+    componentSugar.pId = appId
+    componentSugar.parent = window[`sugarBulk_${appId}`]
     makeSugar(componentSugar)
 
 }

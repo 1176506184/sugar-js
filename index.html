@@ -50,7 +50,7 @@
                 list: [{d: "列表A的数据1"}, {d: "列表A的数据2"}, {d: ""}],
                 classText: 'font-size:17px',
                 fontSize: 15,
-                choose: 0
+                choose: 1
             })
 
             const title = reckon(() => {
@@ -73,12 +73,11 @@
             }
 
             function changeNum(e) {
-                console.log(e)
                 state.num = e.target.value
             }
 
             function changeChoose(e) {
-                console.log(e)
+                state.choose = e
             }
 
             return {
