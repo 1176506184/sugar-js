@@ -1,11 +1,12 @@
-import  {getDataWithKey, getDataWithKeyExtra} from "./getDataWithKeyStr";
+import {getDataWithKey, getDataWithKeyExtra} from "./getDataWithKeyStr";
 import {createEffect} from "../signal/createEffect";
-import {bindSForElement} from "./parse";
+import parse, {bindSForElement} from "./parse";
+import deepClone from "../utils/deepClone";
 
 const pattern = /[`~!@#$^\-&*()=|{}':;',\\\[\]\.<>\/?~！@#￥……&*（）——|{}【】'；：""'。，、？\s]/g;
 const eval2 = eval;
 
-export default function ListUpdate(list, stack, appId) {
+export default function ListUpdate(list, stack, appId, data?) {
     const notNeedUp = [] as any[]
 
     if (!stack.mounted) {
@@ -39,22 +40,12 @@ export default function ListUpdate(list, stack, appId) {
 
         let div = document.createElement("div");
         let NewHtml = stack.html;
-
         for (let j = 0; j < stack.reactive.length; j++) {
             if (getFirstKey(stack.reactive[j].match(/{{(.+?)}}/)[1], appId) === stack.direction) {
-                let key = stack.reactive[j].replaceAll(stack.direction, `${stack.directive[1]}[${i}]`).match(/{{(.+?)}}/)[1];
-                NewHtml = NewHtml.replaceAll(stack.reactive[j], getDataWithKeyExtra(key, appId))
-            } else {
-
-                let result = getDataWithKey(stack.reactive[j].match(/{{(.+?)}}/)[1], appId)
-                if (result !== "this result is not defined and error in sugar-js") {
-                    NewHtml = NewHtml.replaceAll(stack.reactive[j], result)
-                }
-
+                let key = stack.reactive[j].replaceAll(stack.direction, `${stack.directive[1]}[${i}]`);
+                NewHtml = NewHtml.replaceAll(stack.reactive[j], key)
             }
-
         }
-
 
         if (!stack.ListNodes.length) {
             stack.comment.after(div);
@@ -64,12 +55,52 @@ export default function ListUpdate(list, stack, appId) {
             stack.ListNodes.splice(i, 0, div);
         }
         div.innerHTML = NewHtml;
+        replaceAttr(div, stack.direction, stack.directive[1], appId, i)
+
+        parse(div, data, appId)
         forUpdate(div, appId)
 
     }
 
     stack.oldValue = list;
 
+
+}
+
+function replaceAttr(n, d, dc, appId, i) {
+
+    function work(n) {
+
+        n.childNodes.forEach((ns, index) => {
+
+            if (ns.attributes) {
+
+                let attributes = Array.from(ns.attributes).map((a: any) => {
+                    return {
+                        name: a.name,
+                        value: a.value
+                    }
+                });
+
+                attributes.forEach((attr: any) => {
+
+                    if (attr.value.indexOf(d) > -1) {
+                        ns.removeAttribute(attr.name)
+                        ns.setAttribute(attr.name, attr.value.replace(d, `${dc}[${i}]`))
+                    }
+
+                })
+
+            }
+
+            if (ns.childNodes.length > 0) {
+                work(ns)
+            }
+        })
+
+    }
+
+    work(n)
 
 }
 

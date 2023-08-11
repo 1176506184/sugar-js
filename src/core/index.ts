@@ -10,6 +10,7 @@ const makeSugar = function (options: Core) {
     let appId = guid();
     let Components = []
     window[`sugarBulkComponents_${appId}`] = [];
+    window[`sugarBulkComponentsUnmount_${appId}`] = [];
     options.appId = appId;
     let data = options.bulk(options.parent, options.prop);
 
@@ -41,6 +42,7 @@ const makeSugar = function (options: Core) {
         initNode.innerHTML = initHTML
         clearReactive();
         clearMounted();
+        clearWindow();
     }
 
     function use(options: Core | Core[]) {
@@ -70,7 +72,31 @@ const makeSugar = function (options: Core) {
         if (options.components.length > 0) {
             use(options.components)
         }
+        window[`sugarBulkComponentsUnmount_${options.pId}`].push(unmount);
 
+    }
+
+
+    function clearWindow() {
+        clearComponent();
+        window[`sugarBulkComponents_${appId}`] = null
+        delete window[`sugarBulkComponents_${appId}`]
+        window[`sugarBulkProp_${appId}`] = null
+        delete window[`sugarBulkProp_${appId}`]
+        window[`sugarBulk_${appId}`] = null
+        delete window[`sugarBulk_${appId}`]
+        window[`sugarBulk_${appId}`] = null
+        delete window[`sugarBulk_${appId}`]
+        window[`sugarBulkComponentsUnmount_${appId}`] = null
+        delete window[`sugarBulkComponentsUnmount_${appId}`]
+        window[`sugarValues_${appId}`] = null
+        delete window[`sugarValues_${appId}`]
+    }
+
+    function clearComponent() {
+        window[`sugarBulkComponentsUnmount_${appId}`].forEach((u) => {
+            u();
+        })
     }
 
     return {

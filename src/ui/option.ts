@@ -5,6 +5,8 @@ const option = {
     name: 'sugar-option',
     render: `<div class="sugar-option" s-on:click="update">{{prop.label}}</div>`,
     bulk(ctx, prop) {
+
+
         onMounted(() => {
             if (ctx.initVal.value == prop.value) {
                 update();

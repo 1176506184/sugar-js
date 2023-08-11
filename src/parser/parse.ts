@@ -7,24 +7,28 @@ import makeSugar from "../core";
 import {guid} from "../utils/guid";
 import parseComponents from "./parseComponents"
 import deepClone from "../utils/deepClone";
+import bindSForElement from "./forMatch";
 
 const eval2 = eval;
 export default function parse(node?, data?, appId?, type = 1) {
 
-    window[`sugarBulk_${appId}`] = data;
+    if(data){
+        window[`sugarBulk_${appId}`] = data;
+    }
+
 
     function work(node) {
         node.childNodes.forEach((n, index) => {
 
 
-            if (n.nodeType === 1 && checkIsComponent(n.nodeName.toLocaleLowerCase(), appId)) {
+            if (n.nodeType === 1 && checkIsComponent(n.nodeName.toLocaleLowerCase(), appId) && !n.getAttribute('s-for')) {
                 parseComponents(n, appId)
                 return;
             }
 
             if (type === 1) {
 
-                if (n.nodeType === 1) {
+                if (n.nodeType === 1 && !n.getAttribute('s-for')) {
                     BindEvent(n, appId);
                 }
 
@@ -46,7 +50,7 @@ export default function parse(node?, data?, appId?, type = 1) {
                 }
 
                 if (n.nodeType === 1 && !!n.getAttribute('s-for')) {
-                    bindSForElement(n, appId)
+                    bindSForElement(n, appId, data)
                     return
                 }
             }
@@ -104,50 +108,54 @@ function BindIfElement(n, appId?) {
 }
 
 
-function bindSForElement(n, appId?) {
-    let reactiveFor = n.getAttribute('s-for')
-    n.removeAttribute('s-for');
-    let directive = reactiveFor.split(' in ');
-    let stack = {
-        reactiveFor: reactiveFor,
-        node: n,
-        html: n.innerHTML,
-        comment: null as any,
-        reactive: n.innerHTML?.match(/{{(.+?)}}/ig),
-        mounted: false,
-        diffNode: null as any,
-        ListNodes: [],
-        update: ListUpdate,
-        direction: directive[0].split(',')[0],
-        if: null as any,
-        attrs: [] as any[],
-        oldValue: [],
-        indexStr: directive[0].split(',')[1],
-        directive: directive
-    }
-    let comment = document.createComment('s-for')
-    stack.node.before(comment);
-    stack.comment = comment;
-    stack.node.remove();
-    if (!!n.getAttribute('s-if')) {
-        stack.if = n.getAttribute('s-if')
-        n.removeAttribute('s-if')
-    }
 
+//
+// function bindSForElement(n, appId?, data?: any) {
+//     let reactiveFor = n.getAttribute('s-for')
+//     n.removeAttribute('s-for');
+//     let directive = reactiveFor.split(' in ');
+//     let stack = {
+//         reactiveFor: reactiveFor,
+//         node: n,
+//         html: n.outerHTML,
+//         comment: null as any,
+//         reactive: n.innerHTML?.match(/{{(.+?)}}/ig) ? n.innerHTML?.match(/{{(.+?)}}/ig) : [],
+//         mounted: false,
+//         diffNode: null as any,
+//         ListNodes: [],
+//         update: ListUpdate,
+//         direction: directive[0].split(',')[0],
+//         if: null as any,
+//         attrs: [] as any[],
+//         oldValue: [],
+//         indexStr: directive[0].split(',')[1],
+//         directive: directive
+//     }
+//     let comment = document.createComment('s-for')
+//     stack.node.before(comment);
+//     stack.comment = comment;
+//     stack.node.remove();
+//     if (!!n.getAttribute('s-if')) {
+//         stack.if = n.getAttribute('s-if')
+//         n.removeAttribute('s-if')
+//     }
+//
+//
+//     Object.keys(n.attributes).forEach(key => {
+//         stack.attrs.push({
+//             name: n.attributes[key].name,
+//             value: n.attributes[key].value
+//         })
+//     })
+//
+//
+//     createEffect(() => {
+//         let list = getDataWithKey(directive[1], appId);
+//         ListUpdate(list, stack, appId, data);
+//     })
+// }
+//
 
-    Object.keys(n.attributes).forEach(key => {
-        stack.attrs.push({
-            name: n.attributes[key].name,
-            value: n.attributes[key].value
-        })
-    })
-
-
-    createEffect(() => {
-        let list = getDataWithKey(directive[1], appId);
-        ListUpdate(list, stack, appId);
-    })
-}
 
 function checkIsComponent(name, appId) {
     return window[`sugarBulkComponents_${appId}`].filter(c => {

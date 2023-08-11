@@ -17,15 +17,12 @@
 <body s-load="false">
 <div id="app">
     {{title.value}}
+    <p>选项的值{{state.choose}}</p>
 
     <sugar-input :value="state.num" emit:change="changeNum"></sugar-input>
 
     <sugar-select :value="state.choose" emit:change="changeChoose">
-
-        <sugar-option label="选项一" value="1"></sugar-option>
-
-        <sugar-option label="选项二" value="2"></sugar-option>
-
+        <sugar-option s-for="item,index in state.selectList" :label="item.label" :value="item.value"></sugar-option>
     </sugar-select>
 
     <sugar-button label="更新" emit:click="update" :style="styleText.value"></sugar-button>
@@ -50,7 +47,14 @@
                 list: [{d: "列表A的数据1"}, {d: "列表A的数据2"}, {d: ""}],
                 classText: 'font-size:17px',
                 fontSize: 15,
-                choose: 1
+                choose: 1,
+                selectList: [{
+                    label: "选项一",
+                    value: 1
+                }, {
+                    label: "选项二",
+                    value: 2
+                }]
             })
 
             const title = reckon(() => {

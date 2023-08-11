@@ -31,6 +31,7 @@ export function getDataWithKey(keyStr, appId: any | null = null) {
 
 export function getDataWithKeyExtra(keyStr, appId: any) {
 
+    // console.log(keyStr)
 
     let keyArr = keyStr.split('.');
     if (keyArr[0] === 'prop') {
@@ -46,6 +47,12 @@ export function getDataWithKeyExtra(keyStr, appId: any) {
         }
 
     }
+
+    if (keyArr[0] === 'window') {
+        // console.log(eval2(keyStr))
+        return eval2(keyStr);
+    }
+
     let keys = Object.keys(window[`sugarBulk_${appId}`]).toString()
     window[`sugarValues_${appId}`] = Object.values(window[`sugarBulk_${appId}`])
     return eval2(`(function(${keys}){return ${keyStr}}).call(window['sugarBulk_${appId}'],...window['sugarValues_${appId}'])`)

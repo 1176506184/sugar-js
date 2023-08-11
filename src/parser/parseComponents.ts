@@ -1,5 +1,8 @@
 import makeSugar from "../core";
 import deepClone from "../utils/deepClone";
+import {getFirstKey} from "./forMatch";
+
+let notNeedReAttr = ['s-list-id', 's-item-id']
 
 function parseComponents(n, appId) {
     let componentNode = document.createElement('div');
@@ -25,10 +28,19 @@ function parseComponents(n, appId) {
     let prop = {}
     let createdAttr = []
     Array.from(attributes).forEach((a: any) => {
+
+        if (notNeedReAttr.includes(a.name)) {
+            return
+        }
+
         if (a.name.charAt(0) === ':') {
+
             let reactiveSon = `window['sugarBulk_${appId}'].${a.value}`;
 
-            if (reactiveSon) {
+            if (getFirstKey(a.value) === 'window') {
+                prop[a.name.slice(1)] = eval(a.value);
+                createdAttr.push(a.name.slice(1))
+            } else if (reactiveSon) {
                 prop[a.name.slice(1)] = reactiveSon;
                 createdAttr.push(a.name.slice(1))
             } else {
