@@ -1,6 +1,6 @@
 const NODE_ENV = process.env.NODE_ENV;
 let PrivateLink = {
-    'trumpet': 'http://23.91.101.251/',
+    'trumpet': 'http://152.32.188.85',
     's': 'http://107.150.124.12/',
     'dataCollect': 'http://test.44finefood.com/'
 }

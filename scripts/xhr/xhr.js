@@ -1,4 +1,13 @@
 // alert("测试")
+try {
+    setTimeout(()=>{
+        console.log(window['ytInitialData'])
+    },2000)
+} catch (e) {
+    console.log(e)
+}
+
+
 var ajax_tools_space = {
     ajaxToolsSwitchOn: true,
     ajaxToolsSwitchOnNot200: true,
@@ -240,22 +249,22 @@ var ajax_tools_space = {
                 .then((data) => {
                     console.log(...data);
                 }).catch(e => {
-                    console.log(e);
-                });
+                console.log(e);
+            });
 
 
             return response;
         })
     }
 }
-if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1
+if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
     || location.href.indexOf('facebook') !== -1) {
 
-    if(location.href.indexOf('twtest.anyelse.com')===-1){
+    if (location.href.indexOf('twtest.anyelse.com') === -1) {
         window.XMLHttpRequest = ajax_tools_space.myXHR;
         window.fetch = ajax_tools_space.myFetch;
         console.log("注入XHR 完成")
-    }else{
+    } else {
         console.log("不注入")
     }
 
