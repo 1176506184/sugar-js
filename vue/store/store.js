@@ -1,18 +1,26 @@
 import {createStore} from "vuex";
+
 const store = createStore({
-    state () {
+    state() {
         return {
-            type: ''
+            type: '',
+            youtubeVideoData: []
         }
     },
     mutations: {
-        changeType (state,n) {
+        changeType(state, n) {
             state.type = n;
+        },
+        changeYoutubeVideoData(state, n) {
+            state.youtubeVideoData = n
         }
     },
-    getters:{
-        getType(state){
+    getters: {
+        getType(state) {
             return state.type;
+        },
+        getYoutubeVideoData(state) {
+            return state.youtubeVideoData
         }
     }
 })

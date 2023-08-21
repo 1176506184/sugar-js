@@ -16,12 +16,18 @@ if (NODE_ENV === 'development') {
 }
 
 
-function xhrHttp(url, params, type = 'get') {
+function xhrHttp(url, params, type = 'get', content_type = 'application/x-www-form-urlencoded; charset=UTF-8') {
     return new Promise((resolve, reject) => {
+
+        if (content_type === 'application/json') {
+            params = JSON.stringify(params)
+        }
+
         $.ajax({
             url: url,
             data: params,
-            type: type
+            type: type,
+            contentType: content_type
             , success: function (data) {
                 resolve(data);
             },
@@ -97,8 +103,8 @@ function dHttp(url, params, type = 'post') {
             url: PrivateLink['dataCollect'] + url,
             data: params,
             type: type,
-            headers:{
-              "content-type":'application/json'
+            headers: {
+                "content-type": 'application/json'
             }
             , beforeSend: function (XMLHttpRequest) {
                 XMLHttpRequest.setRequestHeader("token", localStorage.getItem("tk"));

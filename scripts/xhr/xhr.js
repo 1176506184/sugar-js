@@ -1,11 +1,11 @@
-// alert("测试")
-try {
-    setTimeout(()=>{
-        console.log(window['ytInitialData'])
-    },2000)
-} catch (e) {
-    console.log(e)
-}
+// // alert("测试")
+// try {
+//     setTimeout(()=>{
+//         console.log(window['ytInitialData'])
+//     },2000)
+// } catch (e) {
+//     console.log(e)
+// }
 
 
 var ajax_tools_space = {
@@ -244,21 +244,20 @@ var ajax_tools_space = {
                 return responseProxy;
             }
 
-            response.clone()
-                .json()
-                .then((data) => {
-                    console.log(...data);
-                }).catch(e => {
-                console.log(e);
-            });
+            let data = await response.clone().json()
 
+            window.postMessage({
+                Message: 'ajax',
+                url: response.url,
+                data: data
+            })
 
             return response;
         })
     }
 }
 if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
-    || location.href.indexOf('facebook') !== -1) {
+    || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1) {
 
     if (location.href.indexOf('twtest.anyelse.com') === -1) {
         window.XMLHttpRequest = ajax_tools_space.myXHR;

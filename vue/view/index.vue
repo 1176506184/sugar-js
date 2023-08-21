@@ -17,7 +17,8 @@
         {{ state.loginText }}
       </el-button>
 
-      <el-select style="width: 110px;float: right;margin-right: 15px;display: none" placeholder="请选择系统" v-model="state.system"
+      <el-select style="width: 110px;float: right;margin-right: 15px;display: none" placeholder="请选择系统"
+                 v-model="state.system"
                  @change="tipReload">
         <el-option :value="1" label="小号系统"></el-option>
         <el-option :value="2" label="数据系统"></el-option>
@@ -120,6 +121,11 @@
               </el-button>
             </div>
           </el-collapse-item>
+          <el-collapse-item title="油管博主" name="6">
+            <div>
+              <el-button @click="collectYoutube" type="primary">采集油管视频并自动分发</el-button>
+            </div>
+          </el-collapse-item>
 
           <!--        <p>脸书社团</p>-->
           <!--        <div>-->
@@ -172,7 +178,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v2.2",
+  version: "v2.3",
   system: 1
 });
 
@@ -210,6 +216,9 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "sohu") {
       activeNames.value.push("4");
       store.commit("changeType", "sohu");
+    } else if (Message.type === "youtube") {
+      activeNames.value.push("6");
+      store.commit("changeType", "youtube");
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
@@ -838,6 +847,18 @@ function stopCollectFacebook() {
       }
   );
 }
+
+//油管采集
+
+function collectYoutube() {
+  router.push({
+    name: "YoutubeVideo",
+    query: {},
+  });
+}
+
+
+
 </script>
 
 <style scoped>

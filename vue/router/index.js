@@ -1,6 +1,7 @@
 import Home from "../view/index.vue"
 import TrumpetVideo from "../view/trumpetVideo.vue";
 import TwitterImage from "../view/twitterImage.vue"
+import YoutubeVideo from "../view/youtubeVideo.vue"
 import {createRouter, createWebHashHistory} from "vue-router";
 const routes = [
     {
@@ -24,6 +25,15 @@ const routes = [
         name: 'TwitterImage',
         path: '/TwitterImage',
         component: TwitterImage,
+        props: route => ({ query: route.query.q }),
+        meta:{
+
+        }
+    },
+    {
+        name: 'YoutubeVideo',
+        path: '/YoutubeVideo',
+        component: YoutubeVideo,
         props: route => ({ query: route.query.q }),
         meta:{
 
