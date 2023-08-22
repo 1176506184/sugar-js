@@ -19,10 +19,7 @@
                 {{ row.title.runs[0].text }}
               </template>
             </el-table-column>
-            <el-table-column label="播放量">
-              <template #default="{ row }">
-                {{ row.viewCountText.simpleText.replace(/\D/g, '') }}
-              </template>
+            <el-table-column label="播放量" prop="viewCount" sortable :sort-orders="['descending','ascending',null]">
             </el-table-column>
           </el-table>
 
@@ -51,7 +48,7 @@
 
           <el-col :span="6">
             <el-form-item label="生成内容域名">
-              <el-select placeholder="请选择" v-model="form.host" @change="getCateGory">
+              <el-select placeholder="请选择" v-model="form.host" @change="getCateGory" filterable>
                 <el-option v-for="item in ports" :label="item" :value="item"/>
               </el-select>
             </el-form-item>
@@ -126,7 +123,12 @@ const form = reactive({
 
 
 function dealYoutubeVideo(Message) {
-  data.value = Message.data
+  data.value = Message.data.map((d) => {
+    return {
+      ...d,
+      viewCount: parseInt(d.viewCountText.simpleText.replace(/\D/g, ''))
+    }
+  })
   author.value = Message.author
   console.log(data.value)
 }
