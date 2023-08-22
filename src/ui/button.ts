@@ -1,21 +1,12 @@
-import {findEmits} from "../event/findEmits";
-
 const button = {
     name: 'sugar-button',
-    render: `<button s-on:click="click" class="sugar-button">
-                 {{prop.label}}
-             </button>`,
-    bulk() {
-        const emits = findEmits(this);
-
-        function click() {
-            emits['click']();
-        }
-
-        return {
-            click
-        }
-    }
+    render: (props) => {
+        return `<button s-on:click="click" class="sugar-button">
+                 {{props.label}}
+             </button>`
+    },
+    emit: ['click']
 }
+
 
 export default button

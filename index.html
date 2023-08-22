@@ -8,33 +8,19 @@
 </head>
 <style>
 
-    [s-load="false"] {
-        display: none;
-    }
 
 </style>
 <script src="/dist/sugar.js"></script>
-<body s-load="false">
+<body>
 <div id="app">
-    {{title.value}}
-    <p>选项的值{{state.choose}}</p>
-
-    <sugar-input :value="state.num" emit:change="changeNum"></sugar-input>
-
-    <sugar-select :value="state.choose" emit:change="changeChoose">
-        <sugar-option s-for="item,index in state.selectList" :label="item.label" :value="item.value"></sugar-option>
-    </sugar-select>
-
-    <sugar-button label="更新" emit:click="update" :style="styleText.value"></sugar-button>
-
-
-    <div s-for="item in state.list" s-if="item.d != ''">
-        {{item.d}}
+    <button @click="update">+1</button>
+    <div class="count-cls" :style="state.classText">count：{{ state.num }}</div>
+    <div s-if="state.num % 2 === 0">doubleCount：{{ state.num * 2 }}</div>
+    <div s-for="(item,index) in state.list">
+        {{item.d}} 测试
+        <p>{{state.num - 1}}</p>
     </div>
-
-
 </div>
-
 </body>
 
 <script>
@@ -44,7 +30,7 @@
 
             const state = reactive({
                 num: 0,
-                list: [{d: "列表A的数据1"}, {d: "列表A的数据2"}, {d: ""}],
+                list: [{d: 1}, {d: 2}, {d: 3}],
                 classText: 'font-size:17px',
                 fontSize: 15,
                 choose: 1,
@@ -84,19 +70,21 @@
                 state.choose = e
             }
 
+            const testRef = ref("testRef");
+
             return {
                 state,
                 update,
                 title,
                 styleText,
                 changeNum,
-                changeChoose
+                changeChoose,
+                testRef
             }
         }
     })
 
     sugar.mount('#app')
-    sugar.use(sugarUI);
 
 
 </script>

@@ -1,18 +1,17 @@
-import {findEmits} from "../event/findEmits";
+
 import {onMounted, reactive, reckon} from "../main";
 import {guid} from "../utils/guid";
 
 const select = {
     name: 'sugar-select',
     render: `<div>
-                 <input  class="sugar-select"  :value="state.textValue" s-on:click="click" :ref="componentId.value" readonly placeholder="请选择"/>
+                 <input  class="sugar-select"  :value="state.textValue" s-on:click="click" :ref="componentId.value" readonly :placeholder="prop.placeholder"/>
                  <div class="sugar-select-options-box" s-if="state.open" :style="state.styleText" >
                    #default
                  </div>
                  
              </div>`,
     bulk(ctx, prop) {
-        const emits = findEmits(this);
         let cid = guid();
         const componentId: any = reckon(() => {
             return cid;
@@ -45,7 +44,7 @@ const select = {
         function update(text, value) {
             state.textValue = text;
             state.value = value;
-            emits['change'](value);
+            ctx.change();
         }
 
         return {
@@ -53,7 +52,8 @@ const select = {
             click,
             componentId,
             update,
-            initVal
+            initVal,
+            prop
         }
     }
 }

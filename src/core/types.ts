@@ -8,8 +8,9 @@ interface Core {
     appId?: any,
     components?: any,
     pId?: any,
-    parent?: Object,
-    ctx?: Object
+    ctx?: Object,
+    forArr: any[],
+    el?: any
 
 }
 

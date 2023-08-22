@@ -1,4 +1,3 @@
-import {findEmits} from "../event/findEmits";
 import {onMounted} from "../main";
 
 const option = {
