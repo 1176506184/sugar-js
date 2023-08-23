@@ -175,6 +175,9 @@ var ajax_tools_space = {
             return await reader.read().then(processData);
         }
         return ajax_tools_space.originalFetch(...args).then(async (response) => {
+
+
+
             let overrideText = undefined;
             const interfaceList = [];
             ajax_tools_space.ajaxDataList.forEach((item) => {

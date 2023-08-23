@@ -28,7 +28,7 @@
         <el-row gutter="5">
           <el-col :span="6">
             <el-form-item label="语言">
-              <el-select v-model="form.lang" class="smallWidthInput" placeholder="请选择">
+              <el-select v-model="form.lang" class="smallWidthInput" placeholder="请选择" @change="getPortList">
                 <el-option label="繁体" :value="0"/>
                 <el-option label="英语" :value="1"/>
                 <el-option label="葡语" :value="2"/>
@@ -77,8 +77,8 @@
               </el-select>
             </el-col>
             <el-col :span="18" style="color:orange;">
-              对应选择的专页：
-              （发帖形式：图文追平贴 排期类型：定时发）
+              {{ pageType }}
+<!--              （发帖形式：图文追平贴 排期类型：定时发）-->
             </el-col>
           </el-row>
         </el-form-item>
@@ -121,6 +121,19 @@ const form = reactive({
   pageuid: ''
 })
 
+const pageType = computed(() => {
+
+  for (let i = 0; i < pages.value.length; i++) {
+
+    if (form.pageuid === pages.value[i].uid) {
+      return `（ 发帖形式：${pages.value[i].post_typename} | 排期类型：${pages.value[i].plan_typename} ）`
+    }
+
+  }
+
+  return ``
+
+})
 
 function dealYoutubeVideo(Message) {
   data.value = Message.data.map((d) => {
@@ -135,7 +148,8 @@ function dealYoutubeVideo(Message) {
 
 function getPortList() {
   xhrHttp(`http://gpt.anyelse.com/callback/capturehostlist`, {
-    content_type: form.content_type
+    content_type: form.content_type,
+    lang: form.lang
   }, 'post', 'application/json').then((res) => {
     ports.value = JSON.parse(res).data
   });
@@ -144,6 +158,7 @@ function getPortList() {
 function getCateGory() {
   xhrHttp(`http://gpt.anyelse.com/callback/capturecategorylist`, {
     content_type: form.content_type,
+    lang: form.lang,
     host: form.host
   }, 'post', 'application/json').then((res) => {
     categorys.value = JSON.parse(res).data
@@ -153,6 +168,7 @@ function getCateGory() {
 function getPage() {
   xhrHttp(`http://gpt.anyelse.com/callback/capturefacebooklist`, {}, 'post', 'application/json').then((res) => {
     pages.value = JSON.parse(res).data
+    console.log(pages.value)
   });
 }
 

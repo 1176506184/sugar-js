@@ -17,6 +17,12 @@
         {{ state.loginText }}
       </el-button>
 
+      <el-select placeholder="是否开启" style="width: 160px;float: right;margin-right: 15px;" v-model="open"
+                 @change="changeOpen">
+        <el-option :value="1" label="插件状态：开启"></el-option>
+        <el-option :value="0" label="插件状态：关闭"></el-option>
+      </el-select>
+
       <el-select style="width: 110px;float: right;margin-right: 15px;display: none" placeholder="请选择系统"
                  v-model="state.system"
                  @change="tipReload">
@@ -137,8 +143,8 @@
       </div>
 
     </div>
-    <div id="version">
-      <p id="v_p" style="cursor: pointer">{{ state.version }}</p>
+    <div id="version" style="display: flex;align-items: center">
+      <p id="v_p" style="cursor: pointer">{{ state.version }} （如遇视频无法播放的情况请先关闭插件并刷新页面）</p>
     </div>
   </div>
 </template>
@@ -156,6 +162,17 @@ import store from "../store/store.js";
 import {computed} from "vue";
 import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
 import {ElMessage} from "element-plus";
+
+const open = ref(1)
+
+function changeOpen() {
+  chrome.storage.local.set({
+    open: open.value
+  }, () => {
+
+  })
+
+}
 
 const activeNames = ref([])
 const handleChange = (val) => {
@@ -178,7 +195,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v2.4",
+  version: "v2.7",
   system: 1
 });
 
@@ -388,7 +405,13 @@ const eventBus = async function (Message, sender, sendResponse) {
 
 onMounted(() => {
 
-  console.log(localStorage.getItem("system"))
+
+  chrome.storage.local.get('open', (res) => {
+    if (typeof res.open === "number") {
+      open.value = res.open
+    }
+  })
+
 
   state.system = isNaN(parseInt(localStorage.getItem("system"))) ? 1 : parseInt(localStorage.getItem("system"))
 
@@ -856,7 +879,6 @@ function collectYoutube() {
     query: {},
   });
 }
-
 
 
 </script>

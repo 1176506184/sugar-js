@@ -9,9 +9,14 @@ async function injectedScript(path) {
     return scriptNode;
 }
 
-injectedScript('scripts/xhr/xhr.js').then(r => {
-    console.log("开始注入xhr")
+chrome.storage.local.get('open', (res) => {
+    if (res.open !== 0) {
+        injectedScript('scripts/xhr/xhr.js').then(r => {
+
+        })
+    }
 })
+
 
 var G = {};
 var cacheData = {init: true};
