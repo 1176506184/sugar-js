@@ -9,12 +9,16 @@ npm install sugar-reactive-js
 ## Use
 
         <div id="app">
-            <button @click="update">+1</button>
-            <div class="count-cls" :style="state.classText">count：{{ state.num }}</div>
-            <div s-if="state.num % 2 === 0">doubleCount：{{ state.num * 2 }}</div>
-            <div s-for="(item,index) in state.list">
-                {{item.d}} 测试
-                <p>{{state.num}}</p>
+            <div id="app">
+                <div>
+                    {{title.value}}
+                </div>
+            
+                <div s-for="(item,index) in state.list" s-if="(item.d + state.num) > 1">
+                    {{item.d + state.num}}
+                </div>
+            
+                <button @click="update">+1</button>
             </div>
         </div>
     
