@@ -5,8 +5,6 @@ import {isArray} from "@sugar/sugar-shared";
 
 export function generate(ast, options) {
 
-    console.log(ast)
-
     const genElmChildren = (children = []) => {
         let str = "[";
         children.forEach((child, i) => {
@@ -96,8 +94,6 @@ function transformFor(ast, prop, props) {
         index: isArray(forMatch[0]) ? forMatch[0][1] : null
     }
 
-    console.log(forStatment)
-
     let son = `_c('${ast.tag}',{ "attr":{`;
     son += dealAttr(props)
 
@@ -152,7 +148,6 @@ function dealAttr(props) {
 
         if (prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && prop.name !== 'bind') {
 
-            console.log(prop.value)
             str += `"${prop.name}":"${prop.value.content}"`
 
         } else if (prop.name === 'bind') {
