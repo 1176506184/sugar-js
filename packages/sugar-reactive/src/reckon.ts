@@ -1,4 +1,4 @@
-import {reactive} from "../main";
+import reactive from "./reactive";
 import {isArray} from "@sugar/sugar-shared";
 
 const eval2 = eval;

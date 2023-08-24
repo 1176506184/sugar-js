@@ -1,9 +1,6 @@
 import {Core} from "./types";
 import {mountHandleList, clearMounted} from "../hooks/onMounted";
-import {clearReactive} from "../reactive/reactive";
-import {guid} from "../utils/guid";
 import {sugarRender} from "@sugar/sugar-render";
-import {baseCompile} from "@sugar/compiler-core";
 
 function makeSugar(options: Core) {
 

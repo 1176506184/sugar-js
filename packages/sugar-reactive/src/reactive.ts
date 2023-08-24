@@ -1,4 +1,4 @@
-import {getCurrentObserver} from "../signal/createEffect";
+import {getCurrentObserver} from "./signal/createEffect";
 
 let subscribers = new Set();
 const makeReactive = function (value) {

@@ -1,8 +1,6 @@
-import {createEffect} from "./signal/createEffect";
 import onMounted from "./hooks/onMounted";
-import {reactive} from "./reactive";
+import {reactive,reckon,ref,createEffect} from "@sugar/sugar-reactive";
 import makeSugar from "./core";
-import reckon, {ref} from "./reactive/reckon"
 import sugarUI from "./ui";
 
 
