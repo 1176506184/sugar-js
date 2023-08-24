@@ -24,6 +24,7 @@ export function escape2Html(str) {
 }
 
 
+
 //生成不重复11位序列号
 export function serial_num_11() {
     let d = new Date();

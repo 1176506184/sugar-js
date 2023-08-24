@@ -1,12 +1,18 @@
 import {isArray} from "@sugar/sugar-shared";
+import {baseCompile} from "@sugar/compiler-core";
+
 
 export function sugarCompiler(template) {
 
     function compile(template = '') {
+
+        const astEX = baseCompile(template)
+        console.log(astEX)
         const ast = parse(template);
+        console.log(ast)
         const code = generate(ast);
         console.log(code)
-        return createFunction(code);
+        return createFunction(astEX);
     }
 
     function parse(template = '') {
@@ -95,7 +101,7 @@ export function sugarCompiler(template) {
                             // .trim()
                             // .replace(" ", "")
                             .replaceAll("\n", " ")
-                            // .trim(); // 去除空格和换行
+                        // .trim(); // 去除空格和换行
 
                         if (text) {
                             // 创建空的ast，文本节点增加text属性
@@ -124,7 +130,7 @@ export function sugarCompiler(template) {
                         // .trim()
                         // .replace(" ", "")
                         .replaceAll("\n", " ")
-                        // .trim(); // 去除空格和换行
+                    // .trim(); // 去除空格和换行
                     // 创建空的ast，文本节点增加text属性
                     const textAst = createASTElement();
                     textAst.text = text;
@@ -183,22 +189,25 @@ export function sugarCompiler(template) {
                     if (!skip) {
                         if (item.name.startsWith(':')) { // parse :class
                             key = item.name.replace(':', '');
-                            if (data.attrs[key]) {
-                                const oldVal = data.attrs[key]
-                                const valList = JSON.parse(item.value.replaceAll(`'`, `"`) || '[]');
-                                value = `${oldVal} ${valList.join(' ')}`
-                            }
+                            value = `SUGARREMOVE${item.value}SUGARREMOVE`
                         } else {
                             key = item.name;
-                            value = item.value;
+                            value = item.value
                         }
                     }
                     data.attrs[key] = value;
                 })
             }
 
+
             return data;
         };
+
+
+        function CLEARSUGARREMOVE(data) {
+            data = JSON.stringify(data).replace('"SUGARREMOVE', '').replace('SUGARREMOVE"', '')
+            return data
+        }
 
         // 构建_c()
         const genElm = (ast) => {
@@ -206,14 +215,14 @@ export function sugarCompiler(template) {
             if (ast['if'] && ast['if'].exp) { // 处理v-if
                 let elStr = ''
                 if (ast.tag) {
-                    elStr += `_c('${ast.tag}', ${JSON.stringify(genData(ast))}, ${ast.children ? genElmChildren(ast.children) || "[]" : "[]"})`;
+                    elStr += `_c('${ast.tag}', ${CLEARSUGARREMOVE(genData(ast))}, ${ast.children ? genElmChildren(ast.children) || "[]" : "[]"})`;
                 }
                 // v-if构造出来，就是拼接一个三元运算符，例如count % 2 === 0 ? _c(xxx) : _e()
                 str += `${ast['if'].exp} ? ${elStr} : _e()`
 
             } else if (ast['for'] && ast['for'].exp) {
 
-                let son = `_c('${ast.tag}',${JSON.stringify(genData(ast))},[`;
+                let son = `_c('${ast.tag}',${CLEARSUGARREMOVE(genData(ast))},[`;
                 ast.children.forEach((astChild, index) => {
 
                     son += generate(astChild, ast['for'].item);
@@ -230,7 +239,7 @@ export function sugarCompiler(template) {
 
             } else if (ast.tag) {
                 // 处理元素节点，data参数通过genData函数处理，children通过genElmChildren处理
-                str += `_c('${ast.tag}', ${JSON.stringify(genData(ast))}, ${ast.children ? genElmChildren(ast.children) || "[]" : "[]"})`;
+                str += `_c('${ast.tag}', ${CLEARSUGARREMOVE(genData(ast))}, ${ast.children ? genElmChildren(ast.children) || "[]" : "[]"})`;
             } else if (ast.text) { // 处理文本节点
 
                 // 处理文本中插值语法，例如：将countVal：{{count}}解析生成'countVal：'+ _s(count)
