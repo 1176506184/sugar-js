@@ -1,7 +1,6 @@
 import onMounted from "./hooks/onMounted";
 import {reactive,reckon,ref,createEffect} from "@sugar/sugar-reactive";
 import makeSugar from "./core";
-import sugarUI from "./ui";
 
 
 // @ts-ignore
@@ -19,6 +18,5 @@ export {
     onMounted,
     createEffect,
     reckon,
-    sugarUI,
     ref
 }
