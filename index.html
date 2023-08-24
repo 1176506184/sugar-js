@@ -17,7 +17,7 @@
         {{state.num}}
     </div>
 
-    <div s-for="(item,index) in state.list" s-if="item.d > 1">
+    <div s-for="(item,index) in state.list" s-if="(item.d + state.num) > 1">
         {{item.d + state.num}}
     </div>
 
