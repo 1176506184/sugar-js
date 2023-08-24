@@ -1,5 +1,5 @@
 import {isArray} from "@sugar/sugar-shared";
-import {baseCompile} from "@sugar/compiler-core";
+import {baseCompile} from "./compile";
 
 
 export function sugarCompiler(template) {

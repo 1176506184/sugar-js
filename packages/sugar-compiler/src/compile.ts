@@ -1,13 +1,10 @@
 import {extend, isArray, NO} from "./utils";
-import {transform} from "./transform";
 import {generate} from "./codegen";
-import {treeCompile} from "./treeCompile";
 
 export function baseCompile(template: string, node?: Element) {
 
     const ast = toAst(template);
-    const render = generate(ast, {});
-    return render
+    return generate(ast, {})
 
 }
 
