@@ -1,7 +1,10 @@
 <template>
   <div>
-    <div class="layout_top" style="height: 20px;line-height: 20px">
-      <span style="font-size: 15px;font-weight: bold">油管频道博主：{{ author }}</span>
+    <div class="layout_top" style="height: 20px;display: flex;align-items: center;justify-content: flex-start">
+      <span style="font-size: 15px;font-weight: bold;margin-right: 5px">博主名称</span>
+       <el-input v-model="author" style="display: inline-flex;flex:1;width: 500px" >
+         <template #append>可修改</template>
+       </el-input>
     </div>
 
     <div style="padding: 0 10px 10px;">

@@ -7,7 +7,7 @@ function getVideo() {
     chrome.runtime.sendMessage({
         Message: 'youtubeVideo',
         data: videoData,
-        author: document.querySelector('.style-scope.ytd-channel-name')?.innerText
+        author: document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText
     }).then()
 }
 
