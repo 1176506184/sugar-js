@@ -1,7 +1,7 @@
 import {Core} from "./types";
-import {mountHandleList, clearMounted, updateActiveId} from "../hooks/onMounted";
+import onMounted, {mountHandleList, clearMounted, updateActiveId} from "./hooks/onMounted";
 import {sugarRender} from "@sugar/sugar-render";
-import {guid} from "../utils/guid";
+import {guid} from "./utils/guid";
 
 function makeSugar(options: Core) {
     let appId = guid();
@@ -18,7 +18,7 @@ function makeSugar(options: Core) {
     function mount(el) {
         vm.$el = document.querySelector(`${el}`)
         mounted(vm, vm.$el, data);
-        mountHandleList[appId].forEach((item)=>{
+        mountHandleList[appId].forEach((item) => {
             item.fun();
             item.used = true;
         })
@@ -32,4 +32,7 @@ function makeSugar(options: Core) {
 }
 
 
-export default makeSugar
+export {
+    makeSugar,
+    onMounted
+}

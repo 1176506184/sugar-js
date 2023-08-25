@@ -25,7 +25,7 @@ export function sugarRender() {
                 private context: undefined;
                 private text: undefined;
 
-                constructor(tag, data, children) {
+                constructor(tag?, data?, children?) {
                     this.tag = tag;
                     this.data = data;
                     // @ts-ignore
@@ -133,7 +133,7 @@ export function sugarRender() {
             }
 
             function _for(fun: Function, data: any) {
-                // @ts-ignore
+
                 const vnode: any = new VNode();
                 vnode.children = []
                 data.forEach((item) => {
@@ -142,14 +142,23 @@ export function sugarRender() {
                 return vnode;
             }
 
+            function _component() {
+
+                const vnode: any = new VNode();
+
+            }
+
             vm._c = _c;
             vm._v = _v;
             vm._s = _s;
             vm._e = _e;
             vm._for = _for;
+            vm._component = _component;
+
             Object.keys(data).forEach((key) => {
                 vm[key] = data[key]
             })
+
             const vnode = render.call(vm);
 
             // 将vnode转成真实的DOM元素

@@ -1,7 +1,6 @@
-import onMounted from "./hooks/onMounted";
-import {reactive,reckon,ref,createEffect} from "@sugar/sugar-reactive";
-import makeSugar from "./core";
-
+import {onMounted,makeSugar} from "@sugar/sugar-core";
+import {reactive, reckon, ref, createEffect} from "@sugar/sugar-reactive";
+import {createComponent} from "@sugar/sugar-component";
 
 // @ts-ignore
 window['createEffect'] = createEffect
@@ -10,7 +9,7 @@ window['reactive'] = reactive
 window['makeSugar'] = makeSugar
 window['reckon'] = reckon
 window['ref'] = ref;
-
+window['createComponent'] = createComponent
 
 export {
     makeSugar,
@@ -18,5 +17,6 @@ export {
     onMounted,
     createEffect,
     reckon,
-    ref
+    ref,
+    createComponent
 }
