@@ -154,6 +154,14 @@ export function sugarRender() {
             vm._e = _e;
             vm._for = _for;
 
+            vm.__SUGAR__ = {
+                _c,
+                _v,
+                _s,
+                _e,
+                _for
+            }
+
             Object.keys(data).forEach((key) => {
                 vm[key] = data[key]
             })
