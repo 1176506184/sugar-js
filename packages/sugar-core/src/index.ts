@@ -12,7 +12,8 @@ function makeSugar(options: Core) {
         _vnode: null,
         data: data,
         $el: null as any,
-        appId: appId
+        appId: appId,
+        components: []
     }
 
     function mount(el) {
@@ -24,9 +25,16 @@ function makeSugar(options: Core) {
         })
     }
 
+    function install(components) {
+        components.forEach((component) => {
+            vm.components.push(component);
+        })
+    }
+
     return {
         mount,
-        ...data
+        ...data,
+        install
     }
 
 }

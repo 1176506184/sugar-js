@@ -4,12 +4,17 @@ import {createEffect} from "../../../src/main";
 export function sugarRender() {
 
     let render = null
+    let components = []
 
     function mounted(vm, el, data) {
         if (!(el instanceof HTMLElement)) {
             el = document.querySelector(el);
         }
-        render = sugarCompiler(el.outerHTML);
+
+        components = vm.components
+
+        render = sugarCompiler(el.outerHTML, components, data);
+        console.log(render)
 
         createEffect(() => {
             updateComponent(vm, el, data);
@@ -142,25 +147,18 @@ export function sugarRender() {
                 return vnode;
             }
 
-            function _component() {
-
-                const vnode: any = new VNode();
-
-            }
 
             vm._c = _c;
             vm._v = _v;
             vm._s = _s;
             vm._e = _e;
             vm._for = _for;
-            vm._component = _component;
 
             Object.keys(data).forEach((key) => {
                 vm[key] = data[key]
             })
 
             const vnode = render.call(vm);
-
             // 将vnode转成真实的DOM元素
             patch(vm, vm._vnode, vnode, null);
             // 保存旧的vnode

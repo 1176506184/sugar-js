@@ -17,3 +17,5 @@ const button = createComponent({
 
     }
 })
+
+export {button}

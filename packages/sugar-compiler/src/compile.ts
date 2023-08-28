@@ -1,9 +1,18 @@
 import {extend, isArray, NO} from "./utils";
 import {generate} from "./codegen";
+import {transform} from "./transform";
+import {sIf} from "./transform/sIf";
+import {sFor} from "./transform/sFor";
 
-export function baseCompile(template: string, node?: Element) {
+export function baseCompile(template: string, components?: any[], data?: any) {
 
     const ast = toAst(template);
+    transform(ast, {
+        sIf,
+        sFor
+    });
+    console.log(ast)
+    parseComponent(ast, components, data)
     return generate(ast, {})
 
 }
@@ -15,12 +24,52 @@ function toAst(template: string) {
 
 }
 
-export function getBaseTransformPreset() {
-    return [
-        [], {}
-    ]
+function parseComponent(ast: any, components: any[], data: any) {
+
+    if (isComponent(ast.tag, components)) {
+        ast.type = NodeTypes.COMPONENT
+        let sugar = getComponentBulk(ast.tag, components, data)
+        sugar.render = toAst(sugar.render);
+        Object.keys(ast).forEach((key) => {
+            if (key !== 'type') {
+                ast[key] = sugar.render[key]
+            }
+        })
+        ast.bulk = sugar.bulk;
+    }
+
+    if (ast.children?.length) {
+        ast.children.forEach((child) => {
+            parseComponent(child, components, data)
+        })
+    }
+
 }
 
+function isComponent(tag, components) {
+
+    let componentNames = components.map((component) => {
+        return component.name
+    })
+    return componentNames.includes(tag)
+
+}
+
+
+function getComponentBulk(tag, components, data) {
+
+    for (let i = 0; i < components.length; i++) {
+        if (components[i].name === tag) {
+            return {
+                render: components[i].render,
+                bulk: components[i].bulk(data)
+            };
+        }
+    }
+
+    return {}
+
+}
 
 function parse(context: any, ancestors: any) {
     const parent: any = last(ancestors)
@@ -678,4 +727,5 @@ export const enum NodeTypes {
     TEXT_CALL,
     // codegen
     VNODE_CALL,
+    COMPONENT
 }

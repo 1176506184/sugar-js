@@ -13,15 +13,9 @@
 <script src="/dist/sugar.js"></script>
 <body>
 <div id="app">
-    <div>
-        {{title.value}}
-    </div>
-
-    <div s-for="(item,index) in state.list" s-if="(item.d + state.num) > 1">
-        {{item.d + state.num}}
-    </div>
-
-    <button @click="update">+1</button>
+    <button class="sugar-button">2</button>
+    <button class="sugar-button" s-for="(item,index) in state.list" s-if="(item.d + state.num) > 1" @click="update">{{item.d + state.num + 1}}
+    </button>
 </div>
 </body>
 
@@ -87,11 +81,9 @@
         }
     })
 
+    sugar.install(sugarUI)
 
     sugar.mount('#app')
-
-
-
 
 
 </script>

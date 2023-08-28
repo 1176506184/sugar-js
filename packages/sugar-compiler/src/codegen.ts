@@ -23,9 +23,8 @@ export function generate(ast, options) {
         if (ast.type === 1) {
             let elStr = ""
             let ex = false
-            let loop = false
 
-            elStr += `_c('${ast.tag}',{ "attr":{`
+            elStr += `_c('${ast.tag}',{ "attrs":{`
 
             elStr += dealAttr(props)
 
@@ -38,32 +37,22 @@ export function generate(ast, options) {
 
             if (ast.children) {
                 elStr += genElmChildren(ast.children);
+            } else {
+                elStr += '[]'
             }
 
             elStr += ')'
 
-            let propsName = props.map((prop) => {
-                return prop.name
-            })
+            if (ast.forStatment) {
+                ex = true
+                str += transformFor(ast)
+            }
 
-            props.forEach((prop) => {
+            if (ast.if && !ast.forStatment) {
+                ex = true
+                str = `${ast.if.value} ? ${str + elStr} : _e()`
+            }
 
-
-                if (prop.name === 's-for') {
-
-                    ex = true
-
-                    str += transformFor(ast, prop, props)
-                }
-
-                if (prop.name === 's-if' && !propsName.includes('s-for')) {
-
-                    ex = true
-
-                    str = `${prop.value.content} ? ${str + elStr} : _e()`
-                }
-
-            })
 
             if (!ex) {
                 str += elStr
@@ -82,19 +71,16 @@ export function generate(ast, options) {
     return getElm(ast)
 }
 
-function transformFor(ast, prop, props) {
+function isComponent(tag, vm) {
 
+}
 
-    let forMatch = prop.value.content.split(' in ');
-    const reg = /(?<=\()(.+?)(?=\))/;
-    forMatch[0] = forMatch[0].match(reg) ? forMatch[0].match(reg)[0].split(',') : forMatch[0];
-    let forStatment = {
-        exp: forMatch[1],
-        item: isArray(forMatch[0]) ? forMatch[0][0] : forMatch[0],
-        index: isArray(forMatch[0]) ? forMatch[0][1] : null
-    }
+function transformFor(ast) {
 
-    let son = `_c('${ast.tag}',{ "attr":{`;
+    let forStatment = ast.forStatment
+    let props = ast.props
+
+    let son = `_c('${ast.tag}',{ "attrs":{`;
     son += dealAttr(props)
 
     son += '},"on":{'
