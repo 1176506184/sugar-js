@@ -71,9 +71,6 @@ export function generate(ast, options) {
     return getElm(ast)
 }
 
-function isComponent(tag, vm) {
-
-}
 
 function transformFor(ast) {
 

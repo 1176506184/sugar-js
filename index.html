@@ -8,13 +8,38 @@
 </head>
 <style>
 
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .title {
+        width: 100vw;
+        height: 40px;
+        background: #4faee8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bolder;
+    }
+
+    .nav {
+        margin: 5px 5px 0;
+        line-height: 30px;
+        font-size: 15px;
+    }
 
 </style>
 <script src="/dist/sugar.js"></script>
 <body>
 <div id="app">
-    <button class="sugar-button">2</button>
-    <button class="sugar-button" s-for="(item,index) in state.list" s-if="(item.d + state.num) > 1" @click="update">{{item.d + state.num + 1}}
+    <div class="title">
+        SUGAR-JS
+    </div>
+    <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list"
+            s-if="(item.d + state.num) > 1" @click="update">
+        {{item.d + state.num + 1}}
     </button>
 </div>
 </body>
