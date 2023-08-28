@@ -11,7 +11,6 @@ export function baseCompile(template: string, components?: any[], data?: any) {
         sIf,
         sFor
     });
-    console.log(ast)
     parseComponent(ast, components, data)
     return generate(ast, {})
 
