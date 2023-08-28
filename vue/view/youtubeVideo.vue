@@ -2,9 +2,9 @@
   <div>
     <div class="layout_top" style="height: 20px;display: flex;align-items: center;justify-content: flex-start">
       <span style="font-size: 15px;font-weight: bold;margin-right: 5px">博主名称</span>
-       <el-input v-model="author" style="display: inline-flex;flex:1;width: 500px" >
-         <template #append>可修改</template>
-       </el-input>
+      <el-input v-model="author" style="display: inline-flex;flex:1;width: 500px">
+        <template #append>可修改</template>
+      </el-input>
     </div>
 
     <div style="padding: 0 10px 10px;">
@@ -81,7 +81,7 @@
             </el-col>
             <el-col :span="18" style="color:orange;">
               {{ pageType }}
-<!--              （发帖形式：图文追平贴 排期类型：定时发）-->
+              <!--              （发帖形式：图文追平贴 排期类型：定时发）-->
             </el-col>
           </el-row>
         </el-form-item>
@@ -221,18 +221,17 @@ function Save() {
 
   let param = {
     ...form,
-    videodata: upData.value.map(r => {
+    videodata: JSON.stringify(upData.value.map(r => {
       return {
         url: `https://www.youtube.com/watch?v=${r.videoId}`,
         title: r.title.runs[0].text,
         cover: `https://i.ytimg.com/vi/${r.videoId}/hqdefault.jpg`,
         author: author.value
       }
-    })
+    }))
   }
 
-
-  xhrHttp(` http://gpt.anyelse.com/callback/captureyoutubetask`, param, 'post', 'application/json').then((res) => {
+  xhrHttp(`http://gpt.anyelse.com/callback/captureyoutubetask`, param, 'post', 'application/json').then((res) => {
     res = JSON.parse(res);
     if (res.state) {
       alert(res.msg)
