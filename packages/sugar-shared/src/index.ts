@@ -36,3 +36,5 @@ export const enum NodeTypes {
     // codegen
     VNODE_CALL,
 }
+
+export * from './nodeOps'

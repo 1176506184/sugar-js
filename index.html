@@ -37,9 +37,15 @@
     <div class="title">
         SUGAR-JS
     </div>
-    <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list"
+
+    <button class="sugar-button" style="margin: 5px 5px 0;" @click="update">
+        {{state.num}}
+    </button>
+
+
+    <button class="sugar-button" style="margin: 5px 5px 0;"  s-for="(item,index) in state.list"
             s-if="(item.d + state.num) > 1" @click="update">
-        {{item.d + state.num + 1}}
+        {{item.d + state.num}}
     </button>
 </div>
 </body>
@@ -75,8 +81,8 @@
 
             onMounted(() => {
 
-                state.num += 1;
-                state.classText = "font-size:13px"
+                // state.num += 1;
+                // state.classText = "font-size:13px"
 
             })
 

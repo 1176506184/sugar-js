@@ -16,6 +16,10 @@ export function transform(context, helpers) {
                 helpers.sFor(context, prop)
             }
 
+            if (prop.name === 's-model') {
+                helpers.sModel(context, prop)
+            }
+
         })
 
         if (!!context.children) {

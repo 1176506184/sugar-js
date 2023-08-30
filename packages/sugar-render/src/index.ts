@@ -1,5 +1,6 @@
 import {sugarCompiler} from "@sugar/sugar-compiler";
 import {createEffect} from "../../../src/main";
+import patchEx from "./patch";
 
 export function sugarRender() {
 
@@ -10,36 +11,17 @@ export function sugarRender() {
         if (!(el instanceof HTMLElement)) {
             el = document.querySelector(el);
         }
-
+        vm.$el = el
         components = vm.components
-
         render = sugarCompiler(el.outerHTML, components, data);
-        console.log(render)
+        updateComponent(vm, el, data);
 
-        createEffect(() => {
-            updateComponent(vm, el, data);
-        })
+
     }
 
     function updateComponent(vm, el, data) {
         function update(vm, el) {
-            class VNode {
-                private tag: any;
-                private data: any;
-                private elm: undefined;
-                private context: undefined;
-                private text: undefined;
 
-                constructor(tag?, data?, children?) {
-                    this.tag = tag;
-                    this.data = data;
-                    // @ts-ignore
-                    this.children = children;
-                    this.elm = undefined;
-                    this.context = undefined;
-                    this.text = undefined;
-                }
-            }
 
             function patch(vm, oldVNode, vnode, parentElm) {
                 if (!parentElm) {
@@ -101,76 +83,25 @@ export function sugarRender() {
 
             }
 
-            function createElement(tag = "div", data = {}, children = []) {
-                const createVNode = (tag = "div", data = {}, children = []) => {
-                    const vnodeChildren = [];
-
-                    if (children && children.length) {
-                        children.forEach((child) => {
-                            vnodeChildren.push(child);
-                        });
-                    }
-                    return new VNode(tag, data, vnodeChildren);
-                };
-
-                // render函数中执行_c，接收参数，创建vnode
-                return createVNode(tag, data, children);
-            }
-
-            function _c(tag = "div", data = {}, children = []) {
-                return createElement(tag, data, children)
-            }
-
-            function _v(str) {
-                // @ts-ignore
-                const vnode: any = new VNode();
-                vnode.text = str;
-                return vnode;
-            }
-
-            function _s(val) {
-                return String(val);
-            }
-
-            function _e() {
-                // @ts-ignore
-                return new VNode();
-            }
-
-            function _for(fun: Function, data: any) {
-
-                const vnode: any = new VNode();
-                vnode.children = []
-                data.forEach((item) => {
-                    vnode.children.push(fun(item));
-                })
-                return vnode;
-            }
-
-
-            vm._c = _c;
-            vm._v = _v;
-            vm._s = _s;
-            vm._e = _e;
-            vm._for = _for;
-
-            vm.__SUGAR__ = {
-                _c,
-                _v,
-                _s,
-                _e,
-                _for
-            }
 
             Object.keys(data).forEach((key) => {
                 vm[key] = data[key]
             })
 
-            const vnode = render.call(vm);
-            // 将vnode转成真实的DOM元素
-            patch(vm, vm._vnode, vnode, null);
-            // 保存旧的vnode
-            vm._vnode = vnode;
+
+            bindT(vm)
+
+            createEffect(() => {
+                const vnode = render.call(vm);
+                patchEx(vm, vnode);
+
+                // 将vnode转成真实的DOM元素
+                // patch(vm, vm._vnode, vnode, null);
+
+                // 保存旧的vnode
+                vm._vnode = vnode;
+
+            })
 
         }
 
@@ -178,9 +109,99 @@ export function sugarRender() {
 
     }
 
+
     return {
         updateComponent,
         mounted
     }
 
 }
+
+
+function bindT(vm) {
+
+    // vm._vnode = emptyNodeAt(vm.$el)
+
+    function _c(tag = "div", data = {}, children = []) {
+        return createElement(tag, data, children)
+    }
+
+    function _v(str) {
+        // @ts-ignore
+        const vnode: any = new VNode();
+        vnode.text = str;
+        return vnode;
+    }
+
+    function _s(val) {
+        return String(val);
+    }
+
+    function _e() {
+        // @ts-ignore
+        return new VNode();
+    }
+
+    function _for(fun: Function, data: any) {
+
+        // const vnode: any = new VNode();
+        // vnode.children = []
+        // data.forEach((item, index) => {
+        //     vnode.children.push({
+        //         ...fun(item),
+        //         key: index
+        //     });
+        // })
+        let nodes = []
+        data.forEach((item, index) => {
+            nodes.push({
+                ...fun(item),
+                key: index
+            });
+        })
+        return nodes;
+    }
+
+    vm._c = _c;
+    vm._v = _v;
+    vm._s = _s;
+    vm._e = _e;
+    vm._for = _for;
+
+}
+
+function createElement(tag = "div", data = {}, children = []) {
+    const createVNode = (tag = "div", data = {}, children = []) => {
+        const vnodeChildren = [];
+
+        if (children && children.length) {
+            children.forEach((child) => {
+                vnodeChildren.push(child);
+            });
+        }
+        return new VNode(tag, data, vnodeChildren);
+    };
+
+    // render函数中执行_c，接收参数，创建vnode
+    return createVNode(tag, data, children);
+}
+
+
+class VNode {
+    private tag: any;
+    private data: any;
+    private elm: undefined;
+    private context: undefined;
+    private text: undefined;
+
+    constructor(tag?, data?, children?) {
+        this.tag = tag;
+        this.data = data;
+        // @ts-ignore
+        this.children = children;
+        this.elm = undefined;
+        this.context = undefined;
+        this.text = undefined;
+    }
+}
+

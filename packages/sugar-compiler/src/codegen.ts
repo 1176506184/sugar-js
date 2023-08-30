@@ -113,7 +113,7 @@ function transformFor(ast) {
 
     })
 
-    return `_for((${forStatment.item})=>{
+    return `..._for((${forStatment.item})=>{
         return ${son}
                             },${forStatment.exp})`
 

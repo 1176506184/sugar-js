@@ -3,13 +3,15 @@ import {generate} from "./codegen";
 import {transform} from "./transform";
 import {sIf} from "./transform/sIf";
 import {sFor} from "./transform/sFor";
+import {sModel} from "./transform/sModel";
 
 export function baseCompile(template: string, components?: any[], data?: any) {
 
     const ast = toAst(template);
     transform(ast, {
         sIf,
-        sFor
+        sFor,
+        sModel
     });
     parseComponent(ast, components, data)
     return generate(ast, {})
