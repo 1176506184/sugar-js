@@ -38,13 +38,12 @@
         SUGAR-JS
     </div>
 
-    <button class="sugar-button" style="margin: 5px 5px 0;" @click="update">
-        {{state.num}}
-    </button>
+    {{state.num}}
 
+    <div>{{title.value}}</div>
 
-    <button class="sugar-button" style="margin: 5px 5px 0;"  s-for="(item,index) in state.list"
-            s-if="(item.d + state.num) > 1" @click="update">
+    <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
+            s-if="(item.d + state.num) > 3" @click="update">
         {{item.d + state.num}}
     </button>
 </div>
@@ -58,7 +57,7 @@
 
             const state = reactive({
                 num: 0,
-                list: [{d: 1}, {d: 2}, {d: 3}],
+                list: [{d: 1}, {d: 2}, {d: 3}, {d: 4}],
                 classText: 'font-size:17px',
                 fontSize: 15,
                 choose: 1,
