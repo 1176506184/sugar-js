@@ -159,7 +159,14 @@ function dealEvent(props) {
 
         if (prop.name === 'on') {
 
-            str += `"${prop.arg.content}":{"value":"${prop.exp.content}"}`
+            let funString = `"${prop.exp.content}"`
+
+
+            if (prop.exp.isStatic) {
+                funString = `(e)=>{${prop.exp.content}}`
+            }
+
+            str += `"${prop.arg.content}":{"value":${funString},"isStatic":${prop.exp.isStatic}}`
 
             if (prop.name === 'on' && index < props.length - 1) {
                 str += ","

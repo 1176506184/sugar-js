@@ -38,14 +38,12 @@
         SUGAR-JS
     </div>
 
-    {{state.num}}
-
-    <div>{{title.value}}</div>
-
     <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
-            s-if="(item.d + state.num) > 3" @click="update">
+            s-if="(item.d + state.num) > 1" @click="update">
         {{item.d + state.num}}
     </button>
+
+    <input class="sugar-input" s-model="state.num" style="margin: 5px 5px 0;"/>
 </div>
 </body>
 

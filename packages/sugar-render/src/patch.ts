@@ -7,7 +7,7 @@ export function bindAttrAndEvent(vm, vnode) {
         // 处理监听事件
         for (const key in on) {
             if (Object.hasOwnProperty.call(on, key)) {
-                if (on[key].value) {
+                if (on[key].value && !on[key].isStatic) {
                     on[key].value = vm.data[on[key].value]
                 }
             }
@@ -101,6 +101,7 @@ export default function (oldVnode, newVnode) {
             }
         } else {
 
+            patchAttribute(newVnode, oldVnode)
 
             if (oldVnode.children && oldVnode.children.length) {
                 // console.log('新老节点都有childrens属性', oldVnode.elm, oldVnode, newVnode)
@@ -118,6 +119,16 @@ export default function (oldVnode, newVnode) {
             }
 
         }
+
+    }
+
+    function patchAttribute(newVnode, oldVnode) {
+
+        const {tag, data = {}, children = []} = newVnode || {};
+        const {attrs = {}, on = {}} = data;
+        Object.keys(attrs).forEach((attr) => {
+            newVnode.elm.setAttribute(attr, attrs[attr])
+        })
 
     }
 
@@ -176,29 +187,29 @@ export default function (oldVnode, newVnode) {
                 // 新前与旧后
             } else if (isSameNode(newSNode, oldENode)) {
                 console.log('②新前与旧后', newSNode, oldENode)
-                parentDom.insertBefore(oldENode.elm, oldSNode.elm)
                 patchVnode(newSNode, oldENode)
+                parentDom.insertBefore(oldENode.elm, oldSNode.elm)
                 oldENode = oldCh[--oldAftIndex]
                 newSNode = newCh[++newPreIndex]
                 // 新后与旧前
             } else if (isSameNode(newENode, oldSNode)) {
 
                 console.log('③新后与旧前', newENode.elm, oldSNode.elm)
-                parentDom.insertBefore(oldSNode.elm, oldENode.elm.nextSibling)
                 patchVnode(newENode, oldSNode)
-                ++oldPreIndex
-                --newAftIndex
-                // oldSNode = oldCh[++oldPreIndex]
-                // newENode = newCh[--newAftIndex]
+                parentDom.insertBefore(oldSNode.elm, oldENode.elm.nextSibling)
+                // ++oldPreIndex
+                // --newAftIndex
+                oldSNode = oldCh[++oldPreIndex]
+                newENode = newCh[--newAftIndex]
                 // 新后与旧后
             } else if (isSameNode(newENode, oldENode)) {
 
                 console.log('④新后与旧后', newENode, oldENode)
                 patchVnode(newENode, oldENode)
-                --oldAftIndex
-                --newAftIndex
-                // oldENode = oldCh[--oldAftIndex]
-                // newENode = newCh[--newAftIndex]
+                // --oldAftIndex
+                // --newAftIndex
+                oldENode = oldCh[--oldAftIndex]
+                newENode = newCh[--newAftIndex]
 
 
             } else {
@@ -232,11 +243,12 @@ export default function (oldVnode, newVnode) {
         // 循环结束
         // ①如果循环结束，新节点还有剩余直接添加
         if (newPreIndex <= newAftIndex) {
+
             console.log(`⑥循环完毕-新节点剩余--new--${newPreIndex}--add--${newAftIndex}`)
             for (let i = newPreIndex; i <= newAftIndex; i++) {
                 // console.log(parentDom, newCh[i].elm, oldSNode.elm)
                 // console.log(newCh[i], oldSNode)
-                parentDom.insertBefore(newCh[i].elm, oldSNode.elm)
+                parentDom.insertBefore(newCh[i].elm, oldENode.elm)
             }
         }
         // ②如果循环结束，旧节点还有剩余直接删除

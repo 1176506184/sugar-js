@@ -25,8 +25,8 @@ export function sModel(context, prop) {
         },
         exp: {
             type: 4,
-            content: `${prop.name} = e.target.value`,
-            isStatic: false,
+            content: `if(typeof ${prop.value.content} === 'number'){${prop.value.content} = Number(e.target.value)}else{${prop.value.content} = e.target.value}`,
+            isStatic: true,
             constType: 0
         }
     })
