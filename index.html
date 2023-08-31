@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/src/css/sugar-css.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 </head>
 <style>
 
@@ -30,6 +30,11 @@
         font-size: 15px;
     }
 
+    .label {
+        margin: 5px;
+        font-size:13px;
+    }
+
 </style>
 <script src="/dist/sugar.js"></script>
 <body>
@@ -38,15 +43,22 @@
         SUGAR-JS
     </div>
 
+    <p class="label">计算属性</p>
 
-    <input class="sugar-input" s-model="state.num" style="margin: 5px 5px 0;" />
+    <p class="label">{{title.value}}</p>
+
+    <p class="label">s-for</p>
 
     <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
             s-if="(item.d + state.num) > 1" @click="update">
         {{item.d + state.num}}
     </button>
 
+    <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode">新增</button>
 
+    <p class="label">s-model</p>
+
+    <input class="sugar-input" s-model="state.num" style="margin: 5px 5px 0;"/>
 </div>
 </body>
 
@@ -71,8 +83,14 @@
                 }]
             })
 
+            function pushNode() {
+                state.list.push({
+                    d: state.num + state.list.length
+                })
+            }
+
             const title = reckon(() => {
-                return state.num + '计算属性测试'
+                return state.num + 2
             })
 
             const styleText = reckon(() => {
@@ -81,8 +99,8 @@
 
             onMounted(() => {
 
-                // state.num += 1;
-                // state.classText = "font-size:13px"
+                state.num += 1;
+                state.classText = "font-size:13px"
 
             })
 
@@ -107,7 +125,8 @@
                 styleText,
                 changeNum,
                 changeChoose,
-                testRef
+                testRef,
+                pushNode
             }
         }
     })

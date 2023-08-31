@@ -18,7 +18,6 @@ export function sugarRender() {
 
         var serializer = new XMLSerializer();
         var htmlCode = escape2Html(serializer.serializeToString(vm.$el));
-        console.log(htmlCode)
 
         render = sugarCompiler(htmlCode, components, data);
         updateComponent(vm, el, data);
