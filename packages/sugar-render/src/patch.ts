@@ -47,36 +47,44 @@ export default function (oldVnode, newVnode) {
     function createElement(vnode) {
         let domNode
         if (vnode.tag) {
-            domNode = document.createElement(vnode.tag)
-            const {tag, data = {}, children = []} = vnode || {};
 
-            const {attrs = {}, on = {}} = data;
-            // 处理属性
-            for (const key in attrs) {
-                if (Object.hasOwnProperty.call(attrs, key)) {
-                    const value = attrs[key];
-                    domNode.setAttribute(key, value);
-                }
-            }
+            if (typeof vnode.tag === 'string') {
+                domNode = document.createElement(vnode.tag)
+                const {tag, data = {}, children = []} = vnode || {};
 
-            // 处理监听事件
-            for (const key in on) {
-                if (Object.hasOwnProperty.call(on, key)) {
-                    if (on[key].value) {
-                        const event = on[key].value
-                        event && domNode.addEventListener(key, event)
+                const {attrs = {}, on = {}} = data;
+                // 处理属性
+                for (const key in attrs) {
+                    if (Object.hasOwnProperty.call(attrs, key)) {
+                        const value = attrs[key];
+                        domNode.setAttribute(key, value);
                     }
                 }
-            }
 
-            if (vnode.children) {
-                for (let i = 0; i < vnode.children.length; i++) {
-                    let childrenDom = createElement(vnode.children[i]);
-                    if (childrenDom) {
-                        domNode.append(childrenDom)
+                // 处理监听事件
+                for (const key in on) {
+                    if (Object.hasOwnProperty.call(on, key)) {
+                        if (on[key].value) {
+                            const event = on[key].value
+                            event && domNode.addEventListener(key, event)
+                        }
                     }
                 }
+
+                if (vnode.children) {
+                    for (let i = 0; i < vnode.children.length; i++) {
+                        let childrenDom = createElement(vnode.children[i]);
+                        if (childrenDom) {
+                            domNode.append(childrenDom)
+                        }
+                    }
+                }
+
+            } else {
+
             }
+
+
         } else if (vnode.text !== undefined) {
             domNode = document.createTextNode(vnode.text)
         }

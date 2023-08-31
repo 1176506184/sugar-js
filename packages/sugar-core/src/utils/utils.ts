@@ -11,18 +11,6 @@ export function makeMap(
 }
 
 
-export function escape2Html(str) {
-
-    var arrEntities = {'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"'};
-
-    return str.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) {
-
-        return arrEntities[t];
-
-    });
-
-}
-
 
 
 //生成不重复11位序列号

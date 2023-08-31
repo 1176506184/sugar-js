@@ -18,6 +18,20 @@ export function startsWithEndTagOpen(source: string, tag: string): boolean {
     )
 }
 
+
+export function escape2Html(str) {
+
+    var arrEntities = {'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"'};
+
+    return str.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) {
+
+        return arrEntities[t];
+
+    });
+
+}
+
+
 export const enum NodeTypes {
     ROOT,
     ELEMENT,

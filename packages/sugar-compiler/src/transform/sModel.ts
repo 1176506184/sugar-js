@@ -32,5 +32,4 @@ export function sModel(context, prop) {
     })
 
 
-    console.log(context, context.props)
 }

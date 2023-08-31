@@ -13,6 +13,9 @@ export function baseCompile(template: string, components?: any[], data?: any) {
         sFor,
         sModel
     });
+
+    console.log(ast)
+
     parseComponent(ast, components, data)
     return generate(ast, {})
 
@@ -76,7 +79,6 @@ function parse(context: any, ancestors: any) {
     const parent: any = last(ancestors)
     const ns = parent ? parent.ns : Namespaces.HTML
     const nodes = []
-
     while (!isEnd(context, ancestors)) {
         const s = context.source
         let node: any = undefined
@@ -426,6 +428,8 @@ function parseElement(context: any, ancestors: any) {
     ancestors.push(element)
 
     const children = parse(context, ancestors)
+
+
     ancestors.pop()
     // @ts-ignore
     element.children = children
@@ -433,6 +437,7 @@ function parseElement(context: any, ancestors: any) {
     if (startsWithEndTagOpen(context.source, element.tag)) {
         parseTag(context, TagType.End, parent)
     }
+
 
     element.loc = getSelection(context, element.loc.start)
 
@@ -453,8 +458,10 @@ function parseTag(context, type, parent) {
     const tag = match[1]
     const ns = context.options.getNamespace(tag, parent)
 
+
     advanceBy(context, match[0].length)
     advanceSpaces(context)
+
 
     if (context.options.isPreTag(tag)) {
         context.inPre = true
@@ -482,6 +489,7 @@ function parseTag(context, type, parent) {
         tagType,
         children: [],
         props,
+        isSelfClosing,
         loc: getSelection(context, start)
     }
 }

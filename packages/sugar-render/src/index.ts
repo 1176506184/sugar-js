@@ -1,6 +1,7 @@
 import {sugarCompiler} from "@sugar/sugar-compiler";
 import {createEffect} from "../../../src/main";
 import patchEx, {bindAttrAndEvent} from "./patch";
+import {escape2Html} from "@sugar/sugar-shared";
 
 export function sugarRender() {
 
@@ -14,7 +15,12 @@ export function sugarRender() {
         vm.$el = el
         vm._vnode = el
         components = vm.components
-        render = sugarCompiler(el.outerHTML, components, data);
+
+        var serializer = new XMLSerializer();
+        var htmlCode = escape2Html(serializer.serializeToString(vm.$el));
+        console.log(htmlCode)
+
+        render = sugarCompiler(htmlCode, components, data);
         updateComponent(vm, el, data);
 
 
