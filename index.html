@@ -55,7 +55,7 @@
     <p class="label">s-for</p>
 
     <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
-            @click="update">
+            @click="update" s-if="(item.d + state.num) % 2 > 0">
         {{item.d + state.num}}
     </button>
 

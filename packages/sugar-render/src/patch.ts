@@ -171,6 +171,8 @@ export default function (oldVnode, newVnode) {
         // 新后节点
         let newENode = newCh[newAftIndex];
 
+        let oldKeyToIdx, idxInOld, elmToMove, refElm
+
         while (oldPreIndex <= oldAftIndex && newPreIndex <= newAftIndex) {
 
             console.log(oldPreIndex, oldSNode)
@@ -222,26 +224,43 @@ export default function (oldVnode, newVnode) {
 
             } else {
                 console.log('⑤未匹配到相同的情况下')
-                let keyMap = {}
-                // 未匹配到相同的情况下
-                for (let i = oldPreIndex; i < oldAftIndex; i++) {
-                    if (oldCh[i]) {
-                        keyMap[oldCh[i].key] = i
+
+                if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldPreIndex, oldAftIndex)
+                idxInOld = isDef(newSNode.key) ? oldKeyToIdx[newSNode.key] : null
+                if (isUndef(idxInOld)) {
+                    parentDom.insertBefore(newSNode.elm, oldSNode.elm)
+                    newSNode = newCh[++newPreIndex]
+                } else {
+                    elmToMove = oldCh[idxInOld]
+                    if (isSameNode(elmToMove, newSNode)) {
+                        patchVnode(elmToMove, newSNode)
+                        oldCh[idxInOld] = undefined
+                        parentDom.insertBefore(newSNode.elm, oldSNode.elm)
+                        newSNode = newCh[++newPreIndex]
                     }
                 }
-                const target = keyMap[newSNode.key]
-                // 如果存在则移动
-                if (target !== undefined) {
-                    console.log('⑤未匹配到相同的情况下-存在-移动', newSNode.text)
-                    patchVnode(oldCh[target], newSNode)
-                    parentDom.insertBefore(oldCh[target].elm, oldSNode.elm)
-                    oldCh[target] = undefined;
-                } else {
-                    console.log('⑤未匹配到相同的情况下-不存在-添加', newSNode, oldSNode)
-                    // 如不存在则新增
-                    parentDom.insertBefore(newSNode.elm, oldSNode.elm)
-                }
-                newSNode = newCh[++newPreIndex]
+
+
+                // let keyMap = {}
+                // // 未匹配到相同的情况下
+                // for (let i = oldPreIndex; i < oldAftIndex; i++) {
+                //     if (oldCh[i]) {
+                //         keyMap[oldCh[i].key] = i
+                //     }
+                // }
+                // const target = keyMap[newSNode.key]
+                // // 如果存在则移动
+                // if (target !== undefined) {
+                //     console.log('⑤未匹配到相同的情况下-存在-移动', newSNode.text)
+                //     patchVnode(oldCh[target], newSNode)
+                //     parentDom.insertBefore(oldCh[target].elm, oldSNode.elm)
+                //     oldCh[target] = undefined;
+                // } else {
+                //     console.log('⑤未匹配到相同的情况下-不存在-添加', newSNode, oldSNode)
+                //     // 如不存在则新增
+                //     parentDom.insertBefore(newSNode.elm, oldSNode.elm)
+                // }
+                // newSNode = newCh[++newPreIndex]
             }
         }
 
@@ -250,22 +269,22 @@ export default function (oldVnode, newVnode) {
 
         // 循环结束
         // ①如果循环结束，新节点还有剩余直接添加
-        if (newPreIndex <= newAftIndex) {
+        if (oldPreIndex > oldAftIndex) {
 
-            let refElm = isUndef(newCh[newAftIndex + 1]) ? null : newCh[newAftIndex + 1].elm
+            refElm = isUndef(newCh[newAftIndex + 1]) ? null : newCh[newAftIndex + 1].elm
             console.log(`⑥循环完毕-新节点剩余--new--${newPreIndex}--add--${newAftIndex}`)
             for (; newPreIndex <= newAftIndex; newPreIndex++) {
 
-                if(refElm){
+                if (refElm) {
                     parentDom.insertBefore(newCh[newPreIndex].elm, refElm)
-                }else{
+                } else {
                     parentDom.append(newCh[newPreIndex].elm)
                 }
 
             }
         }
         // ②如果循环结束，旧节点还有剩余直接删除
-        if (oldPreIndex <= oldAftIndex) {
+        if (newPreIndex > newAftIndex) {
             console.log('⑥循环完毕-旧节点剩余--old--delete')
             for (let i = oldPreIndex; i <= oldAftIndex; i++) {
                 if (oldCh[i] && oldCh[i].elm) {
@@ -275,6 +294,16 @@ export default function (oldVnode, newVnode) {
             }
         }
 
+    }
+
+    function createKeyToOldIdx(children, beginIdx, endIdx) {
+        let i, key
+        const map = {}
+        for (i = beginIdx; i <= endIdx; ++i) {
+            key = children[i].key
+            if (isDef(key)) map[key] = i
+        }
+        return map
     }
 
 }
