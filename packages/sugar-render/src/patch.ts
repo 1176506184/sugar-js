@@ -1,4 +1,4 @@
-import {nodeOps, NodeTypes} from "@sugar/sugar-shared"
+import {isDef, isUndef, nodeOps, NodeTypes} from "@sugar/sugar-shared"
 
 export function bindAttrAndEvent(vm, vnode) {
     const {tag, data = {}, children = []} = vnode || {};
@@ -252,11 +252,16 @@ export default function (oldVnode, newVnode) {
         // ①如果循环结束，新节点还有剩余直接添加
         if (newPreIndex <= newAftIndex) {
 
+            let refElm = isUndef(newCh[newAftIndex + 1]) ? null : newCh[newAftIndex + 1].elm
             console.log(`⑥循环完毕-新节点剩余--new--${newPreIndex}--add--${newAftIndex}`)
-            for (let i = newPreIndex; i <= newAftIndex; i++) {
-                // console.log(parentDom, newCh[i].elm, oldSNode.elm)
-                // console.log(newCh[i], oldSNode)
-                parentDom.insertBefore(newCh[i].elm, oldENode.elm)
+            for (; newPreIndex <= newAftIndex; newPreIndex++) {
+
+                if(refElm){
+                    parentDom.insertBefore(newCh[newPreIndex].elm, refElm)
+                }else{
+                    parentDom.append(newCh[newPreIndex].elm)
+                }
+
             }
         }
         // ②如果循环结束，旧节点还有剩余直接删除
@@ -274,13 +279,14 @@ export default function (oldVnode, newVnode) {
 
 }
 
+
 export function emptyNodeAt(elm) {
     return new VNode(elm.tagName.toLowerCase(), {}, [], elm);
 }
 
 
 function isSameNode(o, n) {
-    return o.key === n.key && o.tag === n.tag
+    return o.key === n.key && o.tag === n.tag && isDef(o.data) === isDef(n.data)
 }
 
 

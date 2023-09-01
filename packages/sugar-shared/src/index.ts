@@ -18,6 +18,13 @@ export function startsWithEndTagOpen(source: string, tag: string): boolean {
     )
 }
 
+export function isDef(v: any) {
+    return v !== undefined && v !== null
+}
+
+export function isUndef(v: any) {
+    return v === undefined || v === null
+}
 
 export function escape2Html(str) {
 
