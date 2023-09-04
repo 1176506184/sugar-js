@@ -20,6 +20,10 @@ export function transform(context, helpers) {
                 helpers.sModel(context, prop)
             }
 
+            if (prop.name === 'on') {
+                helpers.transformEvent(context, prop)
+            }
+
         })
 
         if (!!context.children) {

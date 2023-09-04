@@ -8,7 +8,18 @@ export function bindAttrAndEvent(vm, vnode) {
         for (const key in on) {
             if (Object.hasOwnProperty.call(on, key)) {
                 if (on[key].value && !on[key].isStatic) {
-                    on[key].value = vm.data[on[key].value]
+                    on[key].fun = function (e) {
+                        let parameters = on[key].parameters
+                        if (parameters?.length) {
+                            console.log(vm)
+                            vm.data[on[key].value](...parameters)
+                        } else {
+                            vm.data[on[key].value](e)
+                        }
+                    }
+
+                }else{
+                    on[key].fun = on[key].value
                 }
             }
         }
@@ -65,7 +76,8 @@ export default function (oldVnode, newVnode) {
                 for (const key in on) {
                     if (Object.hasOwnProperty.call(on, key)) {
                         if (on[key].value) {
-                            const event = on[key].value
+                            const event = on[key].fun
+                            console.log(on)
                             event && domNode.addEventListener(key, event)
                         }
                     }
@@ -136,7 +148,24 @@ export default function (oldVnode, newVnode) {
         const {attrs = {}, on = {}} = data;
         Object.keys(attrs).forEach((attr) => {
             newVnode.elm.setAttribute(attr, attrs[attr])
+            if(attr === 'value'){
+                newVnode.elm.value = attrs[attr]
+            }
         })
+
+        console.log(on)
+
+        // 处理监听事件
+        for (const key in on) {
+            if (Object.hasOwnProperty.call(on, key)) {
+                if (on[key].value) {
+                    const event = on[key].fun
+                    newVnode.elm.removeEventListener(key,oldVnode.data.on[key].fun)
+                    newVnode.elm.addEventListener(key,event)
+
+                }
+            }
+        }
 
     }
 

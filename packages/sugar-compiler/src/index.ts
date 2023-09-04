@@ -1,4 +1,3 @@
-import {isArray} from "@sugar/sugar-shared";
 import {baseCompile} from "./compile";
 
 

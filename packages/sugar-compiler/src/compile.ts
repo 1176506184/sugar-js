@@ -4,18 +4,21 @@ import {transform} from "./transform";
 import {sIf} from "./transform/sIf";
 import {sFor} from "./transform/sFor";
 import {sModel} from "./transform/sModel";
+import {transformRef} from "./transform/transformRef";
+import {transformEvent} from "./transform/transformEvent";
 
 export function baseCompile(template: string, components?: any[], data?: any) {
 
     const ast = toAst(template);
+    console.log(ast)
+
     transform(ast, {
         sIf,
         sFor,
-        sModel
+        sModel,
+        transformRef,
+        transformEvent
     });
-
-    console.log(ast)
-
     parseComponent(ast, components, data)
     return generate(ast, {})
 
@@ -87,7 +90,7 @@ function parse(context: any, ancestors: any) {
         } else if (s[0] === '<') {
 
             if (s.length === 1) {
-
+                //什么都不做
             } else if (s[1] === '/') {
                 if (s.length === 2) {
 

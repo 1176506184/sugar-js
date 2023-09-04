@@ -32,6 +32,7 @@ function makeSugar(options: Core) {
     }
 
     return {
+        vm,
         mount,
         ...data,
         install

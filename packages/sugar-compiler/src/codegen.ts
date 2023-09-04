@@ -1,8 +1,3 @@
-import {helperNameMap} from "./runtimeHelpers";
-import {isSimpleIdentifier, locStub} from "./utils";
-import {advancePos, NodeTypes} from "./compile";
-import {isArray} from "@sugar/sugar-shared";
-
 export function generate(ast, options) {
 
     const genElmChildren = (children = []) => {
@@ -166,7 +161,7 @@ function dealEvent(props) {
                 funString = `(e)=>{${prop.exp.content}}`
             }
 
-            str += `"${prop.arg.content}":{"value":${funString},"isStatic":${prop.exp.isStatic}}`
+            str += `"${prop.arg.content}":{"value":${funString},"isStatic":${prop.exp.isStatic}${prop.exp.parameters ? `,"parameters":[${prop.exp.parameters}]` : ''}}`
 
             if (prop.name === 'on' && index < props.length - 1) {
                 str += ","

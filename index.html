@@ -44,30 +44,50 @@
         SUGAR-JS
     </div>
 
-    <p class="label">计算属性</p>
+    <div>
+        <button style="margin: 5px 5px 0;" class="sugar-button" @click="updateActive">切换界面</button>
+    </div>
 
-    <p class="label">{{title.value}}</p>
+    <div s-if="active.value === 0">
+        <p class="label">计算属性</p>
 
-    <p class="label">s-if</p>
+        <p class="label">{{title.value}}</p>
 
-    <p class="label" s-if="state.num % 2 === 0">{{state.num}}</p>
+        <p class="label">外部状态值：{{store.num}}</p>
 
-    <p class="label">s-for</p>
+        <p class="label">s-if</p>
 
-    <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
-            @click="update" s-if="(item.d + state.num) % 2 > 0">
-        {{item.d + state.num}}
-    </button>
+        <p class="label">{{state.num}}</p>
 
-    <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode">新增</button>
+        <p class="label">s-for</p>
 
-    <p class="label">s-model</p>
+        <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
+                @click="update(item,state.num)">
+            {{item.d + state.num}}
+        </button>
+
+        <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode">新增</button>
+
+        <p class="label">s-model</p>
+
+        <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
+    </div>
+
+    <div s-if="active.value === 1">
+
+    </div>
 
 
 </div>
 </body>
 
 <script>
+
+
+    const {makeSugar, reactive, reckon, onMounted, ref} = SUGAR
+    const store = reactive({
+        num: 0
+    })
 
 
     var sugar = makeSugar({
@@ -88,6 +108,8 @@
                 }]
             })
 
+            const active = ref(0)
+
             function pushNode() {
                 state.list.push({
                     d: state.num + state.list.length + 1
@@ -103,12 +125,13 @@
             })
 
             onMounted(() => {
-
-
+                // state.num += 1
             })
 
-            function update() {
-                state.num += 1
+            function update(item, num) {
+                console.log(num)
+                state.num += 1;
+                item.d += num
             }
 
             function changeNum(e) {
@@ -117,6 +140,10 @@
 
             function changeChoose(e) {
                 state.choose = e
+            }
+
+            function updateActive() {
+                active.value = active.value === 1 ? 0 : 1;
             }
 
             const testRef = ref("testRef");
@@ -129,12 +156,14 @@
                 changeNum,
                 changeChoose,
                 testRef,
-                pushNode
+                pushNode,
+                store,
+                active,
+                updateActive
             }
         }
     })
 
-    sugar.install(sugarUI)
 
     sugar.mount('#app')
 
