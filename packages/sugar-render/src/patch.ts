@@ -77,7 +77,6 @@ export default function (oldVnode, newVnode) {
                     if (Object.hasOwnProperty.call(on, key)) {
                         if (on[key].value) {
                             const event = on[key].fun
-                            console.log(on)
                             event && domNode.addEventListener(key, event)
                         }
                     }
@@ -153,7 +152,6 @@ export default function (oldVnode, newVnode) {
             }
         })
 
-        console.log(on)
 
         // 处理监听事件
         for (const key in on) {

@@ -32,7 +32,7 @@ function ref(fun: Function | Object) {
         })
 
         return proxy.value
-    } else if (typeof fun === 'string' || typeof fun === 'number' || isArray(fun)) {
+    } else if (typeof fun === 'string' || typeof fun === 'number' || typeof fun === 'boolean' || isArray(fun)) {
 
         let data = reactive({
             value: fun

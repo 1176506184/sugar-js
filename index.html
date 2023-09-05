@@ -45,7 +45,7 @@
     </div>
 
     <div>
-        <button style="margin: 5px 5px 0;" class="sugar-button" @click="updateActive">切换界面</button>
+        <button style="margin: 5px 5px 0;" class="sugar-button" @click="updateActive">切换界面:{{active.value}}</button>
     </div>
 
     <div s-if="active.value === 0">
@@ -62,6 +62,7 @@
         <p class="label">s-for</p>
 
         <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
+                s-if="item.d % 2 === 0"
                 @click="update(item,state.num)">
             {{item.d + state.num}}
         </button>
@@ -79,15 +80,42 @@
 
 
 </div>
+
+<div id="sugarX">
+
+</div>
+
 </body>
 
 <script>
 
 
-    const {makeSugar, reactive, reckon, onMounted, ref} = SUGAR
+    const {makeSugar, reactive, reckon, onMounted, ref, div, createEffect, text} = SUGAR
+    const title = ref(0)
+    const className = ref("sugar-button")
+    const show = ref(false)
     const store = reactive({
         num: 0
     })
+    const App = function () {
+
+        function update() {
+            title.value += 1
+        }
+
+        div()(
+                div({
+                    className: className,
+                    click: update,
+                    show: show
+                })("sugar-x"),
+                div()(
+                        document.querySelector('#app'),
+                        text(title),
+                        text(className)
+                )
+        ).mount('#sugarX')
+    }
 
 
     var sugar = makeSugar({
@@ -129,7 +157,6 @@
             })
 
             function update(item, num) {
-                console.log(num)
                 state.num += 1;
                 item.d += num
             }
@@ -157,9 +184,9 @@
                 changeChoose,
                 testRef,
                 pushNode,
-                store,
                 active,
-                updateActive
+                updateActive,
+                store
             }
         }
     })
@@ -167,6 +194,7 @@
 
     sugar.mount('#app')
 
+    App()
 
 </script>
 </html>

@@ -20,7 +20,6 @@ export function sugarRender() {
         var htmlCode = escape2Html(serializer.serializeToString(vm.$el));
 
         render = sugarCompiler(htmlCode, components, data);
-        console.log(render)
         updateComponent(vm, el, data);
 
 

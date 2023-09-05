@@ -10,7 +10,6 @@ import {transformEvent} from "./transform/transformEvent";
 export function baseCompile(template: string, components?: any[], data?: any) {
 
     const ast = toAst(template);
-    console.log(ast)
 
     transform(ast, {
         sIf,

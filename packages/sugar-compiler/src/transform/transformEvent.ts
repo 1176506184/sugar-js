@@ -5,7 +5,6 @@ export function transformEvent(content, prop) {
         let eventStr = prop.exp.content;
         prop.exp.content = prop.exp.content.substring(0, eventStr.indexOf('('))
         prop.exp.parameters = eventStr.substring(eventStr.indexOf('(') + 1, eventStr.length - 1).split(',')
-        console.log(prop)
     }
 
 }
