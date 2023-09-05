@@ -221,11 +221,12 @@ function Save() {
 
   let param = {
     ...form,
+    dduserid: localStorage.getItem("ddid"),
     videodata: JSON.stringify(upData.value.map(r => {
       return {
         url: `https://www.youtube.com/watch?v=${r.videoId}`,
         title: r.title.runs[0].text,
-        cover: `https://i.ytimg.com/vi/${r.videoId}/hqdefault.jpg`,
+        cover: `https://i.ytimg.com/vi/${r.videoId}/maxresdefault.jpg`,
         author: author.value
       }
     }))

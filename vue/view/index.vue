@@ -195,7 +195,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v2.9",
+  version: "v3.2",
   system: 1
 });
 
@@ -426,7 +426,7 @@ onMounted(() => {
   })
 
 
-  if (!localStorage.getItem("tk")) {
+  if (!localStorage.getItem("tk") || !localStorage.getItem('ddid')) {
     nextTick(() => {
       setTimeout(() => {
         initDingLogin();
@@ -547,9 +547,11 @@ function initDingLogin() {
         // }
         success: function (data) {
           if (data.StatusCode === 200) {
+            console.log(data);
             localStorage.setItem("name", data.Data.username);
             localStorage.setItem("uid", data.Data.id);
             localStorage.setItem("tk", data.Data.token);
+            localStorage.setItem("ddid", data.Data.dduserid)
             state.isLogin = true;
             state.loginText = `已登录：${localStorage.getItem("name")}`;
           } else {

@@ -2,7 +2,7 @@ const NODE_ENV = process.env.NODE_ENV;
 let PrivateLink = {
     'trumpet': 'http://152.32.188.85',
     's': 'http://107.150.124.12/',
-    'dataCollect': 'http://test.44finefood.com/'
+    'dataCollect': 'http://captureapi.anyelse.com/'
 }
 
 console.log(NODE_ENV)
@@ -11,7 +11,7 @@ if (NODE_ENV === 'development') {
     PrivateLink = {
         'trumpet': 'http://192.168.205.34:57968/',
         's': 'http://192.168.205.34:44346',
-        'dataCollect': 'http://test.44finefood.com/'
+        'dataCollect': 'http://captureapi.anyelse.com/'
     }
 }
 
