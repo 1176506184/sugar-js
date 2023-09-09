@@ -1,7 +1,6 @@
 import {makeSugar, onMounted} from "@sugar/sugar-core";
 import {createEffect, reactive, reckon, ref} from "@sugar/sugar-reactive";
 import {createComponent} from "@sugar/sugar-component";
-import {div,text} from "@sugar/sugar-x";
 // @ts-ignore
 
 (function (global: any) {
@@ -14,8 +13,6 @@ import {div,text} from "@sugar/sugar-x";
         reckon,
         ref,
         createComponent,
-        div,
-        text
     }
 
 })(window);

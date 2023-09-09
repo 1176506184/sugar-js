@@ -57,7 +57,7 @@
 
         <p class="label">s-if</p>
 
-        <p class="label">{{state.num}}</p>
+        <p class="label" s-if="state.num % 2 === 0">{{state.num}}</p>
 
         <p class="label">s-for</p>
 
@@ -78,11 +78,6 @@
 
     </div>
 
-
-</div>
-
-<div id="sugarX">
-
 </div>
 
 </body>
@@ -90,33 +85,10 @@
 <script>
 
 
-    const {makeSugar, reactive, reckon, onMounted, ref, div, createEffect, text} = SUGAR
-    const title = ref(0)
-    const className = ref("sugar-button")
-    const show = ref(false)
+    const {makeSugar, reactive, reckon, onMounted, ref, createEffect} = SUGAR
     const store = reactive({
         num: 0
     })
-    const App = function () {
-
-        function update() {
-            title.value += 1
-        }
-
-        div()(
-                div({
-                    className: className,
-                    click: update,
-                    show: show
-                })("sugar-x"),
-                div()(
-                        document.querySelector('#app'),
-                        text(title),
-                        text(className)
-                )
-        ).mount('#sugarX')
-    }
-
 
     var sugar = makeSugar({
         bulk() {
@@ -194,7 +166,6 @@
 
     sugar.mount('#app')
 
-    App()
 
 </script>
 </html>
