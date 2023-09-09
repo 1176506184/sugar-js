@@ -1,3 +1,3 @@
-export function createSugarX() {
+export function createSugarX () {
 
 }

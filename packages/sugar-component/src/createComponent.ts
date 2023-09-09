@@ -1,14 +1,11 @@
-export function createComponent(options: any) {
+export function createComponent (options: any) {
+  const bulk = options.bulk;
+  const render = options.render;
+  const name = options.name;
 
-    let bulk = options.bulk;
-    let render = options.render
-    let name = options.name
-
-
-    return {
-        bulk,
-        render,
-        name
-    }
-
+  return {
+    bulk,
+    render,
+    name
+  };
 }
