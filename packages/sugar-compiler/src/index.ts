@@ -1,22 +1,18 @@
-import {baseCompile} from "./compile";
+import { baseCompile } from './compile';
 
+export function sugarCompiler (template, components?: any, data?: any) {
+  function compile (template = '') {
+    const astEX = baseCompile(template, components, data);
+    return createFunction(astEX);
+  }
 
-export function sugarCompiler(template, components?: any, data?: any) {
-
-    function compile(template = '') {
-        const astEX = baseCompile(template, components, data)
-        return createFunction(astEX);
-    }
-
-
-    function createFunction(code = '') {
-        return new Function(`
+  function createFunction (code = '') {
+    return new Function(`
             with(this) {
               return ${code};
             }
-        `)
-    }
+        `);
+  }
 
-    return compile(template)
-
+  return compile(template);
 }

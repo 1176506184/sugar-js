@@ -1,0 +1,6 @@
+**/*.css
+**/*.css.map
+**/*.scss
+**/*.json
+**/*.md
+**/*.html
