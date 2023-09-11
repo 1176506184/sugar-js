@@ -14,7 +14,7 @@ module.exports = {
     '@typescript-eslint/strict-boolean-expressions': 0,
     '@typescript-eslint/ban-ts-comment': 0,
     '@typescript-eslint/semi': [2, 'always'],
-    '@typescript-eslint/explicit-function-return-type': 1,
+    '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-non-null-assertion': 1,
     '@typescript-eslint/no-unused-vars': 1,
     '@typescript-eslint/prefer-optional-chain': 1,

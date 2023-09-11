@@ -409,7 +409,6 @@ function parseElement (context: any, ancestors: any) {
   const children = parse(context, ancestors);
 
   ancestors.pop();
-  // @ts-expect-error
   element.children = children;
 
   if (startsWithEndTagOpen(context.source, element.tag)) {
