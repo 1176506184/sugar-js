@@ -1,24 +1,24 @@
-import {NodeTypes} from "./compile";
+import { NodeTypes } from './compile';
 
-export const NO = (tag: string) => false
-export const isArray = Array.isArray
+export const NO = (tag: string) => false;
+export const isArray = Array.isArray;
 
-export const extend = Object.assign
+export const extend = Object.assign;
 
-export const isString = (val: unknown): val is string => typeof val === 'string'
+export const isString = (val: unknown): val is string => typeof val === 'string';
 
 export const enum PatchFlags {
-    /**
+  /**
      * Indicates an element with dynamic textContent (children fast path)
      */
-    TEXT = 1,
+  TEXT = 1,
 
-    /**
+  /**
      * Indicates an element with dynamic class binding.
      */
-    CLASS = 1 << 1,
+  CLASS = 1 << 1,
 
-    /**
+  /**
      * Indicates an element with dynamic style
      * The compiler pre-compiles static string styles into static objects
      * + detects and hoists inline static objects
@@ -29,68 +29,68 @@ export const enum PatchFlags {
      * render() { return e('div', { style }) }
      * ```
      */
-    STYLE = 1 << 2,
+  STYLE = 1 << 2,
 
-    /**
+  /**
      * Indicates an element that has non-class/style dynamic props.
      * Can also be on a component that has any dynamic props (includes
      * class/style). when this flag is present, the vnode also has a dynamicProps
      * array that contains the keys of the props that may change so the runtime
      * can diff them faster (without having to worry about removed props)
      */
-    PROPS = 1 << 3,
+  PROPS = 1 << 3,
 
-    /**
+  /**
      * Indicates an element with props with dynamic keys. When keys change, a full
      * diff is always needed to remove the old key. This flag is mutually
      * exclusive with CLASS, STYLE and PROPS.
      */
-    FULL_PROPS = 1 << 4,
+  FULL_PROPS = 1 << 4,
 
-    /**
+  /**
      * Indicates an element with event listeners (which need to be attached
      * during hydration)
      */
-    HYDRATE_EVENTS = 1 << 5,
+  HYDRATE_EVENTS = 1 << 5,
 
-    /**
+  /**
      * Indicates a fragment whose children order doesn't change.
      */
-    STABLE_FRAGMENT = 1 << 6,
+  STABLE_FRAGMENT = 1 << 6,
 
-    /**
+  /**
      * Indicates a fragment with keyed or partially keyed children
      */
-    KEYED_FRAGMENT = 1 << 7,
+  KEYED_FRAGMENT = 1 << 7,
 
-    /**
+  /**
      * Indicates a fragment with unkeyed children.
      */
-    UNKEYED_FRAGMENT = 1 << 8,
+  UNKEYED_FRAGMENT = 1 << 8,
 
-    /**
+  /**
      * Indicates an element that only needs non-props patching, e.g. ref or
      * directives (onVnodeXXX hooks). since every patched vnode checks for refs
      * and onVnodeXXX hooks, it simply marks the vnode so that a parent block
      * will track it.
      */
-    NEED_PATCH = 1 << 9,
+  NEED_PATCH = 1 << 9,
 
-    /**
+  /**
      * Indicates a component with dynamic slots (e.g. slot that references a v-for
      * iterated value, or dynamic slot names).
      * Components with this flag are always force updated.
      */
-    DYNAMIC_SLOTS = 1 << 10,
+  DYNAMIC_SLOTS = 1 << 10,
 
-    /**
+  /**
      * Indicates a fragment that was created only because the user has placed
      * comments at the root level of a template. This is a dev-only flag since
      * comments are stripped in production.
      */
-    DEV_ROOT_FRAGMENT = 1 << 11,
+  DEV_ROOT_FRAGMENT = 1 << 11,
 
-    /**
+  /**
      * SPECIAL FLAGS -------------------------------------------------------------
      * Special flags are negative integers. They are never matched against using
      * bitwise operators (bitwise matching should only happen in branches where
@@ -98,62 +98,62 @@ export const enum PatchFlags {
      * flag, simply check patchFlag === FLAG.
      */
 
-    /**
+  /**
      * Indicates a hoisted static vnode. This is a hint for hydration to skip
      * the entire sub tree since static content never needs to be updated.
      */
-    HOISTED = -1,
-    /**
+  HOISTED = -1,
+  /**
      * A special flag that indicates that the diffing algorithm should bail out
      * of optimized mode. For example, on block fragments created by renderSlot()
      * when encountering non-compiler generated slots (i.e. manually written
      * render functions, which should always be fully diffed)
      * OR manually cloneVNodes
      */
-    BAIL = -2
+  BAIL = -2
 }
 
 export const PatchFlagNames: Record<PatchFlags, string> = {
-    [PatchFlags.TEXT]: `TEXT`,
-    [PatchFlags.CLASS]: `CLASS`,
-    [PatchFlags.STYLE]: `STYLE`,
-    [PatchFlags.PROPS]: `PROPS`,
-    [PatchFlags.FULL_PROPS]: `FULL_PROPS`,
-    [PatchFlags.HYDRATE_EVENTS]: `HYDRATE_EVENTS`,
-    [PatchFlags.STABLE_FRAGMENT]: `STABLE_FRAGMENT`,
-    [PatchFlags.KEYED_FRAGMENT]: `KEYED_FRAGMENT`,
-    [PatchFlags.UNKEYED_FRAGMENT]: `UNKEYED_FRAGMENT`,
-    [PatchFlags.NEED_PATCH]: `NEED_PATCH`,
-    [PatchFlags.DYNAMIC_SLOTS]: `DYNAMIC_SLOTS`,
-    [PatchFlags.DEV_ROOT_FRAGMENT]: `DEV_ROOT_FRAGMENT`,
-    [PatchFlags.HOISTED]: `HOISTED`,
-    [PatchFlags.BAIL]: `BAIL`
-}
+  [PatchFlags.TEXT]: 'TEXT',
+  [PatchFlags.CLASS]: 'CLASS',
+  [PatchFlags.STYLE]: 'STYLE',
+  [PatchFlags.PROPS]: 'PROPS',
+  [PatchFlags.FULL_PROPS]: 'FULL_PROPS',
+  [PatchFlags.HYDRATE_EVENTS]: 'HYDRATE_EVENTS',
+  [PatchFlags.STABLE_FRAGMENT]: 'STABLE_FRAGMENT',
+  [PatchFlags.KEYED_FRAGMENT]: 'KEYED_FRAGMENT',
+  [PatchFlags.UNKEYED_FRAGMENT]: 'UNKEYED_FRAGMENT',
+  [PatchFlags.NEED_PATCH]: 'NEED_PATCH',
+  [PatchFlags.DYNAMIC_SLOTS]: 'DYNAMIC_SLOTS',
+  [PatchFlags.DEV_ROOT_FRAGMENT]: 'DEV_ROOT_FRAGMENT',
+  [PatchFlags.HOISTED]: 'HOISTED',
+  [PatchFlags.BAIL]: 'BAIL'
+};
 
 export const locStub = {
-    source: '',
-    start: { line: 1, column: 1, offset: 0 },
-    end: { line: 1, column: 1, offset: 0 }
-}
+  source: '',
+  start: { line: 1, column: 1, offset: 0 },
+  end: { line: 1, column: 1, offset: 0 }
+};
 
-const nonIdentifierRE = /^\d|[^\$\w]/
+const nonIdentifierRE = /^\d|[^\$\w]/;
 
 export const isSimpleIdentifier = (name: string): boolean =>
-    !nonIdentifierRE.test(name)
+  !nonIdentifierRE.test(name);
 
-export function isText(
-    node
+export function isText (
+  node
 ) {
-    return node.type === NodeTypes.INTERPOLATION || node.type === NodeTypes.TEXT;
+  return node.type === NodeTypes.INTERPOLATION || node.type === NodeTypes.TEXT;
 }
 
-export function createCompoundExpression(
-    children,
-    loc = locStub
+export function createCompoundExpression (
+  children,
+  loc = locStub
 ) {
-    return {
-        type: NodeTypes.COMPOUND_EXPRESSION,
-        loc,
-        children
-    }
+  return {
+    type: NodeTypes.COMPOUND_EXPRESSION,
+    loc,
+    children
+  };
 }
