@@ -1,15 +1,17 @@
-import {isDef, isUndef, nodeOps} from '@sugar/sugar-shared';
+import { isDef, isUndef, nodeOps } from '@sugar/sugar-shared';
+import { isComponent } from './utils';
 
-export default function patch(vm, newVnode) {
-
+export default function patch (vm, newVnode) {
   let oldVnode = vm._vnode;
   if (!oldVnode.elm) {
     oldVnode = emptyNodeAt(oldVnode);
   }
+
   let newDom = newVnode.elm;
   if (!newVnode.elm) {
     newDom = createElement(newVnode);
   }
+
   if (isSameNode(oldVnode, newVnode)) {
     patchVnode(newVnode, oldVnode);
   } else {
@@ -19,10 +21,10 @@ export default function patch(vm, newVnode) {
     }
   }
 
-  function createElement(vnode) {
+  function createElement (vnode) {
     let domNode;
     if (vnode.tag) {
-      if (typeof vnode.tag === 'string') {
+      if (typeof vnode.tag === 'string' && !isComponent(vnode, vm.components)) {
         domNode = document.createElement(vnode.tag);
         const {
           data = {}
@@ -58,6 +60,8 @@ export default function patch(vm, newVnode) {
             }
           }
         }
+      } else if (isComponent(vnode, vm.components)) {
+
       }
     } else if (vnode.text !== undefined) {
       domNode = document.createTextNode(vnode.text);
@@ -66,7 +70,7 @@ export default function patch(vm, newVnode) {
     return domNode;
   }
 
-  function patchVnode(newVnode, oldVnode) {
+  function patchVnode (newVnode, oldVnode) {
     if (oldVnode === newVnode) {
       return;
     }
@@ -95,7 +99,7 @@ export default function patch(vm, newVnode) {
     }
   }
 
-  function patchAttribute(newVnode, oldVnode) {
+  function patchAttribute (newVnode, oldVnode) {
     const {
       data = {}
     } = newVnode || {};
@@ -122,13 +126,13 @@ export default function patch(vm, newVnode) {
     }
   }
 
-  function clearEmptyVnode(Vnodes) {
+  function clearEmptyVnode (Vnodes) {
     return Vnodes.filter((Vnode) => {
       return Vnode.tag || Vnode.text === '' || Vnode.text;
     });
   }
 
-  function updateChildren(parentDom, oldCh, newCh) {
+  function updateChildren (parentDom, oldCh, newCh) {
     oldCh = clearEmptyVnode(oldCh);
     newCh = clearEmptyVnode(newCh);
 
@@ -186,7 +190,6 @@ export default function patch(vm, newVnode) {
         oldENode = oldCh[--oldAftIndex];
         newENode = newCh[--newAftIndex];
       } else {
-
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldPreIndex, oldAftIndex);
         idxInOld = isDef(newSNode.key) ? oldKeyToIdx[newSNode.key] : null;
         if (isUndef(idxInOld)) {
@@ -226,7 +229,7 @@ export default function patch(vm, newVnode) {
     }
   }
 
-  function createKeyToOldIdx(children, beginIdx, endIdx) {
+  function createKeyToOldIdx (children, beginIdx, endIdx) {
     let i, key;
     const map = {};
     for (i = beginIdx; i <= endIdx; ++i) {
@@ -237,7 +240,7 @@ export default function patch(vm, newVnode) {
   }
 }
 
-export function bindAttrAndEvent(vm, vnode) {
+export function bindAttrAndEvent (vm, vnode) {
   const {
     data = {}
   } = vnode || {};
@@ -271,11 +274,11 @@ export function bindAttrAndEvent(vm, vnode) {
   }
 }
 
-export function emptyNodeAt(elm) {
+export function emptyNodeAt (elm) {
   return new VNode(elm.tagName.toLowerCase(), {}, [], elm);
 }
 
-function isSameNode(o, n) {
+function isSameNode (o, n) {
   return o.key === n.key && o.tag === n.tag && isDef(o.data) === isDef(n.data);
 }
 
@@ -287,7 +290,7 @@ class VNode {
   private readonly text: undefined;
   private readonly key: undefined;
 
-  constructor(tag?, data?, children?, elm?) {
+  constructor (tag?, data?, children?, elm?) {
     this.tag = tag;
     this.data = data;
     // @ts-expect-error

@@ -1,3 +1,6 @@
-export function transformRef (context, data) {
-  console.log(context, data);
+export function transformRef (context) {
+  const {
+    props,
+    type
+  } = context;
 }

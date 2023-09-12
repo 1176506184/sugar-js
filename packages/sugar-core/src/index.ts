@@ -1,5 +1,5 @@
 import { type Core } from './types';
-import onMounted, { mountHandleList, clearMounted, updateActiveId } from './hooks/onMounted';
+import onMounted, { mountHandleList, updateActiveId } from './hooks/onMounted';
 import { sugarRender } from '@sugar/sugar-render';
 import { guid } from './utils/guid';
 
@@ -27,7 +27,7 @@ function makeSugar (options: Core) {
 
   function install (components) {
     components.forEach((component) => {
-      vm.components.push(component);
+      vm.components[component.name] = component;
     });
   }
 

@@ -20,6 +20,7 @@ export function transform (context, helpers) {
       }
     });
 
+
     if (context.children) {
       context.children.forEach((child) => {
         work(child);

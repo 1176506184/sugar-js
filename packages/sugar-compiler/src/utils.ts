@@ -1,4 +1,4 @@
-import { NodeTypes } from './compile';
+import { NodeTypes } from './parse';
 
 export const NO = (tag: string) => false;
 export const isArray = Array.isArray;

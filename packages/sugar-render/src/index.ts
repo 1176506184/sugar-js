@@ -1,13 +1,13 @@
-import {sugarCompiler} from '@sugar/sugar-compiler';
-import {createEffect} from '../../../src/main';
-import patchEx, {bindAttrAndEvent} from './patch';
-import {escape2Html} from '@sugar/sugar-shared';
+import { sugarCompiler } from '@sugar/sugar-compiler';
+import { createEffect } from '../../../src/main';
+import patchEx, { bindAttrAndEvent } from './patch';
+import { escape2Html } from '@sugar/sugar-shared';
 
-export function sugarRender() {
+export function sugarRender () {
   let render = null;
   let components = [];
 
-  function mounted(vm, el, data) {
+  function mounted (vm, el, data) {
     if (!(el instanceof HTMLElement)) {
       el = document.querySelector(el);
     }
@@ -20,8 +20,8 @@ export function sugarRender() {
     updateComponent(vm, el, data);
   }
 
-  function updateComponent(vm, el, data) {
-    function update(vm, el) {
+  function updateComponent (vm, el, data) {
+    function update (vm, el) {
       Object.keys(data).forEach((key) => {
         vm[key] = data[key];
       });
@@ -45,26 +45,26 @@ export function sugarRender() {
   };
 }
 
-function bindT(vm) {
-  function _c(tag = 'div', data = {}, children = []) {
+function bindT (vm) {
+  function _c (tag = 'div', data = {}, children = []) {
     return createElement(tag, data, children);
   }
 
-  function _v(str) {
+  function _v (str) {
     const vnode: any = new VNode();
     vnode.text = str;
     return vnode;
   }
 
-  function _s(val) {
+  function _s (val) {
     return String(val);
   }
 
-  function _e() {
+  function _e () {
     return new VNode();
   }
 
-  function _for(fun: Function, data: any) {
+  function _for (fun: Function, data: any) {
     const nodes = [];
     data.forEach((item, index) => {
       nodes.push({
@@ -81,7 +81,7 @@ function bindT(vm) {
   vm._for = _for;
 }
 
-function createElement(tag = 'div', data = {}, children = []) {
+function createElement (tag = 'div', data = {}, children = []) {
   const createVNode = (tag = 'div', data = {}, children = []) => {
     const vnodeChildren = [];
 
@@ -105,7 +105,7 @@ class VNode {
   private readonly text: undefined;
   private readonly key: undefined;
 
-  constructor(tag?, data?, children?) {
+  constructor (tag?, data?, children?) {
     this.tag = tag;
     this.data = data;
     // @ts-expect-error

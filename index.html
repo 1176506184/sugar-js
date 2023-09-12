@@ -85,10 +85,32 @@
 <script>
 
 
-    const {makeSugar, reactive, reckon, onMounted, ref, createEffect} = SUGAR
+    const {
+        makeSugar,
+        reactive,
+        reckon,
+        onMounted,
+        ref,
+        createEffect
+    } = SUGAR;
     const store = reactive({
         num: 0
-    })
+    });
+
+    const button = {
+        name: 'sugar-button',
+        render: `<button class="sugar-button" @click="click"></button>`,
+        bulk(ctx) {
+
+            function click(...args) {
+                ctx.click(...args);
+            }
+
+            return {
+                click
+            };
+        }
+    };
 
     var sugar = makeSugar({
         bulk() {
@@ -100,52 +122,52 @@
                 fontSize: 15,
                 choose: 1,
                 selectList: [{
-                    label: "选项一",
+                    label: '选项一',
                     value: 1
                 }, {
-                    label: "选项二",
+                    label: '选项二',
                     value: 2
                 }]
-            })
+            });
 
-            const active = ref(0)
+            const active = ref(0);
 
             function pushNode() {
                 state.list.push({
                     d: state.num + state.list.length + 1
-                })
+                });
             }
 
             const title = reckon(() => {
-                return state.num + 2
-            })
+                return state.num + 2;
+            });
 
             const styleText = reckon(() => {
                 return `font-size:${state.fontSize}px`;
-            })
+            });
 
             onMounted(() => {
                 // state.num += 1
-            })
+            });
 
             function update(item, num) {
                 state.num += 1;
-                item.d += num
+                item.d += num;
             }
 
             function changeNum(e) {
-                state.num = e.target.value
+                state.num = e.target.value;
             }
 
             function changeChoose(e) {
-                state.choose = e
+                state.choose = e;
             }
 
             function updateActive() {
                 active.value = active.value === 1 ? 0 : 1;
             }
 
-            const testRef = ref("testRef");
+            const testRef = ref('testRef');
 
             return {
                 state,
@@ -159,12 +181,13 @@
                 active,
                 updateActive,
                 store
-            }
+            };
         }
-    })
+    });
 
+    sugar.install([button]);
 
-    sugar.mount('#app')
+    sugar.mount('#app');
 
 
 </script>
