@@ -2,7 +2,6 @@ import { isDef, isUndef, nodeOps } from '@sugar/sugar-shared';
 import { isComponent } from './utils';
 
 export default function patch (vm, newVnode) {
-  console.log(newVnode);
   let oldVnode = vm._vnode;
   if (!oldVnode.elm) {
     oldVnode = emptyNodeAt(oldVnode);
@@ -244,6 +243,10 @@ export default function patch (vm, newVnode) {
 }
 
 export function bindAttrAndEvent (vm, vnode) {
+  if (vnode.static) {
+    return;
+  }
+
   const {
     data = {}
   } = vnode || {};

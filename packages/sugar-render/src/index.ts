@@ -82,12 +82,8 @@ function bindT (vm) {
   }
 
   function _sugar (appId) {
-    bindTVNode(vm.sugar[appId].vm._vnode, appId);
+    vm.sugar[appId].vm._vnode.static = true;
     return vm.sugar[appId].vm._vnode;
-  }
-
-  function bindTVNode (_vnode, appId) {
-    _vnode.appId = appId;
   }
 
   vm._c = _c;
