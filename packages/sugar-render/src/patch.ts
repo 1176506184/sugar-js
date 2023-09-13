@@ -115,12 +115,23 @@ export default function patch (vm, newVnode) {
       attrs = {},
       on = {}
     } = data;
+
     Object.keys(attrs).forEach((attr) => {
       newVnode.elm.setAttribute(attr, attrs[attr]);
       if (attr === 'value') {
         newVnode.elm.value = attrs[attr];
       }
     });
+
+    const oldOn = oldVnode.data.on;
+
+    for (const key in oldOn) {
+      if (Object.hasOwnProperty.call(oldOn, key)) {
+        if (oldOn[key].value) {
+          newVnode.elm.removeEventListener(key, oldVnode.data.on[key].fun);
+        }
+      }
+    }
 
     // 处理监听事件
     for (const key in on) {
