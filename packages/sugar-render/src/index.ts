@@ -15,9 +15,13 @@ export function sugarRender () {
     vm._vnode = el;
     components = vm.components;
     const serializer = new XMLSerializer();
-    const htmlCode = escape2Html(serializer.serializeToString(vm.$el));
-    render = sugarCompiler(htmlCode, components, data);
+    const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
+    render = sugarCompiler(htmlCode, components, vm);
     updateComponent(vm, el, data);
+
+    vm.forceUpdate = function () {
+      updateComponent(vm, el, data);
+    };
   }
 
   function updateComponent (vm, el, data) {
@@ -29,6 +33,9 @@ export function sugarRender () {
       bindT(vm);
 
       createEffect(() => {
+        if (vm.parent) {
+          vm.parent.forceUpdate();
+        }
         const vnode = render.call(vm);
         bindAttrAndEvent(vm, vnode);
         patchEx(vm, vnode);
@@ -64,7 +71,7 @@ function bindT (vm) {
     return new VNode();
   }
 
-  function _for (fun: Function, data: any) {
+  function _loop (fun: Function, data: any) {
     const nodes = [];
     data.forEach((item, index) => {
       nodes.push({
@@ -74,11 +81,21 @@ function bindT (vm) {
     return nodes;
   }
 
+  function _sugar (appId) {
+    bindTVNode(vm.sugar[appId].vm._vnode, appId);
+    return vm.sugar[appId].vm._vnode;
+  }
+
+  function bindTVNode (_vnode, appId) {
+    _vnode.appId = appId;
+  }
+
   vm._c = _c;
   vm._v = _v;
   vm._s = _s;
   vm._e = _e;
-  vm._for = _for;
+  vm._loop = _loop;
+  vm._sugar = _sugar;
 }
 
 function createElement (tag = 'div', data = {}, children = []) {
@@ -104,6 +121,7 @@ class VNode {
   private readonly context: undefined;
   private readonly text: undefined;
   private readonly key: undefined;
+  private readonly sugar: any;
 
   constructor (tag?, data?, children?) {
     this.tag = tag;

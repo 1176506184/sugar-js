@@ -2,6 +2,7 @@ import { isDef, isUndef, nodeOps } from '@sugar/sugar-shared';
 import { isComponent } from './utils';
 
 export default function patch (vm, newVnode) {
+  console.log(newVnode);
   let oldVnode = vm._vnode;
   if (!oldVnode.elm) {
     oldVnode = emptyNodeAt(oldVnode);
@@ -65,6 +66,8 @@ export default function patch (vm, newVnode) {
       }
     } else if (vnode.text !== undefined) {
       domNode = document.createTextNode(vnode.text);
+    } else if (vnode.elm !== undefined) {
+      domNode = vnode.elm;
     }
     vnode.elm = domNode;
     return domNode;
@@ -81,7 +84,7 @@ export default function patch (vm, newVnode) {
       if (oldVnode.text !== newVnode.text) {
         oldVnode.elm.nodeValue = newVnode.text;
       }
-    } else {
+    } else if (newVnode?.tag) {
       patchAttribute(newVnode, oldVnode);
 
       if (oldVnode.children?.length) {
@@ -97,6 +100,12 @@ export default function patch (vm, newVnode) {
         }
       }
     }
+  }
+
+  function clearEmptyVnode (Vnodes) {
+    return Vnodes.filter((Vnode) => {
+      return Vnode.tag || Vnode.text === '' || Vnode.text || Vnode.elm;
+    });
   }
 
   function patchAttribute (newVnode, oldVnode) {
@@ -124,12 +133,6 @@ export default function patch (vm, newVnode) {
         }
       }
     }
-  }
-
-  function clearEmptyVnode (Vnodes) {
-    return Vnodes.filter((Vnode) => {
-      return Vnode.tag || Vnode.text === '' || Vnode.text;
-    });
   }
 
   function updateChildren (parentDom, oldCh, newCh) {
@@ -247,7 +250,7 @@ export function bindAttrAndEvent (vm, vnode) {
   const {
     on = {}
   } = data;
-  if (vnode.tag) {
+  if (vnode?.tag) {
     // 处理监听事件
     for (const key in on) {
       if (Object.hasOwnProperty.call(on, key)) {
@@ -255,7 +258,6 @@ export function bindAttrAndEvent (vm, vnode) {
           on[key].fun = function (e) {
             const parameters = on[key].parameters;
             if (parameters?.length) {
-              console.log(vm);
               vm.data[on[key].value](...parameters);
             } else {
               vm.data[on[key].value](e);
@@ -268,7 +270,11 @@ export function bindAttrAndEvent (vm, vnode) {
     }
     if (vnode.children) {
       for (let i = 0; i < vnode.children.length; i++) {
-        bindAttrAndEvent(vm, vnode.children[i]);
+        if (vnode.children[i].appId) {
+          bindAttrAndEvent(vm.sugar[vnode.children[i].appId].vm, vnode.children[i]);
+        } else {
+          bindAttrAndEvent(vm, vnode.children[i]);
+        }
       }
     }
   }

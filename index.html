@@ -69,9 +69,12 @@
 
         <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode">新增</button>
 
+        <sugar-button>新增</sugar-button>
+
         <p class="label">s-model</p>
 
         <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
+
     </div>
 
     <div s-if="active.value === 1">
@@ -99,15 +102,18 @@
 
     const button = {
         name: 'sugar-button',
-        render: `<button class="sugar-button" @click="click"></button>`,
+        render: `<button class="sugar-button"  style="margin: 5px 5px 0;" @click="click">{{text.value}}</button>`,
         bulk(ctx) {
 
-            function click(...args) {
-                ctx.click(...args);
+            const text = ref(0);
+
+            function click() {
+                text.value +=1;
             }
 
             return {
-                click
+                click,
+                text
             };
         }
     };

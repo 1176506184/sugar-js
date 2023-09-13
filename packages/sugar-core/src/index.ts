@@ -9,17 +9,19 @@ function makeSugar (options: Core) {
   const data = options.bulk();
   const { mounted } = sugarRender();
   const vm = {
+    render: options.render,
     _vnode: null,
     data,
     $el: null as any,
     appId,
-    components: []
+    components: [],
+    sugar: {}
   };
 
   function mount (el) {
-    vm.$el = document.querySelector(`${el}`);
+    vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
     mounted(vm, vm.$el, data);
-    mountHandleList[appId].forEach((item) => {
+    mountHandleList[appId]?.forEach((item) => {
       item.fun();
       item.used = true;
     });

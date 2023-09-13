@@ -1,11 +1,15 @@
+import { NodeTypes } from './parse';
+
 export function generate (ast, options) {
   const genElmChildren = (children = []) => {
     let str = '[';
     children.forEach((child, i) => {
       if (child.type === 1 || child.type === 5) {
-        str += getElm(child) + `${i == children.length - 1 ? '' : ','}`;
+        str += getElm(child) + `${i === children.length - 1 ? '' : ','}`;
       } else if (child.type === 2 && !!child.content.trim()) {
-        str += getElm(child) + `${i == children.length - 1 ? '' : ','}`;
+        str += getElm(child) + `${i === children.length - 1 ? '' : ','}`;
+      } else if (child.type === NodeTypes.COMPONENT) {
+        str += `_sugar('${child.sugar.vm.appId}')` + `${i === children.length - 1 ? '' : ','}`;
       }
     });
     return str + ']';
@@ -94,7 +98,7 @@ function transformFor (ast) {
     }
   });
 
-  return `..._for((${forStatment.item})=>{
+  return `..._loop((${forStatment.item})=>{
         return ${son}
                             },${forStatment.exp})`;
 }
