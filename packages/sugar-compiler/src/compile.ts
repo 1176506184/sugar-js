@@ -20,7 +20,7 @@ export function baseCompile (template: string, components?: any[], vm?: any) {
     vm
   });
 
-  return generate(ast, {});
+  return generate(ast);
 }
 
 function toAst (template: string) {

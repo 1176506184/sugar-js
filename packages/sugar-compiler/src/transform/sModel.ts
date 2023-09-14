@@ -23,7 +23,7 @@ export function sModel (context, prop) {
     },
     exp: {
       type: 4,
-      content: `if(typeof ${prop.value.content} === 'number'){${prop.value.content} = Number(e.target.value)}else{${prop.value.content} = e.target.value}`,
+      content: `if(typeof ${prop.value.content} === 'number' && ${prop.value.content}){${prop.value.content} = Number(e.target.value)}else{${prop.value.content} = e.target.value}`,
       isStatic: true,
       constType: 0
     }

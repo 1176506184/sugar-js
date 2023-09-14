@@ -4,14 +4,14 @@ interface Core {
   name?: string
   render?: string | HTMLElement
   renderDom: HTMLElement
-  prop?: any
+  props?: any
   appId?: any
   components?: any
   pId?: any
   ctx?: Object
   forArr: any[]
   el?: any
-
+  slot?: any
 }
 
 export type { Core };

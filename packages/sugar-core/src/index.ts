@@ -6,7 +6,7 @@ import { guid } from './utils/guid';
 function makeSugar (options: Core) {
   const appId = guid();
   updateActiveId(appId);
-  const data = options.bulk();
+  const data = options.bulk(options.props);
   const { mounted } = sugarRender();
   const vm = {
     render: options.render,
@@ -15,7 +15,8 @@ function makeSugar (options: Core) {
     $el: null as any,
     appId,
     components: [],
-    sugar: {}
+    sugar: {},
+    slot: options.slot
   };
 
   function mount (el) {

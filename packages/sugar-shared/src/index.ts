@@ -63,15 +63,17 @@ const is = {
   Function: (val) => Object.prototype.toString.call(val) === '[object Function]'
 };
 
-export function deepClone (value, weakMap = new WeakMap()) {
+export function deepClone (value, weakMap = new WeakMap(), strict = false) {
 // 2.1 函数浅拷贝
   /* if (is.Function(value)) return value */
 
   // 2.2 函数深拷贝
-  if (is.Function(value)) {
+  if (is.Function(value) && strict) {
     if (/^function/.test(value.toString()) || /^\(\)/.test(value.toString())) { return new Function('return ' + value.toString())(); }
 
     return new Function('return function ' + value.toString())();
+  } else if (is.Function(value)) {
+    return value;
   }
 
   // 3.Date 深拷贝

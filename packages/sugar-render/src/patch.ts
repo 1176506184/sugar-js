@@ -129,9 +129,8 @@ export default function patch (vm, newVnode) {
     Object.keys(newAttrs).forEach((attr) => {
       if (attr === 'value') {
         el.value = newAttrs[attr];
-      } else {
-        el.setAttribute(attr, newAttrs[attr]);
       }
+      el.setAttribute(attr, newAttrs[attr]);
     });
   }
 

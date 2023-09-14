@@ -1,7 +1,7 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import { createEffect } from '../../../src/main';
 import patchEx from './patch';
-import { escape2Html } from '@sugar/sugar-shared';
+import { deepClone, escape2Html } from '@sugar/sugar-shared';
 
 export function sugarRender () {
   let render = null;
@@ -81,9 +81,24 @@ function bindT (vm) {
     return nodes;
   }
 
-  function _sugar (appId) {
-    vm.sugar[appId].vm._vnode.static = true;
-    return vm.sugar[appId].vm._vnode;
+  function _sugar (appId, _slot) {
+    vm.sugar[appId]._vnode.static = true;
+    const sugarVnode = deepClone(vm.sugar[appId]._vnode);
+    bindSlot(sugarVnode, _slot);
+    return sugarVnode;
+  }
+
+  function bindSlot (sugarNode, _slot) {
+    let isFind = false;
+    sugarNode.children.forEach((child, index) => {
+      if (child.tag === 'slot') {
+        isFind = true;
+        sugarNode.children.splice(index, 1, ..._slot);
+      }
+      if (child.children && !isFind) {
+        bindSlot(child, _slot);
+      }
+    });
   }
 
   vm._c = _c;

@@ -1,6 +1,6 @@
 import { NodeTypes } from './parse';
 
-export function generate (ast, options) {
+export function generate (ast) {
   const genElmChildren = (children = []) => {
     let str = '[';
     children.forEach((child, i) => {
@@ -9,7 +9,7 @@ export function generate (ast, options) {
       } else if (child.type === 2 && !!child.content.trim()) {
         str += getElm(child) + `${i === children.length - 1 ? '' : ','}`;
       } else if (child.type === NodeTypes.COMPONENT) {
-        str += `_sugar('${child.sugar.vm.appId}')` + `${i === children.length - 1 ? '' : ','}`;
+        str += `_sugar('${child.sugar.vm.appId}',${genElmChildren(child.children)})` + `${i === children.length - 1 ? '' : ','}`;
       }
     });
     return str + ']';
@@ -79,7 +79,7 @@ function transformFor (ast) {
   son += '}},[';
 
   ast.children.forEach((astChild, index) => {
-    son += generate(astChild, forStatment.item);
+    son += generate(astChild);
 
     if (index < ast.children.length - 1) {
       son += ',';
