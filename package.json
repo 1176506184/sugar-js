@@ -1,6 +1,6 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.1.71",
+  "version": "1.1.72",
   "description": "提供简单的响应式UI能力，重构了下",
   "devDependencies": {
     "@babel/core": "^7.20.12",
@@ -27,7 +27,7 @@
     "rollup-plugin-typescript2": "^0.34.1",
     "rollup-plugin-uglify": "^6.0.4"
   },
-  "main": "dist/sugar.bundle.js",
+  "main": "src/main.ts",
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",
