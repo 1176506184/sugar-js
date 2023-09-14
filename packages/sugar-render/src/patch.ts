@@ -41,13 +41,14 @@ export default function patch (vm, newVnode) {
             domNode.setAttribute(key, value);
           }
         }
-
+        const _vei = domNode._vei || (domNode._vei = {});
         // 处理监听事件
         for (const key in on) {
           if (Object.hasOwnProperty.call(on, key)) {
             if (on[key].value) {
               const event = on[key].fun;
               event && domNode.addEventListener(key, event);
+              _vei[key] = event;
             }
           }
         }
@@ -76,16 +77,13 @@ export default function patch (vm, newVnode) {
     if (oldVnode === newVnode) {
       return;
     }
-
     newVnode.elm = oldVnode.elm;
-
     if (newVnode.text) {
       if (oldVnode.text !== newVnode.text) {
         oldVnode.elm.nodeValue = newVnode.text;
       }
-    } else if (newVnode?.tag) {
-      patchAttribute(newVnode, oldVnode);
-
+    } else if (newVnode.tag) {
+      patchProps(newVnode, oldVnode);
       if (oldVnode.children?.length) {
         updateChildren(oldVnode.elm, oldVnode.children, newVnode.children);
       } else {
@@ -107,42 +105,45 @@ export default function patch (vm, newVnode) {
     });
   }
 
-  function patchAttribute (newVnode, oldVnode) {
+  function patchProps (newVnode, oldVnode) {
     const {
-      data = {}
-    } = newVnode || {};
+      data,
+      elm
+    } = newVnode;
     const {
       attrs = {},
       on = {}
     } = data;
+    const oldAttrs = oldVnode.data.attrs;
+    patchAttrs(elm, oldAttrs, attrs);
+    patchEvent(elm, on);
+  }
 
-    Object.keys(attrs).forEach((attr) => {
-      newVnode.elm.setAttribute(attr, attrs[attr]);
+  function patchAttrs (el, oldAttrs, newAttrs) {
+    if (oldAttrs) {
+      Object.keys(oldAttrs).forEach((attr) => {
+        el.removeAttribute(attr);
+      });
+    }
+
+    Object.keys(newAttrs).forEach((attr) => {
       if (attr === 'value') {
-        newVnode.elm.value = attrs[attr];
+        el.value = newAttrs[attr];
+      } else {
+        el.setAttribute(attr, newAttrs[attr]);
       }
     });
+  }
 
-    const oldOn = oldVnode.data.on;
-
-    for (const key in oldOn) {
-      if (Object.hasOwnProperty.call(oldOn, key)) {
-        if (oldOn[key].value) {
-          newVnode.elm.removeEventListener(key, oldVnode.data.on[key].fun);
-        }
-      }
-    }
-
-    // 处理监听事件
-    for (const key in on) {
-      if (Object.hasOwnProperty.call(on, key)) {
-        if (on[key].value) {
-          const event = on[key].fun;
-          newVnode.elm.removeEventListener(key, oldVnode.data.on[key].fun);
-          newVnode.elm.addEventListener(key, event);
-        }
-      }
-    }
+  function patchEvent (el, newOn) {
+    const _vei = el._vei || (el._vei = {});
+    Object.keys(_vei).forEach((eventName) => {
+      el.removeEventListener(eventName, _vei[eventName]);
+    });
+    Object.keys(newOn).forEach((eventName) => {
+      _vei[eventName] = newOn[eventName].fun;
+      el.addEventListener(eventName, newOn[eventName].fun);
+    });
   }
 
   function updateChildren (parentDom, oldCh, newCh) {
@@ -250,47 +251,6 @@ export default function patch (vm, newVnode) {
       if (isDef(key)) map[key] = i;
     }
     return map;
-  }
-}
-
-export function bindAttrAndEvent (vm, vnode) {
-  if (vnode.static) {
-    return;
-  }
-
-  const {
-    data = {}
-  } = vnode || {};
-  const {
-    on = {}
-  } = data;
-  if (vnode?.tag) {
-    // 处理监听事件
-    for (const key in on) {
-      if (Object.hasOwnProperty.call(on, key)) {
-        if (on[key].value && !on[key].isStatic) {
-          on[key].fun = function (e) {
-            const parameters = on[key].parameters;
-            if (parameters?.length) {
-              vm.data[on[key].value](...parameters);
-            } else {
-              vm.data[on[key].value](e);
-            }
-          };
-        } else {
-          on[key].fun = on[key].value;
-        }
-      }
-    }
-    if (vnode.children) {
-      for (let i = 0; i < vnode.children.length; i++) {
-        if (vnode.children[i].appId) {
-          bindAttrAndEvent(vm.sugar[vnode.children[i].appId].vm, vnode.children[i]);
-        } else {
-          bindAttrAndEvent(vm, vnode.children[i]);
-        }
-      }
-    }
   }
 }
 

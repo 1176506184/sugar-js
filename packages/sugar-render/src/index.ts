@@ -1,6 +1,6 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import { createEffect } from '../../../src/main';
-import patchEx, { bindAttrAndEvent } from './patch';
+import patchEx from './patch';
 import { escape2Html } from '@sugar/sugar-shared';
 
 export function sugarRender () {
@@ -128,5 +128,47 @@ class VNode {
     this.context = undefined;
     this.text = undefined;
     this.key = data?.attrs?.key;
+  }
+}
+
+export function bindAttrAndEvent (vm, vnode) {
+  if (vnode.static) {
+    return;
+  }
+
+  const {
+    data = {}
+  } = vnode || {};
+  const {
+    on = {}
+  } = data;
+  if (vnode?.tag) {
+    // 处理监听事件
+    for (const key in on) {
+      if (Object.hasOwnProperty.call(on, key)) {
+        if (on[key].value && !on[key].isStatic) {
+          on[key].value = vm.data[on[key].value];
+          on[key].fun = function (e) {
+            const parameters = on[key].parameters;
+            if (parameters?.length) {
+              on[key].value(...parameters);
+            } else {
+              on[key].value(e);
+            }
+          };
+        } else {
+          on[key].fun = on[key].value;
+        }
+      }
+    }
+    if (vnode.children) {
+      for (let i = 0; i < vnode.children.length; i++) {
+        if (vnode.children[i].appId) {
+          bindAttrAndEvent(vm.sugar[vnode.children[i].appId].vm, vnode.children[i]);
+        } else {
+          bindAttrAndEvent(vm, vnode.children[i]);
+        }
+      }
+    }
   }
 }
