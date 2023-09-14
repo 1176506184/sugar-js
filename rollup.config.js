@@ -1,8 +1,6 @@
 import replace from 'rollup-plugin-replace';
-import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
-import { terser } from 'rollup-plugin-terser';
 import { uglify } from 'rollup-plugin-uglify';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
@@ -20,7 +18,7 @@ export default {
   }, {
     file: isDev ? 'dist/sugar.bundle.js' : 'dist/sugar.bundle.js',
     name: 'Sugar',
-    format: 'cjs',
+    format: 'es',
     sourceMap: true
   }],
   plugins: [
