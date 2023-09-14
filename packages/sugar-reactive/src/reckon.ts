@@ -1,58 +1,24 @@
 import reactive from './reactive';
-import { isArray } from '@sugar/sugar-shared';
-
-const eval2 = eval;
+import { createEffect, getCurrentObserver } from './signal/createEffect';
 
 function reckon (fun: Function) {
   const result = {};
+  let lock = false;
+  let cacheValue = null;
+  createEffect(() => {
+    lock = false;
+    cacheValue = fun();
+  });
   return new Proxy(result, {
     get: () => {
-      try {
-        return eval2(fun());
-      } catch (e) {
+      if (lock) {
+        return cacheValue;
+      } else {
+        lock = true;
         return fun();
       }
     }
   });
 }
 
-function ref (fun: Function | Object) {
-  const result = {};
-  if (typeof fun === 'function') {
-    const proxy: any = new Proxy(result, {
-      get: () => {
-        try {
-          return eval2(fun());
-        } catch (e) {
-          return fun();
-        }
-      }
-    });
-
-    return proxy.value;
-  } else if (typeof fun === 'string' || typeof fun === 'number' || typeof fun === 'boolean' || isArray(fun)) {
-    const data = reactive({
-      value: fun
-    });
-
-    return Object.defineProperty(result, 'value', {
-      get () {
-        return data.value;
-      },
-      set (newValue) {
-        if (newValue !== data.value) {
-          data.value = newValue;
-        }
-      }
-    });
-  } else {
-    return Array.from(reactive({
-      ...fun
-    }));
-  }
-}
-
 export default reckon;
-export {
-  ref
-};
