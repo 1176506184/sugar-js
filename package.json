@@ -27,6 +27,7 @@
     "rollup-plugin-typescript2": "^0.34.1",
     "rollup-plugin-uglify": "^6.0.4"
   },
+  "main": "dist/sugar.bundle.js",
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",

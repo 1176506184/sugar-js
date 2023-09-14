@@ -12,12 +12,17 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 export default {
   input: 'src/main.ts',
-  output: {
+  output: [{
     file: isDev ? 'dist/sugar.js' : 'dist/sugar.js',
     name: 'Sugar',
     format: 'umd',
     sourceMap: true
-  },
+  }, {
+    file: isDev ? 'dist/sugar.bundle.js' : 'dist/sugar.bundle.js',
+    name: 'Sugar',
+    format: 'cjs',
+    sourceMap: true
+  }],
   plugins: [
     babel({
       exclude: 'node_modules/**'
