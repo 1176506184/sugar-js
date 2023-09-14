@@ -1,6 +1,6 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.1.74",
+  "version": "1.1.75",
   "description": "提供简单的响应式UI能力，重构了下",
   "devDependencies": {
     "@babel/core": "^7.20.12",
@@ -30,6 +30,7 @@
   "main": "dist/sugar.js",
   "module": "dist/sugar.bundle.js",
   "type": "module",
+  "types": "dist/sugar.d.ts",
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",
     "test": "cross-env NODE_ENV=development rollup --sourcemap -c",
