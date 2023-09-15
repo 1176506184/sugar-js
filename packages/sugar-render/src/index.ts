@@ -1,5 +1,5 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
-import { createEffect } from '../../../src/main';
+import { createEffect } from '@sugar/sugar-reactive';
 import patchEx from './patch';
 import { deepClone, escape2Html } from '@sugar/sugar-shared';
 

@@ -9,7 +9,7 @@ import babel from 'rollup-plugin-babel';
 const isDev = process.env.NODE_ENV !== 'production';
 
 export default {
-  input: 'src/main.ts',
+  input: './packages/sugar/src/main.ts',
   output: [{
     file: isDev ? 'dist/sugar.js' : 'dist/sugar.js',
     name: 'Sugar',
