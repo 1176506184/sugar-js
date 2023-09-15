@@ -9,7 +9,6 @@ export function transformComponents (content, components, vm) {
     content.tag = '';
     content.type = NodeTypes.COMPONENT;
     const props = {};
-    console.log(content.props, props);
     content.props.forEach((prop) => {
       if (prop.name === 'on') {
         props[prop.arg.content] = vm.data[prop.exp.content];

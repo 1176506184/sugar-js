@@ -61,12 +61,13 @@
 
         <p class="label">s-for</p>
 
-        <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
-                @click="update(item,state.num)">
+        <sugar-button  class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :dataKey="state.num" @click="update(item,num)">
             {{item.d}}
-        </button>
+        </sugar-button >
 
         <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode">新增</button>
+
+        <!--测试注释-->
 
         <p class="label">s-model</p>
 
@@ -166,6 +167,7 @@
             });
 
             function update(item, num) {
+                console.log(item,num)
                 state.num += 1;
             }
 

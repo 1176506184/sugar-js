@@ -25,7 +25,7 @@ export function parse (context: any, ancestors: any) {
         }
       } else if (/[a-z]/i.test(s[1])) {
         node = parseElement(context, ancestors);
-      } else if (s[1] === '?') {
+      } else if (s[1] === '!') {
         node = parseComment(context);
       }
     }
@@ -605,13 +605,6 @@ export const enum NodeTypes {
   INTERPOLATION,
   ATTRIBUTE,
   DIRECTIVE,
-  // containers
   COMPOUND_EXPRESSION,
-  IF,
-  IF_BRANCH,
-  FOR,
-  TEXT_CALL,
-  // codegen
-  VNODE_CALL,
   COMPONENT
 }

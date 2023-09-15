@@ -17,6 +17,7 @@ export function sugarRender () {
     const serializer = new XMLSerializer();
     const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
     render = sugarCompiler(htmlCode, components, vm);
+    console.log(render);
     updateComponent(vm, el, data);
 
     vm.forceUpdate = function () {

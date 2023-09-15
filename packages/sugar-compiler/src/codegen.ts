@@ -4,12 +4,16 @@ export function generate (ast) {
   const genElmChildren = (children = []) => {
     let str = '[';
     children.forEach((child, i) => {
-      if (child.type === 1 || child.type === 5) {
+      if (child.type === NodeTypes.ELEMENT || child.type === NodeTypes.INTERPOLATION) {
         str += getElm(child) + `${i === children.length - 1 ? '' : ','}`;
-      } else if (child.type === 2 && !!child.content.trim()) {
+      } else if (child.type === NodeTypes.TEXT && !!child.content.trim()) {
         str += getElm(child) + `${i === children.length - 1 ? '' : ','}`;
       } else if (child.type === NodeTypes.COMPONENT) {
-        str += `_sugar('${child.sugar.vm.appId}',${genElmChildren(child.children)})` + `${i === children.length - 1 ? '' : ','}`;
+        if (child.forStatment) {
+          str += transformFor(child) + `${i === children.length - 1 ? '' : ','}`;
+        } else {
+          str += `_sugar('${child.sugar.vm.appId}',${genElmChildren(child.children)})` + `${i === children.length - 1 ? '' : ','}`;
+        }
       }
     });
     return str + ']';
@@ -63,44 +67,50 @@ export function generate (ast) {
   }
 
   return getElm(ast);
-}
 
-function transformFor (ast) {
-  const forStatment = ast.forStatment;
-  const props = ast.props;
+  function transformFor (ast) {
+    const forStatment = ast.forStatment;
+    const props = ast.props;
 
-  let son = `_c('${ast.tag}',{ "attrs":{`;
-  son += dealAttr(props);
+    if (ast.type === NodeTypes.COMPONENT) {
+      return `..._loop((${forStatment.item})=>{
+        return _sugar('${ast.sugar.vm.appId}',${genElmChildren(ast.children)})
+                            },${forStatment.exp})`;
+    }
 
-  son += '},"on":{';
+    let son = `_c('${ast.tag}',{ "attrs":{`;
+    son += dealAttr(props);
 
-  son += dealEvent(props);
+    son += '},"on":{';
 
-  son += '}},[';
+    son += dealEvent(props);
 
-  ast.children.forEach((astChild, index) => {
-    son += generate(astChild);
+    son += '}},[';
 
-    if (index < ast.children.length - 1) {
-      son += ',';
-    } else {
+    ast.children.forEach((astChild, index) => {
+      son += generate(astChild);
+
+      if (index < ast.children.length - 1) {
+        son += ',';
+      } else {
+        son += '])';
+      }
+    });
+
+    if (ast.children.length === 0) {
       son += '])';
     }
-  });
 
-  if (ast.children.length === 0) {
-    son += '])';
-  }
+    props.forEach((prop) => {
+      if (prop.name === 's-if') {
+        son = `${prop.value.content} ? ${son} : _e()`;
+      }
+    });
 
-  props.forEach((prop) => {
-    if (prop.name === 's-if') {
-      son = `${prop.value.content} ? ${son} : _e()`;
-    }
-  });
-
-  return `..._loop((${forStatment.item})=>{
+    return `..._loop((${forStatment.item})=>{
         return ${son}
                             },${forStatment.exp})`;
+  }
 }
 
 function dealAttr (props) {

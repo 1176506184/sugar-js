@@ -116,7 +116,7 @@ export default function patch (vm, newVnode) {
     } = data;
     const oldAttrs = oldVnode.data.attrs;
     patchAttrs(elm, oldAttrs, attrs);
-    patchEvent(elm, on);
+    patchEvents(elm, on);
   }
 
   function patchAttrs (el, oldAttrs, newAttrs) {
@@ -134,7 +134,7 @@ export default function patch (vm, newVnode) {
     });
   }
 
-  function patchEvent (el, newOn) {
+  function patchEvents (el, newOn) {
     const _vei = el._vei || (el._vei = {});
     Object.keys(_vei).forEach((eventName) => {
       el.removeEventListener(eventName, _vei[eventName]);

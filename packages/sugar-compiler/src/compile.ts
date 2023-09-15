@@ -10,6 +10,7 @@ import { transformComponents } from './transform/transformComponents';
 
 export function baseCompile (template: string, components?: any[], vm?: any) {
   const ast = toAst(template);
+
   transform(ast, {
     sIf,
     sFor,
