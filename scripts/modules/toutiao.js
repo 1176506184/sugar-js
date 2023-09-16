@@ -9,7 +9,6 @@ window.addEventListener('message', function (res) {
         if (res.data.url && (res.data.url.indexOf("/api/pc/list/feed") !== -1 || (res.data.url.indexOf("/api/pc/list/user/feed") !== -1))) {
             try {
                 toutiaoData.push(...JSON.parse(res.data.data).data)
-                console.log(toutiaoData)
             } catch (e) {
 
             }

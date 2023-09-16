@@ -1,12 +1,3 @@
-// // alert("测试")
-// try {
-//     setTimeout(()=>{
-//         console.log(window['ytInitialData'])
-//     },2000)
-// } catch (e) {
-//     console.log(e)
-// }
-
 
 var ajax_tools_space = {
     ajaxToolsSwitchOn: true,

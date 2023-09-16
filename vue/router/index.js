@@ -2,42 +2,45 @@ import Home from "../view/index.vue"
 import TrumpetVideo from "../view/trumpetVideo.vue";
 import TwitterImage from "../view/twitterImage.vue"
 import YoutubeVideo from "../view/youtubeVideo.vue"
+import ShortsVideo from "../view/shortsVideo.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
+
 const routes = [
     {
-        name:'Home',
+        name: 'Home',
         path: '/',
         component: Home,
-        meta:{
-            keepAlive:true
+        meta: {
+            keepAlive: true
         }
     },
     {
         name: 'TrumpetVideo',
         path: '/TrumpetVideo',
         component: TrumpetVideo,
-        props: route => ({ query: route.query.q }),
-        meta:{
-
-        }
+        props: route => ({query: route.query.q}),
+        meta: {}
     },
     {
         name: 'TwitterImage',
         path: '/TwitterImage',
         component: TwitterImage,
-        props: route => ({ query: route.query.q }),
-        meta:{
-
-        }
+        props: route => ({query: route.query.q}),
+        meta: {}
     },
     {
         name: 'YoutubeVideo',
         path: '/YoutubeVideo',
         component: YoutubeVideo,
-        props: route => ({ query: route.query.q }),
-        meta:{
-
-        }
+        props: route => ({query: route.query.q}),
+        meta: {}
+    },
+    {
+        name: 'ShortsVideo',
+        path: '/ShortsVideo',
+        component: ShortsVideo,
+        props: route => ({query: route.query.q}),
+        meta: {}
     }
 ]
 

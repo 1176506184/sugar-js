@@ -26,7 +26,7 @@
 
               </template>
               <template #default="{ row }">
-                {{ row.title.runs[0].text }}
+                {{ row.headline.simpleText }}
               </template>
             </el-table-column>
             <el-table-column label="播放量" prop="viewCount" sortable :sort-orders="['descending','ascending',null]">
@@ -163,7 +163,7 @@ const pageType = computed(() => {
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.title.runs[0].text.indexOf(title.value) > -1
+    return item.headline.simpleText.indexOf(title.value) > -1
   })
 
 }
@@ -265,10 +265,10 @@ async function Save() {
       cover = `https://i.ytimg.com/vi/${r.videoId}/hqdefault.jpg`;
     }
     videoData.push({
-      url: `https://www.youtube.com/watch?v=${r.videoId}`,
-      title: r.title.runs[0].text,
+      url: `https://www.youtube.com/shorts/${r.videoId}`,
+      title: r.headline.simpleText,
       cover: cover,
-      author: r.author ? r.author : author.value
+      author: author.value
     })
   })
 
@@ -281,8 +281,11 @@ async function Save() {
     dduserid: localStorage.getItem("ddid"),
     videodata: JSON.stringify(videoData)
   }
+
   // console.log(videoData)
   // console.log(param)
+
+
   xhrHttp(`http://gpt.anyelse.com/callback/captureyoutubetask`, param, 'post', 'application/json').then((res) => {
     res = JSON.parse(res);
     if (res.state) {

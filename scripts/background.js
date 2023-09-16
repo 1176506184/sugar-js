@@ -10,6 +10,8 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse("ok");
     } else if (Message.Message === 'group') {
         console.log(Message.data)
+    } else if (Message.Message === 'web') {
+        console.log(Message.data)
     }
 })
 

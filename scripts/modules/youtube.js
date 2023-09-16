@@ -29,10 +29,11 @@ function parseVideo(data) {
         if (typeof d === 'object') {
 
             Object.keys(d).forEach((key) => {
-                if (key === 'videoRenderer') {
+                if (key === 'videoRenderer' || key === 'reelItemRenderer') {
 
-                    if(!videoIds.includes(d[key]?.videoId)){
+                    if (!videoIds.includes(d[key]?.videoId)) {
                         videoIds.push(d[key]?.videoId)
+                        d[key].author = document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText
                         videoData.push(d[key]);
                     }
 

@@ -43,6 +43,28 @@ function xhrHttp(url, params, type = 'get', content_type = 'application/x-www-fo
     })
 }
 
+function testHttp(url) {
+    return new Promise((resolve, reject) => {
+
+        $.ajax({
+            url: url,
+            type: "get"
+            , success: function (data) {
+                resolve(true);
+            },
+            fail: function (error) {
+                resolve(false)
+            },
+            statusCode: {
+                404: function () {
+                    resolve(false)
+                }
+            }
+        })
+
+    })
+}
+
 function http(url, params, type = 'post') {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -128,5 +150,6 @@ export {
     http,
     xhrHttp,
     sHttp,
-    dHttp
+    dHttp,
+    testHttp
 }

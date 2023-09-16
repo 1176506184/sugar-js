@@ -130,6 +130,8 @@
           <el-collapse-item title="油管博主" name="6">
             <div>
               <el-button @click="collectYoutube" type="primary">采集油管视频并自动分发</el-button>
+
+              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>
             </div>
           </el-collapse-item>
 
@@ -195,7 +197,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v3.2",
+  version: "v3.6",
   system: 1
 });
 
@@ -878,6 +880,13 @@ function stopCollectFacebook() {
 function collectYoutube() {
   router.push({
     name: "YoutubeVideo",
+    query: {},
+  });
+}
+
+function collectShorts() {
+  router.push({
+    name: "ShortsVideo",
     query: {},
   });
 }
