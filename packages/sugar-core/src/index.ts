@@ -44,5 +44,7 @@ function makeSugar (options: Core) {
 
 export {
   makeSugar,
-  onMounted
+  onMounted,
+  updateActiveId,
+  mountHandleList
 };

@@ -6,22 +6,21 @@ import { sFor } from './transform/sFor';
 import { sModel } from './transform/sModel';
 import { transformEvent } from './transform/transformEvent';
 import { Namespaces, parse } from './parse';
-import { transformComponents } from './transform/transformComponents';
 
-export function baseCompile (template: string, components?: any[], vm?: any) {
+export function baseCompile (template: string) {
   const ast = toAst(template);
 
   transform(ast, {
     sIf,
     sFor,
     sModel,
-    transformEvent,
-    components,
-    transformComponents,
-    vm
+    transformEvent
   });
 
-  return generate(ast);
+  return {
+    root: ast,
+    code: generate(ast)
+  };
 }
 
 function toAst (template: string) {

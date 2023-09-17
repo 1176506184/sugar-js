@@ -16,44 +16,34 @@ export function sugarRender () {
     components = vm.components;
     const serializer = new XMLSerializer();
     const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
-    render = sugarCompiler(htmlCode, components, vm);
-    console.log(render);
-    updateComponent(vm, el, data);
-
+    const { code } = sugarCompiler(htmlCode);
+    render = code;
+    bindT(vm, data);
+    update(vm);
     vm.forceUpdate = function () {
-      updateComponent(vm, el, data);
+      update(vm);
     };
   }
 
-  function updateComponent (vm, el, data) {
-    function update (vm, el) {
-      Object.keys(data).forEach((key) => {
-        vm[key] = data[key];
-      });
-
-      bindT(vm);
-
-      createEffect(() => {
-        if (vm.parent) {
-          vm.parent.forceUpdate();
-        }
-        const vnode = render.call(vm);
-        bindAttrAndEvent(vm, vnode);
-        patchEx(vm, vnode);
-        vm._vnode = vnode;
-      });
-    }
-
-    update(vm, el);
+  function update (vm) {
+    createEffect(() => {
+      const vnode = render.call(vm);
+      bindAttrAndEvent(vm, vnode);
+      patchEx(vm, vnode);
+      vm._vnode = vnode;
+    });
   }
 
   return {
-    updateComponent,
+    update,
     mounted
   };
 }
 
-function bindT (vm) {
+export function bindT (vm, data) {
+  Object.keys(data).forEach((key) => {
+    vm[key] = data[key];
+  });
   function _c (tag = 'div', data = {}, children = []) {
     return createElement(tag, data, children);
   }
@@ -110,7 +100,7 @@ function bindT (vm) {
   vm._sugar = _sugar;
 }
 
-function createElement (tag = 'div', data = {}, children = []) {
+export function createElement (tag = 'div', data = {}, children = []) {
   const createVNode = (tag = 'div', data = {}, children = []) => {
     const vnodeChildren = [];
 
@@ -126,7 +116,7 @@ function createElement (tag = 'div', data = {}, children = []) {
   return createVNode(tag, data, children);
 }
 
-class VNode {
+export class VNode {
   private readonly tag: any;
   private readonly data: any;
   private readonly elm: undefined;

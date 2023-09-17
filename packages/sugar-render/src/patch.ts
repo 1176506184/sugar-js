@@ -1,22 +1,17 @@
 import { isDef, isUndef, nodeOps } from '@sugar/sugar-shared';
 import { isComponent } from './utils';
+import { bulkComponent } from './component';
 
 export default function patch (vm, newVnode) {
   let oldVnode = vm._vnode;
   if (!oldVnode.elm) {
     oldVnode = emptyNodeAt(oldVnode);
   }
-
-  let newDom = newVnode.elm;
-  if (!newVnode.elm) {
-    newDom = createElement(newVnode);
-  }
-
   if (isSameNode(oldVnode, newVnode)) {
     patchVnode(newVnode, oldVnode);
   } else {
-    if (oldVnode.elm?.parentNode && newDom) {
-      nodeOps.insert(newDom, nodeOps.parentNode(oldVnode.elm), oldVnode.elm);
+    if (oldVnode.elm?.parentNode && newVnode) {
+      nodeOps.insert(createElement(newVnode), nodeOps.parentNode(oldVnode.elm), oldVnode.elm);
       nodeOps.remove(oldVnode.elm);
     }
   }
@@ -52,7 +47,6 @@ export default function patch (vm, newVnode) {
             }
           }
         }
-
         if (vnode.children) {
           for (let i = 0; i < vnode.children.length; i++) {
             const childrenDom = createElement(vnode.children[i]);
@@ -62,7 +56,10 @@ export default function patch (vm, newVnode) {
           }
         }
       } else if (isComponent(vnode, vm.components)) {
-
+        const app = mountComponent(vnode, vm.components[vnode.tag]);
+        vnode.elm = app.vm.$el;
+        vnode._sugar = app;
+        domNode = vnode.elm;
       }
     } else if (vnode.text !== undefined) {
       domNode = document.createTextNode(vnode.text);
@@ -74,9 +71,30 @@ export default function patch (vm, newVnode) {
   }
 
   function patchVnode (newVnode, oldVnode) {
-    if (oldVnode === newVnode) {
+    if (isComponent(newVnode, vm.components)) {
+      Object.keys(oldVnode._sugar.vm.props).forEach(prop => {
+        if (newVnode.data.attrs[prop]) {
+          oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
+        } else if (newVnode.data.on[prop]) {
+          if (newVnode.data.on[prop].parameters) {
+            oldVnode._sugar.vm.props[prop] = function () {
+              newVnode.data.on[prop].fun(...newVnode.data.on[prop].parameters);
+            };
+          } else {
+            oldVnode._sugar.vm.props[prop] = newVnode.data.on[prop].fun;
+          }
+        }
+      });
+
+      if (oldVnode._sugar) {
+        oldVnode._sugar.vm.forceUpdate();
+      }
+      newVnode.elm = oldVnode.elm;
+      newVnode._sugar = oldVnode._sugar;
+
       return;
     }
+
     newVnode.elm = oldVnode.elm;
     if (newVnode.text) {
       if (oldVnode.text !== newVnode.text) {
@@ -89,32 +107,20 @@ export default function patch (vm, newVnode) {
       } else {
         oldVnode.elm.innerHTML = '';
         for (let i = 0; i < newVnode.children.length; i++) {
-          const child = newVnode.children[i];
-          const newChildDom = child.elm;
-          if (newChildDom) {
-            oldVnode.elm.appendChild(newChildDom);
+          const child = createElement(newVnode.children[i]);
+          if (child) {
+            oldVnode.elm.appendChild(child);
           }
         }
       }
     }
   }
 
-  function clearEmptyVnode (Vnodes) {
-    return Vnodes.filter((Vnode) => {
-      return Vnode.tag || Vnode.text === '' || Vnode.text || Vnode.elm;
-    });
-  }
-
   function patchProps (newVnode, oldVnode) {
-    const {
-      data,
-      elm
-    } = newVnode;
-    const {
-      attrs = {},
-      on = {}
-    } = data;
+    const attrs = newVnode.data.attrs;
+    const on = newVnode.data.on;
     const oldAttrs = oldVnode.data.attrs;
+    const elm = newVnode.elm;
     patchAttrs(elm, oldAttrs, attrs);
     patchEvents(elm, on);
   }
@@ -131,17 +137,6 @@ export default function patch (vm, newVnode) {
         el.value = newAttrs[attr];
       }
       el.setAttribute(attr, newAttrs[attr]);
-    });
-  }
-
-  function patchEvents (el, newOn) {
-    const _vei = el._vei || (el._vei = {});
-    Object.keys(_vei).forEach((eventName) => {
-      el.removeEventListener(eventName, _vei[eventName]);
-    });
-    Object.keys(newOn).forEach((eventName) => {
-      _vei[eventName] = newOn[eventName].fun;
-      el.addEventListener(eventName, newOn[eventName].fun);
     });
   }
 
@@ -206,14 +201,14 @@ export default function patch (vm, newVnode) {
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldPreIndex, oldAftIndex);
         idxInOld = isDef(newSNode.key) ? oldKeyToIdx[newSNode.key] : null;
         if (isUndef(idxInOld)) {
-          parentDom.insertBefore(newSNode.elm, oldSNode.elm);
+          parentDom.insertBefore(createElement(newSNode), oldSNode.elm);
           newSNode = newCh[++newPreIndex];
         } else {
           elmToMove = oldCh[idxInOld];
           if (isSameNode(elmToMove, newSNode)) {
             patchVnode(elmToMove, newSNode);
             oldCh[idxInOld] = undefined;
-            parentDom.insertBefore(newSNode.elm, oldSNode.elm);
+            parentDom.insertBefore(newSNode, oldSNode.elm);
             newSNode = newCh[++newPreIndex];
           }
         }
@@ -226,9 +221,9 @@ export default function patch (vm, newVnode) {
       refElm = isUndef(newCh[newAftIndex + 1]) ? null : newCh[newAftIndex + 1].elm;
       for (; newPreIndex <= newAftIndex; newPreIndex++) {
         if (refElm) {
-          parentDom.insertBefore(newCh[newPreIndex].elm, refElm);
+          parentDom.insertBefore(createElement(newCh[newPreIndex]), refElm);
         } else {
-          parentDom.append(newCh[newPreIndex].elm);
+          parentDom.append(createElement(newCh[newPreIndex]));
         }
       }
     }
@@ -253,12 +248,37 @@ export default function patch (vm, newVnode) {
   }
 }
 
+export function mountComponent (vnode, parentComponent) {
+  const instance = {
+    _vnode: vnode,
+    parentComponent
+  };
+  return bulkComponent(instance);
+}
+
 export function emptyNodeAt (elm) {
   return new VNode(elm.tagName.toLowerCase(), {}, [], elm);
 }
 
 function isSameNode (o, n) {
   return o.key === n.key && o.tag === n.tag && isDef(o.data) === isDef(n.data);
+}
+
+function patchEvents (el, newOn) {
+  const _vei = el._vei || (el._vei = {});
+  Object.keys(_vei).forEach((eventName) => {
+    el.removeEventListener(eventName, _vei[eventName]);
+  });
+  Object.keys(newOn).forEach((eventName) => {
+    _vei[eventName] = newOn[eventName].fun;
+    el.addEventListener(eventName, newOn[eventName].fun);
+  });
+}
+
+function clearEmptyVnode (Vnodes) {
+  return Vnodes.filter((Vnode) => {
+    return Vnode.tag || Vnode.text === '' || Vnode.text || Vnode.elm;
+  });
 }
 
 class VNode {
@@ -268,6 +288,7 @@ class VNode {
   private readonly context: undefined;
   private readonly text: undefined;
   private readonly key: undefined;
+  private readonly _sugar: undefined;
 
   constructor (tag?, data?, children?, elm?) {
     this.tag = tag;

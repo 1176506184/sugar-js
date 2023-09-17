@@ -21,8 +21,6 @@ export function transform (context, helpers) {
       }
     });
 
-    helpers.transformComponents(context, helpers.components, helpers.vm);
-
     if (context.children) {
       context.children.forEach((child, index) => {
         work(child);
