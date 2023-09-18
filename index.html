@@ -69,7 +69,8 @@
         <p class="label">s-model</p>
 
         <sugar-button s-for="item in state.list" :dataKey="state.num" @click="pushNode(state.num)">
-            <div @click="pushNode">{{state.num}}</div>
+            <span>测试</span>
+            <span>{{state.num}}</span>
         </sugar-button>
 
         <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
@@ -107,18 +108,12 @@
 </button>`,
         bulk(ctx) {
 
-            const text = reckon(()=>{
-                return ctx.datakey.value
-            });
-
             function click() {
-                text.value += 1;
                 ctx.click();
             }
 
             return {
                 click,
-                text,
                 ctx
             };
         }

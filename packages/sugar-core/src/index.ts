@@ -31,6 +31,7 @@ function makeSugar (options: Core) {
   function install (components) {
     components.forEach((component) => {
       vm.components[component.name] = component;
+      vm.components[component.name].components = vm.components;
     });
   }
 

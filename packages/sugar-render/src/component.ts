@@ -44,7 +44,7 @@ export function makeComponent (instance) {
     data,
     $el: null as any,
     appId,
-    components: [],
+    components: instance.components ? instance.components : [],
     sugar: {},
     slot: instance.slot,
     props: instance.props
@@ -77,11 +77,10 @@ export function makeComponent (instance) {
 
 export function componentRender () {
   let render = null;
-  let components = [];
 
   function mounted (vm, data) {
-    components = vm.components;
     const htmlCode = vm.render;
+    console.log(vm.components);
     const { code, root } = sugarCompiler(htmlCode);
     vm.$el = document.createElement(root.tag);
     vm._vnode = vm.$el;
@@ -107,7 +106,7 @@ export function componentRender () {
   function assembling (_n, slot) {
     _n.children.forEach((child, index) => {
       if (child.tag === 'slot') {
-        _n.children[index] = slot[0];
+        _n.children.splice(index, 1, ...slot);
       } else if (child.children?.length) {
         assembling(child, slot);
       }

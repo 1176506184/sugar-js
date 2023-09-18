@@ -5,7 +5,6 @@ import { deepClone, escape2Html } from '@sugar/sugar-shared';
 
 export function sugarRender () {
   let render = null;
-  let components = [];
 
   function mounted (vm, el, data) {
     if (!(el instanceof HTMLElement)) {
@@ -13,7 +12,6 @@ export function sugarRender () {
     }
     vm.$el = el;
     vm._vnode = el;
-    components = vm.components;
     const serializer = new XMLSerializer();
     const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
     const { code } = sugarCompiler(htmlCode);
