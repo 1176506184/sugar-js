@@ -94,7 +94,11 @@ export function generate (ast) {
       }
     });
 
-    return `..._loop((${forStatment.item})=>{
+    console.log(`..._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
+        return ${son}
+                            },${forStatment.exp})`);
+
+    return `..._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
         return ${son}
                             },${forStatment.exp})`;
   }

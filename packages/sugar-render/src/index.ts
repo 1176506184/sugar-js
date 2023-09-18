@@ -64,30 +64,10 @@ export function bindT (vm, data) {
     const nodes = [];
     data.forEach((item, index) => {
       nodes.push({
-        ...fun(item)
+        ...fun(item, index)
       });
     });
     return nodes;
-  }
-
-  function _sugar (appId, _slot) {
-    vm.sugar[appId]._vnode.static = true;
-    const sugarVnode = deepClone(vm.sugar[appId]._vnode);
-    bindSlot(sugarVnode, _slot);
-    return sugarVnode;
-  }
-
-  function bindSlot (sugarNode, _slot) {
-    let isFind = false;
-    sugarNode.children.forEach((child, index) => {
-      if (child.tag === 'slot') {
-        isFind = true;
-        sugarNode.children.splice(index, 1, ..._slot);
-      }
-      if (child.children && !isFind) {
-        bindSlot(child, _slot);
-      }
-    });
   }
 
   vm._c = _c;
@@ -95,7 +75,6 @@ export function bindT (vm, data) {
   vm._s = _s;
   vm._e = _e;
   vm._loop = _loop;
-  vm._sugar = _sugar;
 }
 
 export function createElement (tag = 'div', data = {}, children = []) {

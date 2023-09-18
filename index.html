@@ -57,7 +57,7 @@
 
         <p class="label">s-for</p>
 
-        <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
+        <button class="sugar-button" style="margin: 5px 5px 0;" s-for="item in state.list" :key="item.d"
                 @click="update(item,state.num)">
             {{item.d}}
         </button>
@@ -68,10 +68,10 @@
 
         <p class="label">s-model</p>
 
-        <sugar-button s-for="item in state.list" :dataKey="state.num" @click="pushNode(state.num)">
+        <sugar-button s-for="(item,index) in state.list" :dataKey="state.num" @click="pushNode(state.num)" s-if="index%2===0" :key="item.d">
             <div #default>
                 <span>测试</span>
-                <span>{{state.num}}</span>
+                <span>{{item.d + state.num}}</span>
             </div>
         </sugar-button>
 
@@ -106,9 +106,9 @@
     const button = {
         name: 'sugar-button',
         render: `<button class="sugar-button" style="margin: 5px 5px 0;" @click="click">
-    <slot name="default"></slot>
-    <slot name="label"></slot>
-</button>`,
+                    <slot name="default"></slot>
+                    <slot name="label"></slot>
+                 </button>`,
         bulk(ctx) {
 
             function click() {
@@ -159,7 +159,7 @@
             });
 
             onMounted(() => {
-                // state.num += 1;
+                state.num += 1;
             });
 
             function update(item, num) {
