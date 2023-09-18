@@ -68,9 +68,11 @@
 
         <p class="label">s-model</p>
 
-        <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
+        <sugar-button s-for="item in state.list" :dataKey="state.num" @click="pushNode(state.num)">
+            <div @click="pushNode">{{state.num}}</div>
+        </sugar-button>
 
-        <sugar-button s-for="item in state.list" :dataKey="state.num" @click="pushNode(state.num)">新增</sugar-button>
+        <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
 
     </div>
 
@@ -101,7 +103,7 @@
     const button = {
         name: 'sugar-button',
         render: `<button class="sugar-button" style="margin: 5px 5px 0;" @click="click">
-    {{text.value}}
+    <slot name="default"></slot>
 </button>`,
         bulk(ctx) {
 

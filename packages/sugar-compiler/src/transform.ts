@@ -1,4 +1,4 @@
-import * as vm from 'vm';
+import { NodeTypes } from './parse';
 
 export function transform (context, helpers) {
   function work (context) {
@@ -20,6 +20,10 @@ export function transform (context, helpers) {
         helpers.transformEvent(context, prop);
       }
     });
+
+    if (context.tag === 'slot') {
+      context.type = NodeTypes.SLOT;
+    }
 
     if (context.children) {
       context.children.forEach((child, index) => {

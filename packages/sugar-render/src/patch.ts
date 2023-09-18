@@ -72,25 +72,7 @@ export default function patch (vm, newVnode) {
 
   function patchVnode (newVnode, oldVnode) {
     if (isComponent(newVnode, vm.components)) {
-      Object.keys(oldVnode._sugar.vm.props).forEach(prop => {
-        if (newVnode.data.attrs[prop]) {
-          oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
-        } else if (newVnode.data.on[prop]) {
-          if (newVnode.data.on[prop].parameters) {
-            oldVnode._sugar.vm.props[prop] = function () {
-              newVnode.data.on[prop].fun(...newVnode.data.on[prop].parameters);
-            };
-          } else {
-            oldVnode._sugar.vm.props[prop] = newVnode.data.on[prop].fun;
-          }
-        }
-      });
-
-      if (oldVnode._sugar) {
-        oldVnode._sugar.vm.forceUpdate();
-      }
-      newVnode.elm = oldVnode.elm;
-      newVnode._sugar = oldVnode._sugar;
+      updateComponent(newVnode, oldVnode);
 
       return;
     }
@@ -254,6 +236,28 @@ export function mountComponent (vnode, parentComponent) {
     parentComponent
   };
   return bulkComponent(instance);
+}
+
+export function updateComponent (newVnode, oldVnode) {
+  Object.keys(oldVnode._sugar.vm.props).forEach(prop => {
+    if (newVnode.data.attrs[prop]) {
+      oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
+    } else if (newVnode.data.on[prop]) {
+      if (newVnode.data.on[prop].parameters) {
+        oldVnode._sugar.vm.props[prop] = function () {
+          newVnode.data.on[prop].fun(...newVnode.data.on[prop].parameters);
+        };
+      } else {
+        oldVnode._sugar.vm.props[prop] = newVnode.data.on[prop].fun;
+      }
+    }
+  });
+  oldVnode._sugar.updateSlot(newVnode.children);
+  if (oldVnode._sugar) {
+    oldVnode._sugar.forceUpdate();
+  }
+  newVnode.elm = oldVnode.elm;
+  newVnode._sugar = oldVnode._sugar;
 }
 
 export function emptyNodeAt (elm) {

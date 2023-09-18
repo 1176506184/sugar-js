@@ -10,6 +10,7 @@ export function bulkComponent (instance) {
   const { data, children } = _vnode;
   const _sugar = deepClone(parentComponent);
   const props = {};
+  const slot = children;
   Object.keys(data.attrs).forEach((propName) => {
     props[propName] = ref(data.attrs[propName]);
   });
@@ -24,7 +25,8 @@ export function bulkComponent (instance) {
   });
   const app = makeComponent({
     ..._sugar,
-    props
+    props,
+    slot
   });
   app.mount();
   return app;
@@ -35,6 +37,7 @@ export function makeComponent (instance) {
   updateActiveId(appId);
   const data = instance.bulk(instance.props);
   const { mounted } = componentRender();
+  let update = null;
   const vm = {
     render: instance.render,
     _vnode: null,
@@ -48,17 +51,27 @@ export function makeComponent (instance) {
   };
 
   function mount () {
-    mounted(vm, data);
+    update = mounted(vm, data);
     mountHandleList[appId]?.forEach((item) => {
       item.fun();
       item.used = true;
     });
   }
 
+  function updateSlot (slot) {
+    vm.slot = slot;
+  }
+
+  function forceUpdate () {
+    update();
+  }
+
   return {
     vm,
     mount,
-    ...data
+    ...data,
+    updateSlot,
+    forceUpdate
   };
 }
 
@@ -78,14 +91,26 @@ export function componentRender () {
     vm.forceUpdate = function () {
       update(vm);
     };
+    return vm.forceUpdate;
   }
 
   function update (vm) {
     createEffect(() => {
       const vnode = render.call(vm);
       bindAttrAndEvent(vm, vnode);
+      assembling(vnode, vm.slot);
       patchEx(vm, vnode);
       vm._vnode = vnode;
+    });
+  }
+
+  function assembling (_n, slot) {
+    _n.children.forEach((child, index) => {
+      if (child.tag === 'slot') {
+        _n.children[index] = slot[0];
+      } else if (child.children?.length) {
+        assembling(child, slot);
+      }
     });
   }
 

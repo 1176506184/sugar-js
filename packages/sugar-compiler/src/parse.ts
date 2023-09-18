@@ -606,5 +606,6 @@ export const enum NodeTypes {
   ATTRIBUTE,
   DIRECTIVE,
   COMPOUND_EXPRESSION,
-  COMPONENT
+  COMPONENT,
+  SLOT
 }

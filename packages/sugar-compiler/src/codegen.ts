@@ -4,16 +4,10 @@ export function generate (ast) {
   const genElmChildren = (children = []) => {
     let str = '[';
     children.forEach((child, i) => {
-      if (child.type === NodeTypes.ELEMENT || child.type === NodeTypes.INTERPOLATION) {
+      if (child.type === NodeTypes.ELEMENT || child.type === NodeTypes.INTERPOLATION || child.type === NodeTypes.SLOT) {
         str += getElm(child) + `${i === children.length - 1 ? '' : ','}`;
       } else if (child.type === NodeTypes.TEXT && !!child.content.trim()) {
         str += getElm(child) + `${i === children.length - 1 ? '' : ','}`;
-      } else if (child.type === NodeTypes.COMPONENT) {
-        if (child.forStatment) {
-          str += transformFor(child) + `${i === children.length - 1 ? '' : ','}`;
-        } else {
-          str += `_sugar('${child.sugar.vm.appId}',${genElmChildren(child.children)})` + `${i === children.length - 1 ? '' : ','}`;
-        }
       }
     });
     return str + ']';
@@ -22,7 +16,7 @@ export function generate (ast) {
   function getElm (ast) {
     let str = '';
     const props = ast.props;
-    if (ast.type === 1) {
+    if (ast.type === 1 || ast.type === NodeTypes.SLOT) {
       let elStr = '';
       let ex = false;
 
@@ -57,9 +51,9 @@ export function generate (ast) {
       if (!ex) {
         str += elStr;
       }
-    } else if (ast.type === 5) {
+    } else if (ast.type === NodeTypes.INTERPOLATION) {
       str += `_v(_s(${ast.content.content}))`;
-    } else if (ast.type === 2) {
+    } else if (ast.type === NodeTypes.TEXT) {
       str += `_v('${ast.content}')`;
     }
 
@@ -71,13 +65,6 @@ export function generate (ast) {
   function transformFor (ast) {
     const forStatment = ast.forStatment;
     const props = ast.props;
-
-    if (ast.type === NodeTypes.COMPONENT) {
-      return `..._loop((${forStatment.item})=>{
-        return _sugar('${ast.sugar.vm.appId}',${genElmChildren(ast.children)})
-                            },${forStatment.exp})`;
-    }
-
     let son = `_c('${ast.tag}',{ "attrs":{`;
     son += dealAttr(props);
 
