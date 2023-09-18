@@ -24,27 +24,27 @@ npm install sugar-reactive-js
         
                 <p class="label">外部状态值：{{store.num}}</p>
         
-                <p class="label">s-if</p>
-        
-                <p class="label" s-if="state.num % 2 === 0">{{state.num}}</p>
-        
                 <p class="label">s-for</p>
         
                 <button class="sugar-button" style="margin: 5px 5px 0;" s-for="(item,index) in state.list" :key="item.d"
-                        s-if="item.d % 2 === 0"
                         @click="update(item,state.num)">
                     {{item.d}}
                 </button>
         
                 <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode">新增</button>
         
+                <!--测试注释-->
+        
                 <p class="label">s-model</p>
         
-                <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
-        
-                <sugar-button @click="pushNode" :dataKey="title.value">
-                    新增（{{state.num}}）
+                <sugar-button s-for="item in state.list" :dataKey="state.num" @click="pushNode(state.num)">
+                    <div #default>
+                        <span>测试</span>
+                        <span>{{state.num}}</span>
+                    </div>
                 </sugar-button>
+        
+                <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
         
             </div>
         
@@ -68,29 +68,24 @@ npm install sugar-reactive-js
                     num: 0
                 });
             
-                const button = {
-                    name: 'sugar-button',
-                    render: `<button class="sugar-button" style="margin: 5px 5px 0;" @click="click" :dataKey="dataKey.value">
-                <slot></slot>
-            </button>`,
-            bulk(ctx) {
-            
-                        const text = ref(0);
-            
-                        function click() {
-                            text.value += 1;
-                            ctx.click();
+               const button = {
+                        name: 'sugar-button',
+                        render: `<button class="sugar-button" style="margin: 5px 5px 0;" @click="click">
+                    <slot name="default"></slot>
+                    <slot name="label"></slot>
+                </button>`,
+                bulk(ctx) {
+                
+                            function click() {
+                                ctx.click();
+                            }
+                
+                            return {
+                                click,
+                                ctx
+                            };
                         }
-            
-                        const dataKey = ctx.datakey;
-            
-                        return {
-                            click,
-                            text,
-                            dataKey
-                        };
-                    }
-                };
+                    };
             
                 var sugar = makeSugar({
                     bulk() {
@@ -112,10 +107,11 @@ npm install sugar-reactive-js
             
                         const active = ref(0);
             
-                        function pushNode() {
+                        function pushNode(num) {
+                            console.log(num)
                             state.num += 1;
                             state.list.push({
-                                d: Number(state.num) + state.list.length + 1
+                                d: state.list.length + 1
                             });
                         }
             
@@ -128,7 +124,7 @@ npm install sugar-reactive-js
                         });
             
                         onMounted(() => {
-                            state.num += 1;
+                            // state.num += 1;
                         });
             
                         function update(item, num) {

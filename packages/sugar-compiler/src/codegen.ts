@@ -108,10 +108,12 @@ function dealAttr (props) {
   });
 
   props.forEach((prop, index) => {
-    if (prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && prop.name !== 'bind') {
+    if (prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && prop.name !== 'bind' && prop.name !== 'slot') {
       str += `"${prop.name}":"${prop.value.content}"`;
     } else if (prop.name === 'bind') {
       str += `"${prop.arg.content}":${prop.exp.content}`;
+    } else if (prop.name === 'slot') {
+      str += `"slot":"${prop.arg.content}"`;
     }
 
     if (prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && index < props.length - 1) {

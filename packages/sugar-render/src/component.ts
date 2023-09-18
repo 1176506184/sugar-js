@@ -80,7 +80,6 @@ export function componentRender () {
 
   function mounted (vm, data) {
     const htmlCode = vm.render;
-    console.log(vm.components);
     const { code, root } = sugarCompiler(htmlCode);
     vm.$el = document.createElement(root.tag);
     vm._vnode = vm.$el;
@@ -105,8 +104,16 @@ export function componentRender () {
 
   function assembling (_n, slot) {
     _n.children.forEach((child, index) => {
-      if (child.tag === 'slot') {
-        _n.children.splice(index, 1, ...slot);
+      if (child.tag === 'slot' && child.data.attrs?.name) {
+        const NamedSlots = slot.filter((s: any) => {
+          return s.data.attrs.slot === child.data.attrs.name;
+        });
+        _n.children.splice(index, 1, ...NamedSlots);
+      } else if (child.tag === 'slot' && !child.data.attrs?.name) {
+        const NoNamedSlots = slot.filter((s: any) => {
+          return !s.data.attrs.slot;
+        });
+        _n.children.splice(index, 1, ...NoNamedSlots);
       } else if (child.children?.length) {
         assembling(child, slot);
       }
