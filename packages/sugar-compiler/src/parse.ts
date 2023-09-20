@@ -1,4 +1,5 @@
 import { extend, isArray } from './utils';
+import { deepClone } from '@sugar/sugar-shared';
 
 export function parse (context: any, ancestors: any) {
   const parent: any = last(ancestors);
@@ -6,7 +7,7 @@ export function parse (context: any, ancestors: any) {
   while (!isEnd(context, ancestors)) {
     const s = context.source;
     let node: any;
-    if (!context.inVPre && startsWith(s, context.options.delimiters[0])) {
+    if (startsWith(s, context.options.delimiters[0])) {
       node = parseInterpolation(context);
     } else if (s[0] === '<') {
       if (s.length === 1) {
@@ -322,40 +323,19 @@ function pushNode (nodes: any, node: any): void {
 }
 
 function parseElement (context: any, ancestors: any) {
-  const wasInPre = context.inPre;
-  const wasInVPre = context.inVPre;
   const parent = last(ancestors);
   const element: any = parseTag(context, TagType.Start, parent);
-  const isPreBoundary = context.inPre && !wasInPre;
-  const isVPreBoundary = context.inVPre && !wasInVPre;
   if (element.isSelfClosing || context.options.isVoidTag(element.tag)) {
-    if (isPreBoundary) {
-      context.inPre = false;
-    }
-    if (isVPreBoundary) {
-      context.inVPre = false;
-    }
     return element;
   }
   ancestors.push(element);
-
   const children = parse(context, ancestors);
-
   ancestors.pop();
   element.children = children;
-
   if (startsWithEndTagOpen(context.source, element.tag)) {
     parseTag(context, TagType.End, parent);
   }
-
   element.loc = getSelection(context, element.loc.start);
-
-  if (isPreBoundary) {
-    context.inPre = false;
-  }
-  if (isVPreBoundary) {
-    context.inVPre = false;
-  }
   return element;
 }
 
@@ -363,14 +343,9 @@ function parseTag (context, type, parent) {
   const start = getPos(context);
   const match = /^<\/?([a-z][^\t\r\n\f />]*)/i.exec(context.source)!;
   const tag = match[1];
-  const ns = context.options.getNamespace(tag, parent);
 
   advanceBy(context, match[0].length);
   advanceSpaces(context);
-
-  if (context.options.isPreTag(tag)) {
-    context.inPre = true;
-  }
 
   const props = parseAttributes(context, type);
 
@@ -389,7 +364,6 @@ function parseTag (context, type, parent) {
 
   return {
     type: NodeTypes.ELEMENT,
-    ns,
     tag,
     tagType,
     children: [],
@@ -533,7 +507,6 @@ function matchText (context: any, length: any) {
 function advanceBy (context: any, numberOfCharacters: number): void {
   const { source } = context;
   advancePos(context, source, numberOfCharacters);
-  context.source = source.slice(numberOfCharacters);
   context.source = source.slice(numberOfCharacters);
 }
 

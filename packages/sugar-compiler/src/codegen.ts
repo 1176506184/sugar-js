@@ -94,10 +94,6 @@ export function generate (ast) {
       }
     });
 
-    console.log(`..._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
-        return ${son}
-                            },${forStatment.exp})`);
-
     return `..._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
         return ${son}
                             },${forStatment.exp})`;
