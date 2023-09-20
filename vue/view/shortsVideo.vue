@@ -26,7 +26,7 @@
 
               </template>
               <template #default="{ row }">
-                {{ row.headline.simpleText }}
+                {{ row.headline?.simpleText }}
               </template>
             </el-table-column>
             <el-table-column label="播放量" prop="viewCount" sortable :sort-orders="['descending','ascending',null]">
@@ -163,7 +163,7 @@ const pageType = computed(() => {
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.headline.simpleText.indexOf(title.value) > -1
+    return item.headline?.simpleText.toLowerCase().indexOf(title.value.toLowerCase()) > -1
   })
 
 }
