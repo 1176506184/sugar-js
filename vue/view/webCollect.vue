@@ -80,8 +80,12 @@ const rules = ref({})
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.headline.simpleText.indexOf(title.value) > -1
+    return item.title.indexOf(title.value) > -1
   })
+
+}
+
+function uploadData() {
 
 }
 
@@ -100,6 +104,11 @@ function dealData(Message) {
 
 function finishTask() {
   nextStepBtn.value = "上传数据"
+  if (collectStatus === 1) {
+    uploadData();
+    return
+  }
+  collectStatus.value = 1;
   chrome.tabs.query(
       {
         active: true,
