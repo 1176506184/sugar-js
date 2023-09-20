@@ -135,6 +135,12 @@
             </div>
           </el-collapse-item>
 
+          <el-collapse-item title="网站采集" name="7">
+            <div>
+              <el-button @click="collectWeb" type="primary">网站采集</el-button>
+            </div>
+          </el-collapse-item>
+
           <!--        <p>脸书社团</p>-->
           <!--        <div>-->
           <!--          <el-button @click="facebook_member" type="primary" :disabled="type!=='facebook'">手动采集</el-button>-->
@@ -238,7 +244,10 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "youtube") {
       activeNames.value.push("6");
       store.commit("changeType", "youtube");
-    } else if (Message.type === "empty") {
+    }  else if (Message.type === "web") {
+      activeNames.value.push("7");
+      store.commit("changeType", "web");
+    }else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
   } else if (Message.Message === "video") {
@@ -887,6 +896,13 @@ function collectYoutube() {
 function collectShorts() {
   router.push({
     name: "ShortsVideo",
+    query: {},
+  });
+}
+
+function collectWeb(){
+  router.push({
+    name: "WebCollect",
     query: {},
   });
 }

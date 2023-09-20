@@ -3,6 +3,7 @@ import TrumpetVideo from "../view/trumpetVideo.vue";
 import TwitterImage from "../view/twitterImage.vue"
 import YoutubeVideo from "../view/youtubeVideo.vue"
 import ShortsVideo from "../view/shortsVideo.vue";
+import WebCollect from "../view/webCollect.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 
 const routes = [
@@ -39,6 +40,13 @@ const routes = [
         name: 'ShortsVideo',
         path: '/ShortsVideo',
         component: ShortsVideo,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    },
+    {
+        name: 'WebCollect',
+        path: '/WebCollect',
+        component: WebCollect,
         props: route => ({query: route.query.q}),
         meta: {}
     }

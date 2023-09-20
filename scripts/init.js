@@ -77,20 +77,18 @@ if (location.href.indexOf("douyin") !== -1) {
         console.log("注入完成")
     })
 } else {
-    // chrome.runtime.sendMessage({
-    //     Message: "loadScript",
-    //     script: 'web.js'
-    // }).then(() => {
-    //     console.log("注入web完成")
-    // })
-
     chrome.runtime.sendMessage({
         Message: "loadScript",
-        script: 'empty.js'
+        script: 'web.js'
     }).then(() => {
-        console.log("注入empty完成")
+        console.log("注入web完成")
     })
-
+    // chrome.runtime.sendMessage({
+    //     Message: "loadScript",
+    //     script: 'empty.js'
+    // }).then(() => {
+    //     console.log("注入empty完成")
+    // })
 }
 
 
