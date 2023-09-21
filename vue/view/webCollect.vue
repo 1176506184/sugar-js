@@ -86,7 +86,17 @@ function filterList() {
 }
 
 function uploadData() {
-
+  xhrHttp(`http://captureapi.anyelse.com/CaptureArticleHistory/Save`, {
+    models: data.value.map(d => {
+      return {
+        SourceDomainId: urlId.value,
+        ArticleUrl: d.href,
+        ArticleItemTitle:d.title
+      }
+    })
+  }, 'post', 'application/json').then((res) => {
+    res = JSON.parse(res)
+  });
 }
 
 function dealData(Message) {
@@ -104,7 +114,7 @@ function dealData(Message) {
 
 function finishTask() {
   nextStepBtn.value = "上传数据"
-  if (collectStatus === 1) {
+  if (collectStatus.value === 1) {
     uploadData();
     return
   }
