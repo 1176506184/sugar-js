@@ -73,16 +73,23 @@ const list = {
                 return parentNode.querySelector('a[rel="bookmark"]').href;
             },
             title: function (parentNode) {
-                return parentNode.querySelector('h2.entry-title').innerText;
+
+                let title = parentNode.querySelector('h3.entry-title')?.innerText;
+                if (!title) {
+                    title = parentNode.querySelector('h2.entry-title').innerText;
+                }
+                return title
             },
-            time: null,
+            time: function (parentNode) {
+                return parentNode.querySelector('time').getAttribute('datetime')
+            },
             play: null,
             nextPage: function () {
                 return document.querySelector('div.g1-collection-more a')
             }
         }
     },
-    "https://madlyodd.com/category/feed-pets/page/": {
+    "https://madlyodd.com/category/feed-pets/": {
         type: NODE,
         node: {
             item: function () {
@@ -95,7 +102,15 @@ const list = {
                 return parentNode.querySelector('h3.entry-title').innerText;
             },
             time: null,
-            play: null,
+            play: function (parentNode) {
+
+                let play = parentNode.querySelector('.entry-views strong').innerText;
+                if (play.indexOf('k')) {
+                    play = play.replace(/[^\d.]/ig, "");
+                    play = play * 1000;
+                }
+                return play
+            },
             nextPage: null
         }
     },
@@ -136,6 +151,25 @@ const list = {
                 return document.querySelector('button.alm-load-more-btn.more')
             }
         }
+    },
+    "https://www.onemillionarticle.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('article.post-amp.post.hentry.h-entry')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('h2').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('#loadMorePosts')
+            }
+        }
     }
 }
 
@@ -153,14 +187,17 @@ function startTask() {
                             href: nodeJson.href(node),
                             title: nodeJson.title(node),
                             isCollect: false,
-                            play: 0
+                            play: nodeJson.play ? nodeJson.play(node) : 0,
+                            time: nodeJson.time ? nodeJson.time(node) : ''
                         })
                     }
+                    // node.remove();
                     result = repeat(result);
                 })
 
 
                 if (list[key].node.nextPage !== null) {
+                    scrollBottom();
                     list[key].node.nextPage()?.click();
                     if (!list[key].node.nextPage()) {
                         chrome.runtime.sendMessage({

@@ -10,8 +10,7 @@
     <el-form label-position="top">
       <div style="padding: 0 10px 10px;">
         <el-form-item>
-          <el-table :data="data" @selection-change="handleSelectionChange" height="480px">
-            <el-table-column type="selection" width="55"/>
+          <el-table :data="data" height="480px">
 
             <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
@@ -86,17 +85,28 @@ function filterList() {
 }
 
 function uploadData() {
-  xhrHttp(`http://captureapi.anyelse.com/CaptureArticleHistory/Save`, {
-    models: data.value.map(d => {
-      return {
-        SourceDomainId: urlId.value,
-        ArticleUrl: d.href,
-        ArticleItemTitle:d.title
-      }
-    })
-  }, 'post', 'application/json').then((res) => {
-    res = JSON.parse(res)
-  });
+
+  for (let i = 0; i < data.value.length; i += 50) {
+
+    xhrHttp(`http://captureapi.anyelse.com/CaptureArticleHistory/Save`, {
+      models: data.value.filter((d, index) => {
+        return index >= i && index < i + 50
+      }).map(d => {
+        return {
+          SourceDomainId: urlId.value,
+          ArticleUrl: d.href,
+          ArticleItemTitle: d.title,
+          PublishedTime: d.time
+
+        }
+      })
+    }, 'post', 'application/json').then((res) => {
+      res = JSON.parse(res)
+    });
+
+  }
+
+
 }
 
 function dealData(Message) {
