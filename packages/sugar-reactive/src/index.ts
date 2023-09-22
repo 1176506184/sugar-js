@@ -1,6 +1,6 @@
 import makeReactive from './reactive';
 import reckon from './reckon';
-import { ref } from './ref';
+import { ref, instance } from './ref';
 import { createEffect } from './signal/createEffect';
 
 const reactive = function (value) {
@@ -13,6 +13,6 @@ const reactive = function (value) {
 export {
   reactive,
   reckon,
-  ref, createEffect
+  ref, createEffect, instance
 
 };

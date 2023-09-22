@@ -1,6 +1,8 @@
 import { NodeTypes } from './parse';
 
 export function generate (ast) {
+  const cid = 1;
+
   const genElmChildren = (children = []) => {
     let str = '[';
     children.forEach((child, i) => {
@@ -20,7 +22,9 @@ export function generate (ast) {
       let elStr = '';
       let ex = false;
 
-      elStr += `_c('${ast.tag}',{ "attrs":{`;
+      elStr += `_c('${ast.tag}',{ `;
+
+      elStr += '"attrs":{';
 
       elStr += dealAttr(props);
 
@@ -65,7 +69,10 @@ export function generate (ast) {
   function transformFor (ast) {
     const forStatment = ast.forStatment;
     const props = ast.props;
-    let son = `_c('${ast.tag}',{ "attrs":{`;
+    let son = `_c('${ast.tag}',{ `;
+
+    son += '"attrs":{';
+
     son += dealAttr(props);
 
     son += '},"on":{';

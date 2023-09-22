@@ -1,18 +1,33 @@
-import { deepClone, escape2Html, guid } from '@sugar/sugar-shared';
-import { makeSugar, mountHandleList, updateActiveId } from '@sugar/sugar-core';
-import { createEffect, reckon, ref } from '@sugar/sugar-reactive';
-import { bindAttrAndEvent, bindT, createElement, sugarRender } from './index';
+import { deepClone, guid } from '@sugar/sugar-shared';
+import { mountHandleList, updateActiveId } from '@sugar/sugar-core';
+import { createEffect, ref } from '@sugar/sugar-reactive';
+import { bindAttrAndEvent, bindT } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patchEx from './patch';
+import { addComponentCache, getComponentCache } from './componentCache';
 
 export function bulkComponent (instance) {
-  const { _vnode, parentComponent } = instance;
-  const { data, children } = _vnode;
+  const {
+    _vnode,
+    parentComponent
+  } = instance;
+  const {
+    data,
+    children
+  } = _vnode;
+
+  let parentInstance = null;
+
   const _sugar = deepClone(parentComponent);
   const props = {};
   const slot = children;
+
   Object.keys(data.attrs).forEach((propName) => {
-    props[propName] = ref(data.attrs[propName]);
+    if (propName === 'instance') {
+      parentInstance = data.attrs[propName];
+    } else {
+      props[propName] = ref(data.attrs[propName]);
+    }
   });
   Object.keys(data.on).forEach((propName) => {
     if (data.on[propName].parameters) {
@@ -23,12 +38,23 @@ export function bulkComponent (instance) {
       props[propName] = data.on[propName].fun;
     }
   });
+
+  if (_vnode.key && getComponentCache(_vnode.key)) {
+    console.log(_vnode.key);
+    parentInstance.value = getComponentCache(_vnode.key);
+    return getComponentCache(_vnode.key);
+  }
+
   const app = makeComponent({
     ..._sugar,
     props,
     slot
   });
   app.mount();
+  if (parentInstance) {
+    parentInstance.value = app;
+  }
+  _vnode.key && addComponentCache(app, _vnode.key);
   return app;
 }
 
@@ -80,7 +106,10 @@ export function componentRender () {
 
   function mounted (vm, data) {
     const htmlCode = vm.render;
-    const { code, root } = sugarCompiler(htmlCode);
+    const {
+      code,
+      root
+    } = sugarCompiler(htmlCode);
     vm.$el = document.createElement(root.tag);
     vm._vnode = vm.$el;
     render = code;
@@ -104,19 +133,27 @@ export function componentRender () {
 
   function assembling (_n, slot) {
     _n.children.forEach((child, index) => {
-      if (child.tag === 'slot' && child.data.attrs?.name) {
+      if (child.tag === 'slot' && (child.data.attrs?.name === 'default') && isDefault(slot)) {
+        _n.children.splice(index, 1, ...slot);
+      } else if (child.tag === 'slot' && child.data.attrs?.name) {
         const NamedSlots = slot.filter((s: any) => {
-          return s.data.attrs.slot === child.data.attrs.name;
+          return s.data?.attrs.slot === child.data.attrs.name;
         });
         _n.children.splice(index, 1, ...NamedSlots);
       } else if (child.tag === 'slot' && !child.data.attrs?.name) {
         const NoNamedSlots = slot.filter((s: any) => {
-          return !s.data.attrs.slot;
+          return !s.data?.attrs.slot;
         });
         _n.children.splice(index, 1, ...NoNamedSlots);
       } else if (child.children?.length) {
         assembling(child, slot);
       }
+    });
+  }
+
+  function isDefault (slots) {
+    return slots.filter((slot) => {
+      return slot.data?.attrs?.slot;
     });
   }
 

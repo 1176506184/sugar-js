@@ -68,14 +68,23 @@
 
         <p class="label">s-model</p>
 
-        <sugar-button s-for="(item,index) in state.list" :dataKey="state.num" @click="pushNode(state.num)" s-if="index%2===0" :key="item.d">
-            <div #default>
+        <sugar-button s-for="(item,index) in state.list" :dataKey="state.num" @click="pushNode(state.num)"
+                      s-if="index%2===0" :key="'sugar_btn_' + item.d" :instance="button">
+            <span #default>
                 <span>测试</span>
                 <span>{{item.d + state.num}}</span>
-            </div>
+            </span>
         </sugar-button>
 
         <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
+
+        <sugar-dialog :model="showDialog.value">
+            测试一下
+        </sugar-dialog>
+
+        <p class="label">s-if</p>
+
+        <div s-if="show.value">{{show.value}}</div>
 
     </div>
 
@@ -96,7 +105,8 @@
         reckon,
         onMounted,
         ref,
-        createEffect
+        createEffect,
+        instance
     } = SUGAR;
 
     const store = reactive({
@@ -108,17 +118,42 @@
         render: `<button class="sugar-button" style="margin: 5px 5px 0;" @click="click">
                     <slot name="default"></slot>
                     <slot name="label"></slot>
+                    <span>{{text.value}}</span>
                  </button>`,
         bulk(ctx) {
 
+            const text = ref(0);
+
             function click() {
+                text.value += 1;
                 ctx.click();
             }
 
             return {
                 click,
-                ctx
+                ctx,
+                text
             };
+        }
+    };
+
+    const dialog = {
+        name: 'sugar-dialog',
+        render: `<div><div class="sugar-dialog-mode" s-if="show.value">
+                    <div class="sugar-dialog">
+                        <slot name="default"></slot>
+                    </div>
+                </div></div>`,
+        bulk(ctx) {
+
+            const show = reckon(() => {
+                return ctx.model.value;
+            });
+
+            return {
+                show
+            };
+
         }
     };
 
@@ -142,8 +177,14 @@
 
             const active = ref(0);
 
+            const button = instance(null);
+
+            const show = ref(false);
+
+            const showDialog = ref(false);
+
             function pushNode(num) {
-                console.log(num)
+                show.value = !show.value;
                 state.num += 1;
                 state.list.push({
                     d: state.list.length + 1
@@ -159,7 +200,7 @@
             });
 
             onMounted(() => {
-                state.num += 1;
+                // state.num += 1;
             });
 
             function update(item, num) {
@@ -191,12 +232,15 @@
                 pushNode,
                 active,
                 updateActive,
-                store
+                store,
+                button,
+                showDialog,
+                show
             };
         }
     });
 
-    sugar.install([button]);
+    sugar.install([button, dialog]);
 
     sugar.mount('#app');
 

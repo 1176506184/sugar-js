@@ -16,7 +16,7 @@ export default function patch (vm, newVnode) {
     }
   }
 
-  function createElement (vnode) {
+  function createElement (vnode: any) {
     let domNode;
     if (vnode.tag) {
       if (typeof vnode.tag === 'string' && !isComponent(vnode, vm.components)) {
@@ -265,7 +265,7 @@ export function emptyNodeAt (elm) {
 }
 
 function isSameNode (o, n) {
-  return o.key === n.key && o.tag === n.tag && isDef(o.data) === isDef(n.data);
+  return o.key === n.key && o.tag === n.tag && isDef(o.data) === isDef(n.data) && (o.data?.cid === n.data?.cid);
 }
 
 function patchEvents (el, newOn) {

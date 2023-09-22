@@ -5,7 +5,7 @@ const subscribers = new Set();
 
 function ref (fun: any) {
   const result = {};
-  if (typeof fun === 'string' || typeof fun === 'number' || typeof fun === 'boolean') {
+  if (typeof fun === 'string' || typeof fun === 'number' || typeof fun === 'boolean' || fun === null) {
     const data = {
       value: fun
     };
@@ -53,6 +53,24 @@ function ref (fun: any) {
   }
 }
 
+function instance () {
+  const result = {};
+  const data = {
+    value: null
+  };
+  return Object.defineProperty(result, 'value', {
+    get () {
+      return data.value;
+    },
+    set (newValue) {
+      if (newValue !== data.value) {
+        data.value = newValue;
+      }
+    }
+  });
+}
+
 export {
-  ref
+  ref,
+  instance
 };
