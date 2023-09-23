@@ -12,9 +12,12 @@ export function bulkComponent (instance) {
     parentComponent
   } = instance;
   const {
-    data,
+    data: {
+      attrs,
+      on
+    },
     children
-  } = _vnode;
+  }: any = _vnode;
 
   let parentInstance = null;
 
@@ -22,20 +25,20 @@ export function bulkComponent (instance) {
   const props = {};
   const slot = children;
 
-  Object.keys(data.attrs).forEach((propName) => {
+  Object.keys(attrs).forEach((propName) => {
     if (propName === 'instance') {
-      parentInstance = data.attrs[propName];
+      parentInstance = attrs[propName];
     } else {
-      props[propName] = ref(data.attrs[propName]);
+      props[propName] = ref(attrs[propName]);
     }
   });
-  Object.keys(data.on).forEach((propName) => {
-    if (data.on[propName].parameters) {
+  Object.keys(on).forEach((propName) => {
+    if (on[propName].parameters) {
       props[propName] = function () {
-        data.on[propName].fun(...data.on[propName].parameters);
+        on[propName].fun(...on[propName].parameters);
       };
     } else {
-      props[propName] = data.on[propName].fun;
+      props[propName] = on[propName].fun;
     }
   });
 

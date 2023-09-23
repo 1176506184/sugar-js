@@ -238,11 +238,12 @@ export function mountComponent (vnode, parentComponent) {
   return bulkComponent(instance);
 }
 
-export function updateComponent (newVnode, oldVnode) {
+export function updateComponent (newVnode: any, oldVnode: any) {
   Object.keys(oldVnode._sugar.vm.props).forEach(prop => {
-    if (newVnode.data.attrs[prop]) {
+    const { attrs, on } = newVnode.data;
+    if (Object.keys(attrs).includes(prop)) {
       oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
-    } else if (newVnode.data.on[prop]) {
+    } else if (Object.keys(on).includes(prop)) {
       if (newVnode.data.on[prop].parameters) {
         oldVnode._sugar.vm.props[prop] = function () {
           newVnode.data.on[prop].fun(...newVnode.data.on[prop].parameters);
@@ -265,7 +266,7 @@ export function emptyNodeAt (elm) {
 }
 
 function isSameNode (o, n) {
-  return o.key === n.key && o.tag === n.tag && isDef(o.data) === isDef(n.data) && (o.data?.cid === n.data?.cid);
+  return o.key === n.key && o.tag === n.tag && isDef(o.data) === isDef(n.data);
 }
 
 function patchEvents (el, newOn) {

@@ -78,7 +78,7 @@
 
         <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
 
-        <sugar-dialog :model="showDialog.value">
+        <sugar-dialog :model="showDialog.value" @close="closeDialog">
             测试一下
         </sugar-dialog>
 
@@ -139,7 +139,7 @@
 
     const dialog = {
         name: 'sugar-dialog',
-        render: `<div><div class="sugar-dialog-mode" s-if="show.value">
+        render: `<div><div class="sugar-dialog-mode" s-if="show.value" @click="close">
                     <div class="sugar-dialog">
                         <slot name="default"></slot>
                     </div>
@@ -150,8 +150,13 @@
                 return ctx.model.value;
             });
 
+            function close() {
+                ctx.close();
+            }
+
             return {
-                show
+                show,
+                close
             };
 
         }
@@ -182,6 +187,10 @@
             const show = ref(false);
 
             const showDialog = ref(false);
+
+            function closeDialog() {
+                showDialog.value = false;
+            }
 
             function pushNode(num) {
                 show.value = !show.value;
@@ -235,7 +244,8 @@
                 store,
                 button,
                 showDialog,
-                show
+                show,
+                closeDialog
             };
         }
     });
