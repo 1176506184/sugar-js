@@ -5,6 +5,7 @@ import { sIf } from './transform/sIf';
 import { sFor } from './transform/sFor';
 import { sModel } from './transform/sModel';
 import { transformEvent } from './transform/transformEvent';
+import { transformRef } from './transform/transformRef';
 import { Namespaces, parse } from './parse';
 
 export function baseCompile (template: string) {
@@ -14,7 +15,8 @@ export function baseCompile (template: string) {
     sIf,
     sFor,
     sModel,
-    transformEvent
+    transformEvent,
+    transformRef
   });
 
   return {

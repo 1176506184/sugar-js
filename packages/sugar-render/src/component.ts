@@ -43,7 +43,6 @@ export function bulkComponent (instance) {
   });
 
   if (_vnode.key && getComponentCache(_vnode.key)) {
-    console.log(_vnode.key);
     parentInstance.value = getComponentCache(_vnode.key);
     return getComponentCache(_vnode.key);
   }

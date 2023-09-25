@@ -1,7 +1,7 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import { createEffect } from '@sugar/sugar-reactive';
 import patchEx from './patch';
-import { deepClone, escape2Html } from '@sugar/sugar-shared';
+import { escape2Html } from '@sugar/sugar-shared';
 
 export function sugarRender () {
   let render = null;
@@ -42,6 +42,7 @@ export function bindT (vm, data) {
   Object.keys(data).forEach((key) => {
     vm[key] = data[key];
   });
+
   function _c (tag = 'div', data = {}, children = []) {
     return createElement(tag, data, children);
   }

@@ -25,6 +25,8 @@ export function transform (context, helpers) {
       context.type = NodeTypes.SLOT;
     }
 
+    helpers.transformRef(context);
+
     if (context.children) {
       context.children.forEach((child, index) => {
         work(child);
