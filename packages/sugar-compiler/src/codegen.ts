@@ -1,4 +1,5 @@
 import { NodeTypes } from './parse';
+import { isArray } from '@sugar/sugar-shared';
 
 export function generate (ast) {
   const cid = 1;
@@ -146,7 +147,7 @@ function dealEvent (props) {
         funString = `(e)=>{${prop.exp.content}}`;
       }
 
-      str += `"${prop.arg.content}":{"value":${funString},"isStatic":${prop.exp.isStatic}${prop.exp.parameters ? `,"parameters":[${prop.exp.parameters}]` : ''}}`;
+      str += `"${prop.arg.content}":{"value":${funString},"isStatic":${prop.exp.isStatic}${prop.exp.parameters ? `,"parameters":[${prop.exp.parameters}]` : ''},"modifiers":[${Array2String(prop.modifiers)}]}`;
 
       if (prop.name === 'on' && index < props.length - 1) {
         str += ',';
@@ -155,4 +156,13 @@ function dealEvent (props) {
   });
 
   return str;
+}
+
+function Array2String (arr) {
+  if (!isArray(arr)) {
+    return '';
+  }
+  return arr.map((a: any) => {
+    return `"${a}"`;
+  });
 }

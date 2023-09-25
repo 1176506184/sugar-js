@@ -88,6 +88,11 @@
 
         <div s-if="show">{{show}}</div>
 
+        <p class="label">显示DiaLog</p>
+
+        <sugar-button @click="showDialogFun">
+            {{showDialog}}
+        </sugar-button>
     </div>
 
     <div s-if="active === 1">
@@ -120,7 +125,6 @@
         render: `<button class="sugar-button" style="margin: 5px 5px 0;" @click="click">
                     <slot name="default"></slot>
                     <slot name="label"></slot>
-                    <span>{{text.value}}</span>
                  </button>`,
         bulk(ctx) {
 
@@ -141,11 +145,13 @@
 
     const dialog = {
         name: 'sugar-dialog',
-        render: `<div><div class="sugar-dialog-mode" s-if="show.value" @click="close">
-                    <div class="sugar-dialog">
+        render: `<div>
+                    <div class="sugar-dialog-mode" s-if="show" @click.self="close">
+                     <div class="sugar-dialog" s-if="show">
                         <slot name="default"></slot>
                     </div>
-                </div></div>`,
+                    </div>
+                </div>`,
         bulk(ctx) {
 
             const show = reckon(() => {
@@ -230,6 +236,10 @@
                 active.value = active.value === 1 ? 0 : 1;
             }
 
+            function showDialogFun() {
+                showDialog.value = true;
+            }
+
             const testRef = ref('testRef');
 
             return {
@@ -247,7 +257,9 @@
                 button,
                 showDialog,
                 show,
-                closeDialog
+                closeDialog,
+                showDialogFun
+
             };
         }
     });

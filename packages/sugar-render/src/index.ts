@@ -133,11 +133,25 @@ export function bindAttrAndEvent (vm, vnode) {
         if (on[key].value && !on[key].isStatic) {
           on[key].value = vm.data[on[key].value];
           on[key].fun = function (e) {
+            if (on[key].modifiers.includes('self')) {
+              if (e.target !== e.currentTarget) {
+                return;
+              }
+            }
+
             const parameters = on[key].parameters;
             if (parameters?.length) {
               on[key].value(...parameters);
             } else {
               on[key].value(e);
+            }
+
+            if (on[key].modifiers.includes('stop')) {
+              e.stopPropagation();
+            }
+
+            if (on[key].modifiers.includes('prevent')) {
+              e.preventDefault();
             }
           };
         } else {
