@@ -1,4 +1,3 @@
-
 var ajax_tools_space = {
     ajaxToolsSwitchOn: true,
     ajaxToolsSwitchOnNot200: true,
@@ -166,92 +165,18 @@ var ajax_tools_space = {
             return await reader.read().then(processData);
         }
         return ajax_tools_space.originalFetch(...args).then(async (response) => {
-
-
-
-            let overrideText = undefined;
-            const interfaceList = [];
-            ajax_tools_space.ajaxDataList.forEach((item) => {
-                interfaceList.push(...(item.interfaceList || []));
-            });
-
-            const {method = 'GET'} = args[1] || {};
-            for (let i = 0; i < interfaceList.length; i++) {
-                const {open = true, matchType = 'normal', matchMethod, request, responseText} = interfaceList[i];
-                const matchedMethod = !matchMethod || matchMethod === method.toUpperCase();
-
-                if (open && matchedMethod) {
-                    let matched = false;
-                    if (matchType === 'normal' && request && response.url.includes(request)) {
-                        matched = true;
-                    } else if (matchType === 'regex' && request && response.url.match(ajax_tools_space.strToRegExp(request))) {
-                        matched = true;
-                    }
-
-                    if (matched && responseText) {
-                        const queryStringParameters = ajax_tools_space.getRequestParams(response.url);
-                        const [_, data] = args;
-                        const originalResponse = await getOriginalResponse(response.body);
-                        const funcArgs = {
-                            method,
-                            payload: {
-                                queryStringParameters,
-                                requestPayload: data.body
-                            },
-                            originalResponse
-                        };
-                        overrideText = ajax_tools_space.getOverrideText(responseText, funcArgs);
-                    }
-                }
-            }
-            if (overrideText !== undefined) {
-                const stream = new ReadableStream({
-                    start(controller) {
-                        controller.enqueue(new TextEncoder().encode(overrideText));
-                        controller.close();
-                    }
-                });
-                const newResponse = new Response(stream, {
-                    headers: response.headers,
-                    status: response.status,
-                    statusText: response.statusText,
-                });
-                const responseProxy = new Proxy(newResponse, {
-                    get: function (target, name) {
-                        switch (name) {
-                            case 'body':
-                            case 'bodyUsed':
-                            case 'ok':
-                            case 'redirected':
-                            case 'type':
-                            case 'url':
-                                return response[name];
-                        }
-                        return target[name];
-                    }
-                });
-                for (let key in responseProxy) {
-                    if (typeof responseProxy[key] === 'function') {
-                        responseProxy[key] = responseProxy[key].bind(newResponse);
-                    }
-                }
-                return responseProxy;
-            }
-
             let data = await response.clone().json()
-
             window.postMessage({
                 Message: 'ajax',
                 url: response.url,
                 data: data
             })
-
             return response;
         })
     }
 }
 if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
-    || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1) {
+    || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 || location.href.indexOf('tiktok') !== -1) {
 
     if (location.href.indexOf('twtest.anyelse.com') === -1) {
         window.XMLHttpRequest = ajax_tools_space.myXHR;

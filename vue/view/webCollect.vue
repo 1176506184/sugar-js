@@ -96,7 +96,8 @@ function uploadData() {
           SourceDomainId: urlId.value,
           ArticleUrl: d.href,
           ArticleItemTitle: d.title,
-          PublishedTime: d.time
+          PublishedTime: d.time,
+          ViewCount: d.play
 
         }
       })

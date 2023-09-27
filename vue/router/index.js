@@ -4,6 +4,7 @@ import TwitterImage from "../view/twitterImage.vue"
 import YoutubeVideo from "../view/youtubeVideo.vue"
 import ShortsVideo from "../view/shortsVideo.vue";
 import WebCollect from "../view/webCollect.vue";
+import TiktokVideo from "../view/tiktokVideo.vue"
 import {createRouter, createWebHashHistory} from "vue-router";
 
 const routes = [
@@ -47,6 +48,13 @@ const routes = [
         name: 'WebCollect',
         path: '/WebCollect',
         component: WebCollect,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    },
+    {
+        name: 'TiktokVideo',
+        path: '/TiktokVideo',
+        component: TiktokVideo,
         props: route => ({query: route.query.q}),
         meta: {}
     }

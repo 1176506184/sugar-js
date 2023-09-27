@@ -76,6 +76,13 @@ if (location.href.indexOf("douyin") !== -1) {
     }).then(() => {
         console.log("注入完成")
     })
+} else if (location.href.indexOf("tiktok") !== -1) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'tiktok.js'
+    }).then(() => {
+        console.log("注入完成")
+    })
 } else {
     chrome.runtime.sendMessage({
         Message: "loadScript",

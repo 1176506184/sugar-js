@@ -26,7 +26,7 @@
 
               </template>
               <template #default="{ row }">
-                {{ row.title?.runs[0]?.text }}
+                <el-input v-model="row.title.runs[0].text"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="播放量" prop="viewCount" sortable :sort-orders="['descending','ascending',null]">
@@ -97,18 +97,22 @@
         <div class="dialog-footer"
              style="text-align: right;width: calc(100% - 20px);padding: 10px;position: fixed;bottom: 0;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
 
-          <el-row gutter="5" style="width: 580px;float: left">
-            <el-col :span="8">
+          <el-row gutter="10" style="width: 420px;float: left">
+            <el-col :span="12">
               <el-select placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%">
                 <el-option v-for="item in pages" :label="item.name" :value="item.uid"/>
               </el-select>
             </el-col>
-            <el-col :span="16" style="color:orange;">
+            <el-col :span="12" style="color:orange;font-size: 12px;line-height: 17px;white-space: pre-wrap;
+    text-align: left;">
               {{ pageType }}
               <!--              （发帖形式：图文追平贴 排期类型：定时发）-->
             </el-col>
           </el-row>
 
+          <el-button type="primary" @click="copy">
+            复制链接
+          </el-button>
           <el-button @click="close">取消</el-button>
           <el-button type="primary" style="margin-right: 10px" @click="Save">
             创建任务
@@ -127,6 +131,9 @@ import router from "../router";
 import {computed, onMounted, reactive, ref} from "vue";
 import store from "../store/store";
 import {testHttp, xhrHttp} from "../utils/request";
+import {ElMessage} from "element-plus";
+import {handleCopyValue} from "../utils/utils";
+
 
 const data = ref([])
 const AllData = ref([])
@@ -151,7 +158,7 @@ const pageType = computed(() => {
   for (let i = 0; i < pages.value.length; i++) {
 
     if (form.pageuid === pages.value[i].uid) {
-      return `（ 发帖形式：${pages.value[i].post_typename} | 排期类型：${pages.value[i].plan_typename} ）`
+      return `发帖形式：${pages.value[i].post_typename}\n排期类型：${pages.value[i].plan_typename} `
     }
 
   }
@@ -292,6 +299,22 @@ async function Save() {
     }
   });
 }
+
+function copy() {
+  let copyText = ``;
+  upData.value.forEach((item) => {
+    copyText += `https://www.youtube.com/watch?v=${item.videoId}\n`;
+  })
+  handleCopyValue(copyText).then(()=>{
+    ElMessage({
+      message: '复制成功.',
+      type: 'success',
+
+    })
+  });
+}
+
+
 
 </script>
 

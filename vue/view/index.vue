@@ -134,8 +134,12 @@
               <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>
             </div>
           </el-collapse-item>
-
-          <el-collapse-item title="网站采集" name="7">
+          <el-collapse-item title="字节跳动" name="7">
+            <div>
+              <el-button @click="collectTiktok" type="primary">采集视频</el-button>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item title="网站采集" name="8">
             <div>
               <el-button @click="collectWeb" type="primary">网站采集</el-button>
             </div>
@@ -203,7 +207,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v3.7",
+  version: "v3.8",
   system: 1
 });
 
@@ -244,8 +248,11 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "youtube") {
       activeNames.value.push("6");
       store.commit("changeType", "youtube");
-    }  else if (Message.type === "web") {
+    } else if (Message.type === "tiktok") {
       activeNames.value.push("7");
+      store.commit("changeType", "tiktok");
+    } else if (Message.type === "web") {
+      activeNames.value.push("8");
       store.commit("changeType", "web");
     }else if (Message.type === "empty") {
       store.commit("changeType", "empty");
@@ -896,6 +903,13 @@ function collectYoutube() {
 function collectShorts() {
   router.push({
     name: "ShortsVideo",
+    query: {},
+  });
+}
+
+function collectTiktok() {
+  router.push({
+    name: "TiktokVideo",
     query: {},
   });
 }

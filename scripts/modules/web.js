@@ -191,7 +191,9 @@ function startTask() {
                             time: nodeJson.time ? nodeJson.time(node) : ''
                         })
                     }
-                    // node.remove();
+                    // if(list[key].node.nextPage !== null){
+                    //     node.remove();
+                    // }
                     result = repeat(result);
                 })
 
@@ -207,6 +209,8 @@ function startTask() {
 
                         })
                     }
+
+
                 } else {
                     scrollBottom();
                 }
