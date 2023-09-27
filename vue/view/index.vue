@@ -109,7 +109,7 @@
               </el-button>
             </div>
           </el-collapse-item>
-          <el-collapse-item title="脸书博主" name="5">
+          <el-collapse-item title="Facebook博主" name="5">
             <div style="display: flex">
               <el-input
                   placeholder="最大采集文章数"
@@ -127,14 +127,14 @@
               </el-button>
             </div>
           </el-collapse-item>
-          <el-collapse-item title="油管博主" name="6">
+          <el-collapse-item title="youtube博主" name="6">
             <div>
               <el-button @click="collectYoutube" type="primary">采集油管视频并自动分发</el-button>
 
               <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>
             </div>
           </el-collapse-item>
-          <el-collapse-item title="字节跳动" name="7">
+          <el-collapse-item title="TikTok" name="7">
             <div>
               <el-button @click="collectTiktok" type="primary">采集视频</el-button>
             </div>
@@ -207,7 +207,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v3.9",
+  version: "v4.0",
   system: 1
 });
 
