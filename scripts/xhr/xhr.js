@@ -149,28 +149,29 @@ var ajax_tools_space = {
     },
     originalFetch: window.fetch.bind(window),
     myFetch: function (...args) {
-        const getOriginalResponse = async (stream) => {
-            let text = '';
-            const decoder = new TextDecoder('utf-8');
-            const reader = stream.getReader();
-            const processData = (result) => {
-                if (result.done) {
-                    return text;
-                }
-                const value = result.value; // Uint8Array
-                text += decoder.decode(value, {stream: true});
-                // 读取下一个文件片段，重复处理步骤
-                return reader.read().then(processData);
-            };
-            return await reader.read().then(processData);
-        }
         return ajax_tools_space.originalFetch(...args).then(async (response) => {
-            let data = await response.clone().json()
-            window.postMessage({
-                Message: 'ajax',
-                url: response.url,
-                data: data
-            })
+            try {
+                if (response.url.includes("www.tiktok.com")) {
+                    if(response.url.includes("/api/post/item_list")){
+                        let data = await response.clone().json()
+                        window.postMessage({
+                            Message: 'ajax',
+                            url: response.url,
+                            data: data
+                        })
+                    }
+                } else {
+                    let data = await response.clone().json()
+                    window.postMessage({
+                        Message: 'ajax',
+                        url: response.url,
+                        data: data
+                    })
+                }
+
+            } catch (e) {
+
+            }
             return response;
         })
     }

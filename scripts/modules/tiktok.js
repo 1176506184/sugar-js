@@ -41,8 +41,8 @@ function parseVideo(data) {
 
             Object.keys(d).forEach((key) => {
                 if (key === 'itemList') {
+                    console.log(d[key])
                     d[key].map(item => {
-                        videoIds.push(item.id);
                         if (!videoIds.includes(item.id)) {
                             videoIds.push(item.id)
                             videoData.push({
