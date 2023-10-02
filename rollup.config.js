@@ -37,6 +37,7 @@ export default {
     // 热更新 默认监听根文件夹
     isDev ? livereload() : null,
     // 本地服务器
+    // eslint-disable-next-line multiline-ternary
     isDev ? serve({
       open: true, // 自动打开页面
       port: 8000,

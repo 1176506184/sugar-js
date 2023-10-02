@@ -110,7 +110,9 @@ export default function patch (vm, newVnode) {
   function patchAttrs (el, oldAttrs, newAttrs) {
     if (oldAttrs) {
       Object.keys(oldAttrs).forEach((attr) => {
-        el.removeAttribute(attr);
+        if (newAttrs[attr] !== oldAttrs[attr]) {
+          el.removeAttribute(attr);
+        }
       });
     }
 
@@ -118,7 +120,9 @@ export default function patch (vm, newVnode) {
       if (attr === 'value') {
         el.value = newAttrs[attr];
       }
-      el.setAttribute(attr, newAttrs[attr]);
+      if (!oldAttrs || newAttrs[attr] !== oldAttrs[attr]) {
+        el.setAttribute(attr, newAttrs[attr]);
+      }
     });
   }
 
@@ -240,7 +244,10 @@ export function mountComponent (vnode, parentComponent) {
 
 export function updateComponent (newVnode: any, oldVnode: any) {
   Object.keys(oldVnode._sugar.vm.props).forEach(prop => {
-    const { attrs, on } = newVnode.data;
+    const {
+      attrs,
+      on
+    } = newVnode.data;
     if (Object.keys(attrs).includes(prop)) {
       oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
     } else if (Object.keys(on).includes(prop)) {
