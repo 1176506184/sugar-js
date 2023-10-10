@@ -11,9 +11,12 @@ async function injectedScript(path) {
 
 chrome.storage.local.get('open', (res) => {
     if (res.open !== 0) {
-        injectedScript('scripts/xhr/xhr.js').then(r => {
+        if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
+            || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 || location.href.indexOf('tiktok') !== -1) {
+            injectedScript('scripts/xhr/xhr.js').then(r => {
 
-        })
+            })
+        }
     }
 })
 
@@ -83,19 +86,13 @@ if (location.href.indexOf("douyin") !== -1) {
     }).then(() => {
         console.log("注入完成")
     })
-} else {
+} else if (location.href) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
-        script: 'web.js'
+        script: 'empty.js'
     }).then(() => {
-        console.log("注入web完成")
+        console.log("注入empty完成")
     })
-    // chrome.runtime.sendMessage({
-    //     Message: "loadScript",
-    //     script: 'empty.js'
-    // }).then(() => {
-    //     console.log("注入empty完成")
-    // })
 }
 
 

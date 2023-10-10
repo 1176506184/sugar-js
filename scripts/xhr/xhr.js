@@ -148,19 +148,13 @@ var ajax_tools_space = {
         }
     },
     originalFetch: window.fetch.bind(window),
-    myFetch: function (...args) {
-        return ajax_tools_space.originalFetch(...args).then(async (response) => {
-            try {
-                if (response.url.includes("www.tiktok.com")) {
-                    if(response.url.includes("/api/post/item_list")){
-                        let data = await response.clone().json()
-                        window.postMessage({
-                            Message: 'ajax',
-                            url: response.url,
-                            data: data
-                        })
-                    }
-                } else {
+    myFetch: async function (...args) {
+
+        let [resource, config] = args;
+        const response = await ajax_tools_space.originalFetch(resource, config);
+        try {
+            if (response.url.includes("www.tiktok.com")) {
+                if (response.url.includes("/api/post/item_list")) {
                     let data = await response.clone().json()
                     window.postMessage({
                         Message: 'ajax',
@@ -168,12 +162,46 @@ var ajax_tools_space = {
                         data: data
                     })
                 }
-
-            } catch (e) {
-
+            } else {
+                let data = await response.clone().json()
+                window.postMessage({
+                    Message: 'ajax',
+                    url: response.url,
+                    data: data
+                })
             }
-            return response;
-        })
+
+        } catch (e) {
+
+        }
+        // response interceptor here
+        return response;
+
+        // return ajax_tools_space.originalFetch(...args).then(async (response) => {
+        //     try {
+        //         if (response.url.includes("www.tiktok.com")) {
+        //             if(response.url.includes("/api/post/item_list")){
+        //                 let data = await response.clone().json()
+        //                 window.postMessage({
+        //                     Message: 'ajax',
+        //                     url: response.url,
+        //                     data: data
+        //                 })
+        //             }
+        //         } else {
+        //             let data = await response.clone().json()
+        //             window.postMessage({
+        //                 Message: 'ajax',
+        //                 url: response.url,
+        //                 data: data
+        //             })
+        //         }
+        //
+        //     } catch (e) {
+        //
+        //     }
+        //     return response;
+        // })
     }
 }
 if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1

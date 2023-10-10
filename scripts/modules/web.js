@@ -89,6 +89,32 @@ const list = {
             }
         }
     },
+    "https://fandomwire.com/?s=Game+of+Thrones": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('div.g1-row-inner div[id="primary"] .g1-collection-item article');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a[rel="bookmark"]').href;
+            },
+            title: function (parentNode) {
+
+                let title = parentNode.querySelector('h3.entry-title')?.innerText;
+                if (!title) {
+                    title = parentNode.querySelector('h2.entry-title').innerText;
+                }
+                return title
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time').getAttribute('datetime')
+            },
+            play: null,
+            nextPage: function () {
+                return document.querySelector('div.g1-collection-more a')
+            }
+        }
+    },
     "https://madlyodd.com/category/feed-pets/": {
         type: NODE,
         node: {
@@ -112,6 +138,25 @@ const list = {
                 return play
             },
             nextPage: null
+        }
+    },
+    "https://www.faithpot.com/category/news/amazing": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('main article');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a').href;
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('h2.entry-title').innerText;
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('div.masonry-load-more.load-more.has-svg-icon a')
+            }
         }
     },
     "https://www.faithpot.com/category/news": {
@@ -170,6 +215,60 @@ const list = {
                 return document.querySelector('#loadMorePosts')
             }
         }
+    },
+    "https://justsomething.co": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('ul.g1-collection-items li.g1-collection-item.g1-collection-item-1of3')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a').href
+
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.g1-gamma.g1-gamma-1st.entry-title').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: null
+        }
+    },
+    "https://www.tvinsider.com/show/NCIS/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.records .records-item')
+            },
+            href: function (parentNode) {
+                return parentNode.href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('h3').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('.records .alm-load-more-btn.more')
+            }
+        }
+    },
+    "https://www.lovemeow.com/stories/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('#sSection_0_0_2_0_0_3_0 article')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('h2').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: null
+        }
     }
 }
 
@@ -179,6 +278,7 @@ function startTask() {
         Object.keys(list).forEach((key) => {
 
             if (location.href.indexOf(key) > -1 && list[key].type === NODE) {
+                console.log(key);
                 const nodeJson = list[key].node
                 const nodes = nodeJson.item()
                 Array.from(nodes).forEach(node => {
@@ -191,9 +291,9 @@ function startTask() {
                             time: nodeJson.time ? nodeJson.time(node) : ''
                         })
                     }
-                    // if(list[key].node.nextPage !== null){
-                    //     node.remove();
-                    // }
+                    if (list[key].node.nextPage !== null) {
+                        node.remove();
+                    }
                     result = repeat(result);
                 })
 

@@ -160,7 +160,9 @@ function getRule() {
     is_rule: -1,
     id: null,
     addusername: "",
-    rule_datetime: ""
+    rule_datetime: "",
+    LinkType:-1,
+    ruleType:-1
   }, 'post', 'application/json').then((res) => {
     res = JSON.parse(res)
     urls.value = res.data.data;
