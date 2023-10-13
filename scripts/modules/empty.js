@@ -8,6 +8,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         })
         sendResponse({state: 200});
     }
+    sendResponse({state: 200});
 })
 
 

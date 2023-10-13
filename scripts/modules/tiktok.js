@@ -6,7 +6,7 @@ window.onload = function () {
     videoData.push(...Object.keys(data).map(d => {
         return {
             title: data[d].desc,
-            href: location.href + `/video/${data[d].id}`,
+            href: location.origin + location.pathname + `/video/${data[d].id}`,
             playCount: data[d].stats.playCount
         }
     }))
@@ -47,7 +47,7 @@ function parseVideo(data) {
                             videoIds.push(item.id)
                             videoData.push({
                                 title: item.desc,
-                                href: location.href + `/video/${item.id}`,
+                                href: location.origin + location.pathname + `/video/${item.id}`,
                                 playCount: item.stats.playCount
                             });
                         }
