@@ -26,7 +26,7 @@ var cacheData = {init: true};
 chrome.storage.local.set({iframeVisible: true});
 G.scriptList = new Map();
 G.scriptList.set("facebook.js", {refresh: true, allFrames: true, world: "MAIN", name: "facebook"});
-
+const webList = ['https://movieweb.com', 'https://collider.com']
 
 if (location.href.indexOf('twtest.anyelse.com') !== -1) {
     chrome.runtime.sendMessage({
@@ -85,6 +85,13 @@ if (location.href.indexOf("douyin") !== -1) {
         script: 'tiktok.js'
     }).then(() => {
         console.log("注入完成")
+    })
+} else if (webList.includes(location.origin)) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'web.js'
+    }).then(() => {
+        console.log("注入web完成")
     })
 } else if (location.href) {
     chrome.runtime.sendMessage({

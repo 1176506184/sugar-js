@@ -271,7 +271,7 @@ async function Save() {
       cover = `https://i.ytimg.com/vi/${r.videoId}/hqdefault.jpg`;
     }
     videoData.push({
-      url: `https://www.youtube.com/shorts/${r.videoId}`,
+      url: `https://www.youtube.com/watch?v=${r.videoId}`,
       title: r.headline.simpleText,
       cover: cover,
       author: author.value

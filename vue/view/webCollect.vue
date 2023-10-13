@@ -161,8 +161,9 @@ function getRule() {
     id: null,
     addusername: "",
     rule_datetime: "",
-    LinkType:-1,
-    ruleType:-1
+    LinkType: -1,
+    ruleType: -1,
+    lang: -1
   }, 'post', 'application/json').then((res) => {
     res = JSON.parse(res)
     urls.value = res.data.data;

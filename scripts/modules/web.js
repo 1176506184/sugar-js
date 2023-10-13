@@ -269,6 +269,44 @@ const list = {
             play: null,
             nextPage: null
         }
+    },
+    "https://movieweb.com/person/gal-gadot/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.display-card')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('.display-card-title a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.display-card-title').innerText
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time.display-card-date').getAttribute('datetime')
+            },
+            play: null,
+            nextPage: null
+        }
+    },
+    "https://collider.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.sentinel-home-list .display-card')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('.display-card-title a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.display-card-title').innerText
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time.display-card-date').getAttribute('datetime')
+            },
+            play: null,
+            nextPage: null
+        }
     }
 }
 
