@@ -125,6 +125,9 @@
               </el-button>
               <el-button type="danger" @click="stopCollectFacebook" v-else>停止采集
               </el-button>
+
+              <el-button type="primary" @click="collectFBVideo">采集博主视频</el-button>
+
             </div>
           </el-collapse-item>
           <el-collapse-item title="youtube博主" name="6">
@@ -254,7 +257,7 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "web") {
       activeNames.value.push("8");
       store.commit("changeType", "web");
-    }else if (Message.type === "empty") {
+    } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
   } else if (Message.Message === "video") {
@@ -914,13 +917,19 @@ function collectTiktok() {
   });
 }
 
-function collectWeb(){
+function collectWeb() {
   router.push({
     name: "WebCollect",
     query: {},
   });
 }
 
+function collectFBVideo() {
+  router.push({
+    name: "FBCollect",
+    query: {},
+  });
+}
 
 </script>
 
