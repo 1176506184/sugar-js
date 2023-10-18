@@ -131,7 +131,7 @@ import router from "../router";
 import {computed, onMounted, reactive, ref} from "vue";
 import store from "../store/store";
 import {testHttp, xhrHttp} from "../utils/request";
-import {ElMessage} from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 import {handleCopyValue} from "../utils/utils";
 
 
@@ -282,14 +282,19 @@ async function Save() {
   await Promise.all(promise);
   loading.close();
 
+  const loadingTask = ElLoading.service({
+    lock: true,
+    text: '数据上传中',
+    background: 'rgba(0, 0, 0, 0.6)',
+  })
+
 
   let param = {
     ...form,
     dduserid: localStorage.getItem("ddid"),
     videodata: JSON.stringify(videoData)
   }
-  // console.log(videoData)
-  // console.log(param)
+
   xhrHttp(`http://gpt.anyelse.com/callback/captureyoutubetask`, param, 'post', 'application/json').then((res) => {
     res = JSON.parse(res);
     if (res.state) {
@@ -297,6 +302,7 @@ async function Save() {
     } else {
       alert("创建失败")
     }
+    loadingTask.close();
   });
 }
 
@@ -305,7 +311,7 @@ function copy() {
   upData.value.forEach((item) => {
     copyText += `https://www.youtube.com/watch?v=${item.videoId}\n`;
   })
-  handleCopyValue(copyText).then(()=>{
+  handleCopyValue(copyText).then(() => {
     ElMessage({
       message: '复制成功.',
       type: 'success',
@@ -313,7 +319,6 @@ function copy() {
     })
   });
 }
-
 
 
 </script>
