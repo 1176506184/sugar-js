@@ -132,9 +132,9 @@
           </el-collapse-item>
           <el-collapse-item title="youtube博主" name="6">
             <div>
-              <el-button @click="collectYoutube" type="primary">采集油管视频并自动分发</el-button>
-
+              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>
               <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>
+              <el-button @click="collectYoutubeNew" type="primary">采集视频自动分发（新）</el-button>
             </div>
           </el-collapse-item>
           <el-collapse-item title="TikTok" name="7">
@@ -210,7 +210,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v4.5",
+  version: "v4.7",
   system: 1
 });
 
@@ -929,6 +929,67 @@ function collectFBVideo() {
     name: "FBCollect",
     query: {},
   });
+}
+
+async function collectYoutubeNew() {
+
+  let activeId = await getActiveId();
+  let pageId = await getId();
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/YoutubeVideoFrame?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+
+}
+
+async function updateActiveId(page_id, active_id) {
+  chrome.tabs.sendMessage(
+      page_id,
+      {
+        Message: "updateActiveId",
+        data: active_id
+      },
+      function (response) {
+        if (response?.state !== 200) {
+          ElMessage.warning({
+            message: '插件已重新加载，请刷新页面'
+          })
+        }
+      }
+  );
+}
+
+async function getActiveId() {
+  return new Promise((r) => {
+    chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    }, (tabs) => {
+      r(tabs[0].id)
+    })
+  })
+}
+
+async function getId() {
+  return new Promise((r) => {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab['url']?.includes("chrome-extension://jkobepngkjafdjkkdkebjohjclihidnj/html/out.html#/YoutubeVideoFrame")) {
+          r(tab.id)
+        }
+      })
+      r(false)
+    })
+  })
 }
 
 </script>

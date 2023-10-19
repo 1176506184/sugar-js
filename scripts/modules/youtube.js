@@ -1,14 +1,22 @@
 const videoData = []
 const videoIds = []
 
-function getVideo() {
+function getVideo(type) {
     console.log("开始返回数据")
+    if (type === 'frame') {
+        chrome.runtime.sendMessage({
+            Message: 'youtubeVideo',
+            data: videoData,
+            author: document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText
+        }).then()
+    } else {
+        chrome.runtime.sendMessage({
+            Message: 'youtubeVideo',
+            data: videoData,
+            author: document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText
+        }).then()
+    }
 
-    chrome.runtime.sendMessage({
-        Message: 'youtubeVideo',
-        data: videoData,
-        author: document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText
-    }).then()
 }
 
 
@@ -53,7 +61,11 @@ function parseVideo(data) {
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'video') {
         console.log("获取任务");
-        getVideo();
+        getVideo("pop");
+        sendResponse({state: 200});
+    } else if (Message.Message === 'video_frame') {
+        console.log("获取任务");
+        getVideo("frame");
         sendResponse({state: 200});
     } else if (Message.Message === 'xhr') {
         sendResponse({state: 200});

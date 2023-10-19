@@ -307,6 +307,32 @@ const list = {
             play: null,
             nextPage: null
         }
+    },
+    "https://fandomwire.com/tag/gal-gadot": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('div.g1-row-inner div[id="primary"] .g1-collection-item article');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a[rel="bookmark"]').href;
+            },
+            title: function (parentNode) {
+
+                let title = parentNode.querySelector('h3.entry-title')?.innerText;
+                if (!title) {
+                    title = parentNode.querySelector('h2.entry-title')?.innerText;
+                }
+                return title
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time')?.getAttribute('datetime')
+            },
+            play: null,
+            nextPage: function () {
+                return document.querySelector('div.g1-collection-more a')
+            }
+        }
     }
 }
 
@@ -320,7 +346,7 @@ function startTask() {
                 const nodeJson = list[key].node
                 const nodes = nodeJson.item()
                 Array.from(nodes).forEach(node => {
-                    if (nodeJson.href(node)) {
+                    if (nodeJson.href(node) && nodeJson.title(node)) {
                         result.push({
                             href: nodeJson.href(node),
                             title: nodeJson.title(node),

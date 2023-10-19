@@ -26,7 +26,7 @@ var cacheData = {init: true};
 chrome.storage.local.set({iframeVisible: true});
 G.scriptList = new Map();
 G.scriptList.set("facebook.js", {refresh: true, allFrames: true, world: "MAIN", name: "facebook"});
-const webList = ['https://movieweb.com', 'https://collider.com']
+const webList = ['https://movieweb.com', 'https://collider.com', 'https://fandomwire.com']
 
 if (location.href.indexOf('twtest.anyelse.com') !== -1) {
     chrome.runtime.sendMessage({

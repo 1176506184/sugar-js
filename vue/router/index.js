@@ -2,6 +2,7 @@ import Home from "../view/index.vue"
 import TrumpetVideo from "../view/trumpetVideo.vue";
 import TwitterImage from "../view/twitterImage.vue"
 import YoutubeVideo from "../view/youtubeVideo.vue"
+import YoutubeVideoFrame from "../view/youtubeVideoFrame.vue"
 import ShortsVideo from "../view/shortsVideo.vue";
 import WebCollect from "../view/webCollect.vue";
 import TiktokVideo from "../view/tiktokVideo.vue";
@@ -35,6 +36,13 @@ const routes = [
         name: 'YoutubeVideo',
         path: '/YoutubeVideo',
         component: YoutubeVideo,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    },
+    {
+        name: 'YoutubeVideoFrame',
+        path: '/YoutubeVideoFrame',
+        component: YoutubeVideoFrame,
         props: route => ({query: route.query.q}),
         meta: {}
     },

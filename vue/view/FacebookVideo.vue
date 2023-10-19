@@ -131,7 +131,7 @@ import router from "../router";
 import {computed, onMounted, reactive, ref} from "vue";
 import store from "../store/store";
 import {testHttp, xhrHttp} from "../utils/request";
-import {ElMessage} from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 import {handleCopyValue} from "../utils/utils";
 
 
@@ -252,6 +252,12 @@ const handleSelectionChange = (val) => {
 
 async function Save() {
 
+  const loadingTask = ElLoading.service({
+    lock: true,
+    text: '数据上传中',
+    background: 'rgba(0, 0, 0, 0.6)',
+  })
+
   let param = {
     ...form,
     dduserid: localStorage.getItem("ddid"),
@@ -260,6 +266,7 @@ async function Save() {
 
   xhrHttp(`http://gpt.anyelse.com/callback/capturefacebooktask`, param, 'post', 'application/json').then((res) => {
     res = JSON.parse(res);
+    loadingTask.close();
     if (res.state) {
       alert(res.msg)
     } else {
