@@ -55,6 +55,15 @@
               >欢享网
               </el-button
               >
+
+              <el-button
+                  @click="Copy_douyin"
+                  type="primary"
+                  :disabled="type !== 'douyin'"
+              >视频采集
+              </el-button
+              >
+
             </div>
           </el-collapse-item>
           <el-collapse-item title="推特图片" name="2">
@@ -168,7 +177,7 @@
 import {useRouter} from "vue-router";
 
 const router = useRouter();
-import {guid} from "../utils/utils";
+import {guid, handleCopyValue} from "../utils/utils";
 
 const dingTalkAppId = "dingoac12xjewgmuqs2sea";
 import {nextTick, onActivated, onMounted, reactive, ref, watchEffect} from "vue";
@@ -210,7 +219,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v4.8",
+  version: "v4.9",
   system: 1
 });
 
@@ -635,6 +644,14 @@ function trumpet_video_hx() {
       }
   );
 }
+
+function Copy_douyin() {
+  router.push({
+    name: "douyinVideo",
+    query: {},
+  });
+}
+
 
 function twitter_trumpet() {
   chrome.tabs.query(

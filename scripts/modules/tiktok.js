@@ -16,7 +16,7 @@ window.onload = function () {
 
 function getVideo() {
     chrome.runtime.sendMessage({
-        Message: 'tiktokVideo',
+        Message: 'douyinVideo',
         data: videoData,
         author: document.querySelector('h1[data-e2e="user-title"]')?.innerText
     }).then()

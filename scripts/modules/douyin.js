@@ -112,6 +112,51 @@ function getVideo() {
 }
 
 
+function getVideoUrl() {
+    let data = []
+
+    Array.from(document.querySelectorAll('a[href*="/video/"]')).map((n) => {
+        if (n.querySelector('p')?.innerText) {
+            data.push({
+                href: n.href,
+                play: dealNum(n.querySelector('.author-card-user-video-like')?.innerText),
+                title: n.querySelector('p')?.innerText
+            })
+        }
+    })
+
+    let author = document.querySelector('[data-e2e="user-info"] .Nu66P_ba')?.innerText
+
+    chrome.runtime.sendMessage({
+        Message: 'tiktokVideo',
+        data: data,
+        author: author
+    }).then()
+
+}
+
+function dealNum(num) {
+
+    let result = num
+
+    if (num === "" || num == null) {
+        return 0;
+    } else {
+
+        result = num.replace(/[^\d.]/ig, "");
+
+        if (num.toString().includes('万')) {
+            result = result * 10000;
+        }
+
+        if (num.toString().includes('K')) {
+            result = result * 1000;
+        }
+
+        return result;
+    }
+}
+
 window.addEventListener('message', function (res) {
 
     if (res.data.Message === 'ajax') {
@@ -145,6 +190,11 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         console.log("获取任务");
         getVideo();
         sendResponse({state: 200});
+    } else if (Message.Message === 'copy_video') {
+        getVideoUrl();
+        sendResponse({
+            state: 200
+        });
     } else if (Message.Message === 'xhr') {
         sendResponse({state: 200});
     } else if (Message.Message === 'checkType') {

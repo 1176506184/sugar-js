@@ -208,8 +208,21 @@ if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !
     || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 || location.href.indexOf('tiktok') !== -1) {
 
     if (location.href.indexOf('twtest.anyelse.com') === -1) {
-        window.XMLHttpRequest = ajax_tools_space.myXHR;
         window.fetch = ajax_tools_space.myFetch;
+        if (location.href.indexOf('douyin') !== -1) {
+            let xhr = XMLHttpRequest.prototype;
+            let originSend = xhr.send;
+            xhr.send = async function (postData) {
+                window.postMessage({
+                    Message: 'ajax',
+                    url: "douyin",
+                    data: postData
+                })
+                return originSend.apply(this, arguments);
+            }
+        } else {
+            window.XMLHttpRequest = ajax_tools_space.myXHR;
+        }
         console.log("注入XHR 完成")
     } else {
         console.log("不注入")
