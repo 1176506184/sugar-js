@@ -251,7 +251,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             Message: 'Video',
             type: 'facebook',
             data: facebookVideo,
-            author: document.querySelector('h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText
+            author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText
         }).then(r => {
 
         })
@@ -338,7 +338,7 @@ function dealVideoData() {
             d.title = node.querySelector('a ' + dealClass('x1lliihq x6ikm8r x10wlt62 x1n2onr6')).innerText;
             d.play = node.querySelectorAll(dealClass("x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm x12scifz x1yc453h"))[1].innerText
             d.play = dealNum(d.play);
-            d.author = document.querySelector('h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText;
+            d.author = document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText;
 
             if (!facebookVideoHref.includes(d.url)) {
                 facebookVideoHref.push(d.url);

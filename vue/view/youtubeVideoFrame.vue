@@ -110,6 +110,10 @@
 
     </el-form>
 
+    <el-dialog v-model="loading" width="500" :show-close="false">
+      {{ loading_text }}
+    </el-dialog>
+
   </div>
 </template>
 
@@ -132,7 +136,8 @@ const categorys = ref([])
 const pages = ref([])
 const title = ref("")
 const active_id = ref("")
-
+const loading = ref(false)
+const loading_text = ref("检测封面图中");
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -289,14 +294,12 @@ const handleSelectionChange = (val) => {
 async function Save() {
 
   let videoData = []
+  loading_text.value = `封面图检测中（0/${upData.value.length}）`;
+  loading.value = true;
+  let successNum = 0;
+  const limit = 8;
 
-  const loading = ElLoading.service({
-    lock: true,
-    text: '封面图检测中',
-    background: 'rgba(0, 0, 0, 0.6)',
-  })
-
-  let promise = upData.value.map(async r => {
+  async function checkImage(r) {
     let cover = `https://i.ytimg.com/vi/${r.videoId}/maxresdefault.jpg`;
     let result = await testHttp(cover);
     if (!result) {
@@ -308,10 +311,77 @@ async function Save() {
       cover: cover,
       author: r.author ? r.author : author.value
     })
-  })
+    successNum += 1;
+    loading_text.value = `封面图检测中（${successNum}/${upData.value.length}）`;
+  }
 
-  await Promise.all(promise);
-  loading.close();
+  await promiseAll(upData.value, checkImage, limit)
+
+  // proFn返回一个封装了异步任务的promise
+  async function promiseAll(arr = [], proFn, limit) {
+    // 当前正在遍历的坐标
+    let index = 0;
+    // 存放结果的数组
+    let res = [];
+    // 正在执行的数组
+    let excuting = [];
+
+    // 执行函数
+    function enqueue() {
+      // 当执行完毕之后返回resolve状态的promise
+      if (index === arr.length) {
+        return Promise.resolve();
+      }
+
+      // 依次取出一个元素
+      const item = arr[index++];
+
+      /* 此处then方法会立即返回一个promise,在then回调运行结束
+      （promise生成完毕）之后才会变成resolved状态，且当时的promise与
+      proFn生成的promise保持一致(1、状态一致；2、resolve或者reject的值一致)*/
+      const p = Promise.resolve().then(() => proFn(item, arr));
+      // 将其放到promise数组
+      res.push(p);
+
+      // 将e放入正在执行的数组，并且在p执行完成之后将当前执行的e删除掉
+      const e = p.then(() => {
+        excuting.splice(excuting.indexOf(e), 1);
+      });
+      excuting.push(e);
+
+      // 让r为一个默认resolved状态的promise
+      let r = Promise.resolve();
+      // 如果执行数组满了的话，那就让r通过race等待改变状态
+      if (excuting.length >= limit) {
+        r = Promise.race(excuting);
+      }
+      // 等到r变为resolved状态（执行数组没满或者有一个已经执行完被删除了）再来递归调用enqueue
+      return r.then(() => enqueue());
+    }
+
+    // 执行完成后，通过promise.all返回所有的结果
+    return enqueue().then(() => Promise.all(res));
+  }
+
+  // let promise = upData.value.map(async r => {
+  //   let cover = `https://i.ytimg.com/vi/${r.videoId}/maxresdefault.jpg`;
+  //   let result = await testHttp(cover);
+  //   if (!result) {
+  //     cover = `https://i.ytimg.com/vi/${r.videoId}/hqdefault.jpg`;
+  //   }
+  //   videoData.push({
+  //     url: `https://www.youtube.com/watch?v=${r.videoId}`,
+  //     title: r.title,
+  //     cover: cover,
+  //     author: r.author ? r.author : author.value
+  //   })
+  //
+  //   successNum += 1;
+  //   loading_text.value = `封面图检测中（${successNum}/${upData.value.length}）`;
+  // })
+  //
+  // await Promise.all(promise);
+  loading.value = false;
 
   const loadingTask = ElLoading.service({
     lock: true,
