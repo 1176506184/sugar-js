@@ -247,6 +247,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({state: 200});
     } else if (Message.Message === 'video') {
         console.log("获取采集视频任务");
+        dealVideoData();
         chrome.runtime.sendMessage({
             Message: 'Video',
             type: 'facebook',

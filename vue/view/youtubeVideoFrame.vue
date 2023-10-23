@@ -10,7 +10,8 @@
     <el-form label-position="top" style="height: calc(100vh - 57px);">
       <div style="padding: 0 10px 10px;">
         <el-form-item>
-          <el-table :data="data" @selection-change="handleSelectionChange" style="flex:1;height:calc(100vh - 230px)">
+          <el-table :data="data" @selection-change="handleSelectionChange" style="flex:1;height:calc(100vh - 230px)"
+                    @sort-change="tabelSort">
             <el-table-column type="selection" width="55"/>
 
             <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
@@ -31,7 +32,7 @@
             <el-table-column label="播放量" prop="viewCount" sortable :sort-orders="['descending','ascending',null]">
             </el-table-column>
 
-            <el-table-column label="播放时长" sortable :sort-orders="['descending','ascending',null]">
+            <el-table-column label="播放时长" prop="lengthText" sortable :sort-orders="['descending','ascending',null]">
               <template #default="{ row }">
                 {{ row?.lengthText?.simpleText }}
               </template>
@@ -161,6 +162,38 @@ const pageType = computed(() => {
   return ``
 
 })
+
+
+function tabelSort({column, prop, order}) {
+  // console.log(column, prop, order)
+
+  if (prop === 'lengthText') {
+    data.value = AllData.value.sort((a, b) => {
+
+      let t1 = a.lengthText?.simpleText?.split(':');
+      let t2 = b.lengthText?.simpleText?.split(':');
+
+      if (!t1 || !t2) {
+        return 1
+      }
+
+      if (t1[0] > t2[0]) {
+        return 1
+      } else if (t1[0] === t2[0]) {
+        if (t1[1] > t2[1]) {
+          return 1
+        } else {
+          return -1
+        }
+      } else {
+        return -1
+      }
+
+    })
+  }
+
+
+}
 
 function filterList() {
 
