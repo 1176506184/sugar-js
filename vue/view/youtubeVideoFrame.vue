@@ -198,7 +198,7 @@ function tabelSort({column, prop, order}) {
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.title?.runs[0]?.text.toLowerCase().indexOf(title.value.toLowerCase()) > -1
+    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1
   })
 
 }
