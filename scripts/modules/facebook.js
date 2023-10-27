@@ -247,15 +247,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({state: 200});
     } else if (Message.Message === 'video') {
         console.log("获取采集视频任务");
-        dealVideoData();
-        chrome.runtime.sendMessage({
-            Message: 'Video',
-            type: 'facebook',
-            data: facebookVideo,
-            author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText
-        }).then(r => {
-
-        })
+        dealVideoData().then();
         sendResponse({state: 200});
     } else if (Message.Message === 'stop') {
         facebookData = []
@@ -320,7 +312,7 @@ function dealNum(num) {
 var facebookVideo = [];
 var facebookVideoHref = [];
 
-function dealVideoData() {
+async function dealVideoData() {
 
     let nodes = document.querySelectorAll('.x1mh8g0r .x78zum5.x1q0g3np.x1a02dak ' + dealClass('x9f619 x1r8uery x1iyjqo2 x6ikm8r x10wlt62 x1n2onr6'));
     nodes.forEach((node) => {
@@ -334,7 +326,7 @@ function dealVideoData() {
                 author: ''
             }
 
-            d.cover = node.querySelector('img[alt="视频缩略图"]').src;
+            d.cover = node.querySelector('img[alt="视频缩略图"],img[alt="動画サムネイル"]').src;
             d.url = node.querySelector('a').href;
             d.title = node.querySelector('a ' + dealClass('x1lliihq x6ikm8r x10wlt62 x1n2onr6')).innerText;
             d.play = node.querySelectorAll(dealClass("x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm x12scifz x1yc453h"))[1].innerText
@@ -347,6 +339,15 @@ function dealVideoData() {
             }
 
         }
+    })
+
+    chrome.runtime.sendMessage({
+        Message: 'Video',
+        type: 'facebook',
+        data: facebookVideo,
+        author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText
+    }).then(r => {
+
     })
     // if (data && typeof data === 'object') {
     //     Object.keys(data).forEach(key => {
