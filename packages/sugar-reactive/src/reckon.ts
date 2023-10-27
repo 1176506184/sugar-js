@@ -1,5 +1,4 @@
-import reactive from './reactive';
-import { createEffect, getCurrentObserver } from './signal/createEffect';
+import { createEffect } from './signal/createEffect';
 
 function reckon (fun: Function) {
   const result = {};

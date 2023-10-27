@@ -2,6 +2,7 @@ import makeReactive from './reactive';
 import reckon from './reckon';
 import { ref, instance } from './ref';
 import { createEffect } from './signal/createEffect';
+import { watch } from './watch';
 
 const reactive = function (value) {
   if (!value || typeof value !== 'object') {
@@ -13,6 +14,9 @@ const reactive = function (value) {
 export {
   reactive,
   reckon,
-  ref, createEffect, instance
+  ref,
+  createEffect,
+  instance,
+  watch
 
 };

@@ -25,12 +25,14 @@ const button = {
 const dialog = {
   name: 'sugar-dialog',
   render: `<div>
-                    <div class="sugar-dialog-mode" s-if="show" @click.self="close">
-                     <div class="sugar-dialog" s-if="show">
-                        <slot name="default"></slot>
-                    </div>
-                    </div>
-                </div>`,
+    <transition name="easy-in">
+        <div class="sugar-dialog-mode" s-if="show" @click.self="close">
+            <div class="sugar-dialog" s-if="show">
+                <slot name="default"></slot>
+            </div>
+        </div>
+    </transition>
+</div>`,
   bulk (ctx) {
     const show = reckon(() => {
       return ctx.model.value;

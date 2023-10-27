@@ -115,6 +115,7 @@
         ref,
         createEffect,
         instance,
+        watch,
         sugarUI
     } = SUGAR;
 
@@ -138,6 +139,12 @@
                     label: '选项二',
                     value: 2
                 }]
+            });
+
+            watch(state, () => {
+                showDialog.value = true;
+            }, {
+                deep: true
             });
 
             const active = ref(0);
