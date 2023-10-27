@@ -36,14 +36,14 @@ if (location.href.indexOf('twtest.anyelse.com') !== -1) {
         console.log("注入empty完成")
     })
 }
-if (location.href.indexOf("douyin") !== -1) {
+if (location.origin.indexOf("douyin") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'douyin.js'
     }).then(() => {
         console.log("注入完成")
     })
-} else if (location.href.indexOf("facebook") !== -1) {
+} else if (location.origin.indexOf("facebook") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'facebook.js'
@@ -51,35 +51,35 @@ if (location.href.indexOf("douyin") !== -1) {
         console.log("注入完成")
     })
 
-} else if (location.href.indexOf("twitter") !== -1) {
+} else if (location.origin.indexOf("twitter") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'twitter.js'
     }).then(() => {
         console.log("注入完成")
     })
-} else if (location.href.indexOf("toutiao") !== -1) {
+} else if (location.origin.indexOf("toutiao") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'toutiao.js'
     }).then(() => {
         console.log("注入完成")
     })
-} else if (location.href.indexOf("sohu") !== -1) {
+} else if (location.origin.indexOf("sohu") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'sohu.js'
     }).then(() => {
         console.log("注入完成")
     })
-} else if (location.href.indexOf("youtube") !== -1) {
+} else if (location.origin.indexOf("youtube") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'youtube.js'
     }).then(() => {
         console.log("注入完成")
     })
-} else if (location.href.indexOf("tiktok") !== -1) {
+} else if (location.origin.indexOf("tiktok") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'tiktok.js'
