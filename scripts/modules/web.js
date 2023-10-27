@@ -333,6 +333,32 @@ const list = {
                 return document.querySelector('div.g1-collection-more a')
             }
         }
+    },
+    "https://www.tvinsider.com/show/outlander": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('a.records-item');
+            },
+            href: function (parentNode) {
+                return parentNode.href;
+            },
+            title: function (parentNode) {
+
+                let title = parentNode.querySelector('h3')?.innerText;
+                // if (!title) {
+                //     title = parentNode.querySelector('h2.entry-title')?.innerText;
+                // }
+                return title
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time')?.getAttribute('datetime')
+            },
+            play: null,
+            nextPage: function () {
+                return document.querySelectorAll('button.alm-load-more-btn.more')[1]
+            }
+        }
     }
 }
 
