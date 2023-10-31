@@ -36,6 +36,9 @@
       <el-form-item>
         <div class="dialog-footer"
              style="text-align: right;width: calc(100% - 20px);padding: 10px;position: fixed;bottom: 0;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
+          <el-button type="primary" @click="copyEx">
+            复制标题&链接
+          </el-button>
           <el-button type="primary" @click="copy">
             复制链接
           </el-button>
@@ -74,7 +77,6 @@ const form = reactive({
   category: '',
   pageuid: ''
 })
-
 
 
 function filterList() {
@@ -135,7 +137,7 @@ function copy() {
   upData.value.forEach((item) => {
     copyText += `${item.href}\n`;
   })
-  handleCopyValue(copyText).then(()=>{
+  handleCopyValue(copyText).then(() => {
     ElMessage({
       message: '复制成功.',
       type: 'success',
@@ -144,6 +146,19 @@ function copy() {
   });
 }
 
+function copyEx() {
+  let copyText = ``;
+  upData.value.forEach((item) => {
+    copyText += `${item.title}\n${item.href}\n`;
+  })
+  handleCopyValue(copyText).then(() => {
+    ElMessage({
+      message: '复制成功.',
+      type: 'success',
+
+    })
+  });
+}
 
 </script>
 

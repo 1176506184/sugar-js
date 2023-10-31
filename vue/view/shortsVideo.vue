@@ -97,7 +97,7 @@
         <div class="dialog-footer"
              style="text-align: right;width: calc(100% - 20px);padding: 10px;position: fixed;bottom: 0;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
 
-          <el-row gutter="10" style="width: 420px;float: left">
+          <el-row gutter="10" style="width: 350px;float: left">
             <el-col :span="12">
               <el-select placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%">
                 <el-option v-for="item in pages" :label="item.name" :value="item.uid"/>
@@ -109,6 +109,10 @@
               <!--              （发帖形式：图文追平贴 排期类型：定时发）-->
             </el-col>
           </el-row>
+
+          <el-button type="primary" @click="copyEx">
+            复制标题&链接
+          </el-button>
 
           <el-button type="primary" @click="copy">
             复制链接
@@ -315,6 +319,21 @@ function copy() {
     })
   });
 }
+
+function copyEx() {
+  let copyText = ``;
+  upData.value.forEach((item) => {
+    copyText += `${item.headline?.simpleText}\nhttps://www.youtube.com/watch?v=${item.videoId}\n`;
+  })
+  handleCopyValue(copyText).then(() => {
+    ElMessage({
+      message: '复制成功.',
+      type: 'success',
+
+    })
+  });
+}
+
 
 
 </script>

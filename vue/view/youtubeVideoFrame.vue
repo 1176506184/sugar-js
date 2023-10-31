@@ -99,6 +99,10 @@
             </el-col>
           </el-row>
 
+          <el-button type="primary" @click="copyEx">
+            复制标题&链接
+          </el-button>
+
           <el-button type="primary" @click="copy">
             复制链接
           </el-button>
@@ -444,6 +448,21 @@ function copy() {
   let copyText = ``;
   upData.value.forEach((item) => {
     copyText += `https://www.youtube.com/watch?v=${item.videoId}\n`;
+  })
+  handleCopyValue(copyText).then(() => {
+    ElMessage({
+      message: '复制成功.',
+      type: 'success',
+
+    })
+  });
+}
+
+
+function copyEx() {
+  let copyText = ``;
+  upData.value.forEach((item) => {
+    copyText += `${item.title}\nhttps://www.youtube.com/watch?v=${item.videoId}\n`;
   })
   handleCopyValue(copyText).then(() => {
     ElMessage({
