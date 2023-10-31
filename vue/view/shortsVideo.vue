@@ -111,7 +111,7 @@
           </el-row>
 
           <el-button type="primary" @click="copyEx">
-            复制标题&链接
+            复制标题
           </el-button>
 
           <el-button type="primary" @click="copy">
@@ -323,7 +323,7 @@ function copy() {
 function copyEx() {
   let copyText = ``;
   upData.value.forEach((item) => {
-    copyText += `${item.headline?.simpleText}\nhttps://www.youtube.com/watch?v=${item.videoId}\n`;
+    copyText += `${item.headline?.simpleText}\n`;
   })
   handleCopyValue(copyText).then(() => {
     ElMessage({

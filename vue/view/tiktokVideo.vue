@@ -37,7 +37,7 @@
         <div class="dialog-footer"
              style="text-align: right;width: calc(100% - 20px);padding: 10px;position: fixed;bottom: 0;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
           <el-button type="primary" @click="copyEx">
-            复制标题&链接
+            复制标题
           </el-button>
           <el-button type="primary" @click="copy">
             复制链接
@@ -149,7 +149,7 @@ function copy() {
 function copyEx() {
   let copyText = ``;
   upData.value.forEach((item) => {
-    copyText += `${item.title}\n${item.href}\n`;
+    copyText += `${item.title}\n`;
   })
   handleCopyValue(copyText).then(() => {
     ElMessage({
