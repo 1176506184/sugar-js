@@ -477,8 +477,5 @@ function copyEx() {
 </script>
 
 <style scoped>
-body {
-  margin: 0 !important;
-  height: 100vh !important;
-}
+
 </style>

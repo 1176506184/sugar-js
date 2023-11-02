@@ -151,9 +151,11 @@
               <el-button @click="collectTiktok" type="primary">采集视频</el-button>
             </div>
           </el-collapse-item>
-          <el-collapse-item title="网站采集" name="8">
+          <el-collapse-item title="综合采集" name="8">
             <div>
               <el-button @click="collectWeb" type="primary">网站采集</el-button>
+              <el-button @click="collectNovel" type="primary">小说采集</el-button>
+              <el-button @click="collectNovelSync" type="primary">小说采集（加延迟防检测）</el-button>
             </div>
           </el-collapse-item>
 
@@ -948,10 +950,65 @@ function collectFBVideo() {
   });
 }
 
+async function collectNovel() {
+  let activeId = await getActiveId();
+  let pageId = await getId("Novel");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/Novel?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+async function collectNovelSync() {
+  chrome.tabs.query(
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "asyncWaitNum"
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
+      });
+
+  let activeId = await getActiveId();
+  let pageId = await getId("Novel");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/Novel?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
 async function collectYoutubeNew() {
 
   let activeId = await getActiveId();
-  let pageId = await getId();
+  let pageId = await getId("YoutubeVideoFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
       active: true
@@ -996,11 +1053,11 @@ async function getActiveId() {
   })
 }
 
-async function getId() {
+async function getId(hash) {
   return new Promise((r) => {
     chrome.tabs.query({}, (tabs) => {
       tabs.forEach(tab => {
-        if (tab['url']?.includes("chrome-extension://jkobepngkjafdjkkdkebjohjclihidnj/html/out.html#/YoutubeVideoFrame")) {
+        if (tab['url']?.includes(`chrome-extension://jkobepngkjafdjkkdkebjohjclihidnj/html/out.html#/${hash}`)) {
           r(tab.id)
         }
       })

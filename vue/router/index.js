@@ -8,6 +8,7 @@ import WebCollect from "../view/webCollect.vue";
 import TiktokVideo from "../view/tiktokVideo.vue";
 import FacebookVideo from "../view/FacebookVideo.vue";
 import douyinVideo from "../view/douyinVideo.vue"
+import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 
 const routes = [
@@ -79,6 +80,13 @@ const routes = [
         name: 'FBCollect',
         path: '/FBCollect',
         component: FacebookVideo,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    },
+    {
+        name: 'Novel',
+        path: '/Novel',
+        component: novel,
         props: route => ({query: route.query.q}),
         meta: {}
     }

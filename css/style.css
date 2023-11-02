@@ -178,3 +178,48 @@ input {
 }
 
 
+
+.book {
+    overflow: hidden;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+.bookcover {
+    float: left;
+    width: 8pc;
+}
+
+.hidden-xs {
+    display: flex;
+}
+
+.thumbnail {
+    display: inline-block;
+    padding: 4px;
+    width: 100px;
+    height: 140px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    line-height: 1.42857143;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.bookinfo .booktitle {
+    margin-bottom: 5px;
+    color: #56ccb5;
+    font-size: 18px;
+}
+
+.bookintro {
+    overflow: hidden;
+    height: 63px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
