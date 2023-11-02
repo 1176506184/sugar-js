@@ -6,6 +6,7 @@ var chapterNameMap = []
 var bodyReg = /<body[^>]*>([\s\S]+?)<\/body>/i;
 var bookTitleReg = /《([\s\S]+?)》/i;
 var innerNextPage = /^\s*(下一[页頁张張章]|next\s*page|次のページ)/i;
+var finalPage = /^\s*(末[页頁张張章]|next\s*page|次のページ)/i;
 var resultList = []
 var delReg = /<ins[^>]*>.*<\/ins>/gi;
 var taskActive = 0;
@@ -13,6 +14,7 @@ var title = ""
 var cover = "";
 var brief = "";
 var waitNum = 0;
+var getFinal = false;
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
@@ -42,6 +44,17 @@ async function getAllChapter(aList) {
 
     for (let i = 0; i < aList.length; i++) {
         if (innerNextPage.test(aList[i].innerText)) {
+            let href = aList[i].href;
+            const response1 = await fetch(href);
+            const tempBlob = await response1.blob();
+            const tempText = await readBlob(tempBlob);
+            let body = bodyReg.exec(tempText)[1];
+            body = body.replace(delReg, '');
+            let tempNode = document.createElement('div');
+            tempNode.innerHTML = clearScriptTag(body);
+            await getAllChapter(tempNode.querySelectorAll('a'))
+        } else if (finalPage.test(aList[i].innerText) && !getFinal) {
+            getFinal = true;
             let href = aList[i].href;
             const response1 = await fetch(href);
             const tempBlob = await response1.blob();
@@ -192,7 +205,8 @@ async function getContentNext(name, href) {
         tempNode = null;
         await wait(waitNum);
     } catch (e) {
-        taskActive--;
+        await wait(3);
+        await getContentNext(name, href)
     }
 
 }
@@ -267,7 +281,11 @@ function clearScriptTag(str) {
 
 async function startTask() {
     await getAllChapter(document.querySelectorAll('a'));
-    console.log(chapterList)
+    chrome.runtime.sendMessage({
+        Message: 'chapterLength',
+        data: chapterList.length
+    }).then()
+
     await getContent();
 }
 

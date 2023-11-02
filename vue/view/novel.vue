@@ -6,7 +6,7 @@
           <img class="thumbnail" alt="異能：一不小心覺醒成了世界之主" :src="cover" width="140" height="180">
         </div>
         <div class="bookinfo">
-          <h1 class="booktitle">{{ author }}</h1>
+          <h1 class="booktitle">{{ author }} - 当前下载进度（{{ data.length }}/{{ chapterLength }}）</h1>
           <p class="bookintro">
             {{ brief }}
           </p>
@@ -22,7 +22,7 @@
           <el-table-v2
               :columns="TableColumns"
               :data="data"
-              width="978"
+              :width="978"
               :height="height"
               fixed
           />
@@ -49,7 +49,7 @@
 
         <el-form-item>
           <div class="dialog-footer"
-               style="text-align: right;width: calc(100% - 20px);padding:0 10px;background-color: #fff;z-index:20;border-top:1px solid #f0f0f0">
+               style="text-align: right;width: calc(100% - 20px);padding:10px 10px 0 10px;background-color: #fff;z-index:20;border-top:1px solid #f0f0f0">
 
             <el-button @click="close">取消</el-button>
             <el-button @click="download" type="primary">打包下载</el-button>
@@ -83,8 +83,9 @@ const active_id = ref("")
 const loading = ref(false)
 const cover = ref("")
 const brief = ref("")
-const height = ref(window.innerHeight - 275);
+const height = ref(window.innerHeight - 285);
 const width = ref(0);
+const chapterLength = ref(0)
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -100,7 +101,13 @@ const TableColumns = ref([{
   key: 'index',
   dataKey: 'index',
   title: '序号',
-  width: 100
+  align: 'center',
+  width: 100,
+  cellRenderer: ({rowData, rowIndex}) => (
+      <>
+        {rowIndex + 1}
+      </>
+  )
 }, {
   key: 'name',
   dataKey: 'name',
@@ -195,8 +202,12 @@ function dealYoutubeVideo(Message) {
     if (cache.length > 0) {
       cache[0].content += `\n${tempData.content}`;
     } else {
-      tempData['index'] = data.value.length
+      tempData['checked'] = true
       data.value.push(tempData)
+
+      data.value.sort((a, b) => {
+        return dealNum(a.name) - dealNum(b.name);
+      })
     }
   } else if (Message.Message === 'brief') {
 
@@ -205,10 +216,29 @@ function dealYoutubeVideo(Message) {
     brief.value = Message.brief
 
 
+  } else if (Message.Message === 'chapterLength') {
+
+    chapterLength.value = Message.data
+
   }
 
 
 }
+
+function dealNum(num) {
+
+  let result = num
+
+  if (num === "" || num == null) {
+    return 0;
+  } else {
+
+    result = num.replace(/[^\d.]/ig, "");
+
+    return result;
+  }
+}
+
 
 onMounted(() => {
   chrome.runtime.onMessage.addListener(dealYoutubeVideo);
@@ -279,6 +309,5 @@ function saveTextAsFile(text, filename) {
 </script>
 
 <style scoped>
-
 
 </style>

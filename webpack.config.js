@@ -23,19 +23,19 @@ module.exports = {
         rules: [{
             test: /.vue$/,
             use: [
-                {loader: 'babel-loader'},
                 {loader: "vue-loader"}
             ],
         }, {
             test: /\.css$/,
             use: [
                 {loader: 'style-loader'},
-                {
-                    loader: 'css-loader',
-                    options: {
-                        modules: true,
-                    },
-                },
+                {loader: 'css-loader'}
+            ],
+        }, {
+            test: /\.s[ca]ss$/,
+            use: [
+                {loader: 'style-loader'},
+                {loader: 'css-loader'},
                 {loader: 'sass-loader'},
             ],
         }, {
