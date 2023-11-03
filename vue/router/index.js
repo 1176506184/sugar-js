@@ -6,7 +6,7 @@ import YoutubeVideoFrame from "../view/youtubeVideoFrame.vue"
 import ShortsVideo from "../view/shortsVideo.vue";
 import WebCollect from "../view/webCollect.vue";
 import TiktokVideo from "../view/tiktokVideo.vue";
-import FacebookVideo from "../view/FacebookVideo.vue";
+import FacebookVideo from "../view/FacebookVideoFrame.vue";
 import douyinVideo from "../view/douyinVideo.vue"
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";

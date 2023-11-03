@@ -141,9 +141,9 @@
           </el-collapse-item>
           <el-collapse-item title="youtube博主" name="6">
             <div>
-              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>
-              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>
-              <el-button @click="collectYoutubeNew" type="primary">采集视频自动分发（新）</el-button>
+              <!--              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>-->
+              <!--              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>-->
+              <el-button @click="collectYoutubeNew" type="primary">采集视频 / SHORTS并自动分发</el-button>
             </div>
           </el-collapse-item>
           <el-collapse-item title="TikTok" name="7">
@@ -943,11 +943,23 @@ function collectWeb() {
   });
 }
 
-function collectFBVideo() {
-  router.push({
-    name: "FBCollect",
-    query: {},
-  });
+async function collectFBVideo() {
+
+  let activeId = await getActiveId();
+  let pageId = await getId("FBCollect");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/FBCollect?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
 }
 
 async function collectNovel() {

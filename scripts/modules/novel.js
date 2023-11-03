@@ -15,6 +15,26 @@ var cover = "";
 var brief = "";
 var waitNum = 0;
 var getFinal = false;
+var isOpen = false;
+
+function str2Num(str) {
+    str = str.replace(/^番\s*外/, "99999+").replace(/[一①Ⅰ壹]/g, "1").replace(/[二②Ⅱ贰]/g, "2").replace(/[三③Ⅲ叁]/g, "3").replace(/[四④Ⅳ肆]/g, "4").replace(/[五⑤Ⅴ伍]/g, "5").replace(/[六⑥Ⅵ陆]/g, "6").replace(/[七⑦Ⅶ柒]/g, "7").replace(/[八⑧Ⅷ捌]/g, "8").replace(/[九⑨Ⅸ玖]/g, "9").replace(/[十⑩Ⅹ拾]/g, "*10+").replace(/[百佰]/g, "*100+").replace(/[千仟]/g, "*1000+").replace(/[万萬]/g, "*10000+").replace(/\s/g, "").match(/[\d\*\+]+/);
+    if (!str) return 0;
+    str = str[0];
+    let mul = str.match(/(\d*)\*(\d+)/);
+    while (mul) {
+        let result = parseInt(mul[1] || 1) * parseInt(mul[2]);
+        str = str.replace(mul[0], result);
+        mul = str.match(/(\d+)\*(\d+)/);
+    }
+    let plus = str.match(/(\d+)\+(\d+)/);
+    while (plus) {
+        let result = parseInt(plus[1]) + parseInt(plus[2]);
+        str = str.replace(plus[0], result);
+        plus = str.match(/(\d+)\+(\d+)/);
+    }
+    return parseInt(str);
+}
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
@@ -45,6 +65,9 @@ async function getAllChapter(aList) {
     for (let i = 0; i < aList.length; i++) {
         if (innerNextPage.test(aList[i].innerText)) {
             let href = aList[i].href;
+            if (chapterHrefMap.includes(href)) {
+                return
+            }
             const response1 = await fetch(href);
             const tempBlob = await response1.blob();
             const tempText = await readBlob(tempBlob);
@@ -184,20 +207,18 @@ async function getContentNext(name, href) {
             })
         }
 
-        resultList.push({
-            name: name,
+        let pushData = {
+            name: `第 ${str2Num(name)} 章`,
             href: href,
-            content: content
-        })
+            content: content,
+            guid: uuidv4()
+        }
+
+        resultList.push(pushData)
 
         chrome.runtime.sendMessage({
             Message: 'pushData',
-            data: {
-                name: name,
-                href: href,
-                content: content,
-                guid: uuidv4()
-            }
+            data: pushData
         }).then()
 
 
@@ -280,6 +301,7 @@ function clearScriptTag(str) {
 }
 
 async function startTask() {
+
     await getAllChapter(document.querySelectorAll('a'));
     chrome.runtime.sendMessage({
         Message: 'chapterLength',
@@ -301,7 +323,24 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({state: 200});
     } else if (Message.Message === 'start') {
         getBriefAndCover().then();
-        startTask().then();
+        if (!isOpen) {
+            isOpen = true
+            startTask().then();
+        } else {
+            if (resultList.length > 0) {
+                resultList.forEach((r) => {
+                    chrome.runtime.sendMessage({
+                        Message: 'pushData',
+                        data: r
+                    }).then()
+                })
+
+                chrome.runtime.sendMessage({
+                    Message: 'chapterLength',
+                    data: chapterList.length
+                }).then()
+            }
+        }
         sendResponse({
             state: 200
         });

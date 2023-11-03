@@ -3,7 +3,7 @@
     <div class="layout_top" style="height: auto">
       <div class="book pt10">
         <div class="bookcover hidden-xs">
-          <img class="thumbnail" alt="異能：一不小心覺醒成了世界之主" :src="cover" width="140" height="180">
+          <img class="thumbnail" alt="封面图" :src="cover" width="140" height="180">
         </div>
         <div class="bookinfo">
           <h1 class="booktitle">{{ author }} - 当前下载进度（{{ data.length }}/{{ chapterLength }}）</h1>
@@ -61,6 +61,14 @@
 
     </el-form>
 
+    <el-dialog v-model="open" :before-close="closeArticle" width="700px" :title="tempTitle">
+      <div style="height: 700px;overflow-y: scroll" class="content">
+        <div v-html="tempArticle">
+
+        </div>
+      </div>
+    </el-dialog>
+
 
   </div>
 </template>
@@ -71,6 +79,7 @@ import router from "../router";
 import {computed, onMounted, reactive, ref, nextTick, unref} from "vue";
 import store from "../store/store";
 import {testHttp, xhrHttp} from "../utils/request";
+import {simplized} from '../utils/zhTranform'
 import {ElLoading, ElMessage} from "element-plus";
 import {useRoute} from "vue-router";
 
@@ -112,18 +121,56 @@ const TableColumns = ref([{
   key: 'name',
   dataKey: 'name',
   title: '章节标题',
-  width: 300
+  width: 200
 }, {
   key: 'href',
   dataKey: 'href',
   title: '原链接',
-  width: 500,
+  width: 400,
   cellRenderer: ({rowData}) => (
       <>
         <el-link type="primary">{rowData.href}</el-link>
       </>
   )
+}, {
+  key: 'length',
+  dataKey: 'length',
+  title: '章节字数',
+  width: 100,
+  cellRenderer: ({rowData}) => (
+      <>
+        <el-link type="primary">{rowData.content.length}</el-link>
+      </>
+  )
+}, {
+  key: 'control',
+  dataKey: 'control',
+  title: '操作',
+  width: 100,
+  cellRenderer: ({rowData}) => (
+      <>
+        <el-button onClick={() => {
+          showArticle(rowData)
+        }} type="primary">预览
+        </el-button>
+      </>
+  )
 }])
+
+const tempArticle = ref("");
+const tempTitle = ref("");
+const open = ref(false);
+
+function showArticle(row) {
+  open.value = true;
+  tempArticle.value = row.content
+  tempTitle.value = row.name
+}
+
+function closeArticle() {
+  tempArticle.value = "";
+  open.value = false;
+}
 
 
 const SelectionCell = ({
@@ -200,9 +247,10 @@ function dealYoutubeVideo(Message) {
     })
 
     if (cache.length > 0) {
-      cache[0].content += `\n${tempData.content}`;
+      cache[0].content += `\n${simplized(tempData.content)}`;
     } else {
       tempData['checked'] = true
+      tempData.content = simplized(tempData.content);
       data.value.push(tempData)
 
       data.value.sort((a, b) => {
@@ -309,5 +357,15 @@ function saveTextAsFile(text, filename) {
 </script>
 
 <style scoped>
-
+.content {
+  overflow-wrap: break-word;
+  letter-spacing: 0.2em;
+  line-height: 150%;
+  width: 100%;
+  color: rgb(34, 34, 34);
+  font-family: ���Ŀ���, �����������, ΢���ź�, ����, Arial, serif;
+  font-size: 24px;
+  text-align: center;
+  margin: auto;
+}
 </style>
