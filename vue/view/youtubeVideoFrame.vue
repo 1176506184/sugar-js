@@ -43,7 +43,7 @@
         </el-form-item>
 
         <el-row gutter="5">
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item label="语言">
               <el-select v-model="form.lang" class="smallWidthInput" placeholder="请选择" @change="getPortList">
                 <el-option label="繁体" :value="0"/>
@@ -54,7 +54,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item label="生成内容类型">
               <el-select v-model="form.content_type" placeholder="请选择" @change="getPortList">
                 <el-option label="快讯" :value="0"/>
@@ -72,7 +72,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item label="生成内容域名">
               <el-select placeholder="请选择" v-model="form.host" @change="getCateGory" filterable>
                 <el-option v-for="item in ports" :label="item" :value="item"/>
@@ -80,7 +80,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item label="生成内容分类">
               <el-select placeholder="请选择" v-model="form.category" filterable>
                 <el-option v-for="item in categorys" :label="item" :value="item"/>
