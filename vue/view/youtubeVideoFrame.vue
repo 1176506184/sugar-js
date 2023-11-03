@@ -63,6 +63,15 @@
             </el-form-item>
           </el-col>
 
+          <el-col :span="5">
+            <el-form-item label="是否需要审核">
+              <el-select v-model="form.needProcess" class="smallWidthInput" placeholder="请选择">
+                <el-option label="否" :value="0"/>
+                <el-option label="是" :value="1"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
           <el-col :span="6">
             <el-form-item label="生成内容域名">
               <el-select placeholder="请选择" v-model="form.host" @change="getCateGory" filterable>
@@ -150,7 +159,8 @@ const form = reactive({
   content_type: 0,
   host: '',
   category: '',
-  pageuid: ''
+  pageuid: '',
+  needProcess: 0
 })
 
 const pageType = computed(() => {
