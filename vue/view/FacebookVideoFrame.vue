@@ -91,7 +91,7 @@
           <el-row gutter="10" style="width: 350px;float: left">
             <el-col :span="12">
               <el-select placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%">
-                <el-option v-for="item in pages" :label="item.name" :value="item.uid"/>
+                <el-option v-for="item in pages" :label="item.name + ' - ' +item.uid" :value="item.uid" :key="item.uid"/>
               </el-select>
             </el-col>
             <el-col :span="12" style="color:orange;font-size: 12px;line-height: 17px;white-space: pre-wrap;
