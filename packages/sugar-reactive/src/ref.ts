@@ -1,5 +1,6 @@
 import { createEffect, getCurrentObserver } from './signal/createEffect';
 import reactive from './reactive';
+import { addEffect } from './signal/uiEffect';
 
 const subscribers = new Set();
 
@@ -28,6 +29,7 @@ function ref (fun: any) {
             }
           });
           subscribersToRun.forEach((subscriber: Function) => subscriber());
+          addEffect(...subscribersToRun);
         }
       }
     });

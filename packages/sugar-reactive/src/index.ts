@@ -3,6 +3,7 @@ import reckon from './reckon';
 import { ref, instance } from './ref';
 import { createEffect } from './signal/createEffect';
 import { watch } from './watch';
+import { uiEffect } from './signal/uiEffect';
 
 const reactive = function (value) {
   if (!value || typeof value !== 'object') {
@@ -17,6 +18,7 @@ export {
   ref,
   createEffect,
   instance,
-  watch
+  watch,
+  uiEffect
 
 };

@@ -1,4 +1,5 @@
 export const isArray = (val) => val instanceof Array;
+export const isString = (val: unknown): val is string => typeof val === 'string';
 
 export const enum Namespaces {
   HTML
@@ -13,10 +14,25 @@ export function startsWith (source: string, searchString: string): boolean {
 export function startsWithEndTagOpen (source: string, tag: string): boolean {
   return (
     startsWith(source, '</') &&
-        source.slice(2, 2 + tag.length).toLowerCase() === tag.toLowerCase() &&
-        /[\t\r\n\f />]/.test(source[2 + tag.length] || '>')
+    source.slice(2, 2 + tag.length).toLowerCase() === tag.toLowerCase() &&
+    /[\t\r\n\f />]/.test(source[2 + tag.length] || '>')
   );
 }
+
+export const isIntegerKey = (key: unknown) =>
+  isString(key) &&
+  key !== 'NaN' &&
+  key[0] !== '-' &&
+  '' + parseInt(key, 10) === key;
+
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+export const hasOwn = (
+  val: object,
+  key: any
+): key is keyof typeof val => hasOwnProperty.call(val, key);
+
+export const hasChanged = (value: any, oldValue: any): boolean =>
+  !Object.is(value, oldValue);
 
 export function isDef (v: any) {
   return v !== undefined && v !== null;
@@ -27,7 +43,13 @@ export function isUndef (v: any) {
 }
 
 export function escape2Html (str) {
-  const arrEntities = { lt: '<', gt: '>', nbsp: ' ', amp: '&', quot: '"' };
+  const arrEntities = {
+    lt: '<',
+    gt: '>',
+    nbsp: ' ',
+    amp: '&',
+    quot: '"'
+  };
 
   return str.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) {
     return arrEntities[t];
@@ -69,7 +91,9 @@ export function deepClone (value, weakMap = new WeakMap(), strict = false) {
 
   // 2.2 函数深拷贝
   if (is.Function(value) && strict) {
-    if (/^function/.test(value.toString()) || /^\(\)/.test(value.toString())) { return new Function('return ' + value.toString())(); }
+    if (/^function/.test(value.toString()) || /^\(\)/.test(value.toString())) {
+      return new Function('return ' + value.toString())();
+    }
 
     return new Function('return function ' + value.toString())();
   } else if (is.Function(value)) {

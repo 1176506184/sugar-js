@@ -1,5 +1,5 @@
 import { type Core } from './types';
-import onMounted, { mountHandleList, updateActiveId } from './hooks/onMounted';
+import { onMounted, mountHandleList, updateActiveId } from '@sugar/sugar-hook';
 import { sugarRender } from '@sugar/sugar-render';
 import { guid } from './utils/guid';
 

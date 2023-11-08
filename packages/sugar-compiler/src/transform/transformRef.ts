@@ -16,7 +16,7 @@ export function transformRef (context) {
   }
 }
 
-function toDisPlay (context) {
+export function toDisPlay (context) {
   let temp = '';
   let tempOnce = '';
   let index = 0;

@@ -1,5 +1,5 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
-import { createEffect } from '@sugar/sugar-reactive';
+import { createEffect, uiEffect } from '@sugar/sugar-reactive';
 import patchEx from './patch';
 import { escape2Html } from '@sugar/sugar-shared';
 
@@ -17,6 +17,7 @@ export function sugarRender () {
     const { code } = sugarCompiler(htmlCode);
     render = code;
     bindT(vm, data);
+
     update(vm);
     vm.forceUpdate = function () {
       update(vm);
@@ -24,12 +25,18 @@ export function sugarRender () {
   }
 
   function update (vm) {
-    createEffect(() => {
+    uiEffect(() => {
       const vnode = render.call(vm);
       bindAttrAndEvent(vm, vnode);
       patchEx(vm, vnode);
       vm._vnode = vnode;
     });
+    // createEffect(() => {
+    //   const vnode = render.call(vm);
+    //   bindAttrAndEvent(vm, vnode);
+    //   patchEx(vm, vnode);
+    //   vm._vnode = vnode;
+    // });
   }
 
   return {

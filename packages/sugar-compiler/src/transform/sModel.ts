@@ -1,3 +1,5 @@
+import { toDisPlay } from './transformRef';
+
 export function sModel (context, prop) {
   context.props.push({
     name: 'bind',
@@ -8,7 +10,7 @@ export function sModel (context, prop) {
     },
     exp: {
       type: 4,
-      content: prop.value.content
+      content: toDisPlay(prop.value.content)
     }
   });
 
@@ -23,7 +25,7 @@ export function sModel (context, prop) {
     },
     exp: {
       type: 4,
-      content: `if(typeof ${prop.value.content} === 'number' && ${prop.value.content}){${prop.value.content} = Number(e.target.value)}else{${prop.value.content} = e.target.value}`,
+      content: `if(typeof ${toDisPlay(prop.value.content)} === 'number' && ${toDisPlay(prop.value.content)}){${toDisPlay(prop.value.content)} = Number(e.target.value)}else{${toDisPlay(prop.value.content)} = e.target.value}`,
       isStatic: true,
       constType: 0
     }

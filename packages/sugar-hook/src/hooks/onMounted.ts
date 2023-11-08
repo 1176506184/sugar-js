@@ -1,7 +1,7 @@
 let mountHandleList = {};
 let ActiveId = '';
 
-export default function (handle) {
+function onMounted (handle) {
   if (!mountHandleList[ActiveId]) {
     mountHandleList[ActiveId] = [];
   }
@@ -20,4 +20,4 @@ function clearMounted () {
   mountHandleList = [];
 }
 
-export { mountHandleList, clearMounted, updateActiveId };
+export { onMounted, mountHandleList, clearMounted, updateActiveId };

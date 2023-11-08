@@ -73,7 +73,6 @@ export default function patch (vm, newVnode) {
   function patchVnode (newVnode, oldVnode) {
     if (isComponent(newVnode, vm.components)) {
       updateComponent(newVnode, oldVnode);
-
       return;
     }
 
@@ -150,6 +149,9 @@ export default function patch (vm, newVnode) {
     let oldKeyToIdx, idxInOld, elmToMove, refElm;
 
     while (oldPreIndex <= oldAftIndex && newPreIndex <= newAftIndex) {
+      if (parentDom.id === 'app') {
+        console.log(oldPreIndex, oldAftIndex, newPreIndex, newAftIndex);
+      }
       if (!oldSNode || !oldCh[oldPreIndex]) {
         oldSNode = oldCh[++oldPreIndex];
       } else if (!oldENode || !oldCh[oldAftIndex]) {
@@ -172,15 +174,11 @@ export default function patch (vm, newVnode) {
       } else if (isSameNode(newENode, oldSNode)) {
         patchVnode(newENode, oldSNode);
         parentDom.insertBefore(oldSNode.elm, oldENode.elm.nextSibling);
-        // ++oldPreIndex
-        // --newAftIndex
         oldSNode = oldCh[++oldPreIndex];
         newENode = newCh[--newAftIndex];
         // 新后与旧后
       } else if (isSameNode(newENode, oldENode)) {
         patchVnode(newENode, oldENode);
-        // --oldAftIndex
-        // --newAftIndex
         oldENode = oldCh[--oldAftIndex];
         newENode = newCh[--newAftIndex];
       } else {
@@ -192,11 +190,14 @@ export default function patch (vm, newVnode) {
         } else {
           elmToMove = oldCh[idxInOld];
           if (isSameNode(elmToMove, newSNode)) {
-            patchVnode(elmToMove, newSNode);
+            patchVnode(newSNode, elmToMove);
             oldCh[idxInOld] = undefined;
-            parentDom.insertBefore(newSNode, oldSNode.elm);
-            newSNode = newCh[++newPreIndex];
+            parentDom.insertBefore(elmToMove.elm, oldSNode.elm);
+          } else {
+            parentDom.insertBefore(createElement(newSNode), oldSNode.elm);
           }
+
+          newSNode = newCh[++newPreIndex];
         }
       }
     }
@@ -273,7 +274,7 @@ export function emptyNodeAt (elm) {
 }
 
 function isSameNode (o, n) {
-  return o.key === n.key && o.tag === n.tag && isDef(o.data) === isDef(n.data);
+  return o.key === n.key && o.tag === n.tag;
 }
 
 function patchEvents (el, newOn) {

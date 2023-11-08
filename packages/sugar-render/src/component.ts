@@ -1,5 +1,5 @@
 import { deepClone, guid } from '@sugar/sugar-shared';
-import { mountHandleList, updateActiveId } from '@sugar/sugar-core';
+import { mountHandleList, updateActiveId } from '@sugar/sugar-hook';
 import { createEffect, ref } from '@sugar/sugar-reactive';
 import { bindAttrAndEvent, bindT } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
