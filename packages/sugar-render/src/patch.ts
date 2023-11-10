@@ -149,9 +149,6 @@ export default function patch (vm, newVnode) {
     let oldKeyToIdx, idxInOld, elmToMove, refElm;
 
     while (oldPreIndex <= oldAftIndex && newPreIndex <= newAftIndex) {
-      if (parentDom.id === 'app') {
-        console.log(oldPreIndex, oldAftIndex, newPreIndex, newAftIndex);
-      }
       if (!oldSNode || !oldCh[oldPreIndex]) {
         oldSNode = oldCh[++oldPreIndex];
       } else if (!oldENode || !oldCh[oldAftIndex]) {

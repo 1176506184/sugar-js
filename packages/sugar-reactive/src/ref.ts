@@ -29,7 +29,7 @@ function ref (fun: any) {
             }
           });
           subscribersToRun.forEach((subscriber: Function) => subscriber());
-          addEffect(...subscribersToRun);
+          addEffect(subscribersToRun);
         }
       }
     });

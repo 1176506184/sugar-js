@@ -62,13 +62,14 @@
             {{item.a}}
         </button>
 
-        <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode" >新增</button>
+        <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode">新增</button>
 
         <!--测试注释-->
 
         <p class="label">s-model</p>
 
-        <sugar-button s-for="item in state.list" @click="pushNode(state.num)" :key="'sugar_btn_' + item.d" :instance="button">
+        <sugar-button s-for="item in state.list" @click="pushNode(state.num)" :key="'sugar_btn_' + item.d"
+                      :instance="button">
             <span #default>
                 <span>测试</span>
                 <span>{{item.a}}</span>
@@ -78,7 +79,7 @@
         <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
 
         <sugar-dialog :model="showDialog" @close="closeDialog">
-            <div style="width: 200px;height: 200px;background-color: #fff;border-radius: 5px;">
+            <div style="width: 80%;height: 300px;background-color: #fff;border-radius: 5px;">
                 <div>测试</div>
                 <div>{{state.num}}</div>
             </div>
@@ -160,9 +161,9 @@
 
             const showDialog = ref(false);
 
-            createEffect(()=>{
-                state.num = state.list.length
-            })
+            // createEffect(() => {
+            //     state.num = state.list.length;
+            // });
 
             watch(showDialog, () => {
                 console.log('state发生了变化');
@@ -176,7 +177,6 @@
 
             function pushNode(num) {
                 show.value = !show.value;
-                state.num += 1;
                 state.list.push({
                     d: state.list.length + 1,
                     a: state.list.length + 1

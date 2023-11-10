@@ -8,7 +8,7 @@ export function uiEffect (patch) {
   patchEffect = patch;
 }
 
-export function addEffect (dep: any) {
+export function addEffect (dep: any | any[]) {
   if (isArray(dep)) {
     Scheduler.push(...dep);
   } else {

@@ -27,7 +27,7 @@ const dialog = {
   render: `<div>
     <transition name="easy-in">
         <div class="sugar-dialog-mode" s-if="show" @click.self="close">
-            <div class="sugar-dialog" s-if="show">
+            <div class="sugar-dialog" s-if="show" @click.self="close">
                 <slot name="default"></slot>
             </div>
         </div>

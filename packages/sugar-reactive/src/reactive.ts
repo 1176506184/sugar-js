@@ -62,6 +62,10 @@ const makeReactive = function (value) {
       }
     }
 
+    if (!isArray(target)) {
+      deps.push(...subscribers);
+    }
+
     deps.forEach((dep) => {
       dep();
       addEffect(dep);
