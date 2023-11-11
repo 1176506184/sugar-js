@@ -149,6 +149,7 @@
           <el-collapse-item title="TikTok" name="7">
             <div>
               <el-button @click="collectTiktok" type="primary">采集视频</el-button>
+              <el-button @click="collectTiktokFrame" type="primary">更新视频</el-button>
             </div>
           </el-collapse-item>
           <el-collapse-item title="综合采集" name="8">
@@ -955,6 +956,24 @@ async function collectFBVideo() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/FBCollect?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+async function collectTiktokFrame() {
+  let activeId = await getActiveId();
+  let pageId = await getId("TiktokFrame");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/TiktokFrame?activeId=' + activeId,
       active: true
     }, (tab) => {
 
