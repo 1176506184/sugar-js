@@ -262,7 +262,7 @@ function dealYoutubeVideo(Message) {
       return {
         ...d,
         title: titleTemp,
-        viewCount: parseInt(d.viewCountText.simpleText.replace(/\D/g, ''))
+        viewCount: dealNum(d.viewCountText?.simpleText)
       }
     })
     author.value = Message.author
@@ -272,6 +272,29 @@ function dealYoutubeVideo(Message) {
 
 
 }
+
+function dealNum(num) {
+
+  let result = num
+
+  if (num === "" || num == null) {
+    return 0;
+  } else {
+
+    result = num.replace(/[^\d.]/ig, "");
+
+    if (num.toString().includes('万')) {
+      result = result * 10000;
+    }
+
+    if (num.toString().includes('K')) {
+      result = result * 1000;
+    }
+
+    return result;
+  }
+}
+
 
 function getPortList() {
   xhrHttp(`http://gpt.anyelse.com/callback/capturehostlist`, {

@@ -10,11 +10,11 @@
       <div style="padding: 0 10px 10px;">
         <el-form-item>
           <el-table :data="data" @selection-change="handleSelectionChange" height="480px">
-            <el-table-column type="selection" width="55"/>
+            <el-table-column type="selection" width="30"/>
 
             <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
-            <el-table-column label="视频标题" width="500">
+            <el-table-column label="视频标题" width="370">
               <template #header>
                 <div style="display: flex;align-items: center;">
                   <label>视频标题</label>
@@ -28,6 +28,13 @@
               </template>
             </el-table-column>
             <el-table-column label="播放量" prop="playCount" sortable :sort-orders="['descending','ascending',null]">
+            </el-table-column>
+            <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]">
+            </el-table-column>
+            <el-table-column label="尺寸" prop="playCount">
+              <template #default="{row}">
+                {{ row.width }}×{{ row.height }}
+              </template>
             </el-table-column>
           </el-table>
 

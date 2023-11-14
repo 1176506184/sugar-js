@@ -9,21 +9,7 @@
     </div>
 
     <el-form label-position="top" style="height: calc(100vh - 57px);">
-      <div style="padding: 0 10px 10px;">
-        <el-table :data="data" style="flex:1;height:calc(100vh - 80px)">
-          <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
-
-          <el-table-column label="视频标题" width="500">
-            <template #default="{ row }">
-              {{ row.title }}
-            </template>
-          </el-table-column>
-
-          <el-table-column label="播放量" prop="playCount" sortable :sort-orders="['descending','ascending',null]">
-          </el-table-column>
-
-        </el-table>
-      </div>
+      <el-input type="textarea" rows="20" v-model="textData" readonly></el-input>
     </el-form>
 
   </div>
@@ -37,12 +23,18 @@ import {useRoute} from "vue-router";
 import {xhrHttp} from "../utils/request";
 
 const route = useRoute()
-const data = ref([])
+const data = ref({})
 const AllData = ref([])
 const author = ref("")
 const title = ref("")
 const active_id = ref("")
+let active_page = null;
 const loading = ref(false)
+const textData = computed(() => {
+  return JSON.stringify(active_page);
+})
+
+const pageMap = new Map();
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -55,82 +47,103 @@ const form = reactive({
 })
 
 async function getNextCollect() {
-  console.log(active_id.value)
-  let data = await xhrHttp('http://121.199.14.173:8080/tictok/GetMirrorTask', {}, 'post');
+  let timeStamp = (new Date()).getTime();
+  let data = {}
+  try {
+    if (active_page) {
+      data = active_page;
+    } else {
+      data = await xhrHttp('http://121.199.14.173:8080/tictok/GetMirrorTask?v=' + timeStamp, {}, 'post');
+    }
+  } catch (e) {
+    setTimeout(() => {
+      getNextCollect();
+    }, 5000)
+  }
   author.value = data.homepage;
-  chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        console.log(active_id.value)
-        chrome.tabs.sendMessage(
-            parseInt(active_id.value),
-            {
-              Message: "video_frame",
-              nextHref: data.homepage
-            },
-            function (response) {
-              if (response?.state !== 200) {
+  active_page = data;
+  pageMap.set(data.homepage, {
+    page_id: data.page_id,
+    homepage: data.homepage,
+    author_id: data.author_id
+  })
 
-              }
-            }
-        );
+  chrome.tabs.query(
+      {},
+      async function (tabs) {
+        for (let i = 0; i < tabs.length; i++) {
+          let tab = tabs[i];
+          if (!tab.url.includes('out.html#/TiktokFrame') && tab.url.includes('tiktok')) {
+            let result = await sendTask(tab, data);
+            if (result === 1) break;
+          }
+        }
+
+        setTimeout(() => {
+          getNextCollect();
+        }, 3000)
+
       }
   );
 
 }
 
-
-function dealYoutubeVideo(Message) {
-
-  if (Message.Message === 'updateActiveId') {
-    active_id.value = Message.data;
-    console.log(active_id.value)
-    chrome.tabs.query(
+function sendTask(tab, data) {
+  return new Promise((r, j) => {
+    chrome.tabs.sendMessage(
+        tab.id,
         {
-          active: true,
-          currentWindow: true,
+          Message: "video_frame",
+          nextHref: data.homepage
         },
-        function (tabs) {
-          console.log(active_id.value)
-          chrome.tabs.sendMessage(
-              active_id.value,
-              {
-                Message: "video_frame"
-              },
-              function (response) {
-                if (response?.state !== 200) {
-                  ElMessage.warning({
-                    message: '未获取到内容，请重试'
-                  })
-                }
-              }
-          );
+        function (response) {
+          if (response?.state === 200 && !response.isCollected) {
+            active_page = null
+            r(1)
+          } else {
+            r(-1)
+          }
         }
     );
+  })
+}
 
-    return
-  } else if (Message.Message === 'tiktokFrame') {
+function dealYoutubeVideo(Message) {
+  console.log(Message)
+  if (Message.Message === 'tiktokFrame') {
     data.value = Message.data;
-    setTimeout(() => {
-      getNextCollect()
-    }, 3000)
+    try {
+      var pageObj = pageMap.get(Message.homepage);
+      xhrHttp('http://121.199.14.173:8080/tictok/CallBack', {
+        ...data.value,
+        itemList: data.value.itemList.map((item) => {
+          let authorId = item.authorId;
+          if (!authorId && item.author) {
+            authorId = item.author.id
+          }
+          return {
+            ...item,
+            authorId
+          }
+        }),
+        page_id: pageObj.page_id,
+        author_id: pageObj.author_id,
+        homepage: pageObj.homepage,
+        statusCode: 0
+      }, 'post', 'application/json').then(() => {
+        pageMap.delete(Message.homepage);
+      })
+    } catch (e) {
+
+    }
   }
-
-
 }
 
 onMounted(() => {
   chrome.runtime.onMessage.addListener(dealYoutubeVideo);
-
-  if (!!route.query.activeId) {
-    active_id.value = route.query.activeId;
-    nextTick(() => {
-      getNextCollect()
-    })
-  }
+  nextTick(() => {
+    getNextCollect()
+  })
 })
 
 function close() {

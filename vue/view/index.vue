@@ -149,7 +149,7 @@
           <el-collapse-item title="TikTok" name="7">
             <div>
               <el-button @click="collectTiktok" type="primary">采集视频</el-button>
-              <el-button @click="collectTiktokFrame" type="primary">更新视频</el-button>
+              <el-button @click="collectTiktokFrame" type="primary" disabled>自动化更新视频</el-button>
             </div>
           </el-collapse-item>
           <el-collapse-item title="综合采集" name="8">
@@ -222,7 +222,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v5.3",
+  version: "v5.4",
   system: 1
 });
 
@@ -964,16 +964,14 @@ async function collectFBVideo() {
 }
 
 async function collectTiktokFrame() {
-  let activeId = await getActiveId();
   let pageId = await getId("TiktokFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
       active: true
     })
-    await updateActiveId(pageId, activeId)
   } else {
     chrome.tabs.create({
-      url: '/html/out.html#/TiktokFrame?activeId=' + activeId,
+      url: '/html/out.html#/TiktokFrame',
       active: true
     }, (tab) => {
 
