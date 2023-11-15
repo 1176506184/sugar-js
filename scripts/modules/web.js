@@ -451,7 +451,9 @@ const list = {
         type: NODE,
         node: {
             item: function () {
-                return document.querySelectorAll('div.layout.layout--full div.layout__item');
+
+
+                return document.querySelectorAll('div.story.story--archive.story--i-flex');
             },
             href: function (parentNode) {
                 return parentNode.querySelector('h3 a').href
@@ -493,6 +495,7 @@ function startTask() {
                         })
                     }
                     if (list[key].node.nextPage !== null) {
+                        // 删除页面节点（懒加载可能会导致采集不到全部，遇到可以注释）
                         node.remove();
                     }
                     result = repeat(result);
