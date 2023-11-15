@@ -30,7 +30,7 @@ window.onload = function () {
         try {
             let data = document.querySelector('#SIGI_STATE')?.innerHTML
             if (data) {
-                data = JSON.parse(data).ItemModule;
+                data = JSON.parse(data).ItemModule;re
                 if (!data) {
                     getVideoFrame();
                     return;
