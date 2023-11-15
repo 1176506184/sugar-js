@@ -446,6 +446,30 @@ const list = {
             play: null,
             nextPage: null
         }
+    },
+    "https://nypost.com/tag/will-and-grace/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('div.layout.layout--full div.layout__item');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('h3 a').href
+            },
+            title: function (parentNode) {
+
+                let title = parentNode.querySelector('h3 a')?.innerText;
+                // if (!title) {
+                //     title = parentNode.querySelector('h2.entry-title')?.innerText;
+                // }
+                return title
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('div.m-top-double.t-center button')
+            }
+        }
     }
 }
 
