@@ -197,6 +197,25 @@ const list = {
             }
         }
     },
+    "https://www.tvinsider.com/show/will-grace/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('div.records a.records-item');
+            },
+            href: function (parentNode) {
+                return parentNode.href;
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('h3').innerText;
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('button.alm-load-more-btn.more')
+            }
+        }
+    },
     "https://www.onemillionarticle.com": {
         type: NODE,
         node: {
@@ -308,6 +327,25 @@ const list = {
             nextPage: null
         }
     },
+    "https://collider.com/tag/bruce-lee/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.display-card.article.large')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('.display-card-title a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.display-card-title a').innerText
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time.display-card-date').getAttribute('datetime')
+            },
+            play: null,
+            nextPage: null
+        }
+    },
     "https://fandomwire.com/tag/gal-gadot": {
         type: NODE,
         node: {
@@ -358,6 +396,55 @@ const list = {
             nextPage: function () {
                 return document.querySelectorAll('button.alm-load-more-btn.more')[1]
             }
+        }
+    },
+    "https://www.foxnews.com/search-results/search?q=Suzanne%20Somers": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('article.article');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('h2.title a').href
+            },
+            title: function (parentNode) {
+
+                let title = parentNode.querySelector('h2.title a')?.innerText;
+                // if (!title) {
+                //     title = parentNode.querySelector('h2.entry-title')?.innerText;
+                // }
+                return title
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('div.button.load-more a')
+            }
+        }
+    },
+    "https://screenrant.com/tag/will-and-grace/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('div.display-card.article');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('h5.display-card-title a').href
+            },
+            title: function (parentNode) {
+
+                let title = parentNode.querySelector('h5.display-card-title a')?.innerText;
+                // if (!title) {
+                //     title = parentNode.querySelector('h2.entry-title')?.innerText;
+                // }
+                return title
+            },
+            time: function (parentNode) {
+
+                return parentNode.querySelector('time')?.getAttribute('datetime')
+            },
+            play: null,
+            nextPage: null
         }
     }
 }
