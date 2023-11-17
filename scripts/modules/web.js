@@ -446,6 +446,32 @@ const list = {
             play: null,
             nextPage: null
         }
+    },
+    "https://nypost.com/tag/will-and-grace/": {
+        type: NODE,
+        node: {
+            item: function () {
+
+
+                return document.querySelectorAll('div.story.story--archive.story--i-flex');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('h3 a').href
+            },
+            title: function (parentNode) {
+
+                let title = parentNode.querySelector('h3 a')?.innerText;
+                // if (!title) {
+                //     title = parentNode.querySelector('h2.entry-title')?.innerText;
+                // }
+                return title
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('div.m-top-double.t-center button')
+            }
+        }
     }
 }
 
@@ -469,6 +495,7 @@ function startTask() {
                         })
                     }
                     if (list[key].node.nextPage !== null) {
+                        // 删除页面节点（懒加载可能会导致采集不到全部，遇到可以注释）
                         node.remove();
                     }
                     result = repeat(result);
