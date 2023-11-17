@@ -4,8 +4,10 @@
   "description": "",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack --watch",
-    "build": "cross-env NODE_ENV=production webpack",
+    "dev": "cross-env NODE_ENV=development DIR=dist webpack --watch",
+    "d": "cross-env NODE_ENV=development DIR=app webpack --watch",
+    "build": "cross-env NODE_ENV=production DIR=dist webpack",
+    "b": "cross-env NODE_ENV=production DIR=app webpack",
     "watch": "cross-env NODE_ENV=development webpack --watch"
   },
   "repository": {
@@ -30,6 +32,7 @@
     "css-loader": "^6.7.3",
     "element-plus": "^2.2.32",
     "keep-alive": "^0.1.0",
+    "process": "^0.11.10",
     "sass": "^1.58.3",
     "sass-loader": "^13.2.0",
     "style-loader": "^3.3.1",
