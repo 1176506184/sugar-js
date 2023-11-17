@@ -30,7 +30,8 @@ window.onload = function () {
         try {
             let data = document.querySelector('#SIGI_STATE')?.innerHTML
             if (data) {
-                data = JSON.parse(data).ItemModule;re
+                data = JSON.parse(data).ItemModule;
+                re
                 if (!data) {
                     getVideoFrame();
                     return;
@@ -81,6 +82,17 @@ function getVideoFrame() {
             chrome.runtime.sendMessage({
                 Message: 'tiktokFrame',
                 data: videoData,
+                author: document.querySelector('h1[data-e2e="user-title"]')?.innerText,
+                homepage: location.href.replace('#isCollect', '')
+            }).then(() => {
+                isCollected = false;
+            })
+        } else {
+            chrome.runtime.sendMessage({
+                Message: 'tiktokFrame',
+                data: {
+                    itemList: []
+                },
                 author: document.querySelector('h1[data-e2e="user-title"]')?.innerText,
                 homepage: location.href.replace('#isCollect', '')
             }).then(() => {

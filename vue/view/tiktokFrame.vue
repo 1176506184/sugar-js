@@ -1,5 +1,6 @@
 <template>
-  <div style="height: 100vh;margin: 0;padding: 0;border-right: 1px solid #ccc;border-left: 1px solid #ccc">
+  <div
+      style="height: auto;margin: 0;padding: 0;border-right: 1px solid #ccc;border-left: 1px solid #ccc;border-bottom: 1px solid #ccc">
     <div class="layout_top"
          style="height: 35px;display: flex;align-items: center;justify-content: flex-start;position: relative">
       <span style="font-size: 15px;font-weight: bold;margin-right: 5px">当前博主</span>
@@ -8,8 +9,16 @@
       </el-input>
     </div>
 
-    <el-form label-position="top" style="height: calc(100vh - 57px);">
-      <el-input type="textarea" rows="20" v-model="textData" readonly></el-input>
+    <el-form label-position="top" style="height: auto;padding: 20px;">
+
+      <el-form-item label="上次采集时间">
+        <el-input v-model="lastGetTime" readonly></el-input>
+      </el-form-item>
+
+      <el-form-item label="上次采集博主">
+        <el-input v-model="lastGetAuthor" readonly></el-input>
+      </el-form-item>
+
     </el-form>
 
   </div>
@@ -21,6 +30,7 @@ import {computed, onMounted, reactive, ref, nextTick} from "vue";
 import {ElLoading, ElMessage} from "element-plus";
 import {useRoute} from "vue-router";
 import {xhrHttp} from "../utils/request";
+import {DIR, getNowDate} from "../utils/utils";
 
 const route = useRoute()
 const data = ref({})
@@ -33,7 +43,8 @@ const loading = ref(false)
 const textData = computed(() => {
   return JSON.stringify(active_page);
 })
-
+const lastGetTime = ref("");
+const lastGetAuthor = ref("");
 const pageMap = new Map();
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
@@ -46,26 +57,61 @@ const form = reactive({
   needProcess: 0
 })
 
+const timeInterval = 120000
+let lastTimeStamp = 0;
+
+setInterval(() => {
+  if ((parseInt((new Date()).getTime() / 1000) - lastTimeStamp > 300) && lastTimeStamp !== 0) {
+    getNextCollect();
+    window.open('https://tiktok.com');
+  }
+}, 5000)
+
 async function getNextCollect() {
+  lastGetTime.value = getNowDate();
   let timeStamp = (new Date()).getTime();
   let data = {}
   try {
     if (active_page) {
       data = active_page;
     } else {
-      data = await xhrHttp('http://121.199.14.173:8080/tictok/GetMirrorTask?v=' + timeStamp, {}, 'post');
+
+      if (DIR === 'dist') {
+        data = await xhrHttp('http://101.201.222.226/tictok/GetCollectionLogForJob?v=' + timeStamp, {}, 'post');
+      } else {
+        data = await xhrHttp('http://121.199.14.173:8080/tictok/GetMirrorTask?v=' + timeStamp, {}, 'post');
+      }
+
     }
   } catch (e) {
     setTimeout(() => {
       getNextCollect();
-    }, 5000)
+    }, timeInterval)
   }
+
+  if (data['error_code'] === -1) {
+    setTimeout(() => {
+      getNextCollect();
+    }, timeInterval)
+    return;
+  }
+
   author.value = data.homepage;
   active_page = data;
+  lastGetAuthor.value = data.homepage;
+
+  if (pageMap.get(data.homepage)) {
+    setTimeout(() => {
+      getNextCollect();
+    }, timeInterval)
+    return
+  }
+
   pageMap.set(data.homepage, {
     page_id: data.page_id,
     homepage: data.homepage,
-    author_id: data.author_id
+    author_id: data.author_id,
+    log_id: data.log_id
   })
 
   chrome.tabs.query(
@@ -81,7 +127,7 @@ async function getNextCollect() {
 
         setTimeout(() => {
           getNextCollect();
-        }, 3000)
+        }, timeInterval)
 
       }
   );
@@ -114,9 +160,16 @@ function dealYoutubeVideo(Message) {
     data.value = Message.data;
     try {
       var pageObj = pageMap.get(Message.homepage);
-      xhrHttp('http://121.199.14.173:8080/tictok/CallBack', {
+      let callBackUrl = "";
+      if (DIR === 'dist') {
+        callBackUrl = 'http://101.201.222.226/tictok/CallBackForCollectionLog';
+      } else {
+        callBackUrl = 'http://121.199.14.173:8080/tictok/CallBack';
+      }
+      lastTimeStamp = parseInt((new Date()).getTime() / 1000);
+      xhrHttp(callBackUrl, {
         ...data.value,
-        itemList: data.value.itemList.map((item) => {
+        itemList: data.value.itemList?.map((item) => {
           let authorId = item.authorId;
           if (!authorId && item.author) {
             authorId = item.author.id
@@ -129,12 +182,13 @@ function dealYoutubeVideo(Message) {
         page_id: pageObj.page_id,
         author_id: pageObj.author_id,
         homepage: pageObj.homepage,
+        log_id: pageObj.log_id,
         statusCode: 0
       }, 'post', 'application/json').then(() => {
         pageMap.delete(Message.homepage);
       })
     } catch (e) {
-
+      console.log(e)
     }
   }
 }

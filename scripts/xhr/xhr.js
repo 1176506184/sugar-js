@@ -106,6 +106,9 @@ var ajax_tools_space = {
                         url: currentTarget.responseURL,
                         data: currentTarget.response
                     })
+
+                    // console.log(currentTarget.responseURL,currentTarget.response)
+
                     // modifyResponse();
                     this.onload && this.onload.apply(this, args);
                 }
@@ -205,7 +208,7 @@ var ajax_tools_space = {
     }
 }
 if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
-    || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 || location.href.indexOf('tiktok') !== -1) {
+    || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 || location.href.indexOf('tiktok') !== -1 || location.href.indexOf('ce.xinli001.com') !== -1) {
 
     if (location.href.indexOf('twtest.anyelse.com') === -1) {
         window.fetch = ajax_tools_space.myFetch;
