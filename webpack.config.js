@@ -8,7 +8,7 @@ const distDir = process.env.DIR
 const {
     ElementPlusResolver
 } = require('unplugin-vue-components/resolvers')
-const webpack = require("webpack");
+const {DefinePlugin} = require("webpack");
 
 module.exports = {
     entry: './vue/main.js',
@@ -45,7 +45,7 @@ module.exports = {
         }]
     },
     plugins: [
-        new webpack.DefinePlugin({
+        new DefinePlugin({
             'process.env.DIR': `"${distDir}"`,
         }),
         new CleanWebpackPlugin(),

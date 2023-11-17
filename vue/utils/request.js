@@ -5,8 +5,6 @@ let PrivateLink = {
     'dataCollect': 'http://captureapi.anyelse.com/'
 }
 
-console.log(NODE_ENV)
-
 if (NODE_ENV === 'development') {
     PrivateLink = {
         'trumpet': 'http://192.168.205.34:57968/',
