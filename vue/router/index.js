@@ -3,12 +3,14 @@ import TrumpetVideo from "../view/trumpetVideo.vue";
 import TwitterImage from "../view/twitterImage.vue"
 import YoutubeVideo from "../view/youtubeVideo.vue"
 import YoutubeVideoFrame from "../view/youtubeVideoFrame.vue"
+import YoutubeVideoFramePW from "../view/youtubeVideoFramePW.vue"
 import ShortsVideo from "../view/shortsVideo.vue";
 import WebCollect from "../view/webCollect.vue";
 import TiktokVideo from "../view/tiktokVideo.vue";
 import FacebookVideo from "../view/FacebookVideoFrame.vue";
 import douyinVideo from "../view/douyinVideo.vue"
 import TiktokFrame from "../view/tiktokFrame.vue";
+import TiktokVideoFrame from "../view/tiktokVideoFrame.vue"
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 
@@ -95,6 +97,18 @@ const routes = [
         name: 'TiktokFrame',
         path: '/TiktokFrame',
         component: TiktokFrame,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'YoutubeVideoFramePW',
+        path: '/YoutubeVideoFramePW',
+        component: YoutubeVideoFramePW,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'TiktokVideoFrame',
+        path: '/TiktokVideoFrame',
+        component: TiktokVideoFrame,
         props: route => ({query: route.query.q}),
         meta: {}
     }

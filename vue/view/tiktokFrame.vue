@@ -57,15 +57,33 @@ const form = reactive({
   needProcess: 0
 })
 
-const timeInterval = 120000
+const timeInterval = 240000
 let lastTimeStamp = 0;
 
 setInterval(() => {
   if ((parseInt((new Date()).getTime() / 1000) - lastTimeStamp > 300) && lastTimeStamp !== 0) {
-    getNextCollect();
-    window.open('https://tiktok.com');
+
+    chrome.tabs.query(
+        {},
+        function (tabs) {
+          tabs.map((tab) => {
+            if (!tab.url.includes('out.html#/TiktokFrame') && tab.url.includes('tiktok')) {
+              chrome.tabs.remove(tab.id);
+            }
+          })
+        });
+
+    setTimeout(() => {
+      chrome.tabs.create({
+        url: 'https://www.tiktok.com',
+        active: true
+      }, (tab) => {
+        getNextCollect();
+      })
+    }, 10000)
+
   }
-}, 5000)
+}, timeInterval * 1.5)
 
 async function getNextCollect() {
   lastGetTime.value = getNowDate();
@@ -89,7 +107,7 @@ async function getNextCollect() {
     }, timeInterval)
   }
 
-  if (data['error_code'] === -1) {
+  if (data['errorCode'] === -1) {
     setTimeout(() => {
       getNextCollect();
     }, timeInterval)
@@ -100,7 +118,7 @@ async function getNextCollect() {
   active_page = data;
   lastGetAuthor.value = data.homepage;
 
-  if (pageMap.get(data.homepage)) {
+  if (pageMap.get(data.homepage) && DIR !== 'dist') {
     setTimeout(() => {
       getNextCollect();
     }, timeInterval)
@@ -117,7 +135,7 @@ async function getNextCollect() {
   chrome.tabs.query(
       {},
       async function (tabs) {
-        for (let i = 0; i < tabs.length; i++) {
+        for (let i = tabs.length - 1; i >= 0; i--) {
           let tab = tabs[i];
           if (!tab.url.includes('out.html#/TiktokFrame') && tab.url.includes('tiktok')) {
             let result = await sendTask(tab, data);
@@ -160,6 +178,11 @@ function dealYoutubeVideo(Message) {
     data.value = Message.data;
     try {
       var pageObj = pageMap.get(Message.homepage);
+      if (!pageObj) {
+        getNextCollect();
+        return;
+      }
+
       let callBackUrl = "";
       if (DIR === 'dist') {
         callBackUrl = 'http://101.201.222.226/tictok/CallBackForCollectionLog';

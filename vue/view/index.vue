@@ -144,12 +144,14 @@
               <!--              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>-->
               <!--              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>-->
               <el-button @click="collectYoutubeNew" type="primary">采集视频 / SHORTS并自动分发</el-button>
+              <el-button @click="collectYoutubeNewPW" type="primary">采集视频 / SHORTS并排文</el-button>
             </div>
           </el-collapse-item>
           <el-collapse-item title="TikTok" name="7">
             <div>
               <el-button @click="collectTiktok" type="primary">采集视频</el-button>
-              <el-button @click="collectTiktokFrame" type="primary">自动化更新视频</el-button>
+              <el-button @click="collectTiktokVideoFrame" type="primary">采集视频并排文</el-button>
+              <el-button @click="collectTiktokFrame" type="primary" disabled>自动化更新视频（个人勿点）</el-button>
             </div>
           </el-collapse-item>
           <el-collapse-item title="综合采集" name="8">
@@ -222,7 +224,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v5.4",
+  version: "v5.5",
   system: 1
 });
 
@@ -979,6 +981,24 @@ async function collectTiktokFrame() {
   }
 }
 
+async function collectTiktokVideoFrame() {
+  let activeId = await getActiveId();
+  let pageId = await getId("TiktokVideoFrame");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/TiktokVideoFrame?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
 async function collectNovel() {
   let activeId = await getActiveId();
   let pageId = await getId("Novel");
@@ -1052,6 +1072,24 @@ async function collectYoutubeNew() {
     })
   }
 
+}
+
+async function collectYoutubeNewPW() {
+  let activeId = await getActiveId();
+  let pageId = await getId("YoutubeVideoFramePW");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/YoutubeVideoFramePW?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
 }
 
 async function updateActiveId(page_id, active_id) {
