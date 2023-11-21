@@ -120,6 +120,7 @@ async function getNextCollect() {
 
   if (pageMap.get(data.homepage) && DIR !== 'dist') {
     setTimeout(() => {
+      active_page = null;
       getNextCollect();
     }, timeInterval)
     return
