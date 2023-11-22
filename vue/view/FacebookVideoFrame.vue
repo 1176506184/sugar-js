@@ -90,10 +90,8 @@
 
           <el-row gutter="10" style="width: 350px;float: left">
             <el-col :span="12">
-              <el-select placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%">
-                <el-option v-for="item in pages" :label="item.name + ' - ' +item.uid" :value="item.uid"
-                           :key="item.uid"/>
-              </el-select>
+              <el-select-v2 placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%">
+              </el-select-v2>
             </el-col>
             <el-col :span="12" style="color:orange;font-size: 12px;line-height: 17px;white-space: pre-wrap;
     text-align: left;">
@@ -148,7 +146,7 @@ const form = reactive({
   content_type: 0,
   host: '',
   category: '',
-  pageuid: '',
+  pageuid: null,
   needProcess: 0
 })
 
@@ -230,8 +228,13 @@ function getCateGory() {
 
 function getPage() {
   xhrHttp(`http://gpt.anyelse.com/callback/capturefacebooklist`, {}, 'post', 'application/json').then((res) => {
-    pages.value = JSON.parse(res).data
-    console.log(pages.value)
+    pages.value = JSON.parse(res).data.map((item) => {
+      return {
+        ...item,
+        value: item.uid,
+        label: item.name + ' - ' + item.uid
+      }
+    })
   });
 }
 
@@ -273,6 +276,8 @@ const upData = ref([])
 const handleSelectionChange = (val) => {
   upData.value = val
 }
+
+
 
 async function Save() {
 
@@ -330,5 +335,8 @@ function copyEx() {
 </script>
 
 <style scoped>
-
+:deep(.el-select-v2__placeholder) {
+  text-align: left !important;
+  cursor: pointer;
+}
 </style>

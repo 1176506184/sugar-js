@@ -77,6 +77,13 @@ window.addEventListener('message', function (res) {
 
 function getVideoFrame() {
     try {
+        videoData.itemList = videoData.itemList.map((item) => {
+            item.challenges = []
+            return {
+                ...item
+            }
+        })
+
         if (videoData) {
             chrome.runtime.sendMessage({
                 Message: 'tiktokFrame',
