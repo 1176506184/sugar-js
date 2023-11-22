@@ -203,7 +203,7 @@ function setController(swiper) {
   controlledSwiper.value = swiper
 }
 
-onBeforeMount(()=>{
+onBeforeMount(() => {
   document.body.style.width = "1200px"
 })
 
@@ -369,6 +369,12 @@ function create_plan() {
 const pwData = ref([])
 
 function nextStep() {
+  if (upData.value.length > 60) {
+    ElMessage.error("最多一次排程60条");
+    return
+  }
+
+
   pwData.value = upData.value.map((r) => {
     return {
       title: r.title,
@@ -377,6 +383,7 @@ function nextStep() {
       plan_time: ''
     }
   })
+
 
   if (pwData.value.length === 0) {
     ElMessage.warning("先请选择视频");
