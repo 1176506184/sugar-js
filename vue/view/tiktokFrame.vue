@@ -46,6 +46,7 @@ const textData = computed(() => {
 const lastGetTime = ref("");
 const lastGetAuthor = ref("");
 const pageMap = new Map();
+let restartArr = [];
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -67,7 +68,7 @@ setInterval(() => {
         {},
         function (tabs) {
           tabs.map((tab) => {
-            if (!tab.url.includes('out.html#/TiktokFrame') && tab.url.includes('tiktok')) {
+            if (!tab.url.includes('out.html#/TiktokFrame')) {
               chrome.tabs.remove(tab.id);
             }
           })
@@ -112,6 +113,18 @@ async function getNextCollect() {
       getNextCollect();
     }, timeInterval)
     return;
+  }
+
+  if (restartArr.length === 0 || restartArr[0] === data.homepage) {
+    restartArr.push(data.homepage);
+  }
+
+  if (restartArr.length >= 3) {
+    restartArr = [];
+    active_page = null;
+    await nextUrl(data.homepage);
+    await getNextCollect();
+    return
   }
 
   author.value = data.homepage;
@@ -215,6 +228,28 @@ function dealYoutubeVideo(Message) {
       console.log(e)
     }
   }
+}
+
+async function nextUrl(homepage) {
+  let callBackUrl = "";
+  if (DIR === 'dist') {
+    callBackUrl = 'http://101.201.222.226/tictok/CallBackForCollectionLog';
+  } else {
+    callBackUrl = 'http://121.199.14.173:8080/tictok/CallBack';
+  }
+  var pageObj = pageMap.get(homepage);
+  xhrHttp(callBackUrl, {
+    ...data.value,
+    itemList: [],
+    page_id: pageObj.page_id,
+    author_id: pageObj.author_id,
+    homepage: pageObj.homepage,
+    log_id: pageObj.log_id,
+    statusCode: 0
+  }, 'post', 'application/json').then(() => {
+    pageMap.delete(Message.homepage);
+  })
+
 }
 
 onMounted(() => {

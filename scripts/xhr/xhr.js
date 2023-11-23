@@ -158,12 +158,16 @@ var ajax_tools_space = {
         try {
             if (response.url.includes("www.tiktok.com")) {
                 if (response.url.includes("/api/post/item_list")) {
-                    let data = await response.clone().json()
-                    window.postMessage({
-                        Message: 'ajax',
-                        url: response.url,
-                        data: data
-                    })
+                    try {
+                        let data = await response.clone().json()
+                        window.postMessage({
+                            Message: 'ajax',
+                            url: response.url,
+                            data: data
+                        })
+                    } catch (e) {
+
+                    }
                 }
             } else {
                 let data = await response.clone().json()

@@ -151,7 +151,7 @@
             <div>
               <el-button @click="collectTiktok" type="primary">采集视频</el-button>
               <el-button @click="collectTiktokVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
-              <el-button @click="collectTiktokFrame" type="primary" disabled>自动化更新视频（个人勿点）</el-button>
+              <el-button @click="collectTiktokFrame" type="primary">自动化更新视频（个人勿点）</el-button>
             </div>
           </el-collapse-item>
           <el-collapse-item title="综合采集" name="8">
@@ -224,7 +224,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v5.7",
+  version: "v5.8",
   system: 1
 });
 

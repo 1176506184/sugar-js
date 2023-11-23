@@ -88,9 +88,9 @@
         <div class="dialog-footer"
              style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
 
-          <el-row gutter="10" style="width: 350px;float: left">
+          <el-row gutter="10" style="width: 420px;float: left">
             <el-col :span="12">
-              <el-select-v2 placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%">
+              <el-select-v2 placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%" :options="pages">
               </el-select-v2>
             </el-col>
             <el-col :span="12" style="color:orange;font-size: 12px;line-height: 17px;white-space: pre-wrap;
