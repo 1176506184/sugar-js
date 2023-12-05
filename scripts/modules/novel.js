@@ -232,49 +232,6 @@ async function getContentNext(name, href) {
 
 }
 
-async function getContentNextFrame(name, href) {
-
-    try {
-        var iframe = document.createElement('iframe');
-        iframe.width = 0;
-        iframe.height = 0;
-        document.body.appendChild(iframe);
-        iframe.src = href;
-        iframe.onload = function () {
-            let body = iframe.contentDocument.body;
-            body = body.replace(delReg, '');
-            let tempNode = document.createElement('div');
-            tempNode.innerHTML = clearScriptTag(body);
-            [].forEach.call(tempNode.querySelectorAll("span,div,ul"), function (item) {
-                var thisStyle = tempNode.defaultView ? tempNode.defaultView.getComputedStyle(item) : item.style;
-                if (thisStyle && (thisStyle.display === "none" || (item.nodeName === "SPAN" && thisStyle.fontSize === "0px"))) {
-                    item.innerHTML = "";
-                }
-            });
-            let nextPageMap = [];
-            [].forEach.call(tempNode.querySelectorAll('a'), (a) => {
-                let isNextPageBtn = a.innerText.match(innerNextPage);
-                if (isNextPageBtn && !nextPageMap.includes(a.href) && !chapterHrefMap.includes(a.href)) {
-                    nextPageMap.push(a.href);
-                    chapterHrefMap.push(a.href);
-                    getContentNext(name, a.href);
-                }
-            })
-            resultList.push({
-                name: name,
-                href: href,
-                content: tempNode.querySelector('#content') ? tempNode.querySelector('#content').innerHTML : tempNode.querySelector('#rtext') ? tempNode.querySelector('#rtext').innerHTML : tempNode.innerHTML
-            })
-            tempNode.innerHTML = "";
-            tempNode = null;
-        }
-
-    } catch (e) {
-    }
-
-    await wait();
-}
-
 function wait(num) {
     return new Promise((r) => {
         setTimeout(() => {

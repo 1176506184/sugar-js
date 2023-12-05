@@ -16,7 +16,7 @@
 
             <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
-            <el-table-column label="视频标题" width="700">
+            <el-table-column label="视频标题" width="900">
               <template #header>
                 <div style="display: flex;align-items: center;">
                   <label>视频标题</label>
@@ -54,7 +54,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="生成内容类型">
               <el-select v-model="form.content_type" placeholder="请选择" @change="getPortList">
                 <el-option label="快讯" :value="0"/>
@@ -63,7 +63,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="是否需要审核">
               <el-select v-model="form.needProcess" class="smallWidthInput" placeholder="请选择">
                 <el-option label="否" :value="0"/>
@@ -72,7 +72,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="生成内容域名">
               <el-select placeholder="请选择" v-model="form.host" @change="getCateGory" filterable>
                 <el-option v-for="item in ports" :label="item" :value="item"/>
@@ -80,10 +80,19 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="生成内容分类">
               <el-select placeholder="请选择" v-model="form.category" filterable>
                 <el-option v-for="item in categorys" :label="item" :value="item"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="4">
+            <el-form-item label="标题是否chatgpt处理">
+              <el-select v-model="form.needChapgpt" class="smallWidthInput" placeholder="请选择">
+                <el-option label="否" :value="0"/>
+                <el-option label="是" :value="1"/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -162,7 +171,8 @@ const form = reactive({
   host: '',
   category: '',
   pageuid: null,
-  needProcess: 0
+  needProcess: 1,
+  needChapgpt: 1
 })
 
 const pageType = computed(() => {
@@ -192,6 +202,9 @@ function tabelSort({column, prop, order}) {
       if (!t1 || !t2) {
         return 1
       }
+
+      t1[0] = parseInt(t1[0])
+      t2[0] = parseInt(t2[0])
 
       if (t1[0] > t2[0]) {
         return 1
@@ -516,7 +529,7 @@ function copyEx() {
 
 <style scoped>
 :deep(.el-select-v2__placeholder) {
-  text-align: left!important;
+  text-align: left !important;
   cursor: pointer;
 }
 </style>

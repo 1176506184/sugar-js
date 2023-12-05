@@ -26,7 +26,11 @@ var cacheData = {init: true};
 chrome.storage.local.set({iframeVisible: true});
 G.scriptList = new Map();
 G.scriptList.set("facebook.js", {refresh: true, allFrames: true, world: "MAIN", name: "facebook"});
-const webList = ['https://movieweb.com', 'https://collider.com', 'https://fandomwire.com', 'https://www.tvinsider.com', 'https://www.foxnews.com', 'https://screenrant.com', 'https://nypost.com']
+const webList = ['https://movieweb.com', 'https://collider.com', 'https://fandomwire.com',
+    'https://www.tvinsider.com', 'https://www.foxnews.com', 'https://screenrant.com', 'https://nypost.com',
+    'https://www.cbr.com', 'https://tasteofcountry.com', 'https://people.com', 'https://outsider.com', 'https://www.outsider.com',
+    'https://ew.com','https://countrynow.com']
+
 const novelList = ['https://www.wfxs.tw', 'https://www.wfxs.com.tw']
 
 if (location.href.indexOf('twtest.anyelse.com') !== -1) {

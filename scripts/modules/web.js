@@ -308,11 +308,11 @@ const list = {
             nextPage: null
         }
     },
-    "https://collider.com": {
+    "https://collider.com/tag/keanu-reeves": {
         type: NODE,
         node: {
             item: function () {
-                return document.querySelectorAll('.sentinel-home-list .display-card')
+                return document.querySelectorAll('.sentinel-listing-page-list .display-card')
             },
             href: function (parentNode) {
                 return parentNode.querySelector('.display-card-title a').href
@@ -327,25 +327,44 @@ const list = {
             nextPage: null
         }
     },
-    "https://collider.com/tag/bruce-lee/": {
-        type: NODE,
-        node: {
-            item: function () {
-                return document.querySelectorAll('.display-card.article.large')
-            },
-            href: function (parentNode) {
-                return parentNode.querySelector('.display-card-title a').href
-            },
-            title: function (parentNode) {
-                return parentNode.querySelector('.display-card-title a').innerText
-            },
-            time: function (parentNode) {
-                return parentNode.querySelector('time.display-card-date').getAttribute('datetime')
-            },
-            play: null,
-            nextPage: null
-        }
-    },
+    // "https://collider.com": {
+    //     type: NODE,
+    //     node: {
+    //         item: function () {
+    //             return document.querySelectorAll('.sentinel-home-list .display-card')
+    //         },
+    //         href: function (parentNode) {
+    //             return parentNode.querySelector('.display-card-title a').href
+    //         },
+    //         title: function (parentNode) {
+    //             return parentNode.querySelector('.display-card-title').innerText
+    //         },
+    //         time: function (parentNode) {
+    //             return parentNode.querySelector('time.display-card-date').getAttribute('datetime')
+    //         },
+    //         play: null,
+    //         nextPage: null
+    //     }
+    // },
+    // "https://collider.com/tag/bruce-lee/": {
+    //     type: NODE,
+    //     node: {
+    //         item: function () {
+    //             return document.querySelectorAll('.display-card.article.large')
+    //         },
+    //         href: function (parentNode) {
+    //             return parentNode.querySelector('.display-card-title a').href
+    //         },
+    //         title: function (parentNode) {
+    //             return parentNode.querySelector('.display-card-title a').innerText
+    //         },
+    //         time: function (parentNode) {
+    //             return parentNode.querySelector('time.display-card-date').getAttribute('datetime')
+    //         },
+    //         play: null,
+    //         nextPage: null
+    //     }
+    // },
     "https://fandomwire.com/tag/gal-gadot": {
         type: NODE,
         node: {
@@ -472,10 +491,179 @@ const list = {
                 return document.querySelector('div.m-top-double.t-center button')
             }
         }
+    },
+    "https://nypost.com/tag/bridgerton/": {
+        type: NODE,
+        node: {
+            item: function () {
+
+
+                return document.querySelectorAll('div.story.story--archive.story--i-flex');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('h3 a').href
+            },
+            title: function (parentNode) {
+
+                let title = parentNode.querySelector('h3 a')?.innerText;
+                // if (!title) {
+                //     title = parentNode.querySelector('h2.entry-title')?.innerText;
+                // }
+                return title
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('div.m-top-double.t-center button')
+            }
+        }
+    },
+    "https://www.cbr.com/tag/bridgerton/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.display-card.article');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('.display-card-title  a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.display-card-title  a').innerText
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time').getAttribute('datetime')
+            },
+            play: null,
+            nextPage: function () {
+                return null
+            }
+        }
+    },
+    "https://tasteofcountry.com/tags/tim-mcgraw/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.blogroll-inner article')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a.title').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('a.title').innerText
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time').getAttribute('datetime')
+            },
+            play: null,
+            nextPage: function () {
+                return document.querySelector('header.header-band').querySelector('a')
+            }
+        }
+    },
+    "https://people.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('[id*="mntl-card-list-items"]')
+            },
+            href: function (parentNode) {
+                return parentNode.href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.card__title-text ').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('.pagination__next').querySelector('a')
+            }
+        }
+    },
+    "https://ew.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('[id*="mntl-card-list-items"]')
+            },
+            href: function (parentNode) {
+                return parentNode.href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.card__title-text ').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('.pagination__next').querySelector('a')
+            }
+        }
+    },
+    "https://outsider.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.categoryList article')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('.articleTitle a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.articleTitle').innerText
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time').getAttribute('datetime')
+            },
+            play: null,
+            nextPage: function () {
+                return document.querySelector('a.next.page-numbers')
+            }
+        }
+    }, "https://www.outsider.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.categoryList article')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('.articleTitle a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.articleTitle').innerText
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('time').getAttribute('datetime')
+            },
+            play: null,
+            nextPage: function () {
+                return document.querySelector('a.next.page-numbers')
+            }
+        }
+    },
+    "https://countrynow.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.custom-archive-loop-item')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a.kb-advanced-image-link').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('h3').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('span[aria-current="page"]').nextElementSibling
+            }
+        }
     }
 }
 
+let startState = 0;
+
 function startTask() {
+    startState = 1;
     console.log("开始采集")
     timer = setInterval(() => {
         Object.keys(list).forEach((key) => {
@@ -496,7 +684,7 @@ function startTask() {
                     }
                     if (list[key].node.nextPage !== null) {
                         // 删除页面节点（懒加载可能会导致采集不到全部，遇到可以注释）
-                        node.remove();
+                        // node.remove();
                     }
                     result = repeat(result);
                 })
@@ -564,6 +752,17 @@ function finishTask() {
 }
 
 
+function getInfo() {
+
+    chrome.runtime.sendMessage({
+        Message: 'Origin',
+        type: 'web',
+        data: location.origin
+    }).then(r => {
+
+    })
+}
+
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'checkType') {
         chrome.runtime.sendMessage({
@@ -579,19 +778,17 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         });
     } else if (Message.Message === 'getOrigin') {
 
-        chrome.runtime.sendMessage({
-            Message: 'Origin',
-            type: 'web',
-            data: location.origin
-        }).then(r => {
-
-        })
-
+        getInfo();
         sendResponse({
             state: 200
         });
+
     } else if (Message.Message === 'startTask') {
-        startTask();
+
+        if (startState === 0) {
+            startTask();
+        }
+
         sendResponse({
             state: 200
         });

@@ -158,7 +158,7 @@ input {
 
 @media (min-width: 1000px) {
     body {
-        height: 100vh !important;width: 1000px;
+        height: 100vh !important;width: 1200px;
     }
 
     .layout_top {

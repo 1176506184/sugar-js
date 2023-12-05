@@ -6,6 +6,7 @@ import YoutubeVideoFrame from "../view/youtubeVideoFrame.vue"
 import YoutubeVideoFramePW from "../view/youtubeVideoFramePW.vue"
 import ShortsVideo from "../view/shortsVideo.vue";
 import WebCollect from "../view/webCollect.vue";
+import WebCollectFrame from "../view/webCollectFrame.vue";
 import TiktokVideo from "../view/tiktokVideo.vue";
 import FacebookVideo from "../view/FacebookVideoFrame.vue";
 import douyinVideo from "../view/douyinVideo.vue"
@@ -62,6 +63,13 @@ const routes = [
         name: 'WebCollect',
         path: '/WebCollect',
         component: WebCollect,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    },
+    {
+        name: 'WebCollectFrame',
+        path: '/WebCollectFrame',
+        component: WebCollectFrame,
         props: route => ({query: route.query.q}),
         meta: {}
     },

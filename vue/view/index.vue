@@ -151,12 +151,15 @@
             <div>
               <el-button @click="collectTiktok" type="primary">采集视频</el-button>
               <el-button @click="collectTiktokVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
-              <el-button @click="collectTiktokFrame" type="primary">自动化更新视频（个人勿点）</el-button>
+              <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">
+                自动化更新视频（个人勿点）
+              </el-button>
             </div>
           </el-collapse-item>
           <el-collapse-item title="综合采集" name="8">
             <div>
               <el-button @click="collectWeb" type="primary">网站采集</el-button>
+              <el-button @click="collectWebFrame" type="primary">网站采集（新）</el-button>
               <el-button @click="collectNovel" type="primary">小说采集</el-button>
               <el-button @click="collectNovelSync" type="primary">小说采集（加延迟防检测）</el-button>
             </div>
@@ -224,11 +227,14 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v5.8",
+  version: "v6.0",
   system: 1
 });
 
 const loading = ref(false);
+const canTiktokFrame = computed(() => {
+  return localStorage.getItem('name') !== '唐非凡'
+})
 
 const canUseBtn = reactive({
   trumpetVideo: true,
@@ -1085,6 +1091,24 @@ async function collectYoutubeNewPW() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/YoutubeVideoFramePW?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+async function collectWebFrame() {
+  let activeId = await getActiveId();
+  let pageId = await getId("WebCollectFrame");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/WebCollectFrame?activeId=' + activeId,
       active: true
     }, (tab) => {
 
