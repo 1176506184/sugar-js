@@ -466,7 +466,7 @@ const list = {
             nextPage: null
         }
     },
-    "https://nypost.com/tag/will-and-grace/": {
+    "https://nypost.com": {
         type: NODE,
         node: {
             item: function () {
