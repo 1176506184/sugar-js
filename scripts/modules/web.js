@@ -534,9 +534,7 @@ const list = {
                 return parentNode.querySelector('time').getAttribute('datetime')
             },
             play: null,
-            nextPage: function () {
-                return null
-            }
+            nextPage: null
         }
     },
     "https://tasteofcountry.com/tags/tim-mcgraw/": {
