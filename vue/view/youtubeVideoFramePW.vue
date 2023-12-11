@@ -333,7 +333,7 @@ function dealNum(num) {
       result = result * 1000;
     }
 
-    return result;
+    return Number(result);
   }
 }
 

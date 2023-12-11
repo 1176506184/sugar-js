@@ -210,7 +210,12 @@ function dealYoutubeVideo(Message) {
         }
     );
   } else {
-    data.value = Message.data
+    data.value = Message.data.map((item) => {
+      return {
+        ...item,
+        play: Number(item.play)
+      }
+    })
     author.value = Message.author
     AllData.value = data.value
     console.log(data.value)
