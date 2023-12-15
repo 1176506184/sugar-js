@@ -11,6 +11,10 @@
 
     <el-form label-position="top" style="height: auto;padding: 20px;">
 
+      <el-form-item label="进程唯一ID">
+        <el-input v-model="tiktokGuid" readonly></el-input>
+      </el-form-item>
+
       <el-form-item label="上次采集时间">
         <el-input v-model="lastGetTime" readonly></el-input>
       </el-form-item>
@@ -30,8 +34,11 @@ import {computed, onMounted, reactive, ref, nextTick} from "vue";
 import {ElLoading, ElMessage} from "element-plus";
 import {useRoute} from "vue-router";
 import {xhrHttp} from "../utils/request";
-import {DIR, getNowDate} from "../utils/utils";
+import {DIR, getNowDate, guid} from "../utils/utils";
 
+const isError = ref(false);
+const isEmptyNum = ref(0);
+const tiktokGuid = guid();
 const route = useRoute()
 const data = ref({})
 const AllData = ref([])
@@ -47,6 +54,7 @@ const lastGetTime = ref("");
 const lastGetAuthor = ref("");
 const pageMap = new Map();
 let restartArr = [];
+const uid = ref(0);
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -63,6 +71,7 @@ let lastTimeStamp = 0;
 
 setInterval(() => {
   if ((parseInt((new Date()).getTime() / 1000) - lastTimeStamp > 300) && lastTimeStamp !== 0) {
+    uid.value += 1;
 
     chrome.tabs.query(
         {},
@@ -79,22 +88,27 @@ setInterval(() => {
         url: 'https://www.tiktok.com',
         active: true
       }, (tab) => {
-        getNextCollect();
+        getNextCollect(uid.value);
       })
     }, 10000)
 
   }
 }, timeInterval * 1.5)
 
-async function getNextCollect() {
-  lastGetTime.value = getNowDate();
+async function getNextCollect(u) {
+
+  if (u !== uid.value) {
+    return
+  }
+
   let timeStamp = (new Date()).getTime();
   let data = {}
   try {
     if (active_page) {
       data = active_page;
     } else {
-
+      lastGetTime.value = getNowDate();
+      callUp();
       if (DIR === 'dist') {
         data = await xhrHttp('http://101.201.222.226/tictok/GetCollectionLogForJob?v=' + timeStamp, {}, 'post');
       } else {
@@ -104,13 +118,14 @@ async function getNextCollect() {
     }
   } catch (e) {
     setTimeout(() => {
-      getNextCollect();
+      getNextCollect(u);
     }, timeInterval)
+    return
   }
 
   if (data['errorCode'] === -1) {
     setTimeout(() => {
-      getNextCollect();
+      getNextCollect(u);
     }, timeInterval)
     return;
   }
@@ -123,7 +138,7 @@ async function getNextCollect() {
     restartArr = [];
     active_page = null;
     await nextUrl(data.homepage);
-    await getNextCollect();
+    await getNextCollect(u);
     return
   }
 
@@ -134,7 +149,7 @@ async function getNextCollect() {
   if (pageMap.get(data.homepage) && DIR !== 'dist') {
     setTimeout(() => {
       active_page = null;
-      getNextCollect();
+      getNextCollect(u);
     }, timeInterval)
     return
   }
@@ -158,7 +173,7 @@ async function getNextCollect() {
         }
 
         setTimeout(() => {
-          getNextCollect();
+          getNextCollect(u);
         }, timeInterval)
 
       }
@@ -187,13 +202,12 @@ function sendTask(tab, data) {
 }
 
 function dealYoutubeVideo(Message) {
-  console.log(Message)
   if (Message.Message === 'tiktokFrame') {
     data.value = Message.data;
     try {
       var pageObj = pageMap.get(Message.homepage);
       if (!pageObj) {
-        getNextCollect();
+        getNextCollect(uid.value);
         return;
       }
 
@@ -204,6 +218,20 @@ function dealYoutubeVideo(Message) {
         callBackUrl = 'http://121.199.14.173:8080/tictok/CallBack';
       }
       lastTimeStamp = parseInt((new Date()).getTime() / 1000);
+
+      if (!data.value.itemList || data.value.itemList.length === 0) {
+        isEmptyNum.value += 1;
+        if (isEmptyNum.value >= 5 && !isError.value) {
+          isError.value = true;
+          xhrHttp("http://107.150.124.12/Bot/DingError", {
+            text: '连续超过10次没有抓取到数据'
+          })
+        }
+      } else {
+        isEmptyNum.value = 0;
+        isError.value = false;
+      }
+
       xhrHttp(callBackUrl, {
         ...data.value,
         itemList: data.value.itemList?.map((item) => {
@@ -255,13 +283,25 @@ async function nextUrl(homepage) {
 onMounted(() => {
   chrome.runtime.onMessage.addListener(dealYoutubeVideo);
   nextTick(() => {
-    getNextCollect()
+    getNextCollect(uid.value)
   })
 })
 
 function close() {
   chrome.runtime.onMessage.removeListener(dealYoutubeVideo)
   window.close();
+}
+
+function callUp() {
+  try {
+    xhrHttp('http://107.150.124.12/Bot/PushorUpdateTiktokBot', {
+      FrameId: tiktokGuid
+    }, 'post', 'application/json').then(() => {
+
+    })
+  } catch (e) {
+
+  }
 }
 
 async function Save() {

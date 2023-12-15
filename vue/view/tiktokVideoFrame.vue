@@ -16,7 +16,7 @@
         <el-form label-position="top" style="height: calc(100vh - 57px);">
           <div style="padding: 0 10px 10px;">
             <el-form-item style="margin-bottom: 0">
-              <el-table :data="data" @selection-change="handleSelectionChange"
+              <el-table :data="data" @selection-change="handleSelectionChange" ref="TableRef" @select="handleSelect"
                         style="flex:1;height:calc(100vh - 130px)">
                 <el-table-column type="selection" width="30"/>
 
@@ -187,7 +187,6 @@
 </template>
 
 <script setup>
-
 import {computed, onMounted, reactive, ref, nextTick, onBeforeMount} from "vue";
 import {testHttp, xhrHttp} from "../utils/request";
 import {ElLoading, ElMessage} from "element-plus";
@@ -342,6 +341,52 @@ const is_tw = ref('')
 const handleSelectionChange = (val) => {
   upData.value = val
 }
+
+
+
+const langHover = ref(false)
+const firstSelect = ref(-1)
+const TableRef = ref(null)
+
+document.onkeydown = function (e) {
+  if (e.keyCode === 18) {
+    if (!langHover.value) {
+      langHover.value = true
+    }
+    e.preventDefault();
+  }
+};
+
+document.onkeyup = function (e) {
+  if (e.keyCode === 18) {
+    if (langHover.value) {
+      langHover.value = false
+    }
+    e.preventDefault();
+  }
+};
+
+function handleSelect(selection, row) {
+  if (langHover.value && firstSelect.value === -1) {
+    firstSelect.value = getArrayIndex(data.value, row);
+  } else if (langHover.value && firstSelect.value!== -1) {
+    for (let i = firstSelect.value; i < getArrayIndex(data.value, row); i++) {
+      TableRef.value.toggleRowSelection(data.value[i], true);
+    }
+    firstSelect.value = -1;
+  }
+}
+
+function getArrayIndex(arr, obj) {
+  var i = arr.length;
+  while (i--) {
+    if (arr[i] === obj) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 
 function delPlan(index) {
   pwData.value.splice(index, 1)

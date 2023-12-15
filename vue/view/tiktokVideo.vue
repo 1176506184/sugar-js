@@ -9,7 +9,7 @@
     <el-form label-position="top">
       <div style="padding: 0 10px 10px;">
         <el-form-item>
-          <el-table :data="data" @selection-change="handleSelectionChange" height="480px">
+          <el-table :data="data" @selection-change="handleSelectionChange" height="480px" ref="TableRef" @select="handleSelect">
             <el-table-column type="selection" width="30"/>
 
             <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
@@ -93,6 +93,52 @@ function filterList() {
   })
 
 }
+
+
+const langHover = ref(false)
+const firstSelect = ref(-1)
+const TableRef = ref(null)
+
+document.onkeydown = function (e) {
+  if (e.keyCode === 18) {
+    if (!langHover.value) {
+      langHover.value = true
+    }
+    e.preventDefault();
+  }
+};
+
+document.onkeyup = function (e) {
+  if (e.keyCode === 18) {
+    if (langHover.value) {
+      langHover.value = false
+    }
+    e.preventDefault();
+  }
+};
+
+function handleSelect(selection, row) {
+  if (firstSelect.value === -1) {
+    firstSelect.value = getArrayIndex(data.value, row);
+  } else if (langHover.value && firstSelect.value!== -1) {
+    for (let i = firstSelect.value; i < getArrayIndex(data.value, row); i++) {
+      TableRef.value.toggleRowSelection(data.value[i], true);
+    }
+    firstSelect.value = -1;
+  }
+}
+
+function getArrayIndex(arr, obj) {
+  var i = arr.length;
+  while (i--) {
+    if (arr[i] === obj) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
 
 function dealYoutubeVideo(Message) {
   data.value = Message.data
