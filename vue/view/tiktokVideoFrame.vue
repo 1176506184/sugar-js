@@ -17,6 +17,7 @@
           <div style="padding: 0 10px 10px;">
             <el-form-item style="margin-bottom: 0">
               <el-table :data="data" @selection-change="handleSelectionChange" ref="TableRef" @select="handleSelect"
+                        @sort-change="handleSortChange"
                         style="flex:1;height:calc(100vh - 130px)">
                 <el-table-column type="selection" width="30"/>
 
@@ -339,10 +340,12 @@ const tool_type = ref('')
 const is_tw = ref('')
 
 const handleSelectionChange = (val) => {
-  upData.value = val
+  upData.value = TableRef.value.getSelectionRows()
 }
 
-
+const handleSortChange = ({column, prop, order}) => {
+  console.log({column, prop, order})
+}
 
 const langHover = ref(false)
 const firstSelect = ref(-1)
@@ -367,17 +370,25 @@ document.onkeyup = function (e) {
 };
 
 function handleSelect(selection, row) {
-  if (langHover.value && firstSelect.value === -1) {
-    firstSelect.value = getArrayIndex(data.value, row);
-  } else if (langHover.value && firstSelect.value!== -1) {
-    for (let i = firstSelect.value; i < getArrayIndex(data.value, row); i++) {
-      TableRef.value.toggleRowSelection(data.value[i], true);
+  if (firstSelect.value === -1) {
+    firstSelect.value = getArrayIndex(TableRef.value.store.states.data.value, row);
+    console.log(firstSelect.value)
+  } else if (langHover.value && firstSelect.value !== -1) {
+    if (firstSelect.value > getArrayIndex(TableRef.value.store.states.data.value, row)) {
+      for (let i = firstSelect.value; i > getArrayIndex(TableRef.value.store.states.data.value, row); i--) {
+        TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
+      }
+    } else {
+      for (let i = firstSelect.value; i < getArrayIndex(TableRef.value.store.states.data.value, row); i++) {
+        TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
+      }
     }
     firstSelect.value = -1;
   }
 }
 
 function getArrayIndex(arr, obj) {
+  console.log(arr,obj)
   var i = arr.length;
   while (i--) {
     if (arr[i] === obj) {

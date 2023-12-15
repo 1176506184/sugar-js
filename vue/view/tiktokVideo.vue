@@ -119,14 +119,22 @@ document.onkeyup = function (e) {
 
 function handleSelect(selection, row) {
   if (firstSelect.value === -1) {
-    firstSelect.value = getArrayIndex(data.value, row);
-  } else if (langHover.value && firstSelect.value!== -1) {
-    for (let i = firstSelect.value; i < getArrayIndex(data.value, row); i++) {
-      TableRef.value.toggleRowSelection(data.value[i], true);
+    firstSelect.value = getArrayIndex(TableRef.value.store.states.data.value, row);
+    console.log(firstSelect.value)
+  } else if (langHover.value && firstSelect.value !== -1) {
+    if (firstSelect.value > getArrayIndex(TableRef.value.store.states.data.value, row)) {
+      for (let i = firstSelect.value; i > getArrayIndex(TableRef.value.store.states.data.value, row); i--) {
+        TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
+      }
+    } else {
+      for (let i = firstSelect.value; i < getArrayIndex(TableRef.value.store.states.data.value, row); i++) {
+        TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
+      }
     }
     firstSelect.value = -1;
   }
 }
+
 
 function getArrayIndex(arr, obj) {
   var i = arr.length;
@@ -182,7 +190,7 @@ function close() {
 const upData = ref([])
 
 const handleSelectionChange = (val) => {
-  upData.value = val
+  upData.value = TableRef.value.getSelectionRows()
 }
 
 function copy() {
