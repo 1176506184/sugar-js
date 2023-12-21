@@ -9,7 +9,8 @@
     <el-form label-position="top">
       <div style="padding: 0 10px 10px;">
         <el-form-item>
-          <el-table :data="data" @selection-change="handleSelectionChange" height="480px" ref="TableRef" @select="handleSelect">
+          <el-table :data="data" @selection-change="handleSelectionChange" height="480px" ref="TableRef"
+                    @select="handleSelect">
             <el-table-column type="selection" width="30"/>
 
             <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
@@ -121,6 +122,8 @@ function handleSelect(selection, row) {
   if (firstSelect.value === -1) {
     firstSelect.value = getArrayIndex(TableRef.value.store.states.data.value, row);
     console.log(firstSelect.value)
+  } else if (!langHover.value && firstSelect.value !== -1) {
+    firstSelect.value = getArrayIndex(TableRef.value.store.states.data.value, row);
   } else if (langHover.value && firstSelect.value !== -1) {
     if (firstSelect.value > getArrayIndex(TableRef.value.store.states.data.value, row)) {
       for (let i = firstSelect.value; i > getArrayIndex(TableRef.value.store.states.data.value, row); i--) {
@@ -145,7 +148,6 @@ function getArrayIndex(arr, obj) {
   }
   return -1;
 }
-
 
 
 function dealYoutubeVideo(Message) {
