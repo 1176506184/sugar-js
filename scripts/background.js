@@ -15,39 +15,43 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     }
 })
 
+async function getActive() {
+    return new Promise((r) => {
+        chrome.tabs.query({
+            active: true
+        }, (tabs) => {
+            r(tabs[0])
+        })
+    })
+}
 
-// chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((e)=>{
-//     console.log(e);
-// })
+// 创建
+chrome.contextMenus.create({
+    "id": "tool_ow",
+    "title": "tool源视频排文",
+    "contexts": ["page", "selection"],
+    type: 'normal'
+});
+// 他的点击事件
+chrome.contextMenus.onClicked.addListener(async function (info, tab) {
+    if (info.menuItemId === "tool_ow") {
+        console.log(info.pageUrl)
+        if (info.pageUrl.includes("tiktok.com")) {
+            chrome.tabs.create({
+                url: '/html/out.html#/TiktokVideoFrame?activeId=' + (await getActive()).id,
+                active: true
+            }, (tab) => {
+
+            })
+        } else if (info.pageUrl.includes("youtube.com/")) {
+            chrome.tabs.create({
+                url: '/html/out.html#/YoutubeVideoFramePW?activeId=' + (await getActive()).id,
+                active: true
+            }, (tab) => {
+
+            })
+        }
+    }
+});
 
 
-// chrome.webRequest.onBeforeRequest.addListener((details) => {
-//     if (details.url.indexOf('aweme/v1/web/tab/feed') !== -1) {
-//         console.log(details)
-//         chrome.tabs.query({
-//             active: true,
-//             currentWindow: true
-//         }, function (tabs) {
-//
-//             chrome.tabs.sendMessage(tabs[0].id, {
-//                 Message: 'xhr',
-//                 data: details
-//             }, function (response) {
-//                 if (response?.state !== 200) {
-//                     alert("插件已重新加载，请刷新页面")
-//                 }
-//             });
-//         });
-//     }
-// }, {
-//     urls: []
-// })
-
-
-// if (location.href.indexOf("facebook") !== -1) {
-//     injectedScript("scripts/modules/facebook.js");
-// }
-//
-// if(location.href.indexOf("douyin") !== -1){
-//     injectedScript("scripts/modules/douyin.js");
-// }

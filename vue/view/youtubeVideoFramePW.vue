@@ -425,7 +425,7 @@ function create_plan() {
   }
 
   pwData.value.forEach((r, index) => {
-    r.plan_time = moment(startTime.value).add(interval_num.value * index, interval_type === 0 ? 'minute' : 'hour').format('YYYY-MM-DD HH:mm:ss');
+    r.plan_time = moment(startTime.value).add(interval_num.value * index, interval_type.value === 0 ? 'minute' : 'hour').format('YYYY-MM-DD HH:mm:ss');
     console.log(r.plan_time)
   })
 

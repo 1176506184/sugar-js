@@ -372,7 +372,8 @@ document.onkeyup = function (e) {
 function handleSelect(selection, row) {
   if (firstSelect.value === -1) {
     firstSelect.value = getArrayIndex(TableRef.value.store.states.data.value, row);
-    console.log(firstSelect.value)
+  } else if (!langHover.value && firstSelect.value !== -1) {
+    firstSelect.value = getArrayIndex(TableRef.value.store.states.data.value, row);
   } else if (langHover.value && firstSelect.value !== -1) {
     if (firstSelect.value > getArrayIndex(TableRef.value.store.states.data.value, row)) {
       for (let i = firstSelect.value; i > getArrayIndex(TableRef.value.store.states.data.value, row); i--) {
@@ -388,7 +389,7 @@ function handleSelect(selection, row) {
 }
 
 function getArrayIndex(arr, obj) {
-  console.log(arr,obj)
+  console.log(arr, obj)
   var i = arr.length;
   while (i--) {
     if (arr[i] === obj) {
