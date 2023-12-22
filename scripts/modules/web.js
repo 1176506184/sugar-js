@@ -707,6 +707,25 @@ const list = {
                 return document.querySelector('span[aria-current="page"]').nextElementSibling
             }
         }
+    },
+    "https://www.dicasdemulher.com.br": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.card')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('.card a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.card h5').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('button.alm-load-more-btn.more')
+            }
+        }
     }
 }
 
