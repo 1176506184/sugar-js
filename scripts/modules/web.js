@@ -589,6 +589,25 @@ const list = {
             nextPage: null
         }
     },
+    "https://www.cbr.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.listing-content.section-latest-news .display-card.article');
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('.listing-content.section-latest-news .display-card-title  a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.listing-content.section-latest-news .display-card-title  a').innerText
+            },
+            time: function (parentNode) {
+                return parentNode.querySelector('.listing-content.section-latest-news time').getAttribute('datetime')
+            },
+            play: null,
+            nextPage: null
+        }
+    },
     "https://tasteofcountry.com/tags/tim-mcgraw/": {
         type: NODE,
         node: {
