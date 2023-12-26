@@ -667,6 +667,25 @@ const list = {
             }
         }
     },
+    "https://www.tmz.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.col.gridler__col.gridler__col--default')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('.col.gridler__col.gridler__col--default a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.col.gridler__col.gridler__col--default h4').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('.pagination.gridler__pagination.gridler__pagination--default').querySelector('a')
+            }
+        }
+    },
     "https://outsider.com": {
         type: NODE,
         node: {
