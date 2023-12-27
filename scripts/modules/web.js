@@ -667,25 +667,50 @@ const list = {
             }
         }
     },
-    "https://www.tmz.com": {
+    "https://www.purewow.com": {
         type: NODE,
         node: {
             item: function () {
-                return document.querySelectorAll('.col.gridler__col.gridler__col--default')
+                return document.querySelectorAll('a.search-result')
             },
             href: function (parentNode) {
-                return parentNode.querySelector('.col.gridler__col.gridler__col--default a').href
+                return parentNode.href
             },
             title: function (parentNode) {
-                return parentNode.querySelector('.col.gridler__col.gridler__col--default h4').innerText
+                return parentNode.querySelector('a.search-result h2').innerText
             },
             time: null,
             play: null,
             nextPage: function () {
-                return document.querySelector('.pagination.gridler__pagination.gridler__pagination--default').querySelector('a')
+                if(document.querySelector('.search-pagination-btn active')){
+                    return document.querySelector('.search-pagination-btn.active').nextElementSibling
+                }else{
+                    return document.querySelector('.search-pagination-btn')[1]
+                }
+                
             }
         }
     },
+    "https://deadline.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.result-title a')
+            },
+            href: function (parentNode) {
+                return parentNode.href
+            },
+            title: function (parentNode) {
+                return parentNode.textContent
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('span[data-st-next-page] a')
+            }
+        }
+    },
+    
     "https://outsider.com": {
         type: NODE,
         node: {
