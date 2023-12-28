@@ -625,7 +625,7 @@ const list = {
             },
             play: null,
             nextPage: function () {
-                return document.querySelector('header.header-band').querySelector('a')
+                return document.querySelector('header.header-band')?.querySelector('a')
             }
         }
     },
@@ -644,7 +644,7 @@ const list = {
             time: null,
             play: null,
             nextPage: function () {
-                return document.querySelector('.pagination__next').querySelector('a')
+                return document.querySelector('.pagination__next')?.querySelector('a')
             }
         }
     },
@@ -663,7 +663,7 @@ const list = {
             time: null,
             play: null,
             nextPage: function () {
-                return document.querySelector('.pagination__next').querySelector('a')
+                return document.querySelector('.pagination__next')?.querySelector('a')
             }
         }
     },
@@ -685,7 +685,7 @@ const list = {
                 if(document.querySelector('.search-pagination-btn active')){
                     return document.querySelector('.search-pagination-btn.active').nextElementSibling
                 }else{
-                    return document.querySelector('.search-pagination-btn')[1]
+                    return document.querySelector('.search-pagination-btn')[0]
                 }
                 
             }
@@ -823,18 +823,22 @@ function startTask() {
 
 
                 if (list[key].node.nextPage !== null) {
-                    scrollBottom();
-                    list[key].node.nextPage()?.click();
-                    if (!list[key].node.nextPage()) {
-                        chrome.runtime.sendMessage({
-                            Message: 'finish',
-                            type: 'web'
-                        }).then(r => {
+                   scrollBottom();
+                   try {
+                        list[key].node.nextPage()?.click();
+                   } catch (error) {
+                    
+                        if (!list[key].node.nextPage()) {
+                            chrome.runtime.sendMessage({
+                                Message: 'finish',
+                                type: 'web'
+                            }).then(r => {
 
-                        })
+                            })
+                        }
+
+
                     }
-
-
                 } else {
                     scrollBottom();
                 }
