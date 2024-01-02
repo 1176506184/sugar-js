@@ -789,7 +789,47 @@ const list = {
                 return document.querySelector('button.alm-load-more-btn.more')
             }
         }
-    }
+    },
+    "https://pagesix.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.the-latest__stories .layout__item .story__headline')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('a').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('.button.button--solid.see-more')
+            }
+        }
+    },
+    "https://variety.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.result-title')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('a').textContent
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('span[data-st-next-page] a')
+            }
+        }
+    },
+    
+    
 }
 
 let startState = 0;
