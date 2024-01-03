@@ -249,6 +249,10 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         console.log("获取采集视频任务");
         dealVideoData().then();
         sendResponse({state: 200});
+    } else if (Message.Message === 'history') {
+        console.log("获取采集FB历史任务");
+        dealHistoryData().then();
+        sendResponse({ state: 200 });
     } else if (Message.Message === 'stop') {
         facebookData = []
         pending = "end";
@@ -346,6 +350,54 @@ async function dealVideoData() {
         type: 'facebook',
         data: facebookVideo,
         author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText
+    }).then(r => {
+
+    })
+    // if (data && typeof data === 'object') {
+    //     Object.keys(data).forEach(key => {
+    //         if (key === 'video') {
+    //
+    //         }
+    //     })
+    // }
+}
+
+
+async function dealHistoryData() {
+
+    let nodes = document.querySelectorAll('.x1mh8g0r .x78zum5.x1q0g3np.x1a02dak ' + dealClass('x9f619 x1r8uery x1iyjqo2 x6ikm8r x10wlt62 x1n2onr6'));
+    nodes.forEach((node) => {
+        if (!!node.querySelector('a')) {
+
+            let d = {
+                title: '',
+                cover: '',
+                url: '',
+                play: '',
+                author: ''
+            }
+
+            d.cover = node.querySelector('img[alt="视频缩略图"],img[alt="動画サムネイル"]').src;
+            d.url = node.querySelector('a').href;
+            d.title = node.querySelector('a ' + dealClass('x1lliihq x6ikm8r x10wlt62 x1n2onr6')).innerText;
+            d.play = node.querySelectorAll(dealClass("x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm x12scifz x1yc453h"))[1].innerText
+            d.play = dealNum(d.play);
+            d.author = document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText;
+
+            if (!facebookVideoHref.includes(d.url)) {
+                facebookVideoHref.push(d.url);
+                facebookVideo.push(d);
+            }
+
+        }
+    })
+
+    chrome.runtime.sendMessage({
+        Message: 'history',
+        type: 'facebook',
+        data: facebookVideo,
+        author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,
+        authorLink: location.href
     }).then(r => {
 
     })

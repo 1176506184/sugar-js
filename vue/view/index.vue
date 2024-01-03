@@ -118,6 +118,7 @@
               </el-button>
             </div>
           </el-collapse-item>
+
           <el-collapse-item title="Facebook博主" name="5">
             <div style="display: flex">
               <el-input
@@ -137,8 +138,10 @@
 
               <el-button type="primary" @click="collectFBVideo">采集博主视频</el-button>
 
+              <el-button type="warning" @click="collectFBHistory">自动采集历史</el-button>
             </div>
           </el-collapse-item>
+          
           <el-collapse-item title="youtube博主" name="6">
             <div>
               <!--              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>-->
@@ -964,6 +967,29 @@ async function collectFBVideo() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/FBCollect?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+// FB博主采集历史
+async function collectFBHistory() {
+
+  let activeId = await getActiveId();
+  let pageId = await getId("FBCollectHistory");
+
+  // console.log(activeId, pageId)
+
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/FBCollectHistory?activeId=' + activeId,
       active: true
     }, (tab) => {
 

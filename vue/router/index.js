@@ -9,6 +9,7 @@ import WebCollect from "../view/webCollect.vue";
 import WebCollectFrame from "../view/webCollectFrame.vue";
 import TiktokVideo from "../view/tiktokVideo.vue";
 import FacebookVideo from "../view/FacebookVideoFrame.vue";
+import FBCollectHistory from "../view/FacebookHistoryFrame.vue";
 import douyinVideo from "../view/douyinVideo.vue"
 import TiktokFrame from "../view/tiktokFrame.vue";
 import TiktokVideoFrame from "../view/tiktokVideoFrame.vue"
@@ -92,6 +93,12 @@ const routes = [
         path: '/FBCollect',
         component: FacebookVideo,
         props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'FBCollectHistory',
+        path: '/FBCollectHistory',
+        component: FBCollectHistory,
+        props: route => ({ query: route.query.q }),
         meta: {}
     },
     {
