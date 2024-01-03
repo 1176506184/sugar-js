@@ -190,6 +190,7 @@ function sendTask(tab, data) {
           nextHref: data.homepage
         },
         function (response) {
+          console.log(response)
           if (response?.state === 200 && !response.isCollected) {
             active_page = null
             r(1)

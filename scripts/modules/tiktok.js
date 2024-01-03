@@ -187,7 +187,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         if (noLoad) {
             sendResponse({
                 state: 200,
-                isCollected: true
+                isCollected: isCollected
             });
         } else {
             sendResponse({
@@ -196,8 +196,6 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             });
         }
 
-        if (!isCollected && !noLoad) {
-            location.href = Message.nextHref + '#isCollect'
-        }
+        location.href = Message.nextHref + '#isCollect'
     }
 })
