@@ -625,7 +625,7 @@ const list = {
             },
             play: null,
             nextPage: function () {
-                return document.querySelector('header.header-band').querySelector('a')
+                return document.querySelector('header.header-band')?.querySelector('a')
             }
         }
     },
@@ -644,7 +644,7 @@ const list = {
             time: null,
             play: null,
             nextPage: function () {
-                return document.querySelector('.pagination__next').querySelector('a')
+                return document.querySelector('.pagination__next')?.querySelector('a')
             }
         }
     },
@@ -663,10 +663,54 @@ const list = {
             time: null,
             play: null,
             nextPage: function () {
-                return document.querySelector('.pagination__next').querySelector('a')
+                return document.querySelector('.pagination__next')?.querySelector('a')
             }
         }
     },
+    "https://www.purewow.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('a.search-result')
+            },
+            href: function (parentNode) {
+                return parentNode.href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('a.search-result h2').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                if(document.querySelector('.search-pagination-btn active')){
+                    return document.querySelector('.search-pagination-btn.active').nextElementSibling
+                }else{
+                    return document.querySelector('.search-pagination-btn')[0]
+                }
+                
+            }
+        }
+    },
+    "https://deadline.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.result-title a')
+            },
+            href: function (parentNode) {
+                return parentNode.href
+            },
+            title: function (parentNode) {
+                return parentNode.textContent
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('span[data-st-next-page] a')
+            }
+        }
+    },
+    
     "https://outsider.com": {
         type: NODE,
         node: {
@@ -745,7 +789,47 @@ const list = {
                 return document.querySelector('button.alm-load-more-btn.more')
             }
         }
-    }
+    },
+    "https://pagesix.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.the-latest__stories .layout__item .story__headline')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('a').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('.button.button--solid.see-more')
+            }
+        }
+    },
+    "https://variety.com": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('.result-title')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('a').textContent
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('span[data-st-next-page] a')
+            }
+        }
+    },
+    
+    
 }
 
 let startState = 0;
@@ -779,18 +863,22 @@ function startTask() {
 
 
                 if (list[key].node.nextPage !== null) {
-                    scrollBottom();
-                    list[key].node.nextPage()?.click();
-                    if (!list[key].node.nextPage()) {
-                        chrome.runtime.sendMessage({
-                            Message: 'finish',
-                            type: 'web'
-                        }).then(r => {
+                   scrollBottom();
+                   try {
+                        list[key].node.nextPage()?.click();
+                   } catch (error) {
+                    
+                        if (!list[key].node.nextPage()) {
+                            chrome.runtime.sendMessage({
+                                Message: 'finish',
+                                type: 'web'
+                            }).then(r => {
 
-                        })
+                            })
+                        }
+
+
                     }
-
-
                 } else {
                     scrollBottom();
                 }
