@@ -32,7 +32,7 @@
             </el-table-column>
             <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]">
             </el-table-column>
-            <el-table-column label="尺寸" prop="playCount">
+            <el-table-column label="尺寸" prop="playCount" sortable :sort-orders="['descending','ascending',null]">
               <template #default="{row}">
                 {{ row.width }}×{{ row.height }}
               </template>
