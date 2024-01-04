@@ -269,9 +269,8 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         })
         sendResponse({state: 200});
     } else if (Message.Message === 'history') {
-        console.log("获取采集FB历史任务");
+        sendResponse({state: 200});
         dealHistoryData().then();
-        sendResponse({ state: 200 });
     }
 })
 
@@ -364,6 +363,7 @@ async function dealVideoData() {
 
 // FB采历史
 async function dealHistoryData() {
+    console.log("获取采集FB历史任务");
     let nodes = document.querySelectorAll('.x1mh8g0r .x78zum5.x1q0g3np.x1a02dak ' + dealClass('x9f619 x1r8uery x1iyjqo2 x6ikm8r x10wlt62 x1n2onr6'));
     nodes.forEach((node) => {
         if (!!node.querySelector('a')) {
@@ -395,6 +395,16 @@ async function dealHistoryData() {
 
     })
 }
+
+let historyCollectIndex = 1;
+
+function collectHistory() {
+
+    let needCollect = document.querySelector(`div[aria-posinset=${historyCollectIndex}]`)
+    needCollect.scrollIntoViewIfNeeded();
+
+}
+
 
 window.addEventListener('message', function (res) {
 

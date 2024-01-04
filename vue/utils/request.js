@@ -41,7 +41,7 @@ function xhrHttp(url, params, type = 'get', content_type = 'application/x-www-fo
     })
 }
 
-function testHttp(url) {
+function testHttp(ur, params = {}, type = 'get') {
     return new Promise((resolve, reject) => {
 
         $.ajax({
@@ -143,11 +143,34 @@ function dHttp(url, params, type = 'post') {
     })
 }
 
+function xHttp(url, params, type = 'post') {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: PrivateLink['dataCollect'] + url,
+            data: JSON.stringify(params),
+            type: type,
+            headers: {
+                "content-type": 'application/json'
+            }
+            , beforeSend: function (XMLHttpRequest) {
+                XMLHttpRequest.setRequestHeader("token", localStorage.getItem("tk"));
+            }
+            , success: function (data) {
+                resolve(JSON.parse(data));
+            },
+            error: function (res) {
+                reject(res);
+            }
+        })
+    })
+}
+
 
 export {
     http,
     xhrHttp,
     sHttp,
     dHttp,
-    testHttp
+    testHttp,
+    xHttp
 }
