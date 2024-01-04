@@ -23,18 +23,18 @@
         </div>
         <div>
           <el-form-item label="语言">
-            <el-select v-model="form.lang" placeholder="">
+            <el-select v-model="form.lang" placeholder="" style="width: 200px;">
               <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang" />
             </el-select>
           </el-form-item>
-        </div>
-        <div>
-          <el-button type="primary" @click="createBlogger">创建</el-button>
+          <div>
+            <el-button type="primary" @click="createBlogger">创建</el-button>
+          </div>
         </div>
       </div>
       <div v-if="isHaveBlogger">
         <div style="margin: 30px 0;">
-          <span style="color:#00ff04;">已存在该博主：ID{{blogger_id.value}}</span>
+          <span style="color: green;">已存在该博主：ID {{ blogger_id }}，已采集素材数 {{ collect_count }} </span>
         </div>
       </div>
     </el-form>
@@ -63,6 +63,10 @@ const langList = ref([
   {lang: 2, name: '葡语'},
   {lang: 3, name: '日语'}
 ])
+const user = ref({
+  userid: '',
+  username: ''
+})
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -78,14 +82,16 @@ async function createBlogger() {
     platform: 0,
     lang: form.lang,
     name: author.value,
-    blogger_url: authorLink.value
+    blogger_url: authorLink.value,
+    create_id: user.value.userid,
+    create_name: user.value.username
   })
-
-  if(res.state) {
+  console.log('res', res)
+  if(res.state == true) {
     isHaveBlogger.value = true
     ElMessage({
       type: 'success',
-      message: '创建成功',
+      message: '创建成功'
     })
   }
 }
@@ -137,14 +143,34 @@ async function dealYoutubeVideo(Message) {
     if (d.state) {
       isHaveBlogger.value = true
       let resData = d.data
-      
+      console.log(resData.id);
+      blogger_id.value = resData.id
+      collect_count.value = resData.capture_count? resData.capture_count: '0'
     }
 
   }
 
 }
 
-onMounted(() => {
+onMounted(async() => {
+  // 调用接口，校验ddid
+  let ddid = localStorage.getItem("ddid")
+
+  const loadingTask = ElLoading.service({
+    lock: true,
+    text: '正在查询用户信息',
+    background: 'rgba(0, 0, 0, 0.6)',
+  })
+
+  let res = await xHttp(`/BloggerNew/getUserByDdid`, {
+    ddid: ddid
+  })
+  
+  user.value.userid = res.data.id
+  user.value.username = res.data.name
+
+  loadingTask.close();
+
   chrome.runtime.onMessage.addListener(dealYoutubeVideo);
 
   if (!!route.query.activeId) {

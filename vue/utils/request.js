@@ -178,16 +178,7 @@ function hHttp(url, params, type = 'post') {
                 XMLHttpRequest.setRequestHeader("token", localStorage.getItem("tk"));
             }
             , success: function (data) {
-                if (data.state === true) {
-                    resolve(data);
-                } else {
-                    if(data.status === 401) {
-                        
-                    }else {
-                        resolve(data);
-                    }
-                    
-                }
+                resolve(JSON.parse(data));
             },
             error: function (res) {
                 reject(res);
