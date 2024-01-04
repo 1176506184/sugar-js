@@ -165,6 +165,37 @@ function xHttp(url, params, type = 'post') {
     })
 }
 
+function hHttp(url, params, type = 'post') {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: PrivateLink['dataCollect'] + url,
+            data: JSON.stringify(params),
+            type: type,
+            headers: {
+                "content-type": 'application/json'
+            }
+            , beforeSend: function (XMLHttpRequest) {
+                XMLHttpRequest.setRequestHeader("token", localStorage.getItem("tk"));
+            }
+            , success: function (data) {
+                if (data.state === true) {
+                    resolve(data);
+                } else {
+                    if(data.status === 401) {
+                        
+                    }else {
+                        resolve(data);
+                    }
+                    
+                }
+            },
+            error: function (res) {
+                reject(res);
+            }
+        })
+    })
+}
+
 
 export {
     http,
@@ -172,5 +203,6 @@ export {
     sHttp,
     dHttp,
     testHttp,
-    xHttp
+    xHttp,
+    hHttp
 }

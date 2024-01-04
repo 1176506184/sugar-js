@@ -22,12 +22,19 @@
           <span style="color:blue;">库里没有该博主，请点击创建</span>
         </div>
         <div>
+          <el-form-item label="语言">
+            <el-select v-model="form.lang" placeholder="">
+              <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang" />
+            </el-select>
+          </el-form-item>
+        </div>
+        <div>
           <el-button type="primary" @click="createBlogger">创建</el-button>
         </div>
       </div>
       <div v-if="isHaveBlogger">
         <div style="margin: 30px 0;">
-          <span style="color:#00ff04;">已存在该博主：ID:{{blogger_id.value}}</span>
+          <span style="color:#00ff04;">已存在该博主：ID{{blogger_id.value}}</span>
         </div>
       </div>
     </el-form>
@@ -39,7 +46,7 @@
 import router from "../router";
 import {computed, nextTick, onMounted, reactive, ref} from "vue";
 import store from "../store/store";
-import {dHttp, testHttp, xhrHttp, xHttp} from "../utils/request";
+import {dHttp, hHttp, xhrHttp, xHttp} from "../utils/request";
 import {ElLoading, ElMessage} from "element-plus";
 import {handleCopyValue} from "../utils/utils";
 import {useRoute} from "vue-router";
@@ -50,18 +57,37 @@ const author = ref("")
 const authorLink = ref("")
 const blogger_id = ref("")
 const collect_count = ref("")
-const data = ref([])
-const pages = ref([])
+const langList = ref([
+  {lang: 0, name: '繁体'},
+  {lang: 1, name: '英文'},
+  {lang: 2, name: '葡语'},
+  {lang: 3, name: '日语'}
+])
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
-  lang: 0,
-  content_type: 0
+  lang: 0
 })
 
-function createBlogger() {
-  isHaveBlogger.value = !isHaveBlogger.value
+async function createBlogger() {
+  
   // 创建博主接口
+  // 0：FB专业，1：twitter博主，2：Pinterest，3：头条，4：Instragram，5：Youtube
+  // 0繁体 1 英文 2葡语 3日语
+  let res = await hHttp(`/BloggerNew/Add`, {
+    platform: 0,
+    lang: form.lang,
+    name: author.value,
+    blogger_url: authorLink.value
+  })
+
+  if(res.state) {
+    isHaveBlogger.value = true
+    ElMessage({
+      type: 'success',
+      message: '创建成功',
+    })
+  }
 }
 
 async function dealYoutubeVideo(Message) {
@@ -94,6 +120,7 @@ async function dealYoutubeVideo(Message) {
     author.value = Message.author.replace(/\s/g, '');
     authorLink.value = Message.authorLink.replace(/\s/g, '');
 
+    // 查询库里有没有该博主
     const loadingTask = ElLoading.service({
       lock: true,
       text: '正在查询该博主信息',
@@ -109,6 +136,8 @@ async function dealYoutubeVideo(Message) {
 
     if (d.state) {
       isHaveBlogger.value = true
+      let resData = d.data
+      
     }
 
   }
@@ -134,7 +163,6 @@ onMounted(() => {
             }
           }
       );
-      // 查询库里有没有该博主
     })
   }
 

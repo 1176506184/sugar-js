@@ -388,7 +388,7 @@ async function dealHistoryData() {
     chrome.runtime.sendMessage({
         Message: 'history',
         type: 'facebook',
-        data: facebookVideo,
+        data: '',
         author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,
         authorLink: location.href
     }).then(r => {
