@@ -3,7 +3,7 @@
     <div class="layout_top" style="height: 20px;display: flex;align-items: center;justify-content: flex-start">
       <div>
         <span style="font-size: 15px;font-weight: bold;margin-right: 5px">博主名称</span>
-        <el-input v-model="author" style="display: inline-flex;flex:1;width: 500px" :disabled="false">
+        <el-input v-model="author" style="display: inline-flex;flex:1;width: 800px" :disabled="false">
           <template #append>可修改</template>
         </el-input>
       </div>
@@ -11,15 +11,17 @@
     <div class="layout_top" style="height: 20px;display: flex;align-items: center;justify-content: flex-start">
       <div>
         <span style="font-size: 15px;font-weight: bold;margin-right: 5px">博主链接</span>
-        <el-input v-model="authorLink" style="display: inline-flex;flex:1;width: 500px" :disabled="false">
+        <el-input v-model="authorLink" style="display: inline-flex;flex:1;width: 800px" :disabled="false">
           <template #append>可修改</template>
         </el-input>
       </div>
     </div>
 
     <el-form label-position="top">
-      <div v-if="!isHaveBlogger">
-        <span>库里没有该博主，请点击创建</span>
+      <div v-if="!isHaveBlogger" style="margin-left: 15px;">
+        <div style="margin: 30px 0;">
+          <span style="color:blue;">库里没有该博主，请点击创建</span>
+        </div>
         <div>
           <el-button type="primary" @click="createBlogger">创建</el-button>
         </div>
@@ -45,9 +47,9 @@ const route = useRoute()
 const isHaveBlogger = ref(false)
 const author = ref("")
 const authorLink = ref("")
+const blogger_id = ref("")
+const collect_count = ref("")
 const data = ref([])
-const ports = ref([])
-const categorys = ref([])
 const pages = ref([])
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
@@ -58,6 +60,8 @@ const form = reactive({
 
 function createBlogger() {
   isHaveBlogger.value = !isHaveBlogger.value
+  // 创建博主接口
+
 }
 
 function dealYoutubeVideo(Message) {
@@ -103,7 +107,7 @@ function dealYoutubeVideo(Message) {
 
 
 function getPage() {
-  dHttp(`http://gpt.anyelse.com/callback/capturefacebooklist`, {}, 'post', 'application/json').then((res) => {
+  dHttp(`/callback/capturefacebooklist`, {}, 'post', 'application/json').then((res) => {
     pages.value = JSON.parse(res).data.map((item) => {
       return {
         ...item,
@@ -134,6 +138,9 @@ onMounted(() => {
             }
           }
       );
+
+      // 查询库里有没有该博主
+
     })
   }
 
