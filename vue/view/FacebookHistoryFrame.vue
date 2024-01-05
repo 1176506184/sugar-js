@@ -74,7 +74,6 @@ const form = reactive({
 })
 
 async function createBlogger() {
-  
   // 创建博主接口
   // 0：FB专业，1：twitter博主，2：Pinterest，3：头条，4：Instragram，5：Youtube
   // 0繁体 1 英文 2葡语 3日语
@@ -86,8 +85,12 @@ async function createBlogger() {
     create_id: user.value.userid,
     create_name: user.value.username
   })
-  console.log('res', res)
+  // console.log('res', res)
   if(res.state == true) {
+    if(res.data) {
+      blogger_id.value = res.data.id
+      collect_count.value = '0'
+    }
     isHaveBlogger.value = true
     ElMessage({
       type: 'success',
@@ -96,7 +99,7 @@ async function createBlogger() {
   }
 }
 
-async function dealYoutubeVideo(Message) {
+async function dealFbHistory(Message) {
   if (Message.Message === 'updateActiveId') {
     active_id.value = Message.data;
     chrome.tabs.query(
@@ -122,7 +125,7 @@ async function dealYoutubeVideo(Message) {
         }
     );
   } else {
-    console.log(Message)
+    // console.log(Message)
     author.value = Message.author.replace(/\s/g, '');
     authorLink.value = Message.authorLink.replace(/\s/g, '');
 
@@ -133,7 +136,7 @@ async function dealYoutubeVideo(Message) {
       background: 'rgba(0, 0, 0, 0.6)',
     })
 
-    let d = await xHttp(`/BloggerNew/getBloggerNewByNameUrl`, {
+    let d = await hHttp(`/BloggerNew/getBloggerNewByNameUrl`, {
       url: authorLink.value,
       name: author.value
     })
@@ -162,16 +165,22 @@ onMounted(async() => {
     background: 'rgba(0, 0, 0, 0.6)',
   })
 
-  let res = await xHttp(`/BloggerNew/getUserByDdid`, {
+  let res = await hHttp(`/BloggerNew/getUserByDdid`, {
     ddid: ddid
   })
-  
-  user.value.userid = res.data.id
-  user.value.username = res.data.name
+  if(res.data && res.data.id) {
+    user.value.userid = res.data.id
+    user.value.username = res.data.name
+  }else{
+    ElMessage.warning({
+      message: '请到数据采集平台进行登录授权'
+    })
+    return;
+  }
 
   loadingTask.close();
 
-  chrome.runtime.onMessage.addListener(dealYoutubeVideo);
+  chrome.runtime.onMessage.addListener(dealFbHistory);
 
   if (!!route.query.activeId) {
     nextTick(() => {
@@ -196,7 +205,7 @@ onMounted(async() => {
 
 
 function close() {
-  chrome.runtime.onMessage.removeListener(dealYoutubeVideo)
+  chrome.runtime.onMessage.removeListener(dealFbHistory)
   window.close();
 }
 
