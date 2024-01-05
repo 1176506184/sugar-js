@@ -53,6 +53,8 @@
           <el-form-item>
             <div class="dialog-footer"
                  style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">
+              <el-input style="width: 140px;margin-right: 12px;" placeholder="输入尺寸后筛选" v-model="size"
+                        @input="filterList"></el-input>
               <el-button type="danger" @click="close">关闭</el-button>
               <el-button type="primary" style="margin-right: 10px" @click="nextStep">
                 下一步
@@ -216,6 +218,7 @@ const title = ref("")
 const active_id = ref("")
 const loading = ref(false)
 const loading_text = ref("检测封面图中");
+const size = ref("")
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -231,7 +234,7 @@ const form = reactive({
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1
+    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && `${item.width}×${item.height}`.indexOf(size.value) > -1
   })
 
 }
