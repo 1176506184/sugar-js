@@ -24,7 +24,7 @@
         <div>
           <el-form-item label="语言">
             <el-select v-model="form.lang" placeholder="" style="width: 200px;">
-              <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang" />
+              <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>
             </el-select>
           </el-form-item>
           <div>
@@ -36,6 +36,21 @@
         <div style="margin: 30px 0;">
           <span style="color: green;">已存在该博主：ID {{ blogger_id }}，已采集素材数 {{ collect_count }} </span>
         </div>
+
+        <el-row gutter="10">
+          <el-col :span="12">
+            <el-form-item label="采集数量上限">
+              <el-input v-model="max_collect"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="下拉无数据后多少时间自动结束（分钟）">
+              <el-input v-model="finishTime"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+
       </div>
     </el-form>
 
@@ -57,6 +72,9 @@ const author = ref("")
 const authorLink = ref("")
 const blogger_id = ref("")
 const collect_count = ref("")
+const max_collect = ref(1000)
+const finishTime = ref(10)
+const status = ref(0)
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -86,8 +104,8 @@ async function createBlogger() {
     create_name: user.value.username
   })
   // console.log('res', res)
-  if(res.state == true) {
-    if(res.data) {
+  if (res.state == true) {
+    if (res.data) {
       blogger_id.value = res.data.id
       collect_count.value = '0'
     }
@@ -148,14 +166,14 @@ async function dealFbHistory(Message) {
       let resData = d.data
       console.log(resData.id);
       blogger_id.value = resData.id
-      collect_count.value = resData.capture_count? resData.capture_count: '0'
+      collect_count.value = resData.capture_count ? resData.capture_count : '0'
     }
 
   }
 
 }
 
-onMounted(async() => {
+onMounted(async () => {
   // 调用接口，校验ddid
   let ddid = localStorage.getItem("ddid")
 
@@ -168,10 +186,10 @@ onMounted(async() => {
   let res = await hHttp(`/BloggerNew/getUserByDdid`, {
     ddid: ddid
   })
-  if(res.data && res.data.id) {
+  if (res.data && res.data.id) {
     user.value.userid = res.data.id
     user.value.username = res.data.name
-  }else{
+  } else {
     ElMessage.warning({
       message: '请到数据采集平台进行登录授权'
     })
@@ -183,7 +201,7 @@ onMounted(async() => {
   chrome.runtime.onMessage.addListener(dealFbHistory);
 
   if (!!route.query.activeId) {
-    nextTick(() => {
+    await nextTick(() => {
       console.log(route.query.activeId)
       chrome.tabs.sendMessage(
           parseInt(route.query.activeId),
