@@ -138,7 +138,7 @@ async function createBlogger() {
   // console.log('res', res)
   if (res.state == true) {
     if (res.data) {
-      blogger_id.value = res.data.id
+      blogger_id.value = res.data
       collect_count.value = '0'
     }
     isHaveBlogger.value = true
