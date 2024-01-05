@@ -108,6 +108,19 @@ const form = reactive({
 
 async function startCollect() {
   status.value = 1;
+  chrome.tabs.sendMessage(
+      parseInt(route.query.activeId),
+      {
+        Message: "startCollectHistory"
+      },
+      function (response) {
+        if (response?.state !== 200) {
+          ElMessage.warning({
+            message: '未获取到内容，请重试'
+          })
+        }
+      }
+  );
 }
 
 async function createBlogger() {
