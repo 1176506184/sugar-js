@@ -230,7 +230,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v6.6",
+  version: "v6.7",
   system: 1
 });
 

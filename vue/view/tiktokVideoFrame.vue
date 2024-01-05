@@ -53,7 +53,7 @@
           <el-form-item>
             <div class="dialog-footer"
                  style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">
-              <el-input style="width: 140px;margin-right: 12px;" placeholder="输入尺寸后筛选" v-model="size"
+              <el-input style="width: 200px;margin-right: 12px;" placeholder="尺寸筛选(,分割)" v-model="size"
                         @input="filterList"></el-input>
               <el-button type="danger" @click="close">关闭</el-button>
               <el-button type="primary" style="margin-right: 10px" @click="nextStep">
@@ -234,7 +234,7 @@ const form = reactive({
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && `${item.width}×${item.height}`.indexOf(size.value) > -1
+    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && (size.value.split(',').includes(`${item.width}×${item.height}`) || !size.value)
   })
 
 }
