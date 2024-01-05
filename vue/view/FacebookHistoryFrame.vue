@@ -49,6 +49,20 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <div style="margin: 30px 0;">
+          <div style="font-size: 16px">
+            <span>当前采集状态</span>：<span>{{ status === 0 ? '停止采集' : '采集中' }}</span><span
+              style="margin-left: 20px">已采集帖子：{{ collectNum }}</span>
+          </div>
+          <div style="font-size: 12px;color:orangered;margin-top: 3px">
+            点击开启后，开始自动向下滚动，页面请不要关闭，关闭自动停止
+          </div>
+        </div>
+        <div style="display: flex">
+          <el-button :type="status === 0 ? 'primary':'info'" :disabled="status !== 0" @click="startCollect">继续自动采集
+          </el-button>
+          <el-button :type="status === 0? 'info':'danger'" :disabled="status === 0">关闭自动采集</el-button>
+        </div>
 
 
       </div>
@@ -75,6 +89,7 @@ const collect_count = ref("")
 const max_collect = ref(1000)
 const finishTime = ref(10)
 const status = ref(0)
+const collectNum = ref(0)
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -90,6 +105,10 @@ const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
   lang: 0
 })
+
+async function startCollect() {
+  status.value = 1;
+}
 
 async function createBlogger() {
   // 创建博主接口

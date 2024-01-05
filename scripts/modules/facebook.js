@@ -363,28 +363,6 @@ async function dealVideoData() {
 
 // FB采历史
 async function dealHistoryData() {
-    console.log("获取采集FB历史任务");
-    let nodes = document.querySelectorAll('.x1mh8g0r .x78zum5.x1q0g3np.x1a02dak ' + dealClass('x9f619 x1r8uery x1iyjqo2 x6ikm8r x10wlt62 x1n2onr6'));
-    nodes.forEach((node) => {
-        if (!!node.querySelector('a')) {
-
-            let d = {
-                title: '',
-                cover: '',
-                url: '',
-                play: '',
-                author: ''
-            }
-
-            d.cover = node.querySelector('img[alt="视频缩略图"],img[alt="動画サムネイル"]').src;
-            d.url = node.querySelector('a').href;
-            d.title = node.querySelector('a ' + dealClass('x1lliihq x6ikm8r x10wlt62 x1n2onr6')).innerText;
-            d.play = node.querySelectorAll(dealClass("x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm x12scifz x1yc453h"))[1].innerText
-            d.play = dealNum(d.play);
-            d.author = document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText;
-        }
-    })
-
     chrome.runtime.sendMessage({
         Message: 'history',
         type: 'facebook',
@@ -394,15 +372,6 @@ async function dealHistoryData() {
     }).then(r => {
 
     })
-}
-
-let historyCollectIndex = 1;
-
-function collectHistory() {
-
-    let needCollect = document.querySelector(`div[aria-posinset=${historyCollectIndex}]`)
-    needCollect.scrollIntoViewIfNeeded();
-
 }
 
 
@@ -435,7 +404,7 @@ window.addEventListener('message', function (res) {
                             facebookData.push(result);
                             console.log(result);
                         }
-                        dealVideoData(data);
+                        dealVideoData(data).then();
                     } catch (e) {
 
                     }
@@ -552,3 +521,17 @@ function t2t(timestamp) {
 }
 
 
+/*
+* 获取历史帖子
+* */
+
+
+let historyCollectIndex = 1;
+let state = 0;
+
+function collectHistory() {
+    if (state === 1) {
+        let needCollect = document.querySelector(`div[aria-posinset=${historyCollectIndex}]`)
+        needCollect.scrollIntoViewIfNeeded();
+    }
+}
