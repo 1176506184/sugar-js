@@ -73,8 +73,9 @@
                   type="primary"
                   :disabled="type !== 'twitter'"
               >小号素材库
-              </el-button
-              >
+              </el-button>
+
+              <el-button type="warning" @click="collectTTHistory">自动采集历史</el-button>
             </div>
           </el-collapse-item>
           <el-collapse-item title="头条博主" name="3">
@@ -990,6 +991,29 @@ async function collectFBHistory() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/FBCollectHistory?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+// 推特博主采集历史
+async function collectTTHistory() {
+
+  let activeId = await getActiveId();
+  let pageId = await getId("TTCollectHistory");
+
+  // console.log(activeId, pageId)
+
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/TTCollectHistory?activeId=' + activeId,
       active: true
     }, (tab) => {
 

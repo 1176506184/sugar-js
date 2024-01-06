@@ -22,7 +22,7 @@ function getImage() {
 
 window.addEventListener('message', function (res) {
     if (res.data.Message === 'ajax') {
-
+        
         function swiftData(data) {
 
             Object.keys(data).forEach(key => {
@@ -88,9 +88,352 @@ window.addEventListener('message', function (res) {
             swiftData(res.data.data);
         }
 
+        // 采集历史数据
+        if (typeof res.data.data === 'object' && res.data.url && (res.data.url.indexOf("/UserTweets?") !== -1)) {
+            
+            try {
+                async function handleData(data) {
+                    console.log(data);
+                    let Data = data;
+                    var json_num = data.user.result.timeline_v2.timeline.instructions.length - 1;
+                    // 开始采集
+                    await CacheMertial(Data, json_num);
+                }
+
+                handleData(res.data.data.data);
+            } catch (e) {
+
+                console.log(e)
+            }
+        }
+
     }
 })
 
+var CJtimer = null;
+// 所有变量的声明
+var max_collect_send = 0
+var max_collect_count = 0
+var finishTime_send = 0
+var finishTime_count = 0
+// 开始结束控制变量
+var CollectFlag = false;
+// 发送数据变量
+var PostDataArray = [];
+// 发送数据字段
+var blogger_id_send = ''
+var note = '' 
+var article_type = ''
+var article_url = '' 
+var source_urls = ''
+var post_url = ''
+var likes = '' 
+var retweets = ''
+var comments = '' 
+var move_total = ''
+var post_time = ''
+
+
+async function CacheMertial(Data, json_num) {
+    console.log('cj1', Data);
+
+    var num = Data.user.result.timeline_v2.timeline.instructions[json_num].entries.length;
+    console.log('帖子数' + num);
+    
+    for (var i = 0; i < num; i++) {
+        var notes = "";
+        //var views = 0;
+        var likes = 0;
+        var comments = 0;
+        var retweets = 0;
+        var quotes = 0;
+        var move_total = 0;
+        var article_url = ''
+        var video_url = '';
+        var photo_url = '';
+        var post_url = '';
+        var post_time = '';
+        var article_type = 0;
+        var ifretweeted = false;
+        try {
+            console.log('第' + i);
+            //过滤掉可能出现的广告帖子
+            try {
+                if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.core.user_results.result.legacy.name != blogger_name) {
+                    continue;
+                }
+
+            } catch { }
+
+
+            try {//转推帖过滤
+                //data.user.result.timeline_v2.timeline.instructions[1].entries[0].content.itemContent.tweet_results.result.legacy.retweeted_status_result.result
+                if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.retweeted_status_result.result != '') {
+                    ifretweeted = true;
+                    continue;
+                } else {
+                    ifretweeted = false;
+                }
+            } catch (ex) {
+                ifretweeted = false;
+            }
+
+
+            if (notes == '') {
+                notes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.full_text;
+            }
+
+
+            if (notes.indexOf('http') != -1 || notes.indexOf('https') != -1) {
+                try {
+                    if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.entities.urls[0].expanded_url != '') {
+                        article_url = article_url + Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.entities.urls[0].expanded_url + ';';
+                    } else {
+                        article_url = '';
+                    }
+
+                } catch {
+                    article_url = '';
+                }
+                //极端情况（一个推中含有两个不同的外链），虽然它是上面代码的完善版本，但是没有找到真正的案例佐证，上面目前能跑就别动！
+                //try {
+                //    let article_urls = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.entities.urls;
+                //    for (var i = 0; i < article_urls.length; i++){
+                //        if (article_urls[i].expanded_url != '') {
+                //            article_url = article_url + article_urls[i].expanded_url + ';';
+                //        } else {
+                //            article_url = '';
+                //        }
+                //    }
+                //} catch {
+                //    article_url = '';
+                //}
+
+            } else {
+                article_url = '';
+            }
+
+            // full_text的文本超长时会转存到其他节点，获取长文本
+            try {
+                if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.note_tweet != '') {
+                    notes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.note_tweet.note_tweet_results.result.text;
+                    console.log(notes);
+                }
+            } catch {
+
+            }
+            if (notes == '') {
+                notes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.full_text;
+            }
+
+
+            likes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.favorite_count;
+            console.log('点赞：' + likes);
+
+            retweets = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.quote_count;
+            quotes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.retweet_count;
+            shares = retweets + quotes;
+            console.log('分享：' + shares);
+
+            comments = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.reply_count;
+            console.log('回复：' + comments);
+            move_total = likes + shares + comments;
+            //if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.views.count != '') {
+            //    views = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.views.count;
+            //} else {
+            //    views = 0;
+            //}
+            //console.log('观看：' + views);
+
+            post_url = location.href + '/status/' + Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.rest_id;
+            console.log('帖子链接：' + post_url);
+
+            post_time = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.created_at;
+            var posttime = new Date(post_time);
+            post_time = posttime.toISOString();
+            console.log('发送时间：' + post_time);
+
+
+            try {
+                video_url = await Video(Data, i, json_num);   //视频
+            } catch { }
+            if (video_url != '') {
+                console.log('视频：' + video_url);
+            }
+
+            try {
+                photo_url = await Picture(Data, i, json_num)//图片
+
+            }
+            catch { }
+            if (photo_url != '') {
+                console.log('图片：' + photo_url);
+            }
+
+        } catch { }
+
+
+        if (video_url != '') {
+            article_type = 3;
+            var source_urls = video_url;
+            article_url = '';
+
+        } else if (photo_url != '') {
+            article_type = 2;
+            var source_urls = photo_url;
+            article_url = '';
+
+        }
+        else if (article_url != '') {
+            article_type = 1;
+            var source_urls = '';
+
+        } else {
+            article_type = 0;
+            var source_urls = '';
+            article_url = '';
+        }
+        switch (article_type) {
+            case 0:
+                console.log('文本帖');
+                break;
+            case 1:
+                console.log('链接帖');
+                break;
+            case 2:
+                console.log('图片帖');
+                break;
+            case 3:
+                console.log('视频帖');
+                break;
+        }
+
+
+        if (post_url != '') {
+            await Post(blogger_id_send, notes, article_type, article_url, source_urls, post_url, likes, shares, comments, move_total, post_time);
+            max_collect_count++;
+        } else {
+            continue;
+        }
+
+    }
+}
+
+//////////找视频
+async function Video(jsonData, x, json_num) {
+
+    var videoInfo = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media[0].video_info.variants[2].url;
+    video_num = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media.length;
+    for (var j = 0; j < video_num; j++) {
+        var videoInfo = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media[j].video_info.variants[2].url;
+        if (videoInfo.includes('m3u8')) {
+            videoInfo = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media[j].video_info.variants[1].url;
+            // 打印视频信息
+            if (videoInfo.includes('m3u8')) {
+                videoInfo = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media[j].video_info.variants[0].url;
+                // 打印视频信息
+                if (videoInfo.indexOf('m3u8') == 0) {
+                    console.log(videoInfo);
+                    video_url = videoInfo + ';';
+                    return video_url;
+                    // return videoInfo;
+                }
+            }
+            else {
+                // 打印视频信息
+                console.log(videoInfo);
+                video_url = videoInfo + ';';
+                return video_url;
+                // return videoInfo;
+            }
+        }
+        else {
+            // 打印视频信息
+            console.log(videoInfo);
+            video_url = videoInfo + ';';
+            return video_url;
+            // return videoInfo;
+        }
+    }
+    return video_url;
+}
+
+///////////找图片
+async function Picture(jsonData, x, json_num) {
+    let photo_url = '';
+    var photo_num = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media.length;
+    //var photo_url = '';
+    for (var i = 0; i < photo_num; i++) {
+        photo_url = photo_url + jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media[i].media_url_https + ';';
+    }
+    return photo_url;
+
+}
+
+
+//////POST把抓包内容打包成数组，调用回传
+async function Post(blogger_id_send, note, article_type, article_url, source_urls, post_url, likes, retweets, comments, move_total, post_time) {
+
+    try {
+        PostDataArray.push({
+            // 接收较晚，发送时再组blogger_id
+            // 'blogger_id': blogger_id_send,
+            'title': note,
+            'article_type': article_type,
+            'article_url': article_url,//轉發的url
+            'source_urls': source_urls,//图片、视频合集
+            'post_url': post_url,//原贴鏈接
+            'likes': likes,
+            'shares': retweets,
+            'comments': comments,
+            'move_total': move_total,
+            'publish_time': post_time,
+            'return_msg': '',
+            'remark': ''
+        });
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+////////////回调函数
+async function taskCallBackData() {
+    CJtimer = setInterval(async function() {
+        if (max_collect_count >= max_collect_send) {
+            console.log('总帖子数' + max_collect_count + "完成采集");
+
+            if(CJtimer) {
+                clearInterval(CJtimer);
+            }
+
+            // 更新插件完成状态
+            await UpdateFrameState();
+        }else {
+            if (CollectFlag === true) {
+                console.log('采集已开始');
+                for (let i = 0; i < PostDataArray.length; i++) {
+                    PostDataArray[i].blogger_id = blogger_id_send;
+                }
+                console.log("采集数据回传--->", PostDataArray);
+            } else {
+                console.log('采集当前停止');
+            }
+            // 保证数据传输，延时下拉
+            setTimeout(function() {
+                scrollBottom();
+            }, 2000);
+        }
+    }, 1000)
+}
+
+// 通知插件完成采集
+async function UpdateFrameState() {
+    chrome.runtime.sendMessage({
+        Message: 'endToAlert',
+        type: 'twitter'
+    }).then(r => {
+    })
+}
 
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'image') {
@@ -110,5 +453,57 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({
             state: 200
         });
+    } else if (Message.Message === 'history') {
+        sendResponse({ state: 200 });
+        dealHistoryData().then();
+        
+    } else if (Message.Message === 'sendBloggerid') {
+        sendResponse({ state: 200 });
+        console.log(Message.Data.id);
+        blogger_id_send = Message?.Data?.id;
+
+    } else if (Message.Message === 'startCollectHistory') {
+        sendResponse({ state: 200 });
+        startCollectHistoryData(Message.Data).then();
+
+    } else if (Message.Message === 'stopCollectHistory') {
+        sendResponse({ state: 200 });
+        // 关闭采集
+        CollectFlag = false;
+        if (CJtimer) {
+            clearInterval(CJtimer);
+        }
     }
 })
+
+// 推特采历史
+async function dealHistoryData() {
+    chrome.runtime.sendMessage({
+        Message: 'history',
+        type: 'twitter',
+        data: '',
+        author: document.getElementsByClassName('css-1rynq56 r-dnmrzs r-1udh08x r-3s2u2q r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-b88u0q r-1vvnge1')[0].innerText,
+        authorLink: location.href
+    }).then(r => {
+    })
+}
+
+
+
+// 采集数据脚本
+async function startCollectHistoryData(data) {
+    // 开始采集
+    CollectFlag = true;
+    console.log('采集开始 - 限制条件', data);
+    max_collect_send = data.max_collect;
+    finishTime_send = data.finishTime;
+    blogger_id_send = data.blogger_id;
+    // 开启循环
+    await taskCallBackData();
+}
+
+
+function scrollBottom() {
+    var pageHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);
+    window.scrollTo(0, pageHeight - 50);
+}
