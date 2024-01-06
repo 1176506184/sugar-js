@@ -111,10 +111,12 @@ window.addEventListener('message', function (res) {
 })
 
 var CJtimer = null;
+var timeout = null;
 // 所有变量的声明
-var max_collect_send = 0
+var max_collect_send = 1000
+var max_collect_send_copy = 1000
 var max_collect_count = 0
-var finishTime_send = 0
+var finishTime_send = 10 * 60
 var finishTime_count = 0
 // 开始结束控制变量
 var CollectFlag = false;
@@ -132,7 +134,8 @@ var retweets = ''
 var comments = '' 
 var move_total = ''
 var post_time = ''
-
+// 最后贴文发布时间
+var publish_time_last = ''
 
 async function CacheMertial(Data, json_num) {
     console.log('cj1', Data);
@@ -154,7 +157,9 @@ async function CacheMertial(Data, json_num) {
         var post_url = '';
         var post_time = '';
         var article_type = 0;
+        // 转推贴
         var ifretweeted = false;
+
         try {
             console.log('第' + i);
             //过滤掉可能出现的广告帖子
@@ -310,8 +315,9 @@ async function CacheMertial(Data, json_num) {
 
 
         if (post_url != '') {
+            /////  POST把抓包内容打包成数组，调用回传
             await Post(blogger_id_send, notes, article_type, article_url, source_urls, post_url, likes, shares, comments, move_total, post_time);
-            max_collect_count++;
+            
         } else {
             continue;
         }
@@ -383,6 +389,7 @@ async function Post(blogger_id_send, note, article_type, article_url, source_url
             'article_url': article_url,//轉發的url
             'source_urls': source_urls,//图片、视频合集
             'post_url': post_url,//原贴鏈接
+            'looks': 0,
             'likes': likes,
             'shares': retweets,
             'comments': comments,
@@ -391,6 +398,8 @@ async function Post(blogger_id_send, note, article_type, article_url, source_url
             'return_msg': '',
             'remark': ''
         });
+
+        publish_time_last = post_time;
     } catch (e) {
         console.log(e)
     }
@@ -399,7 +408,10 @@ async function Post(blogger_id_send, note, article_type, article_url, source_url
 ////////////回调函数
 async function taskCallBackData() {
     CJtimer = setInterval(async function() {
-        if (max_collect_count >= max_collect_send) {
+        if ((max_collect_count >= max_collect_send) || (finishTime_count >= finishTime_send)) {
+            console.log('情况1结束', (max_collect_count >= max_collect_send));
+            console.log('情况2结束', (finishTime_count >= finishTime_send));
+
             console.log('总帖子数' + max_collect_count + "完成采集");
 
             if(CJtimer) {
@@ -407,30 +419,64 @@ async function taskCallBackData() {
             }
 
             // 更新插件完成状态
-            await UpdateFrameState();
+            await UpdateFrameState(publish_time_last);
         }else {
             if (CollectFlag === true) {
                 console.log('采集已开始');
-                for (let i = 0; i < PostDataArray.length; i++) {
-                    PostDataArray[i].blogger_id = blogger_id_send;
+
+                let post_num = Math.min(PostDataArray.length, max_collect_send_copy);
+                if (post_num > 0) {
+                    for (let i = 0; i < post_num; i++) {
+                        PostDataArray[i].blogger_id = blogger_id_send;
+
+                        console.log("采集数据回传--->", PostDataArray[i]);
+
+                        chrome.runtime.sendMessage({
+                            Message: 'sendData',
+                            type: 'twitter',
+                            Data: PostDataArray[i]
+                        }).then(r => {
+                        })
+
+                        // 采集条数计数
+                        max_collect_count += 1;
+                        // 发送条数倒着计数
+                        max_collect_send_copy -= 1;
+                        // 下拉无数据计时
+                        finishTime_count = 0;
+                        /* if (timeout) {
+                            clearInterval(timeout);
+                        } */
+                    }
+                    // 传完清空
+                    PostDataArray = [];
                 }
-                console.log("采集数据回传--->", PostDataArray);
             } else {
                 console.log('采集当前停止');
             }
             // 保证数据传输，延时下拉
             setTimeout(function() {
                 scrollBottom();
-            }, 2000);
+            }, 1000);
         }
-    }, 1000)
+
+        if (CollectFlag == true) {
+            finishTime_count += 3;
+            console.log('无数据计时：', finishTime_count);
+            console.log('限时总计时：', finishTime_send);
+        }
+    }, 3000);
 }
 
 // 通知插件完成采集
-async function UpdateFrameState() {
+async function UpdateFrameState(time) {
+    // 状态置为关闭
+    CollectFlag = false
+
     chrome.runtime.sendMessage({
         Message: 'endToAlert',
-        type: 'twitter'
+        type: 'twitter',
+        Data: time
     }).then(r => {
     })
 }
@@ -456,7 +502,9 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'history') {
         sendResponse({ state: 200 });
         dealHistoryData().then();
-        
+        // 刷新计数清零
+        max_collect_count = 0;
+        finishTime_count = 0;
     } else if (Message.Message === 'sendBloggerid') {
         sendResponse({ state: 200 });
         console.log(Message.Data.id);
@@ -473,6 +521,9 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         if (CJtimer) {
             clearInterval(CJtimer);
         }
+        /* if (timeout) {
+            clearInterval(timeout);
+        } */
     }
 })
 
@@ -489,14 +540,18 @@ async function dealHistoryData() {
 }
 
 
-
 // 采集数据脚本
 async function startCollectHistoryData(data) {
     // 开始采集
     CollectFlag = true;
     console.log('采集开始 - 限制条件', data);
-    max_collect_send = data.max_collect;
-    finishTime_send = data.finishTime;
+    if (parseInt(data.max_collect)) {
+        max_collect_send = parseInt(data.max_collect);
+        max_collect_send_copy = parseInt(data.max_collect);
+    }
+    if (parseInt(data.finishTime)) {
+        finishTime_send = parseInt(data.finishTime) * 60;
+    }
     blogger_id_send = data.blogger_id;
     // 开启循环
     await taskCallBackData();

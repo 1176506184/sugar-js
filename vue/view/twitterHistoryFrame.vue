@@ -57,8 +57,11 @@
         </el-row>
         <div style="margin: 30px 0;">
           <div style="font-size: 16px">
-            <span>当前采集状态</span>：<span>{{ status === 0 ? '停止采集' : '采集中' }}</span><span
+            <span>当前采集状态</span>：<span>{{ status === 0 ? '停止采集' : '采集中' }}</span>
+            <span 
               style="margin-left: 20px">已采集帖子：{{ collectNum }}</span>
+            <span
+              style="margin-left: 20px; color: green;">已入库成功：{{ successPostNum }}</span>
           </div>
           <div style="font-size: 12px;color:orangered;margin-top: 3px">
             点击开启后，开始自动向下滚动，页面请不要关闭，关闭自动停止
@@ -99,6 +102,7 @@ const max_collect = ref(1000)
 const finishTime = ref(10)
 const status = ref(0)
 const collectNum = ref(0)
+const successPostNum = ref(0)
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -208,17 +212,23 @@ async function sendBloggerid(id) {
   );
 }
 
-// 调接口
-async function UpdatedBlogger() {
-  let ddid = localStorage.getItem("ddid")
-  let postString = ''
+// 调发通知接口
+async function UpdatedBlogger(time) {
+  let ddid = localStorage.getItem("ddid");
+  let post_time_last = time? time.split('T')[0]: time
+  console.log('完成了，发通知-', ddid);
+  let postString = '博主已采集完毕，已采集到最后贴文发布时间'+ post_time_last +'，请及时进入后台查看' + '\n' +
+    '博主名称：' + author.value + '\n' +
+    '博主平台：推特' + '\n' +
+    '博主采集数量：' + collectNum.value + '\n' +
+    '入库成功数量：' + successPostNum.value
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
     id: ddid,
     content: postString
   })
   if(hres.state == true) {
-    ElMessage.info({
-      message: '已发送钉钉通知'
+    ElMessage.success({
+      message: '采集完成，已发送钉钉通知'
     })
   }
 }
@@ -284,20 +294,27 @@ async function dealTtHistory(Message) {
 
   }else if(Message.Message == "sendData" && Message.type == "twitter") {
 
-    console.log(Message);
-    
-    let res = await hHttp("BloggerCaptureHistory/AddArticle", Message.PostDataArray);
+    // console.log(Message);
 
-    
+    let postArray = [];
+    postArray.push(Message.Data);
+    // 存数据接口
+    let res = await hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
+
+    collectNum.value += 1;
+    if(res.state == true) {
+      successPostNum.value += 1;
+    }
+
   }else if(Message.Message == "endToAlert" && Message.type == "twitter") {
 
-    console.log(Message);
+    // console.log(Message);
 
     // 改变按钮状态
     status.value = 0;
 
     // 通知后台完成状态
-    UpdatedBlogger();
+    await UpdatedBlogger(Message.Data);
 
   }
 }
@@ -353,12 +370,10 @@ onMounted(async () => {
 })
 
 
-
 function close() {
-  chrome.runtime.onMessage.removeListener(dealTtHistory)
+  chrome.runtime.onMessage.removeListener(dealTtHistory);
   window.close();
 }
-
 </script>
 
 <style scoped>
