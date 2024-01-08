@@ -575,6 +575,7 @@ setInterval(() => {
                 })
             }
         } else {
+            no_art_time = 0;
             data_last_length = data_map.length;
         }
     }
