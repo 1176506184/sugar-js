@@ -176,6 +176,11 @@ function timeOk(str) {
 
     try {
 
+        let week = ["周一", "周二", "周三", "周四", "周五", "周六", "周日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+        week.forEach((w) => {
+            str.replace(w, '')
+        })
+
         var year = str.split("年")[0];
 
         var month = str.split("年")[1].split("月")[0];
@@ -185,18 +190,18 @@ function timeOk(str) {
         var hour;
 
         var min = str.split(":")[1];
-        if (str.contains("上午")) {
+        if (str.includes("上午")) {
             hour = parseInt(str.split(":")[0].split("上午")[1]);
-        } else if (str.contains("下午")) {
+        } else if (str.includes("下午")) {
             hour = parseInt(str.split(":")[0].split("午")[1])
             if (hour < 12) {
                 hour = hour + 12;
             }
-        } else if (str.contains("周日")) {
+        } else if (str.includes("周日")) {
             hour = str.split(":")[0].split("日")[2].replace(/[^0-9]/ig, "");
-        } else if (str.contains("日曜日")) {
+        } else if (str.includes("日曜日")) {
             hour = str.split(":")[0].split("日曜日")[1].replace(/[^0-9]/ig, "");
-        } else if (str.contains("曜日")) {
+        } else if (str.includes("曜日")) {
             hour = str.split(":")[0].split("日")[2].replace(/[^0-9]/ig, "");
         } else {
             hour = str.split(":")[0].split("日")[1].replace(/[^0-9]/ig, "");
@@ -804,13 +809,7 @@ async function collectHistory() {
                 }
             }
 
-            try {
-                var posttime = new Date(timeOk(dateMax));/////转换成国际时间
-                var postTime = posttime.toISOString();
-            } catch (e) {
-                postTime = ''
-            }
-
+            var postTime = timeOk(dateMax.toString());
             let returnmsg = ''
             let materialRemark = ''
 
@@ -829,6 +828,7 @@ async function collectHistory() {
                     remark: materialRemark,
                     publish_time: postTime
                 };
+                console.log(data);
                 data_map.push(data);
                 chrome.runtime.sendMessage({
                     Message: 'history_data',

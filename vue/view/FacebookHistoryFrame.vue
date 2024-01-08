@@ -313,7 +313,7 @@ async function UpdatedBlogger(time) {
   })
   if (hres.state === true) {
     ElMessage.success({
-      message: '采集完成，已发送钉钉通知'
+      message: '采集异常中止，已发送钉钉通知'
     })
   }
 }
