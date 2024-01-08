@@ -65,8 +65,6 @@
           <el-button :type="status === 0? 'info':'danger'" :disabled="status === 0" @click="pauseCollect">关闭自动采集
           </el-button>
         </div>
-
-
       </div>
     </el-form>
 
