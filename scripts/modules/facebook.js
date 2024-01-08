@@ -646,8 +646,10 @@ async function collectHistory() {
 
             //查看更多
             if (tag) {
+                let beforeTag = tag;
                 let moreTag = needCollect.querySelector('div' + ".x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xt0b8zv xzsf02u x1s688f".replaceAll(' ', '.'))
                 if (moreTag) {
+                    console.log("找到了moreTag");
                     moreTag.click()
                     await wait(1)
                     switch (tagType) {
@@ -665,6 +667,11 @@ async function collectHistory() {
                             break
                     }
                 }
+
+                if (!tag || tag === 'undefined') {
+                    tag = beforeTag
+                }
+
                 console.log(`tagType为${tagType},tag为${tag}`)
 
                 let dateMin = needCollect.querySelector('span' + ".x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j".replaceAll(' ', '.') + " a span");
