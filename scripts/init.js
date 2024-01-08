@@ -16,6 +16,14 @@ chrome.storage.local.get('open', (res) => {
             injectedScript('scripts/xhr/xhr.js').then(r => {
 
             })
+
+            chrome.runtime.sendMessage({
+                Message: "loadScript",
+                script: 'jquery.js'
+            }).then(() => {
+                console.log("注入query完成")
+            })
+
         }
     }
 })
@@ -29,7 +37,7 @@ G.scriptList.set("facebook.js", {refresh: true, allFrames: true, world: "MAIN", 
 const webList = ['https://movieweb.com', 'https://collider.com', 'https://fandomwire.com',
     'https://www.tvinsider.com', 'https://www.foxnews.com', 'https://screenrant.com', 'https://nypost.com',
     'https://www.cbr.com', 'https://tasteofcountry.com', 'https://people.com', 'https://outsider.com', 'https://www.outsider.com',
-    'https://ew.com','https://countrynow.com','https://www.dicasdemulher.com.br','https://www.purewow.com','https://deadline.com','https://pagesix.com','https://variety.com']
+    'https://ew.com', 'https://countrynow.com', 'https://www.dicasdemulher.com.br', 'https://www.purewow.com', 'https://deadline.com', 'https://pagesix.com', 'https://variety.com']
 
 const novelList = ['https://www.wfxs.tw', 'https://www.wfxs.com.tw']
 
