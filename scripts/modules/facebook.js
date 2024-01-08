@@ -271,6 +271,12 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'history') {
         sendResponse({state: 200});
         dealHistoryData().then();
+    } else if (Message.Message === 'startCollectHistory') {
+        sendResponse({state: 200});
+        startCollectHistory(Message);
+    } else if (Message.Message === 'pauseCollectHistory') {
+        sendResponse({state: 200});
+        pauseCollectHistory();
     }
 })
 
@@ -359,19 +365,6 @@ async function dealVideoData() {
     //         }
     //     })
     // }
-}
-
-// FB采历史
-async function dealHistoryData() {
-    chrome.runtime.sendMessage({
-        Message: 'history',
-        type: 'facebook',
-        data: '',
-        author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,
-        authorLink: location.href
-    }).then(r => {
-
-    })
 }
 
 
@@ -528,10 +521,34 @@ function t2t(timestamp) {
 
 let historyCollectIndex = 1;
 let state = 0;
+let max_collect = 1000;
+let finishTime = 10 * 60;
+
+function startCollectHistory(data) {
+    console.log(data);
+    state = 1;
+}
+
+function pauseCollectHistory() {
+    state = 0;
+}
 
 function collectHistory() {
     if (state === 1) {
         let needCollect = document.querySelector(`div[aria-posinset=${historyCollectIndex}]`)
         needCollect.scrollIntoViewIfNeeded();
     }
+}
+
+// FB采历史
+async function dealHistoryData() {
+    chrome.runtime.sendMessage({
+        Message: 'history',
+        type: 'facebook',
+        data: '',
+        author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,
+        authorLink: location.href
+    }).then(r => {
+
+    })
 }

@@ -61,7 +61,8 @@
         <div style="display: flex">
           <el-button :type="status === 0 ? 'primary':'info'" :disabled="status !== 0" @click="startCollect">继续自动采集
           </el-button>
-          <el-button :type="status === 0? 'info':'danger'" :disabled="status === 0">关闭自动采集</el-button>
+          <el-button :type="status === 0? 'info':'danger'" :disabled="status === 0" @click="pauseCollect">关闭自动采集
+          </el-button>
         </div>
 
 
@@ -111,7 +112,26 @@ async function startCollect() {
   chrome.tabs.sendMessage(
       parseInt(route.query.activeId),
       {
-        Message: "startCollectHistory"
+        Message: "startCollectHistory",
+        max_collect: max_collect.value,
+        finishTime: finishTime.value
+      },
+      function (response) {
+        if (response?.state !== 200) {
+          ElMessage.warning({
+            message: '未获取到内容，请重试'
+          })
+        }
+      }
+  );
+}
+
+async function pauseCollect() {
+  status.value = 0;
+  chrome.tabs.sendMessage(
+      parseInt(route.query.activeId),
+      {
+        Message: "pauseCollectHistory"
       },
       function (response) {
         if (response?.state !== 200) {
@@ -136,7 +156,7 @@ async function createBlogger() {
     create_name: user.value.username
   })
   // console.log('res', res)
-  if (res.state == true) {
+  if (res.state === true) {
     if (res.data) {
       blogger_id.value = res.data
       collect_count.value = '0'
@@ -174,25 +194,20 @@ async function dealFbHistory(Message) {
           );
         }
     );
-  } else {
-    // console.log(Message)
+  } else if (Message.Message === 'history') {
     author.value = Message.author.replace(/\s/g, '');
     authorLink.value = Message.authorLink.replace(/\s/g, '');
-
     // 查询库里有没有该博主
     const loadingTask = ElLoading.service({
       lock: true,
       text: '正在查询该博主信息',
       background: 'rgba(0, 0, 0, 0.6)',
     })
-
     let d = await hHttp(`/BloggerNew/getBloggerNewByNameUrl`, {
       url: authorLink.value,
       name: author.value
     })
-
     loadingTask.close();
-
     if (d.state) {
       isHaveBlogger.value = true
       let resData = d.data
@@ -200,9 +215,9 @@ async function dealFbHistory(Message) {
       blogger_id.value = resData.id
       collect_count.value = resData.capture_count ? resData.capture_count : '0'
     }
-
+  } else if (Message.Message === 'data') {
+    console.log(Message.data)
   }
-
 }
 
 onMounted(async () => {
