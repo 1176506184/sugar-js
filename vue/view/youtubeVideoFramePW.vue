@@ -460,8 +460,8 @@ const upData = ref([])
 const tool_type = ref('')
 const is_tw = ref('')
 
-const handleSelectionChange = (val) => {
-  upData.value = val
+const handleSelectionChange = () => {
+  upData.value = TableRef.value.getSelectionRows()
 }
 
 function delPlan(index) {

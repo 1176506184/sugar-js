@@ -595,262 +595,282 @@ function pauseCollectHistory() {
 async function collectHistory() {
     if (state === 1) {
 
-        if (!document.querySelector(`div[aria-posinset="${historyCollectIndex}"]`)) {
-            await scrollBottom();
-            await waitCondition(() => {
-                return document.querySelector(`div[aria-posinset="${historyCollectIndex}"]`)
-            }, 100, `第${historyCollectIndex}页`)
-        }
-
-        let needCollect = document.querySelector(`div[aria-posinset="${historyCollectIndex}"]`)
-        needCollect.scrollIntoViewIfNeeded();
-        if (needCollect.querySelectorAll(dealClass(`x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1a2a7pz xt0b8zv`)).length > 1) {
-            needCollect.querySelectorAll(dealClass(`x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1a2a7pz xt0b8zv`))[1].click();
-            await wait(2);
-        }
-
-        let title = needCollect.querySelector(`h4${dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz x1gslohp x1yc453h")} a span`)?.innerText;
-        if (!title) {
-            title = needCollect.querySelector(`h3${dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")} span a`)?.innerText;
-        }
         try {
-            FireEvent(needCollect.querySelector(dealClass('x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xt0b8zv xzsf02u x1s688f')), 'pointerover');
-            await wait(2);
-        } catch (e) {
-
-        }
-
-        let tagType = 0;
-        let tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.innerText;
-        if (!tag) {
-            tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText;
-            tagType = 1;
-        }
-        if (!tag) {
-            tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.textContent;
-            tagType = 2;
-        }
-        if (!tag) {
-            tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent;
-            tagType = 3;
-        }
-
-        //查看更多
-        if (tag) {
-            let moreTag = needCollect.querySelector('div' + ".x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xt0b8zv xzsf02u x1s688f".replaceAll(' ', '.'))
-            if (moreTag) {
-                moreTag.click()
-                await wait(1)
+            if (!document.querySelector(`div[aria-posinset="${historyCollectIndex}"]`)) {
+                await scrollBottom();
+                await waitCondition(() => {
+                    return document.querySelector(`div[aria-posinset="${historyCollectIndex}"]`)
+                }, 100, `第${historyCollectIndex}页`)
             }
 
-            switch (tagType) {
-                case 0:
-                    tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.innerText;
-                    break
-                case 1:
-                    tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText;
-                    break
-                case 2:
-                    tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.textContent;
-                    break
-                case 3:
-                    tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent;
-                    break
+            let needCollect = document.querySelector(`div[aria-posinset="${historyCollectIndex}"]`)
+            needCollect.scrollIntoViewIfNeeded();
+            if (needCollect.querySelectorAll(dealClass(`x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1a2a7pz xt0b8zv`)).length > 1) {
+                needCollect.querySelectorAll(dealClass(`x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1a2a7pz xt0b8zv`))[1].click();
+                await wait(2);
             }
 
-            console.log(`tagType为${tagType},tag为${tag}`)
-
-            let dateMin = needCollect.querySelector('span' + ".x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j".replaceAll(' ', '.') + " a span");
-            if (!dateMin) {
-                dateMin = needCollect.querySelector('span' + ".x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84".replaceAll(' ', '.') + " span span" + ".x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j".replaceAll(' ', '.'));
+            let title = needCollect.querySelector(`h4${dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz x1gslohp x1yc453h")} a span`)?.innerText;
+            if (!title) {
+                title = needCollect.querySelector(`h3${dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")} span a`)?.innerText;
             }
-            if (!dateMin) {
-                dateMin = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm xi81zsa x1yc453h".replaceAll(' ', '.') + " a")
-            }
-
-            let post = needCollect.querySelector('a' + ".x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm".replaceAll(' ', '.'));
-            FireEvent(post, 'pointerover');
-            await wait(0.5);
-            let posturl = needCollect.querySelector('a' + ".x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm".replaceAll(' ', '.'))?.getAttribute("href");
-            if (!posturl || posturl === '#') {
-                posturl = needCollect.querySelector('a' + ".x1i10hfl x1qjc9v5 xjbqb8w xjqpnuy xa49m3k xqeqjp1 x2hbi6w x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xdl72j9 x2lah0s xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x2lwn1j xeuugli xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1q0g3np x87ps6o x1lku1pv x1rg5ohu x1a2a7pz x1n2onr6 xh8yej3".replaceAll(' ', '.'))?.getAttribute("href");
-                posturl = 'https://www.facebook.com' + posturl;
-            }
-            if (!posturl || posturl === '#') {
-                posturl = needCollect.querySelector('a' + ".x1i10hfl x9f619 xe8uvvx x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1lku1pv xjbqb8w x76ihet xwmqs3e x112ta8 xxxdfa6 x1ypdohk x1rg5ohu x1qx5ct2 x1k70j0n x1w0mnb xzueoph x1mnrxsn x1iy03kw xexx8yu x4uap5 x18d9i69 xkhd6sd x1o7uuvo x1a2a7pz x1qo4wvw".replaceAll(' ', '.'))?.getAttribute("href");
-            }
-            FireEvent(dateMin, 'pointerover');
-            await wait(2);
-            let dateMax = ''
             try {
-                dateMax = document.querySelector(".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1nxh6w3 x1sibtaa xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.innerText;
-                if (!dateMax) {
-                    dateMax = document.querySelector(".x78zum5 xdt5ytf xz62fqu x16ldp7u").replaceAll(' ', '.')?.innerText;
-                }
+                FireEvent(needCollect.querySelector(dealClass('x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xt0b8zv xzsf02u x1s688f')), 'pointerover');
+                await wait(2);
             } catch (e) {
-                console.log(e)
+
             }
 
-            FireEvent(dateMin, 'pointerout');
-
-            await wait(2);
-
-            let share = 0;
-            let comment = 0;
-            let good = $(needCollect).find($("span.xrbpyxo.x6ikm8r.x10wlt62.xlyipyv.x1exxlbk"))[0]?.innerText;
-            var cofs = [0, 0, 0, 0, 0, 0];
-            good = dealNum(good);
-            if (good === '0') {
-                good = needCollect.querySelector('span' + ".xt0b8zv x2bj2ny xrbpyxo xl423tq".replaceAll(' ', '.')).innerText
+            let tagType = 0;
+            let tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.innerText;
+            if (!tag) {
+                tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText;
+                tagType = 1;
+            }
+            if (!tag) {
+                tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.textContent;
+                tagType = 2;
             }
 
-            let COF = $(needCollect).find($("div.x9f619 x1n2onr6 x1ja2u2z x78zum5 x2lah0s x1qughib x1qjc9v5 xozqiw3 x1q0g3np xykv574 xbmpl8g x4cne27 xifccgj".replaceAll(' ', '.') + " " + "span.x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xi81zsa".replaceAll(' ', '.')));
-            if (COF.length > 0) {
-                for (let i = 0; i < COF.length; i++) {
-                    if (COF[i].innerText.includes('分享')) {
-                        share = dealNum(COF[i].innerText);
-                    } else if (COF[i].innerText.includes('评论') || COF[i].innerText.includes('留言')) {
-                        comment = dealNum(COF[i].innerText);
+            if (!tag) {
+                tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm x17z8epw".replaceAll(' ', '.'))?.textContent;
+                tagType = 3;
+            }
+
+            if (!tag) {
+                tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent;
+                tagType = 3;
+            }
+
+            console.log(tag);
+
+            //查看更多
+            if (tag) {
+                let moreTag = needCollect.querySelector('div' + ".x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xt0b8zv xzsf02u x1s688f".replaceAll(' ', '.'))
+                if (moreTag) {
+                    moreTag.click()
+                    await wait(1)
+                    switch (tagType) {
+                        case 0:
+                            tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.innerText;
+                            break
+                        case 1:
+                            tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText;
+                            break
+                        case 2:
+                            tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.textContent;
+                            break
+                        case 3:
+                            tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent;
+                            break
                     }
                 }
-                if (share === 0 && comment === 0 && COF.length === 2) {
+                console.log(`tagType为${tagType},tag为${tag}`)
+
+                let dateMin = needCollect.querySelector('span' + ".x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j".replaceAll(' ', '.') + " a span");
+                if (!dateMin) {
+                    dateMin = needCollect.querySelector('span' + ".x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84".replaceAll(' ', '.') + " span span" + ".x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j".replaceAll(' ', '.'));
+                }
+                if (!dateMin) {
+                    dateMin = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm xi81zsa x1yc453h".replaceAll(' ', '.') + " a")
+                }
+
+                let post = needCollect.querySelector('a' + ".x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm".replaceAll(' ', '.'));
+                FireEvent(post, 'pointerover');
+                await wait(0.5);
+                let posturl = needCollect.querySelector('a' + ".x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm".replaceAll(' ', '.'))?.getAttribute("href");
+                if (!posturl || posturl === '#') {
+                    posturl = needCollect.querySelector('a' + ".x1i10hfl x1qjc9v5 xjbqb8w xjqpnuy xa49m3k xqeqjp1 x2hbi6w x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xdl72j9 x2lah0s xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x2lwn1j xeuugli xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1q0g3np x87ps6o x1lku1pv x1rg5ohu x1a2a7pz x1n2onr6 xh8yej3".replaceAll(' ', '.'))?.getAttribute("href");
+                    posturl = 'https://www.facebook.com' + posturl;
+                }
+                if (!posturl || posturl === '#') {
+                    posturl = needCollect.querySelector('a' + ".x1i10hfl x9f619 xe8uvvx x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1lku1pv xjbqb8w x76ihet xwmqs3e x112ta8 xxxdfa6 x1ypdohk x1rg5ohu x1qx5ct2 x1k70j0n x1w0mnb xzueoph x1mnrxsn x1iy03kw xexx8yu x4uap5 x18d9i69 xkhd6sd x1o7uuvo x1a2a7pz x1qo4wvw".replaceAll(' ', '.'))?.getAttribute("href");
+                }
+                FireEvent(dateMin, 'pointerover');
+                await wait(2);
+                let dateMax = ''
+                try {
+                    dateMax = document.querySelector(".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1nxh6w3 x1sibtaa xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.innerText;
+                    if (!dateMax) {
+                        dateMax = document.querySelector(".x78zum5 xdt5ytf xz62fqu x16ldp7u").replaceAll(' ', '.')?.innerText;
+                    }
+                } catch (e) {
+                    console.log(e)
+                }
+
+                FireEvent(dateMin, 'pointerout');
+
+                await wait(2);
+
+                let share = 0;
+                let comment = 0;
+                let good = $(needCollect).find($("span.xrbpyxo.x6ikm8r.x10wlt62.xlyipyv.x1exxlbk"))[0]?.innerText;
+                var cofs = [0, 0, 0, 0, 0, 0];
+                good = dealNum(good);
+                if (good === '0') {
+                    good = needCollect.querySelector('span' + ".xt0b8zv x2bj2ny xrbpyxo xl423tq".replaceAll(' ', '.')).innerText
+                }
+
+                let COF = $(needCollect).find($("div.x9f619 x1n2onr6 x1ja2u2z x78zum5 x2lah0s x1qughib x1qjc9v5 xozqiw3 x1q0g3np xykv574 xbmpl8g x4cne27 xifccgj".replaceAll(' ', '.') + " " + "span.x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xi81zsa".replaceAll(' ', '.')));
+                if (COF.length > 0) {
                     for (let i = 0; i < COF.length; i++) {
-                        if (i === 1) {
+                        if (COF[i].innerText.includes('分享')) {
                             share = dealNum(COF[i].innerText);
-                        } else if (i === 0) {
+                        } else if (COF[i].innerText.includes('评论') || COF[i].innerText.includes('留言')) {
                             comment = dealNum(COF[i].innerText);
                         }
                     }
-                }
-            } else {
-                COF = $(needCollect).find('[class="x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w x6s0dn4 x1gslohp x12nagc xzboxd6 x14l7nz5"]');
-                if (COF.length > 0) {
-                    for (let i = 1; i < 6; i += 2) {
-                        try {
-                            cofs[i] = +dealNum(COF[i].innerText);
-                        } catch (e) {
-                            cofs[i] = 0;
+                    if (share === 0 && comment === 0 && COF.length === 2) {
+                        for (let i = 0; i < COF.length; i++) {
+                            if (i === 1) {
+                                share = dealNum(COF[i].innerText);
+                            } else if (i === 0) {
+                                comment = dealNum(COF[i].innerText);
+                            }
                         }
                     }
-                    good = cofs[1];
-                    comment = cofs[3];
-                    share = cofs[5];
                 } else {
+                    COF = $(needCollect).find('[class="x9f619 x1n2onr6 x1ja2u2z x78zum5 xdt5ytf x2lah0s x193iq5w x6s0dn4 x1gslohp x12nagc xzboxd6 x14l7nz5"]');
+                    if (COF.length > 0) {
+                        for (let i = 1; i < 6; i += 2) {
+                            try {
+                                cofs[i] = +dealNum(COF[i].innerText);
+                            } catch (e) {
+                                cofs[i] = 0;
+                            }
+                        }
+                        good = cofs[1];
+                        comment = cofs[3];
+                        share = cofs[5];
+                    } else {
 
+                    }
                 }
-            }
 
-            let totalmove = Number(share) + Number(comment) + Number(good);
-            let PageType = 0;
+                let totalmove = Number(share) + Number(comment) + Number(good);
+                let PageType = 0;
 
-            let imgs = [];
-            Array.from(needCollect.querySelectorAll('.xqtp20y.x6ikm8r.x10wlt62.x1n2onr6')).forEach((item) => {
-                if (item.querySelector('img')?.src) {
-                    imgs.push(item.querySelector('img')?.src);
-                }
-            });
+                let imgs = [];
+                Array.from(needCollect.querySelectorAll('.xqtp20y.x6ikm8r.x10wlt62.x1n2onr6')).forEach((item) => {
+                    if (item.querySelector('img')?.src) {
+                        imgs.push(item.querySelector('img')?.src);
+                    }
+                });
 
-            //隐藏起来的多余的图片
-            let moreImg = needCollect.querySelector('div' + ".x6s0dn4 x18l40ae x1ey2m1c x78zum5 xds687c xdt5ytf xl56j7k x47corl x10l6tqk x17qophe x13vifvy".replaceAll(' ', '.'));
-            if (moreImg) {
-                let moreImgCount = +dealNum(moreImg.innerText);
-                moreImg.click();
-                await wait(1)
-                for (let i = 0; i < moreImgCount; i++) {
-                    let btn = document.querySelectorAll('div' + ".x14yjl9h xudhj91 x18nykt9 xww2gxu x6s0dn4 x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x3nfvp2 xl56j7k x1n2onr6 x1qhmfi1 xsdox4t x1useyqa".replaceAll(' ', '.'))[1]
-                    btn.click();
+                //隐藏起来的多余的图片
+                let moreImg = needCollect.querySelector('div' + ".x6s0dn4 x18l40ae x1ey2m1c x78zum5 xds687c xdt5ytf xl56j7k x47corl x10l6tqk x17qophe x13vifvy".replaceAll(' ', '.'));
+                if (moreImg) {
+                    let moreImgCount = +dealNum(moreImg.innerText);
+                    moreImg.click();
                     await wait(1)
-                    let newImg = document.querySelector('img' + ".x1bwycvy x193iq5w x4fas0m x19kjcj4".replaceAll(' ', '.'))
-                    imgs.push(newImg.src);
-                }
-                await wait(1)
-                let closeBtn = document.querySelector('div' + ".x1i10hfl x6umtig x1b1mbwd xaqea5y xav7gou x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x16tdsg8 x1hl2dhg xggy1nq x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x14yjl9h xudhj91 x18nykt9 xww2gxu x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x78zum5 xl56j7k xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 x1vqgdyp x100vrsf x18l40ae x14ctfv".replaceAll(' ', '.')).querySelector('i')
-                closeBtn.click();
-            }
-
-            if ((posturl.indexOf('watch/') > -1 || posturl.indexOf('reel') > -1 || !!needCollect.querySelector('.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 video') || !!needCollect.querySelector(dealClass('x6s0dn4 xatbrnm x9f619 x78zum5 x5yr21d xl56j7k x6ikm8r x10wlt62 x889kno x1iji9kk x1a8lsjc x1sln4lm xh8yej3')))) {
-                PageType = 3;
-            } else if (needCollect.querySelector('span' + dealClass('x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84'))?.clientHeight > 0) {
-                PageType = 1;
-            } else if (imgs.length > 0) {
-                PageType = 2;
-            }
-
-            let imgurl = '';
-            for (let i = 0; i < imgs.length; i++) {
-                imgurl += imgs[i] + ';';
-            }
-
-            let articleurl = ''
-
-            if (PageType === 1) {
-                if (needCollect.querySelector('div' + ".x2atdfe xb57i2i x1q594ok x5lxg6s x6ikm8r x1n2onr6 x1ja2u2z x78zum5 x1q0g3np x10wlt62".replaceAll(' ', '.'))) {
-                    let articleurlArr = await getUlArticle(needCollect)
-                    articleurlArr.forEach((item) => {
-                        articleurl += item + ';'
-                    })
-                    if (!!articleurl) {
-                        PageType = 1;
+                    for (let i = 0; i < moreImgCount; i++) {
+                        let btn = document.querySelectorAll('div' + ".x14yjl9h xudhj91 x18nykt9 xww2gxu x6s0dn4 x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x3nfvp2 xl56j7k x1n2onr6 x1qhmfi1 xsdox4t x1useyqa".replaceAll(' ', '.'))[1]
+                        btn.click();
+                        await wait(1)
+                        let newImg = document.querySelector('img' + ".x1bwycvy x193iq5w x4fas0m x19kjcj4".replaceAll(' ', '.'))
+                        imgs.push(newImg.src);
                     }
-                } else {
-                    articleurl = await getFeedUrl(needCollect);
-                    if (!!articleurl) {
-                        articleurl = articleurl + ';'
-                        PageType = 1;
-                    }
+                    await wait(1)
+                    let closeBtn = document.querySelector('div' + ".x1i10hfl x6umtig x1b1mbwd xaqea5y xav7gou x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x16tdsg8 x1hl2dhg xggy1nq x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x14yjl9h xudhj91 x18nykt9 xww2gxu x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x78zum5 xl56j7k xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 x1vqgdyp x100vrsf x18l40ae x14ctfv".replaceAll(' ', '.')).querySelector('i')
+                    closeBtn.click();
                 }
-            }
 
-            let video_url = "";
-            if ([3].includes(PageType)) { //链接和reel视频<span class="x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84">标签重复，会造成reel视频被判定为链接
-                video_url = await getVideoUrl(needCollect);
-                video_url = video_url + ';'
-                if (!!video_url) {
+                if ((posturl.indexOf('watch/') > -1 || posturl.indexOf('reel') > -1 || !!needCollect.querySelector('.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 video') || !!needCollect.querySelector(dealClass('x6s0dn4 xatbrnm x9f619 x78zum5 x5yr21d xl56j7k x6ikm8r x10wlt62 x889kno x1iji9kk x1a8lsjc x1sln4lm xh8yej3')))) {
                     PageType = 3;
+                } else if (needCollect.querySelector('span' + dealClass('x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84'))?.clientHeight > 0) {
+                    PageType = 1;
+                } else if (imgs.length > 0) {
+                    PageType = 2;
+                }
+
+                let imgurl = '';
+                for (let i = 0; i < imgs.length; i++) {
+                    imgurl += imgs[i] + ';';
+                }
+
+                let articleurl = ''
+
+                if (PageType === 1) {
+                    if (needCollect.querySelector('div' + ".x2atdfe xb57i2i x1q594ok x5lxg6s x6ikm8r x1n2onr6 x1ja2u2z x78zum5 x1q0g3np x10wlt62".replaceAll(' ', '.'))) {
+                        let articleurlArr = await getUlArticle(needCollect)
+                        articleurlArr.forEach((item) => {
+                            articleurl += item + ';'
+                        })
+                        if (!!articleurl) {
+                            PageType = 1;
+                        }
+                    } else {
+                        articleurl = await getFeedUrl(needCollect);
+                        if (!!articleurl) {
+                            articleurl = articleurl + ';'
+                            PageType = 1;
+                        }
+                    }
+                }
+
+                let video_url = "";
+                if ([3].includes(PageType)) { //链接和reel视频<span class="x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84">标签重复，会造成reel视频被判定为链接
+                    video_url = await getVideoUrl(needCollect);
+                    video_url = video_url + ';'
+                    if (!!video_url) {
+                        PageType = 3;
+                    }
+                }
+
+                var postTime = timeOk(dateMax.toString());
+                let returnmsg = ''
+                let materialRemark = ''
+
+                try {
+                    let data = {
+                        article_type: PageType,
+                        title: encodeURI(tag),
+                        source_urls: PageType === 2 ? imgurl : video_url,
+                        post_url: posturl,
+                        article_url: articleurl,
+                        move_total: totalmove,
+                        likes: good,
+                        shares: share,
+                        comments: comment,
+                        return_msg: returnmsg,
+                        remark: materialRemark,
+                        publish_time: postTime
+                    };
+                    console.log(data);
+                    data_map.push(data);
+                    chrome.runtime.sendMessage({
+                        Message: 'history_data',
+                        type: 'facebook',
+                        data: data
+                    }).then(r => {
+
+                    })
+
+                } catch (e) {
+                    console.log(e);
+                }
+
+                historyCollectIndex += 1;
+
+                if (state === 1) {
+                    collectHistory().then();
+                }
+
+            } else {
+                console.log('未找到tag');
+                historyCollectIndex += 1;
+
+                if (state === 1) {
+                    collectHistory().then();
                 }
             }
-
-            var postTime = timeOk(dateMax.toString());
-            let returnmsg = ''
-            let materialRemark = ''
-
-            try {
-                let data = {
-                    article_type: PageType,
-                    title: encodeURI(tag),
-                    source_urls: PageType === 2 ? imgurl : video_url,
-                    post_url: posturl,
-                    article_url: articleurl,
-                    move_total: totalmove,
-                    likes: good,
-                    shares: share,
-                    comments: comment,
-                    return_msg: returnmsg,
-                    remark: materialRemark,
-                    publish_time: postTime
-                };
-                console.log(data);
-                data_map.push(data);
-                chrome.runtime.sendMessage({
-                    Message: 'history_data',
-                    type: 'facebook',
-                    data: data
-                }).then(r => {
-
-                })
-
-            } catch (e) {
-                console.log(e);
-            }
-
-            historyCollectIndex += 1;
-
+        } catch (e) {
+            console.log(e);
             if (state === 1) {
+                historyCollectIndex += 1;
                 collectHistory().then();
             }
-
         }
-
     }
 }
 
