@@ -145,7 +145,7 @@ async function CacheMertial(Data, json_num) {
     
     for (var i = 0; i < num; i++) {
         var notes = "";
-        //var views = 0;
+        var views = 0;
         var likes = 0;
         var comments = 0;
         var retweets = 0;
@@ -243,12 +243,13 @@ async function CacheMertial(Data, json_num) {
             comments = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.reply_count;
             console.log('回复：' + comments);
             move_total = likes + shares + comments;
-            //if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.views.count != '') {
-            //    views = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.views.count;
-            //} else {
-            //    views = 0;
-            //}
-            //console.log('观看：' + views);
+
+            if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.views.count != '') {
+               views = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.views.count;
+            } else {
+               views = 0;
+            }
+            console.log('观看：' + views);
 
             post_url = location.href + '/status/' + Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.rest_id;
             console.log('帖子链接：' + post_url);
@@ -316,7 +317,7 @@ async function CacheMertial(Data, json_num) {
 
         if (post_url != '') {
             /////  POST把抓包内容打包成数组，调用回传
-            await Post(blogger_id_send, notes, article_type, article_url, source_urls, post_url, likes, shares, comments, move_total, post_time);
+            await Post(blogger_id_send, notes, article_type, article_url, source_urls, post_url, views, likes, shares, comments, move_total, post_time);
             
         } else {
             continue;
@@ -378,7 +379,7 @@ async function Picture(jsonData, x, json_num) {
 
 
 //////POST把抓包内容打包成数组，调用回传
-async function Post(blogger_id_send, note, article_type, article_url, source_urls, post_url, likes, retweets, comments, move_total, post_time) {
+async function Post(blogger_id_send, note, article_type, article_url, source_urls, post_url, looks, likes, retweets, comments, move_total, post_time) {
 
     try {
         PostDataArray.push({
@@ -389,7 +390,7 @@ async function Post(blogger_id_send, note, article_type, article_url, source_url
             'article_url': article_url,//轉發的url
             'source_urls': source_urls,//图片、视频合集
             'post_url': post_url,//原贴鏈接
-            'looks': 0,
+            'looks': looks,
             'likes': likes,
             'shares': retweets,
             'comments': comments,
