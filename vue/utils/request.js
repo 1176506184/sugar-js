@@ -41,7 +41,7 @@ function xhrHttp(url, params, type = 'get', content_type = 'application/x-www-fo
     })
 }
 
-function testHttp(ur, params = {}, type = 'get') {
+function testHttp(url, params = {}, type = 'get') {
     return new Promise((resolve, reject) => {
 
         $.ajax({

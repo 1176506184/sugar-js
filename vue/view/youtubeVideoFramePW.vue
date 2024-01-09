@@ -16,7 +16,7 @@
         <el-form label-position="top" style="height: calc(100vh - 57px);">
           <div style="padding: 0 10px 10px;">
             <el-form-item style="margin-bottom: 0">
-              <el-table :data="data" @selection-change="handleSelectionChange" style="flex:1;height:calc(100vh - 130px)"
+              <el-table :data="data" @selection-change="handleSelectionChange" style="flex:1;height:calc(100vh - 130px)" ref="TableRef" @select="handleSelect"
                         @sort-change="tabelSort">
                 <el-table-column type="selection" width="55"/>
 
@@ -222,6 +222,62 @@ const form = reactive({
   needProcess: 0
 })
 
+const langHover = ref(false)
+const firstSelect = ref(-1)
+const TableRef = ref(null)
+
+document.onkeydown = function (e) {
+  if (e.keyCode === 18) {
+    if (!langHover.value) {
+      langHover.value = true
+    }
+    e.preventDefault();
+  }
+};
+
+
+document.onkeyup = function (e) {
+  if (e.keyCode === 18) {
+    if (langHover.value) {
+      langHover.value = false
+    }
+    e.preventDefault();
+  }
+};
+
+function handleSelect(selection, row) {
+  console.log(getArrayIndex(TableRef.value.store.states.data.value, row))
+  if (firstSelect.value === -1) {
+    firstSelect.value = getArrayIndex(TableRef.value.store.states.data.value, row);
+  } else if (!langHover.value && firstSelect.value !== -1) {
+    firstSelect.value = getArrayIndex(TableRef.value.store.states.data.value, row);
+  } else if (langHover.value && firstSelect.value !== -1) {
+    if (firstSelect.value > getArrayIndex(TableRef.value.store.states.data.value, row)) {
+      for (let i = firstSelect.value; i > getArrayIndex(TableRef.value.store.states.data.value, row); i--) {
+        TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
+      }
+    } else {
+      for (let i = firstSelect.value; i < getArrayIndex(TableRef.value.store.states.data.value, row); i++) {
+        TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
+      }
+    }
+    firstSelect.value = -1;
+  }
+}
+
+function getArrayIndex(arr, obj) {
+  console.log(arr, obj)
+  var i = arr.length;
+  while (i--) {
+    if (arr[i] === obj) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+
 function tabelSort({column, prop, order}) {
 
   if (prop === 'lengthText') {
@@ -404,8 +460,8 @@ const upData = ref([])
 const tool_type = ref('')
 const is_tw = ref('')
 
-const handleSelectionChange = (val) => {
-  upData.value = val
+const handleSelectionChange = () => {
+  upData.value = TableRef.value.getSelectionRows()
 }
 
 function delPlan(index) {
@@ -526,7 +582,7 @@ const startTime = ref("")
 const interval_type = ref(0)
 const interval_num = ref("")
 
-onBeforeMount(()=>{
+onBeforeMount(() => {
   document.body.style.width = "1200px"
 })
 

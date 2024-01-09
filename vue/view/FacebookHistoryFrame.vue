@@ -53,18 +53,18 @@
           <div style="font-size: 16px">
             <span>当前采集状态</span>：<span>{{ status === 0 ? '停止采集' : '采集中' }}</span><span
               style="margin-left: 20px">已采集帖子：{{ collectNum }}</span>
+<!--            <span style="margin-left: 20px">距离上次获取贴文已经过：{{ waitNextTimeNum }}秒</span>-->
           </div>
           <div style="font-size: 12px;color:orangered;margin-top: 3px">
-            点击开启后，开始自动向下滚动，页面请不要关闭，关闭自动停止
+            点击开启后，请切换到对应采集页面，开始自动向下滚动，页面请不要最小化，如需使用浏览器，请单独拖拽出一个新的浏览器窗口进行操作
           </div>
         </div>
         <div style="display: flex">
           <el-button :type="status === 0 ? 'primary':'info'" :disabled="status !== 0" @click="startCollect">继续自动采集
           </el-button>
-          <el-button :type="status === 0? 'info':'danger'" :disabled="status === 0">关闭自动采集</el-button>
+          <el-button :type="status === 0? 'info':'danger'" :disabled="status === 0" @click="pauseCollect">关闭自动采集
+          </el-button>
         </div>
-
-
       </div>
     </el-form>
 
@@ -90,6 +90,8 @@ const max_collect = ref(1000)
 const finishTime = ref(10)
 const status = ref(0)
 const collectNum = ref(0)
+const successPostNum = ref(0)
+const waitNextTimeNum = ref(0)
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -111,7 +113,30 @@ async function startCollect() {
   chrome.tabs.sendMessage(
       parseInt(route.query.activeId),
       {
-        Message: "startCollectHistory"
+        Message: "startCollectHistory",
+        max_collect: max_collect.value,
+        finishTime: finishTime.value
+      },
+      function (response) {
+        if (response?.state !== 200) {
+          ElMessage.warning({
+            message: '未获取到内容，请重试'
+          })
+        } else {
+          chrome.tabs.update(parseInt(route.query.activeId), {
+            active: true
+          })
+        }
+      }
+  );
+}
+
+async function pauseCollect() {
+  status.value = 0;
+  chrome.tabs.sendMessage(
+      parseInt(route.query.activeId),
+      {
+        Message: "pauseCollectHistory"
       },
       function (response) {
         if (response?.state !== 200) {
@@ -136,7 +161,7 @@ async function createBlogger() {
     create_name: user.value.username
   })
   // console.log('res', res)
-  if (res.state == true) {
+  if (res.state === true) {
     if (res.data) {
       blogger_id.value = res.data
       collect_count.value = '0'
@@ -174,25 +199,20 @@ async function dealFbHistory(Message) {
           );
         }
     );
-  } else {
-    // console.log(Message)
+  } else if (Message.Message === 'history') {
     author.value = Message.author.replace(/\s/g, '');
     authorLink.value = Message.authorLink.replace(/\s/g, '');
-
     // 查询库里有没有该博主
     const loadingTask = ElLoading.service({
       lock: true,
       text: '正在查询该博主信息',
       background: 'rgba(0, 0, 0, 0.6)',
     })
-
     let d = await hHttp(`/BloggerNew/getBloggerNewByNameUrl`, {
       url: authorLink.value,
       name: author.value
     })
-
     loadingTask.close();
-
     if (d.state) {
       isHaveBlogger.value = true
       let resData = d.data
@@ -200,9 +220,30 @@ async function dealFbHistory(Message) {
       blogger_id.value = resData.id
       collect_count.value = resData.capture_count ? resData.capture_count : '0'
     }
+  } else if (Message.Message === 'history_data') {
+    console.log(Message.data)
+    if (collectNum.value < max_collect.value) {
+      try {
+        let {state} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', [{
+          blogger_id: blogger_id.value,
+          ...Message.data
+        }]);
+        if (state) {
+          successPostNum.value += 1;
+        }
+      } catch (e) {
 
+      }
+
+      collectNum.value += 1;
+      if (collectNum.value >= max_collect.value) {
+        UpdatedBlogger(Message.data.publish_time).then();
+        pauseCollect().then();
+      }
+    }
+  } else if (Message.Message === 'error') {
+    UpdatedBloggerError().then();
   }
-
 }
 
 onMounted(async () => {
@@ -259,6 +300,47 @@ function close() {
   window.close();
 }
 
+
+// 调发通知接口
+async function UpdatedBlogger(time) {
+  let ddid = localStorage.getItem("ddid");
+  let post_time_last = time ? time.split('T')[0] : time
+  console.log('完成了，发通知-', ddid);
+  let postString = '博主已采集完毕，已采集到最后贴文发布时间' + post_time_last + '，请及时进入后台查看' + '\n' +
+      '博主名称：' + author.value + '\n' +
+      '博主平台：Facebook' + '\n' +
+      '博主采集数量：' + collectNum.value + '\n' +
+      '入库成功数量：' + successPostNum.value
+  let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
+    id: ddid,
+    content: postString
+  })
+  if (hres.state === true) {
+    ElMessage.success({
+      message: '采集异常中止，已发送钉钉通知'
+    })
+  }
+}
+
+// 调发通知接口
+async function UpdatedBloggerError() {
+  let ddid = localStorage.getItem("ddid");
+  console.log('完成了，发通知-', ddid);
+  let postString = '博主历史采集超过' + finishTime.value + '分钟未获取到新贴文，请查看' + '\n' +
+      '博主名称：' + author.value + '\n' +
+      '博主平台：Facebook' + '\n' +
+      '博主采集数量：' + collectNum.value + '\n' +
+      '入库成功数量：' + successPostNum.value
+  let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
+    id: ddid,
+    content: postString
+  })
+  if (hres.state === true) {
+    ElMessage.success({
+      message: '采集完成，已发送钉钉通知'
+    })
+  }
+}
 
 </script>
 

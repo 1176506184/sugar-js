@@ -34,7 +34,8 @@
     {
       "resources": [
         "scripts/modules/*",
-        "scripts/xhr/*"
+        "scripts/xhr/*",
+        "scripts/jquery.js"
       ],
       "matches": [
         "<all_urls>"
