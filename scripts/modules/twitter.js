@@ -420,7 +420,12 @@ async function taskCallBackData() {
             }
 
             // 更新插件完成状态
-            await UpdateFrameState(publish_time_last);
+            if ((max_collect_count >= max_collect_send)) {
+                await UpdateFrameState(publish_time_last, 'end')
+            } else if((finishTime_count >= finishTime_send)) {
+                await UpdateFrameState(publish_time_last, 'stop')
+            }
+            
         }else {
             if (CollectFlag === true) {
                 console.log('采集已开始');
@@ -470,12 +475,13 @@ async function taskCallBackData() {
 }
 
 // 通知插件完成采集
-async function UpdateFrameState(time) {
+async function UpdateFrameState(time, type) {
     // 状态置为关闭
     CollectFlag = false
 
     chrome.runtime.sendMessage({
         Message: 'endToAlert',
+        AlertType: type,
         type: 'twitter',
         Data: time
     }).then(r => {
@@ -535,7 +541,7 @@ async function dealHistoryData() {
         type: 'twitter',
         data: '',
         author: document.getElementsByClassName('css-1rynq56 r-dnmrzs r-1udh08x r-3s2u2q r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-b88u0q r-1vvnge1')[0].innerText,
-        authorLink: location.href
+        authorLink: location.href[location.href.length - 1] === '/' ? location.href.slice(0, -1) : location.href
     }).then(r => {
     })
 }
