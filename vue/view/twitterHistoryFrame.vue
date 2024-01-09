@@ -234,17 +234,15 @@ async function UpdatedBlogger(time, type) {
       '入库成功数量：' + successPostNum.value
   }
   
-  setTimeout(async function() {
-    let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
-      id: ddid,
-      content: postString
+  let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
+    id: ddid,
+    content: postString
+  })
+  if(hres.state == true) {
+    ElMessage.success({
+      message: '采集完成，已发送钉钉通知'
     })
-    if(hres.state == true) {
-      ElMessage.success({
-        message: '采集完成，已发送钉钉通知'
-      })
-    }
-  }, 1000)
+  }
   
 }
 
@@ -314,10 +312,9 @@ async function dealTtHistory(Message) {
     let postArray = [];
     postArray.push(Message.Data);
 
-    collectNum.value += 1;
     // 存数据接口
     let res = await hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
-
+    collectNum.value += 1;
     if(res.state == true) {
       successPostNum.value += 1;
     }
