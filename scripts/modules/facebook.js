@@ -894,7 +894,7 @@ async function dealHistoryData(data) {
         type: 'facebook',
         data: '',
         author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,
-        authorLink: location.href.includes('profile.php') ? location.href.split('&')[0] : location.origin + location.pathname,
+        authorLink: location.href.includes('profile.php') ? location.href.split('&')[0] : location.origin + location.pathname[location.pathname.length - 1] === '/' ? location.pathname.slice(0, -1) : location.pathname,
     }).then(r => {
 
     })
