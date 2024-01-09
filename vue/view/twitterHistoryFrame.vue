@@ -213,24 +213,39 @@ async function sendBloggerid(id) {
 }
 
 // 调发通知接口
-async function UpdatedBlogger(time) {
+async function UpdatedBlogger(time, type) {
   let ddid = localStorage.getItem("ddid");
   let post_time_last = time? time.split('T')[0]: time
+  let postString = ''
   console.log('完成了，发通知-', ddid);
-  let postString = '博主已采集完毕，已采集到最后贴文发布时间'+ post_time_last +'，请及时进入后台查看' + '\n' +
-    '博主名称：' + author.value + '\n' +
-    '博主平台：推特' + '\n' +
-    '博主采集数量：' + collectNum.value + '\n' +
-    '入库成功数量：' + successPostNum.value
-  let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
-    id: ddid,
-    content: postString
-  })
-  if(hres.state == true) {
-    ElMessage.success({
-      message: '采集完成，已发送钉钉通知'
-    })
+
+  if(type == 'end') {
+    postString = '博主已采集完毕，已采集到最后贴文发布时间'+ post_time_last +'，请及时进入后台查看' + '\n' +
+      '博主名称：' + author.value + '\n' +
+      '博主平台：推特' + '\n' +
+      '博主采集数量：' + collectNum.value + '\n' +
+      '入库成功数量：' + successPostNum.value
   }
+  if(type == 'stop') {
+    postString = '博主历史采集超过'+ finishTime.value +'分钟未采集' +'，请及时进入后台查看' + '\n' +
+      '博主名称：' + author.value + '\n' +
+      '博主平台：推特' + '\n' +
+      '博主采集数量：' + collectNum.value + '\n' +
+      '入库成功数量：' + successPostNum.value
+  }
+  
+  setTimeout(async function() {
+    let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
+      id: ddid,
+      content: postString
+    })
+    if(hres.state == true) {
+      ElMessage.success({
+        message: '采集完成，已发送钉钉通知'
+      })
+    }
+  }, 1000)
+  
 }
 
 
@@ -298,23 +313,29 @@ async function dealTtHistory(Message) {
 
     let postArray = [];
     postArray.push(Message.Data);
+
+    collectNum.value += 1;
     // 存数据接口
     let res = await hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
 
-    collectNum.value += 1;
     if(res.state == true) {
       successPostNum.value += 1;
     }
 
   }else if(Message.Message == "endToAlert" && Message.type == "twitter") {
 
-    // console.log(Message);
-
     // 改变按钮状态
     status.value = 0;
 
-    // 通知后台完成状态
-    await UpdatedBlogger(Message.Data);
+    if(Message.AlertType == 'end') {
+      // 通知后台完成状态
+      await UpdatedBlogger(Message.Data, 'end');
+    }
+
+    if(Message.AlertType == 'stop') {
+      // 通知后台完成状态
+      await UpdatedBlogger(Message.Data, 'stop');
+    }
 
   }
 }
