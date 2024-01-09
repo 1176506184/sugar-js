@@ -304,7 +304,7 @@ async function UpdatedBlogger(time) {
   console.log('完成了，发通知-', ddid);
   let postString = '博主已采集完毕，已采集到最后贴文发布时间' + post_time_last + '，请及时进入后台查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：推特' + '\n' +
+      '博主平台：Facebook' + '\n' +
       '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + successPostNum.value
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
@@ -324,7 +324,7 @@ async function UpdatedBloggerError() {
   console.log('完成了，发通知-', ddid);
   let postString = '博主历史采集超过' + finishTime.value + '分钟未获取到新贴文，请查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：推特' + '\n' +
+      '博主平台：Facebook' + '\n' +
       '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + successPostNum.value
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {

@@ -784,7 +784,7 @@ async function collectHistory() {
 
                 if ((posturl.indexOf('watch/') > -1 || posturl.indexOf('reel') > -1 || !!needCollect.querySelector('.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 video') || !!needCollect.querySelector(dealClass('x6s0dn4 xatbrnm x9f619 x78zum5 x5yr21d xl56j7k x6ikm8r x10wlt62 x889kno x1iji9kk x1a8lsjc x1sln4lm xh8yej3')))) {
                     PageType = 3;
-                } else if (needCollect.querySelector('span' + dealClass('x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84'))?.clientHeight > 0) {
+                } else if (needCollect.querySelector('span' + dealClass('x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84'))?.clientHeight > 0 || (needCollect.querySelector('a' + dealClass('x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv x5yr21d x10l6tqk x17qophe x13vifvy xh8yej3 x1vjfegm')))) {
                     PageType = 1;
                 } else if (imgs.length > 0) {
                     PageType = 2;
@@ -798,7 +798,9 @@ async function collectHistory() {
                 let articleurl = ''
 
                 if (PageType === 1) {
+                    console.log("查询原文链接")
                     if (needCollect.querySelector('div' + ".x2atdfe xb57i2i x1q594ok x5lxg6s x6ikm8r x1n2onr6 x1ja2u2z x78zum5 x1q0g3np x10wlt62".replaceAll(' ', '.'))) {
+                        console.log("查询原文链接 - 1")
                         let articleurlArr = await getUlArticle(needCollect)
                         articleurlArr.forEach((item) => {
                             articleurl += item + ';'
@@ -807,6 +809,7 @@ async function collectHistory() {
                             PageType = 1;
                         }
                     } else {
+                        console.log("查询原文链接 - 2")
                         articleurl = await getFeedUrl(needCollect);
                         if (!!articleurl) {
                             articleurl = articleurl + ';'
@@ -888,7 +891,7 @@ async function dealHistoryData(data) {
         type: 'facebook',
         data: '',
         author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,
-        authorLink: location.href
+        authorLink: location.origin + location.pathname
     }).then(r => {
 
     })
@@ -914,40 +917,53 @@ async function getFeedUrl(needCollect) {
     let result = '';
     try {
         await Promise.all([getFeedUrlInTitle(needCollect), getFeedUrlInLink(needCollect)]).then((values) => {
+            console.log(values)
             result = values[0] ? values[0] : values[1]
         });
     } catch (e) {
-
+        console.log(e)
     }
     return result;
 }
 
 async function getFeedUrlInTitle(needCollect) {
-    let type = 1;
     let arturl = ''
-    arturl = needCollect.querySelector('a' + '.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd.xaqea5y.xav7gou.x9f619.x1ypdohk.xe8uvvx.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x16tdsg8.x1hl2dhg.xggy1nq.x1a2a7pz.x1heor9g.x1lliihq.x1lku1pv[target="_blank"]')[0]?.href;
+    arturl = needCollect.querySelector('a' + '.x1i10hfl.xjbqb8w.x6umtig.x1b1mbwd.xaqea5y.xav7gou.x9f619.x1ypdohk.xe8uvvx.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x16tdsg8.x1hl2dhg.xggy1nq.x1a2a7pz.x1heor9g.x1lliihq.x1lku1pv[target="_blank"]')?.href;
     await wait(2);
     let outHrefDom = needCollect.querySelector('a.' + 'x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1lliihq x1lku1pv'.replaceAll(' ', '.'));
-    if (!outHrefDom.length) {
+    if (!outHrefDom) {
         outHrefDom = needCollect.querySelector('a.' + 'x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv x5yr21d x10l6tqk x17qophe x13vifvy xh8yej3 x1vjfegm'.replaceAll(' ', '.'));
     }
 
-    if (!arturl && outHrefDom.length > 0) {
-        FireEvent(outHrefDom[0], 'pointerover');
+    if (!arturl && outHrefDom) {
+        FireEvent(outHrefDom, 'pointerover');
         await wait(2);   //时间不能太短
-        arturl = outHrefDom[0]?.href;
+        arturl = outHrefDom?.href;
         await wait(2);
-        FireEvent(outHrefDom[0], 'pointerout');
+        FireEvent(outHrefDom, 'pointerout');
     }
     return arturl
 }
 
 async function getFeedUrlInLink(needCollect) {
-    let type = 11;
-
-    needCollect.querySelector('[data-ad-preview="message"] .x1s688f[role="button"]')[0]?.click();
+    console.log("从链接模块中找链接");
+    if (needCollect.querySelector('[data-ad-preview="message"] .x1s688f[role="button"]')) {
+        needCollect.querySelector('[data-ad-preview="message"] .x1s688f[role="button"]')?.click();
+    }
     await wait(2);
-    let arturl = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.') + ' a[target="_blank"]')[0]?.href;
+    let arturl = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.') + ' a[target="_blank"]')?.href;
+    let hrefDomSec = needCollect.querySelector('a' + dealClass('x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv x5yr21d x10l6tqk x17qophe x13vifvy xh8yej3 x1vjfegm'))
+    if (!arturl && hrefDomSec) {
+        FireEvent(hrefDomSec, 'pointerover');
+        await wait(2);
+        arturl = hrefDomSec.href
+    }
+    hrefDomSec = needCollect.querySelector('a' + dealClass('x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1lliihq x1lku1pv'))
+    if (!arturl && hrefDomSec) {
+        FireEvent(hrefDomSec, 'pointerover');
+        await wait(2);
+        arturl = hrefDomSec.href
+    }
     let hrefDom = $('[role="dialog"] div.x1n2onr6 a[role="link"].' + 'x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1lliihq x1lku1pv'.replaceAll(' ', '.'));
     if (!arturl && !!hrefDom.length > 0) {
         FireEvent(hrefDom[0], 'pointerover');
@@ -955,11 +971,9 @@ async function getFeedUrlInLink(needCollect) {
         arturl = hrefDom[0]?.href;
         await wait(2);
         FireEvent(hrefDom[0], 'pointerout');
-        type = 22;
     }
     if (!arturl) {
         arturl = needCollect.querySelector(`[data-ad-preview="message"] a.` + 'x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xt0b8zv x1fey0fg'.replaceAll(' ', '.'))?.href;
-        type = 33;
     }
     return arturl
 }
