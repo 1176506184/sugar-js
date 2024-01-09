@@ -53,7 +53,7 @@
           <div style="font-size: 16px">
             <span>当前采集状态</span>：<span>{{ status === 0 ? '停止采集' : '采集中' }}</span><span
               style="margin-left: 20px">已采集帖子：{{ collectNum }}</span>
-            <span style="margin-left: 20px">距离上次获取贴文已经过：{{ waitNextTimeNum }}秒</span>
+<!--            <span style="margin-left: 20px">距离上次获取贴文已经过：{{ waitNextTimeNum }}秒</span>-->
           </div>
           <div style="font-size: 12px;color:orangered;margin-top: 3px">
             点击开启后，请切换到对应采集页面，开始自动向下滚动，页面请不要最小化，如需使用浏览器，请单独拖拽出一个新的浏览器窗口进行操作
