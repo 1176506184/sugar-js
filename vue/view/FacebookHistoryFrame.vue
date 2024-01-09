@@ -56,7 +56,7 @@
             <span style="margin-left: 20px">距离上次获取贴文已经过：{{ waitNextTimeNum }}秒</span>
           </div>
           <div style="font-size: 12px;color:orangered;margin-top: 3px">
-            点击开启后，开始自动向下滚动，页面请不要关闭，关闭自动停止
+            点击开启后，请切换到对应采集页面，开始自动向下滚动，页面请不要最小化，如需使用浏览器，请单独拖拽出一个新的浏览器窗口进行操作
           </div>
         </div>
         <div style="display: flex">
@@ -121,6 +121,10 @@ async function startCollect() {
         if (response?.state !== 200) {
           ElMessage.warning({
             message: '未获取到内容，请重试'
+          })
+        } else {
+          chrome.tabs.update(parseInt(route.query.activeId), {
+            active: true
           })
         }
       }

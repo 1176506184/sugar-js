@@ -559,6 +559,9 @@ let data_map = []
 let data_last_length = 0;
 let no_art_time = 0
 let noticed = false;
+let div = document.createElement('div');
+div.style = 'border:1px solid #cdcdcd;position:fixed;top:10px;left:10px;background:#fff;z-index:99999999999;border-radius:5px;display:flex;justify-content:center;align-items:center;padding:10px'
+let isInBody = false;
 
 setInterval(() => {
 
@@ -583,8 +586,16 @@ setInterval(() => {
 }, 1000)
 
 function startCollectHistory(data) {
+
+    if (!isInBody) {
+        isInBody = true;
+        document.body.appendChild(div);
+        div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
+    }
+
     state = 1;
     finishTime = data.finishTime * 60
+    max_collect = data.max_collect
     collectHistory().then();
 }
 
@@ -608,17 +619,6 @@ async function collectHistory() {
             if (needCollect.querySelectorAll(dealClass(`x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1a2a7pz xt0b8zv`)).length > 1) {
                 needCollect.querySelectorAll(dealClass(`x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1a2a7pz xt0b8zv`))[1].click();
                 await wait(2);
-            }
-
-            let title = needCollect.querySelector(`h4${dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz x1gslohp x1yc453h")} a span`)?.innerText;
-            if (!title) {
-                title = needCollect.querySelector(`h3${dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")} span a`)?.innerText;
-            }
-            try {
-                FireEvent(needCollect.querySelector(dealClass('x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xt0b8zv xzsf02u x1s688f')), 'pointerover');
-                await wait(2);
-            } catch (e) {
-
             }
 
             let tagType = 0;
@@ -694,7 +694,7 @@ async function collectHistory() {
                     posturl = needCollect.querySelector('a' + ".x1i10hfl x9f619 xe8uvvx x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1lku1pv xjbqb8w x76ihet xwmqs3e x112ta8 xxxdfa6 x1ypdohk x1rg5ohu x1qx5ct2 x1k70j0n x1w0mnb xzueoph x1mnrxsn x1iy03kw xexx8yu x4uap5 x18d9i69 xkhd6sd x1o7uuvo x1a2a7pz x1qo4wvw".replaceAll(' ', '.'))?.getAttribute("href");
                 }
                 FireEvent(dateMin, 'pointerover');
-                await wait(2);
+                await wait(1);
                 let dateMax = ''
                 try {
                     dateMax = document.querySelector(".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1nxh6w3 x1sibtaa xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.innerText;
@@ -707,7 +707,7 @@ async function collectHistory() {
 
                 FireEvent(dateMin, 'pointerout');
 
-                await wait(2);
+                await wait(1);
 
                 let share = 0;
                 let comment = 0;
@@ -848,6 +848,7 @@ async function collectHistory() {
                     };
                     console.log(data);
                     data_map.push(data);
+                    div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
                     chrome.runtime.sendMessage({
                         Message: 'history_data',
                         type: 'facebook',
@@ -917,7 +918,6 @@ async function getFeedUrl(needCollect) {
     let result = '';
     try {
         await Promise.all([getFeedUrlInTitle(needCollect), getFeedUrlInLink(needCollect)]).then((values) => {
-            console.log(values)
             result = values[0] ? values[0] : values[1]
         });
     } catch (e) {
@@ -945,8 +945,6 @@ async function getFeedUrlInTitle(needCollect) {
         FireEvent(outHrefDom, 'pointerover');
         await wait(2);   //时间不能太短
         arturl = outHrefDom?.href;
-        await wait(2);
-        FireEvent(outHrefDom, 'pointerout');
     }
     return arturl
 }
@@ -975,8 +973,6 @@ async function getFeedUrlInLink(needCollect) {
         FireEvent(hrefDom[0], 'pointerover');
         await wait(2);
         arturl = hrefDom[0]?.href;
-        await wait(2);
-        FireEvent(hrefDom[0], 'pointerout');
     }
     if (!arturl) {
         arturl = needCollect.querySelector(`[data-ad-preview="message"] a.` + 'x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz xt0b8zv x1fey0fg'.replaceAll(' ', '.'))?.href;
