@@ -61,7 +61,7 @@
             <span 
               style="margin-left: 20px">已采集帖子：{{ collectNum }}</span>
             <span
-              style="margin-left: 20px; color: green;">已入库成功：{{ successPostNum }}</span>
+              style="margin-left: 20px; color: green;">已入库成功：{{ collectNum }}</span>
           </div>
           <div style="font-size: 12px;color:orangered;margin-top: 3px">
             点击开启后，开始自动向下滚动，页面请不要关闭，关闭自动停止
@@ -223,15 +223,15 @@ async function UpdatedBlogger(time, type) {
     postString = '博主已采集完毕，已采集到最后贴文发布时间'+ post_time_last +'，请及时进入后台查看' + '\n' +
       '博主名称：' + author.value + '\n' +
       '博主平台：推特' + '\n' +
-      '博主采集数量：' + collectNum.value + '\n' +
-      '入库成功数量：' + successPostNum.value
+      '博主采集数量：' + max_collect.value + '\n' +
+      '入库成功数量：' + collectNum.value
   }
   if(type == 'stop') {
     postString = '博主历史采集超过'+ finishTime.value +'分钟未采集' +'，请及时进入后台查看' + '\n' +
       '博主名称：' + author.value + '\n' +
       '博主平台：推特' + '\n' +
-      '博主采集数量：' + collectNum.value + '\n' +
-      '入库成功数量：' + successPostNum.value
+      '博主采集数量：' + max_collect.value + '\n' +
+      '入库成功数量：' + collectNum.value
   }
   
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
@@ -313,11 +313,11 @@ async function dealTtHistory(Message) {
     postArray.push(Message.Data);
 
     // 存数据接口
-    let res = await hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
+    let res = hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
     collectNum.value += 1;
-    if(res.state == true) {
+    /* if(res.state == true) {
       successPostNum.value += 1;
-    }
+    } */
 
   }else if(Message.Message == "endToAlert" && Message.type == "twitter") {
 
