@@ -65,6 +65,7 @@
         </el-form>
 
       </swiper-slide>
+
       <swiper-slide style="width: 100%;height: 100vh">
         <div class="layout_top"
              style="height: 35px;display: flex;align-items: center;justify-content: flex-start;position: relative">
@@ -123,6 +124,7 @@
               </el-table>
             </el-form-item>
           </div>
+          
           <el-form-item>
             <div class="dialog-footer"
                  style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">

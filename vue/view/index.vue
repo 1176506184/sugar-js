@@ -151,15 +151,21 @@
               <el-button @click="collectYoutubeNewPW" type="primary">采集视频 / SHORTS并TOOL源视频排文</el-button>
             </div>
           </el-collapse-item>
+
+
           <el-collapse-item title="TikTok" name="7">
             <div>
               <el-button @click="collectTiktok" type="primary">采集视频</el-button>
               <el-button @click="collectTiktokVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
+
+              <el-button @click="collectTiktokVideoCommunitySchedulingFrame" type="primary">批量源素材社团排程</el-button>
+
               <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">
                 自动化更新视频（个人勿点）
               </el-button>
             </div>
           </el-collapse-item>
+
           <el-collapse-item title="综合采集" name="8">
             <div>
               <el-button @click="collectWeb" type="primary">网站采集</el-button>
@@ -1048,6 +1054,25 @@ async function collectTiktokVideoFrame() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/TiktokVideoFrame?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+// TiktokVideo社团批量排程
+async function collectTiktokVideoCommunitySchedulingFrame() {
+  let activeId = await getActiveId();
+  let pageId = await getId("TiktokVideoFrame");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/TiktokVideoCommunitySchedulingFrame?activeId=' + activeId,
       active: true
     }, (tab) => {
 

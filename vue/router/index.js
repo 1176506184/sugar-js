@@ -14,6 +14,8 @@ import TTCollectHistory from "../view/twitterHistoryFrame.vue";
 import douyinVideo from "../view/douyinVideo.vue"
 import TiktokFrame from "../view/tiktokFrame.vue";
 import TiktokVideoFrame from "../view/tiktokVideoFrame.vue"
+import TiktokVideoCommunitySchedulingFrame from "../view/tiktokVideoCommunitySchedulingFrame.vue"
+
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 
@@ -134,6 +136,12 @@ const routes = [
         path: '/TiktokVideoFrame',
         component: TiktokVideoFrame,
         props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'TiktokVideoCommunitySchedulingFrame',
+        path: '/TiktokVideoCommunitySchedulingFrame',
+        component: TiktokVideoCommunitySchedulingFrame,
+        props: route => ({ query: route.query.q }),
         meta: {}
     }
 ]
