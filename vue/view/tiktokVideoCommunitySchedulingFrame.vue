@@ -124,58 +124,105 @@
               </el-table>
             </el-form-item>
           </div>
-          
-          <el-form-item>
+
+          <div class="el-form-item">
             <div class="dialog-footer"
-                 style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">
+                 style="text-align: left;width: calc(100% - 20px);height: 100px;padding: 10px;background-color: #fff;z-index:20;">
 
-              <el-row gutter="10" style="width: 620px;float: left">
-                <el-col :span="10">
-                  <el-select placeholder="搜索专页名称或专页ID" v-model="form.pageuid"
-                             filterable
-                             clearable
-                             remote
-                             reserve-keyword
-                             :loading="pageLoading"
-                             :remote-method="getPage"
-                             @change="changePage"
-                             value-key="Pagefbid"
-                             style="width: 100%">
-                    <el-option v-for="item in pages" :label="item.Name + ' - ' + item.Pagefbid" :value="item"
-                               :key="item.Pagefbid"/>
-                  </el-select>
+              <el-row gutter="10" style="width: 880px;float: left">
+                <el-col :span="9">
+                  <div style="flex-v">
+                    <div class="form_title">排程社团</div>
+                    <div>
+                      <el-select placeholder="搜索社团名称或ID" v-model="state.communityNameAndUid"
+                                filterable
+                                clearable
+                                remote
+                                reserve-keyword
+                                :loading="pageLoading"
+                                :remote-method="getCommuity"
+                                @change="changePage"
+                                value-key="CommunityCode"
+                                style="width: 100%">
+                        <el-option v-for="item in communitys" :label="item.Name + ' ' + item.CommunityCode" :value="item"
+                                  :key="item.CommunityCode"/>
+                      </el-select>
+                    </div>
+                  </div>
                 </el-col>
-                <el-col :span="7">
-                  <el-select placeholder="排程类型" v-model="tool_type">
-                    <el-option label="Reels" :value="4">
-                      Reels
-                    </el-option>
-                    <el-option label="时间线" :value="0">
-                      时间线
-                    </el-option>
-                  </el-select>
+                
+                <el-col :span="4">
+                  <div style="flex-v">
+                    <div class="form_title">排程社团</div>
+                    <div>
+                      <el-select placeholder="排程类型" v-model="tool_type">
+                        <el-option label="Reels" :value="4">
+                          Reels
+                        </el-option>
+                        <el-option label="时间线" :value="0">
+                          时间线
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
                 </el-col>
 
-                <el-col :span="7">
-                  <el-select placeholder="是否简繁转换" v-model="is_tw">
-                    <el-option label="否" :value="0">
-                      否
-                    </el-option>
-                    <el-option label="是" :value="1">
-                      是
-                    </el-option>
-                  </el-select>
+                <el-col :span="4">
+                  <div style="flex-v">
+                    <div class="form_title">排程社团</div>
+                    <div>
+                      <el-select placeholder="是否简繁转换" v-model="is_tw">
+                        <el-option label="否" :value="0">
+                          否
+                        </el-option>
+                        <el-option label="是" :value="1">
+                          是
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
                 </el-col>
 
+                <el-col :span="4">
+                  <div style="flex-v">
+                    <div class="form_title">排程社团</div>
+                    <div>
+                      <el-select placeholder="是否简繁转换" v-model="is_tw">
+                        <el-option label="否" :value="0">
+                          否
+                        </el-option>
+                        <el-option label="是" :value="1">
+                          是
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </el-col>
+
+                <el-col :span="3">
+                  <div style="flex-v">
+                    <div class="form_title">排程社团</div>
+                    <div>
+                      <el-select placeholder="是否简繁转换" v-model="is_tw">
+                        <el-option label="否" :value="0">
+                          否
+                        </el-option>
+                        <el-option label="是" :value="1">
+                          是
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </el-col>
               </el-row>
 
               <el-button type="danger" @click="close">关闭</el-button>
               <el-button @click="prevStep">上一步</el-button>
               <el-button type="primary" style="margin-right: 10px" @click="Save">
-                创建TOOL源视频排程
+                创建排程
               </el-button>
             </div>
-          </el-form-item>
+          </div>
         </el-form>
 
 
@@ -187,13 +234,12 @@
 
     </Swiper>
 
-
   </div>
 </template>
 
 <script setup>
 import {computed, onMounted, reactive, ref, nextTick, onBeforeMount} from "vue";
-import {testHttp, xhrHttp} from "../utils/request";
+import {testHttp, sHttp} from "../utils/request";
 import {ElLoading, ElMessage} from "element-plus";
 import {useRoute} from "vue-router";
 import {Swiper, SwiperSlide} from 'swiper/vue';
@@ -215,7 +261,7 @@ const route = useRoute()
 const data = ref([])
 const AllData = ref([])
 const author = ref("")
-const pages = ref([])
+const communitys = ref([])
 const title = ref("")
 const active_id = ref("")
 const loading = ref(false)
@@ -230,6 +276,11 @@ const form = reactive({
   category: '',
   pageuid: '',
   needProcess: 0
+})
+
+const state = ref({
+  communityNameAndUid: '',
+  
 })
 
 
@@ -282,34 +333,35 @@ function dealYoutubeVideo(Message) {
 
 const pageLoading = ref(false);
 var reg = /^[1-9]\d*$|^0$/;
-const pageState = reactive({
-  Pagename: '',
-  Pagefbid: '',
-  Pageid: ''
+const CommunityState = reactive({
+  Communityid: 0,
+  Communityuserid: '',
+  DishoutName: ''
 })
 const failList = ref([])
 
-function changePage(data) {
-  console.log(data)
-  pageState.Pagefbid = data.Pagefbid;
-  pageState.Pageid = data.id;
-  pageState.Pagename = data.Name;
+function changePage(item) {
+  console.log(item);
+  CommunityState.Communityuserid = item.CommunityCode;
+  CommunityState.Communityid = item.id;
+  CommunityState.DishoutName = item.Name;
+
+  state.value.communityNameAndUid = item.Name + ' ' + item.CommunityCode;
 }
 
-function getPage(query) {
+function getCommuity(query) {
   if (query) {
     pageLoading.value = true;
-    xhrHttp(`https://tool.anyelse.com/open/getPage`, {
-      pagename: reg.test(query) ? null : query,
-      fbid: reg.test(query) ? query : null,
+    sHttp(`/ScheduledTask/GetList`, {
+      community_str: query
     }, 'post', 'application/json').then((res) => {
-      pages.value = JSON.parse(res).data
+      console.log(res);
+      communitys.value = res;
       pageLoading.value = false;
     });
   } else {
-    pages.value = []
+    communitys.value = []
   }
-
 }
 
 onMounted(() => {
@@ -461,7 +513,7 @@ function prevStep() {
 
 async function Save() {
 
-  if (!pageState.Pageid) {
+  /* if (!CommunityState.Pageid) {
     ElMessage.warning("请选择专页");
     return;
   }
@@ -480,7 +532,7 @@ async function Save() {
   if (tool_type.value === '' || tool_type.value === undefined || tool_type.value === null) {
     ElMessage.warning("请选择排程类型");
     return;
-  }
+  } */
 
   const loadingTask = ElLoading.service({
     lock: true,
@@ -493,9 +545,9 @@ async function Save() {
     return {
       Title: encodeURI(item.title),
       Url: encodeURI(item.url),
-      Pagename: pageState.Pagename ? encodeURI(pageState.Pagename) : '',
-      Pagefbid: pageState.Pagefbid,
-      Pageid: pageState.Pageid,
+      Pagename: CommunityState.Pagename ? encodeURI(CommunityState.Pagename) : '',
+      Pagefbid: CommunityState.Pagefbid,
+      Pageid: CommunityState.Pageid,
       Type: tool_type.value,
       isTW: is_tw.value ? is_tw.value : 0,
       Plantime: item.plan_time,
@@ -504,7 +556,7 @@ async function Save() {
     }
   })
 
-  xhrHttp(`https://tool.anyelse.com/open/saveVideoPlanBatch`, param, 'post', 'application/json').then((res) => {
+  sHttp(`/ScheduledTask/BatchAdd`, param, 'post', 'application/json').then((res) => {
     res = JSON.parse(res);
     if (res.r) {
       alert(`创建成功${res.successCount.length};失败${res.failCount.length}条`);
@@ -524,5 +576,106 @@ const interval_num = ref("")
 </script>
 
 <style scoped>
+/**
+flex布局
+*/
+  /**
+  主轴为水平方向
+  */
+  .flex-p {
+      display: flex;
+      display: -webkit-flex;
+      flex-direction: row;
+  }
 
+  /**
+  主轴为垂直方向
+  */
+  .flex-v {
+      display: flex;
+      display: -webkit-flex;
+      flex-direction: column;
+  }
+
+  /**
+  主轴水平方向，垂直方向统统居中
+  */
+  .flex-c {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: center;
+      align-items: center;
+  }
+
+  /**
+  主轴水平方向居中
+  */
+  .flex-pc {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: center;
+  }
+
+  /**
+  主轴垂直方向居中
+  */
+  .flex-vc {
+      display: flex;
+      display: -webkit-flex;
+      align-items: center;
+  }
+
+  /**
+  主轴水平方向两端分布
+  */
+  .flex-between {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: space-between;
+  }
+
+  /**
+  主轴水平方向均匀分布
+  */
+  .flex-around {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: space-around;
+  }
+
+  /**
+  主轴水平方向顺序
+  */
+  .flex-start {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: flex-start;
+  }
+
+  /**
+  主轴水平方向逆序
+  */
+  .flex-end {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: flex-end;
+  }
+
+  /**
+  主轴水平方向换行
+  */
+  .flex-wrap {
+      display: flex;
+      display: -webkit-flex;
+      flex-wrap: wrap;
+  }
+
+  /**
+  主轴水平方向不换行
+  */
+  .flex-nowrap {
+      display: flex;
+      display: -webkit-flex;
+      flex-wrap: nowrap;
+  }
 </style>

@@ -8,7 +8,8 @@ let PrivateLink = {
 if (NODE_ENV === 'development') {
     PrivateLink = {
         'trumpet': 'http://192.168.205.34:57968/',
-        's': 'http://192.168.205.34:44346',
+        // 's': 'http://192.168.205.34:44346',
+        's': 'http://107.150.124.12/',
         'dataCollect': 'http://captureapi.anyelse.com/'
     }
 }
