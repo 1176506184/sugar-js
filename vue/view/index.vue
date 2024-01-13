@@ -149,6 +149,8 @@
               <!--              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>-->
               <el-button @click="collectYoutubeNew" type="primary">采集视频 / SHORTS并自动分发</el-button>
               <el-button @click="collectYoutubeNewPW" type="primary">采集视频 / SHORTS并TOOL源视频排文</el-button>
+
+              <el-button @click="collectYoutubeVideoCommunitySchedulingFramePW" type="primary">批量源素材社团排程</el-button>
             </div>
           </el-collapse-item>
 
@@ -1064,12 +1066,12 @@ async function collectTiktokVideoFrame() {
 // TiktokVideo社团批量排程
 async function collectTiktokVideoCommunitySchedulingFrame() {
   let activeId = await getActiveId();
-  let pageId = await getId("TiktokVideoFrame");
+  let pageId = await getId("TiktokVideoCommunitySchedulingFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
       active: true
     })
-    await updateActiveId(pageId, activeId)
+    await updateActiveId(pageId, activeId);
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/TiktokVideoCommunitySchedulingFrame?activeId=' + activeId,
@@ -1079,6 +1081,28 @@ async function collectTiktokVideoCommunitySchedulingFrame() {
     })
   }
 }
+
+
+// YoutubeVideo社团批量排程
+async function collectYoutubeVideoCommunitySchedulingFramePW() {
+  let activeId = await getActiveId();
+  let pageId = await getId("youtubeVideoCommunitySchedulingFramePW");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/youtubeVideoCommunitySchedulingFramePW?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+
 
 async function collectNovel() {
   let activeId = await getActiveId();

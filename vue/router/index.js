@@ -11,10 +11,11 @@ import TiktokVideo from "../view/tiktokVideo.vue";
 import FacebookVideo from "../view/FacebookVideoFrame.vue";
 import FBCollectHistory from "../view/FacebookHistoryFrame.vue";
 import TTCollectHistory from "../view/twitterHistoryFrame.vue";
-import douyinVideo from "../view/douyinVideo.vue"
+import douyinVideo from "../view/douyinVideo.vue";
 import TiktokFrame from "../view/tiktokFrame.vue";
-import TiktokVideoFrame from "../view/tiktokVideoFrame.vue"
-import TiktokVideoCommunitySchedulingFrame from "../view/tiktokVideoCommunitySchedulingFrame.vue"
+import TiktokVideoFrame from "../view/tiktokVideoFrame.vue";
+import TiktokVideoCommunitySchedulingFrame from "../view/tiktokVideoCommunitySchedulingFrame.vue";
+import YoutubeVideoCommunitySchedulingFramePW from "../view/youtubeVideoCommunitySchedulingFramePW.vue";
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -141,6 +142,12 @@ const routes = [
         name: 'TiktokVideoCommunitySchedulingFrame',
         path: '/TiktokVideoCommunitySchedulingFrame',
         component: TiktokVideoCommunitySchedulingFrame,
+        props: route => ({ query: route.query.q }),
+        meta: {}
+    }, {
+        name: 'YoutubeVideoCommunitySchedulingFramePW',
+        path: '/YoutubeVideoCommunitySchedulingFramePW',
+        component: YoutubeVideoCommunitySchedulingFramePW,
         props: route => ({ query: route.query.q }),
         meta: {}
     }
