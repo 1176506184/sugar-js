@@ -130,7 +130,7 @@
                  style="text-align: left;width: calc(100% - 20px);height: 100px;padding: 10px;background-color: #fff;z-index:20;">
 
               <el-row gutter="10" style="width: 880px;float: left">
-                <el-col :span="9">
+                <el-col :span="12">
                   <div style="flex-v">
                     <div class="form_title">排程社团</div>
                     <div>
@@ -150,17 +150,32 @@
                     </div>
                   </div>
                 </el-col>
-                
+                <!-- <el-col :span="4">
+                  <div style="flex-v">
+                    <div class="form_title">排程类型</div>
+                    <div>
+                      <el-select placeholder="排程类型" v-model="state.PostType">
+                        <el-option label="图文" :value="2">
+                          图文
+                        </el-option>
+                        <el-option label="视频" :value="3">
+                          视频
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </el-col> -->
+
                 <el-col :span="4">
                   <div style="flex-v">
-                    <div class="form_title">排程社团</div>
+                    <div class="form_title">发帖身份</div>
                     <div>
-                      <el-select placeholder="排程类型" v-model="tool_type">
-                        <el-option label="Reels" :value="4">
-                          Reels
+                      <el-select placeholder="发帖身份" v-model="state.JoinRole">
+                        <el-option label="账号" :value="0">
+                          账号
                         </el-option>
-                        <el-option label="时间线" :value="0">
-                          时间线
+                        <el-option label="粉丝页" :value="1">
+                          粉丝页
                         </el-option>
                       </el-select>
                     </div>
@@ -169,14 +184,17 @@
 
                 <el-col :span="4">
                   <div style="flex-v">
-                    <div class="form_title">排程社团</div>
+                    <div class="form_title">社团角色</div>
                     <div>
-                      <el-select placeholder="是否简繁转换" v-model="is_tw">
-                        <el-option label="否" :value="0">
-                          否
+                      <el-select placeholder="社团角色" v-model="state.CommunityRole">
+                        <el-option label="普通成员" :value="1">
+                          普通成员
                         </el-option>
-                        <el-option label="是" :value="1">
-                          是
+                        <el-option label="社团版主" :value="2">
+                          社团版主
+                        </el-option>
+                        <el-option label="管理员" :value="3">
+                          管理员
                         </el-option>
                       </el-select>
                     </div>
@@ -185,25 +203,9 @@
 
                 <el-col :span="4">
                   <div style="flex-v">
-                    <div class="form_title">排程社团</div>
+                    <div class="form_title">是否置顶</div>
                     <div>
-                      <el-select placeholder="是否简繁转换" v-model="is_tw">
-                        <el-option label="否" :value="0">
-                          否
-                        </el-option>
-                        <el-option label="是" :value="1">
-                          是
-                        </el-option>
-                      </el-select>
-                    </div>
-                  </div>
-                </el-col>
-
-                <el-col :span="3">
-                  <div style="flex-v">
-                    <div class="form_title">排程社团</div>
-                    <div>
-                      <el-select placeholder="是否简繁转换" v-model="is_tw">
+                      <el-select placeholder="是否置顶" v-model="state.IsTop">
                         <el-option label="否" :value="0">
                           否
                         </el-option>
@@ -216,11 +218,13 @@
                 </el-col>
               </el-row>
 
-              <el-button type="danger" @click="close">关闭</el-button>
-              <el-button @click="prevStep">上一步</el-button>
-              <el-button type="primary" style="margin-right: 10px" @click="Save">
-                创建排程
-              </el-button>
+              <div class="flex-p flex-end" style="margin-top: 15px;">
+                <el-button type="danger" @click="close">关闭</el-button>
+                <el-button @click="prevStep">上一步</el-button>
+                <el-button type="primary" style="margin-right: 10px" @click="Save">
+                  创建排程
+                </el-button>
+              </div>
             </div>
           </div>
         </el-form>
@@ -239,8 +243,8 @@
 
 <script setup>
 import {computed, onMounted, reactive, ref, nextTick, onBeforeMount} from "vue";
-import {testHttp, sHttp} from "../utils/request";
-import {ElLoading, ElMessage} from "element-plus";
+import {testHttp, sHttp, cjHttp} from "../utils/request";
+import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import {useRoute} from "vue-router";
 import {Swiper, SwiperSlide} from 'swiper/vue';
 import {Controller} from 'swiper/modules';
@@ -278,9 +282,20 @@ const form = reactive({
   needProcess: 0
 })
 
+// 排程社团
+const CommunityState = reactive({
+  Communityid: 0,
+  Communityuserid: '',
+  DishoutName: ''
+})
+// 排程其他变量
 const state = ref({
   communityNameAndUid: '',
-  
+  PostType: 3,
+  JoinRole: 0,
+  CommunityRole: 3,
+  IsTop: 0,
+  SourceType: 2
 })
 
 
@@ -333,11 +348,7 @@ function dealYoutubeVideo(Message) {
 
 const pageLoading = ref(false);
 var reg = /^[1-9]\d*$|^0$/;
-const CommunityState = reactive({
-  Communityid: 0,
-  Communityuserid: '',
-  DishoutName: ''
-})
+
 const failList = ref([])
 
 function changePage(item) {
@@ -352,7 +363,7 @@ function changePage(item) {
 function getCommuity(query) {
   if (query) {
     pageLoading.value = true;
-    sHttp(`/ScheduledTask/GetList`, {
+    sHttp(`ScheduledTask/GetList`, {
       community_str: query
     }, 'post', 'application/json').then((res) => {
       console.log(res);
@@ -513,26 +524,24 @@ function prevStep() {
 
 async function Save() {
 
-  /* if (!CommunityState.Pageid) {
-    ElMessage.warning("请选择专页");
+  if (!CommunityState.Communityid || !CommunityState.Communityuserid) {
+    ElMessage.error("请选择排程社团");
     return;
   }
-
-  failList.value = []
 
 
   if (pwData.value.filter((item, index) => {
-    failList.value.push(index)
     return !item.url || !item.title || !item.plan_time
   }).length > 0) {
-    ElMessage.warning("请补全视频的标题/链接/排程时间");
-    return
-  }
-
-  if (tool_type.value === '' || tool_type.value === undefined || tool_type.value === null) {
-    ElMessage.warning("请选择排程类型");
+    ElMessage.error("请补全视频的标题/链接/排程时间");
     return;
-  } */
+  }
+  
+
+  if (state.JoinRole === '' || state.CommunityRole === '' || state.IsTop === '') {
+    ElMessage.error("请将排程信息填写完整");
+    return;
+  }
 
   const loadingTask = ElLoading.service({
     lock: true,
@@ -540,10 +549,11 @@ async function Save() {
     background: 'rgba(0, 0, 0, 0.6)',
   })
 
+  
 
-  let param = pwData.value.map((item) => {
+  let params = pwData.value.map((item) => {
     return {
-      Title: encodeURI(item.title),
+      /* Title: encodeURI(item.title),
       Url: encodeURI(item.url),
       Pagename: CommunityState.Pagename ? encodeURI(CommunityState.Pagename) : '',
       Pagefbid: CommunityState.Pagefbid,
@@ -552,17 +562,52 @@ async function Save() {
       isTW: is_tw.value ? is_tw.value : 0,
       Plantime: item.plan_time,
       CreateUserId: localStorage.getItem("ddid"),
-      CreateUserName: localStorage.getItem('name')
+      CreateUserName: localStorage.getItem('name') */
+      MaterialTitle: encodeURI(item.title) || '',
+      MaterialSourceUrl: encodeURI(item.url) || '',
+      PlanTime: item.plan_time || ''
     }
   })
 
-  sHttp(`/ScheduledTask/BatchAdd`, param, 'post', 'application/json').then((res) => {
-    res = JSON.parse(res);
+  // 组成要发送的数据包
+  let PostData = {
+    SourceType: '2', //素材来源 1抖音 2tiktok 3youtube
+    PostType: '3', //帖子类型 2图文 3视频
+    JoinRole: state.JoinRole,
+    CommunityRole: state.CommunityRole,
+    IsTop: state.IsTop,
+    Communityid: CommunityState.Communityid,
+    Communityuserid: CommunityState.Communityuserid,
+    DishoutName: CommunityState.DishoutName,
+    BatchParam: params,
+    ddId: localStorage.getItem("ddid")
+  }
+
+  cjHttp(`ScheduledTask/BatchAdd`, PostData, 'post', 'application/json').then((res) => {
+    /* res = JSON.parse(res);
     if (res.r) {
       alert(`创建成功${res.successCount.length};失败${res.failCount.length}条`);
       failList.value = res.failCount;
     } else {
       alert(res.msg)
+    } */
+    if(res.StatusCode === 200) {
+      ElMessageBox.confirm
+        (
+          '排程创建成功!',
+          '温馨提示',
+          {
+            confirmButtonText: '确认',
+            showCancelButton: false
+          }
+        )
+      .then(() => {
+        prevStep();
+      })
+      .catch(() => {
+      });
+    }else {
+      alert(res.Message);
     }
     loadingTask.close();
   });
@@ -677,5 +722,11 @@ flex布局
       display: flex;
       display: -webkit-flex;
       flex-wrap: nowrap;
+  }
+
+  .form_title {
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 6px;
   }
 </style>

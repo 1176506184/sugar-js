@@ -118,6 +118,28 @@ function sHttp(url, params, type = 'post') {
     })
 }
 
+function cjHttp(url, params, type = 'post') {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: PrivateLink['s'] + url,
+            data: JSON.stringify(params),
+            type: type,
+            headers: {
+                "content-type": 'application/json'
+            }
+            , beforeSend: function (XMLHttpRequest) {
+                XMLHttpRequest.setRequestHeader("token", localStorage.getItem("tk"));
+            }
+            , success: function (data) {
+                resolve(data);
+            },
+            error: function (res) {
+                reject(res);
+            }
+        })
+    })
+}
+
 function dHttp(url, params, type = 'post') {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -196,5 +218,6 @@ export {
     dHttp,
     testHttp,
     xHttp,
-    hHttp
+    hHttp,
+    cjHttp
 }
