@@ -601,7 +601,7 @@ async function Save() {
   }
   
 
-  if (state.JoinRole === '' || state.CommunityRole === '' || state.IsTop === '') {
+  if (state.value.JoinRole === '' || state.value.CommunityRole === '' || state.value.IsTop === '') {
     ElMessage.error("请将排程信息填写完整");
     return;
   }
@@ -637,9 +637,9 @@ async function Save() {
   let PostData = {
     SourceType: '3', //素材来源 1抖音 2tiktok 3youtube
     PostType: '3', //帖子类型 2图文 3视频
-    JoinRole: state.JoinRole,
-    CommunityRole: state.CommunityRole,
-    IsTop: state.IsTop,
+    JoinRole: state.value.JoinRole,
+    CommunityRole: state.value.CommunityRole,
+    IsTop: state.value.IsTop,
     Communityid: CommunityState.Communityid,
     Communityuserid: CommunityState.Communityuserid,
     DishoutName: CommunityState.DishoutName,
