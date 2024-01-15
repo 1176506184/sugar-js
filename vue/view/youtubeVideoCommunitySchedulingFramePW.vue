@@ -311,6 +311,7 @@ document.onkeyup = function (e) {
   }
 };
 
+
 function handleSelect(selection, row) {
   console.log(getArrayIndex(TableRef.value.store.states.data.value, row))
   if (firstSelect.value === -1) {
