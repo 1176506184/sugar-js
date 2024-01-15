@@ -634,7 +634,7 @@ async function Save() {
 
   // 组成要发送的数据包
   let PostData = {
-    SourceType: '2', //素材来源 1抖音 2tiktok 3youtube
+    SourceType: '3', //素材来源 1抖音 2tiktok 3youtube
     PostType: '3', //帖子类型 2图文 3视频
     JoinRole: state.JoinRole,
     CommunityRole: state.CommunityRole,
@@ -674,7 +674,7 @@ async function Save() {
     }
     loadingTask.close();
   });
-  
+
 }
 
 
