@@ -44,6 +44,8 @@
       <el-form-item>
         <div class="dialog-footer"
              style="text-align: right;width: calc(100% - 20px);padding: 10px;position: fixed;bottom: 0;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
+          <el-input style="width: 200px;margin-right: 12px;" placeholder="尺寸筛选(,分割)" v-model="size"
+                    @input="filterList"></el-input>
           <el-button type="primary" @click="copyEx">
             复制标题
           </el-button>
@@ -75,6 +77,7 @@ const ports = ref([])
 const categorys = ref([])
 const pages = ref([])
 const title = ref("")
+const size = ref("")
 
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
@@ -90,7 +93,7 @@ const form = reactive({
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1
+    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && (size.value.split(',').includes(`${item.width}×${item.height}`) || !size.value)
   })
 
 }
