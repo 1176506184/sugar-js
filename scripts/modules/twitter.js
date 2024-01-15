@@ -540,7 +540,7 @@ async function dealHistoryData() {
         Message: 'history',
         type: 'twitter',
         data: '',
-        author: document.getElementsByClassName('css-1rynq56 r-dnmrzs r-1udh08x r-3s2u2q r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-b88u0q r-1vvnge1')[0].innerText,
+        author: document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0].innerText,
         authorLink: location.href[location.href.length - 1] === '/' ? location.href.slice(0, -1) : location.href
     }).then(r => {
     })
