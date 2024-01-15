@@ -63,6 +63,8 @@
               >视频采集
               </el-button
               >
+              
+              <el-button @click="collectDouyinVideoCommunitySchedulingFrame" type="primary" :disabled="type !== 'douyin'">批量源素材社团排程</el-button>
 
             </div>
           </el-collapse-item>
@@ -1086,7 +1088,7 @@ async function collectTiktokVideoCommunitySchedulingFrame() {
 // YoutubeVideo社团批量排程
 async function collectYoutubeVideoCommunitySchedulingFramePW() {
   let activeId = await getActiveId();
-  let pageId = await getId("youtubeVideoCommunitySchedulingFramePW");
+  let pageId = await getId("YoutubeVideoCommunitySchedulingFramePW");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
       active: true
@@ -1094,7 +1096,7 @@ async function collectYoutubeVideoCommunitySchedulingFramePW() {
     await updateActiveId(pageId, activeId);
   } else {
     chrome.tabs.create({
-      url: '/html/out.html#/youtubeVideoCommunitySchedulingFramePW?activeId=' + activeId,
+      url: '/html/out.html#/YoutubeVideoCommunitySchedulingFramePW?activeId=' + activeId,
       active: true
     }, (tab) => {
 
@@ -1102,6 +1104,25 @@ async function collectYoutubeVideoCommunitySchedulingFramePW() {
   }
 }
 
+
+// DouyinVideo社团批量排程
+async function collectDouyinVideoCommunitySchedulingFrame() {
+  let activeId = await getActiveId();
+  let pageId = await getId("DouyinVideoCommunitySchedulingFrame");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/DouyinVideoCommunitySchedulingFrame?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
 
 
 async function collectNovel() {
