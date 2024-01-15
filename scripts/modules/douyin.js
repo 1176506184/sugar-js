@@ -135,6 +135,33 @@ function getVideoUrl() {
 
 }
 
+
+// 社团源素材排程
+function getDouyinVideoUrl() {
+    let data = []
+
+    Array.from(document.querySelectorAll('a[href*="/video/"]')).map((n) => {
+        if (n.querySelector('p')?.innerText) {
+            data.push({
+                href: n.href,
+                play: dealNum(n.querySelector('.author-card-user-video-like')?.innerText),
+                title: n.querySelector('p')?.innerText
+            })
+        }
+    })
+
+    let author = document.querySelector('[data-e2e="user-info"] h1')?.innerText
+
+    chrome.runtime.sendMessage({
+        Message: 'communityVideo',
+        data: data,
+        author: author
+    }).then()
+
+}
+
+
+
 function dealNum(num) {
 
     let result = num
@@ -206,6 +233,11 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         })
         sendResponse({state: 200});
     } else if (Message.Message === 'getPending') {
+        sendResponse({
+            state: 200
+        });
+    } else if (Message.Message === 'community_video') {
+        getDouyinVideoUrl();
         sendResponse({
             state: 200
         });

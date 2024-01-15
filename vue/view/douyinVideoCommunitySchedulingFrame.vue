@@ -21,9 +21,9 @@
                         style="flex:1;height:calc(100vh - 130px)">
                 <el-table-column type="selection" width="30"/>
 
-                <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
+                <el-table-column type="index" width="58" label="序号" align="center"></el-table-column>
 
-                <el-table-column label="视频标题" width="570">
+                <el-table-column label="视频标题" width="820">
                   <template #header>
                     <div style="display: flex;align-items: center;">
                       <label>视频标题</label>
@@ -36,15 +36,10 @@
                     {{ row.title }}
                   </template>
                 </el-table-column>
-                <el-table-column label="播放量" prop="playCount" sortable :sort-orders="['descending','ascending',null]">
+                <el-table-column label="点赞量" prop="play" sortable="custom" :sort-orders="['descending','ascending',null]">
                 </el-table-column>
-                <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]">
-                </el-table-column>
-                <el-table-column label="尺寸" prop="cup" sortable :sort-orders="['descending','ascending',null]">
-                  <template #default="{row}">
-                    {{ row.width }}×{{ row.height }}
-                  </template>
-                </el-table-column>
+                <!-- <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]">
+                </el-table-column> -->
 
               </el-table>
 
@@ -53,8 +48,8 @@
           <el-form-item>
             <div class="dialog-footer"
                  style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">
-              <el-input style="width: 200px;margin-right: 12px;" placeholder="尺寸筛选(,分割)" v-model="size"
-                        @input="filterList"></el-input>
+              <!-- <el-input style="width: 200px;margin-right: 12px;" placeholder="尺寸筛选(,分割)" v-model="size"
+                        @input="filterList"></el-input> -->
               <el-button type="danger" @click="close">关闭</el-button>
               <el-button type="primary" style="margin-right: 10px" @click="nextStep">
                 下一步
@@ -299,13 +294,14 @@ const state = ref({
 })
 
 
-function filterList() {
+// 暂无尺寸
+/* function filterList() {
 
   data.value = AllData.value.filter((item) => {
     return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && (size.value.split(',').includes(`${item.width}×${item.height}`) || !size.value)
   })
 
-}
+} */
 
 function dealYoutubeVideo(Message) {
 
@@ -322,7 +318,7 @@ function dealYoutubeVideo(Message) {
           chrome.tabs.sendMessage(
               active_id.value,
               {
-                Message: "video"
+                Message: "community_video"
               },
               function (response) {
                 if (response?.state !== 200) {
@@ -336,7 +332,7 @@ function dealYoutubeVideo(Message) {
     );
 
     return
-  } else if (Message.Message === 'douyinVideo') {
+  } else if (Message.Message === 'communityVideo') {
     data.value = Message.data
     author.value = Message.author
     AllData.value = data.value
@@ -377,13 +373,14 @@ function getCommuity(query) {
 
 onMounted(() => {
   chrome.runtime.onMessage.addListener(dealYoutubeVideo);
+  
   if (!!route.query.activeId) {
     nextTick(() => {
       console.log(route.query.activeId)
       chrome.tabs.sendMessage(
           parseInt(route.query.activeId),
           {
-            Message: "video"
+            Message: "community_video"
           },
           function (response) {
             if (response?.state !== 200) {
@@ -399,7 +396,7 @@ onMounted(() => {
 
 
 function close() {
-  chrome.runtime.onMessage.removeListener(dealYoutubeVideo)
+  chrome.runtime.onMessage.removeListener(dealYoutubeVideo);
   window.close();
 }
 
@@ -413,6 +410,17 @@ const handleSelectionChange = (val) => {
 
 const handleSortChange = ({column, prop, order}) => {
   console.log({column, prop, order})
+  if(prop == 'play') {
+    var o = 0
+    if(order == 'ascending') {
+      o = 1
+    }
+    if(order == 'descending') {
+      o = -1
+    }
+    // console.log(data.value.sort(function(a, b){return parseInt(a.play)-parseInt(b.play)}))
+    data.value.sort(function(a, b){ return (parseInt(a.play)-parseInt(b.play))*o })
+  }
 }
 
 const langHover = ref(false)
@@ -572,7 +580,7 @@ async function Save() {
 
   // 组成要发送的数据包
   let PostData = {
-    SourceType: '2', //素材来源 1抖音 2tiktok 3youtube
+    SourceType: '1', //素材来源 1抖音 2tiktok 3youtube
     PostType: '3', //帖子类型 2图文 3视频
     JoinRole: state.value.JoinRole,
     CommunityRole: state.value.CommunityRole,
