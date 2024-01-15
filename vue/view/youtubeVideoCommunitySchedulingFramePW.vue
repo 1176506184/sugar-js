@@ -118,57 +118,109 @@
               </el-table>
             </el-form-item>
           </div>
-          <el-form-item>
+
+          <div class="el-form-item">
             <div class="dialog-footer"
-                 style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">
+                 style="text-align: left;width: calc(100% - 20px);height: 100px;padding: 10px;background-color: #fff;z-index:20;">
 
-              <el-row gutter="10" style="width: 620px;float: left">
-                <el-col :span="10">
-                  <el-select placeholder="搜索专页名称或专页ID" v-model="form.pageuid"
-                             filterable
-                             clearable
-                             remote
-                             reserve-keyword
-                             :loading="pageLoading"
-                             :remote-method="getPage"
-                             @change="changePage"
-                             value-key="Pagefbid"
-                             style="width: 100%">
-                    <el-option v-for="item in pages" :label="item.Name + ' - ' + item.Pagefbid" :value="item"
-                               :key="item.Pagefbid"/>
-                  </el-select>
+              <el-row gutter="10" style="width: 880px;float: left">
+                <el-col :span="12">
+                  <div style="flex-v">
+                    <div class="form_title">排程社团</div>
+                    <div>
+                      <el-select placeholder="搜索社团名称或ID" v-model="state.communityNameAndUid"
+                                filterable
+                                clearable
+                                remote
+                                reserve-keyword
+                                :loading="pageLoading"
+                                :remote-method="getCommuity"
+                                @change="changePage"
+                                value-key="CommunityCode"
+                                style="width: 100%">
+                        <el-option v-for="item in communitys" :label="item.Name + ' ' + item.CommunityCode" :value="item"
+                                  :key="item.CommunityCode"/>
+                      </el-select>
+                    </div>
+                  </div>
                 </el-col>
-                <el-col :span="7">
-                  <el-select placeholder="排程类型" v-model="tool_type">
-                    <el-option label="Reels" :value="4">
-                      Reels
-                    </el-option>
-                    <el-option label="时间线" :value="0">
-                      时间线
-                    </el-option>
-                  </el-select>
+                <!-- <el-col :span="4">
+                  <div style="flex-v">
+                    <div class="form_title">排程类型</div>
+                    <div>
+                      <el-select placeholder="排程类型" v-model="state.PostType">
+                        <el-option label="图文" :value="2">
+                          图文
+                        </el-option>
+                        <el-option label="视频" :value="3">
+                          视频
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </el-col> -->
+
+                <el-col :span="4">
+                  <div style="flex-v">
+                    <div class="form_title">发帖身份</div>
+                    <div>
+                      <el-select placeholder="发帖身份" v-model="state.JoinRole">
+                        <el-option label="账号" :value="0">
+                          账号
+                        </el-option>
+                        <el-option label="粉丝页" :value="1">
+                          粉丝页
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
                 </el-col>
 
-                <el-col :span="7">
-                  <el-select placeholder="是否简繁转换" v-model="is_tw">
-                    <el-option label="Reels" :value="0">
-                      否
-                    </el-option>
-                    <el-option label="是" :value="1">
-                      是
-                    </el-option>
-                  </el-select>
+                <el-col :span="4">
+                  <div style="flex-v">
+                    <div class="form_title">社团角色</div>
+                    <div>
+                      <el-select placeholder="社团角色" v-model="state.CommunityRole">
+                        <el-option label="普通成员" :value="1">
+                          普通成员
+                        </el-option>
+                        <el-option label="社团版主" :value="2">
+                          社团版主
+                        </el-option>
+                        <el-option label="管理员" :value="3">
+                          管理员
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
                 </el-col>
 
+                <el-col :span="4">
+                  <div style="flex-v">
+                    <div class="form_title">是否置顶</div>
+                    <div>
+                      <el-select placeholder="是否置顶" v-model="state.IsTop">
+                        <el-option label="否" :value="0">
+                          否
+                        </el-option>
+                        <el-option label="是" :value="1">
+                          是
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </el-col>
               </el-row>
 
-              <el-button type="danger" @click="close">关闭</el-button>
-              <el-button @click="prevStep">上一步</el-button>
-              <el-button type="primary" style="margin-right: 10px" @click="Save">
-                创建TOOL源视频排程
-              </el-button>
+              <div class="flex-p flex-end" style="margin-top: 15px;">
+                <el-button type="danger" @click="close">关闭</el-button>
+                <el-button @click="prevStep">上一步</el-button>
+                <el-button type="primary" style="margin-right: 10px" @click="Save">
+                  创建排程
+                </el-button>
+              </div>
             </div>
-          </el-form-item>
+          </div>
         </el-form>
 
 
@@ -187,7 +239,7 @@
 <script setup>
 
 import {computed, onMounted, reactive, ref, nextTick, onBeforeMount} from "vue";
-import {testHttp, xhrHttp} from "../utils/request";
+import {testHttp, sHttp, cjHttp} from "../utils/request";
 import {ElLoading, ElMessage} from "element-plus";
 import {useRoute} from "vue-router";
 import {Swiper, SwiperSlide} from 'swiper/vue';
@@ -205,8 +257,7 @@ const route = useRoute()
 const data = ref([])
 const AllData = ref([])
 const author = ref("")
-const ports = ref([])
-const pages = ref([])
+const communitys = ref([])
 const title = ref("")
 const active_id = ref("")
 const loading = ref(false)
@@ -220,6 +271,21 @@ const form = reactive({
   category: '',
   pageuid: '',
   needProcess: 0
+})
+// 排程社团
+const CommunityState = reactive({
+  Communityid: 0,
+  Communityuserid: '',
+  DishoutName: ''
+})
+// 排程其他变量
+const state = ref({
+  communityNameAndUid: '',
+  PostType: 3,
+  JoinRole: 0,
+  CommunityRole: 3,
+  IsTop: 0,
+  SourceType: 2
 })
 
 const langHover = ref(false)
@@ -403,28 +469,28 @@ const pageState = reactive({
 })
 const failList = ref([])
 
-function changePage(data) {
-  console.log(data)
-  pageState.Pagefbid = data.Pagefbid;
-  pageState.Pageid = data.id;
-  pageState.Pagename = data.Name;
+function changePage(item) {
+  console.log(item);
+  CommunityState.Communityuserid = item.CommunityCode;
+  CommunityState.Communityid = item.id;
+  CommunityState.DishoutName = item.Name;
+
+  state.value.communityNameAndUid = item.Name + ' ' + item.CommunityCode;
 }
 
-
-function getPage(query) {
+function getCommuity(query) {
   if (query) {
     pageLoading.value = true;
-    xhrHttp(`https://tool.anyelse.com/open/getPage`, {
-      pagename: reg.test(query) ? null : query,
-      fbid: reg.test(query) ? query : null,
+    sHttp(`ScheduledTask/GetList`, {
+      community_str: query
     }, 'post', 'application/json').then((res) => {
-      pages.value = JSON.parse(res).data
+      console.log(res);
+      communitys.value = res;
       pageLoading.value = false;
     });
   } else {
-    pages.value = []
+    communitys.value = []
   }
-
 }
 
 onMounted(() => {
@@ -520,26 +586,23 @@ function prevStep() {
 }
 
 async function Save() {
-  if (!pageState.Pageid) {
-    ElMessage.warning("请选择专页");
+  if (!CommunityState.Communityid || !CommunityState.Communityuserid) {
+    ElMessage.error("请选择排程社团");
     return;
   }
-
-  if (tool_type.value === '' || tool_type.value === undefined || tool_type.value === null) {
-    ElMessage.warning("请选择排程类型");
-    return;
-  }
-
-
-  failList.value = []
 
 
   if (pwData.value.filter((item, index) => {
-    failList.value.push(index)
     return !item.url || !item.title || !item.plan_time
   }).length > 0) {
-    ElMessage.warning("请补全视频的标题/链接/排程时间");
-    return
+    ElMessage.error("请补全视频的标题/链接/排程时间");
+    return;
+  }
+  
+
+  if (state.JoinRole === '' || state.CommunityRole === '' || state.IsTop === '') {
+    ElMessage.error("请将排程信息填写完整");
+    return;
   }
 
   const loadingTask = ElLoading.service({
@@ -549,32 +612,69 @@ async function Save() {
   })
 
 
-  let param = pwData.value.map((item) => {
+
+
+  let params = pwData.value.map((item) => {
     return {
-      Title: encodeURI(item.title),
+      /* Title: encodeURI(item.title),
       Url: encodeURI(item.url),
-      Pagename: pageState.Pagename ? encodeURI(pageState.Pagename) : '',
-      Pagefbid: pageState.Pagefbid,
-      Pageid: pageState.Pageid,
+      Pagename: CommunityState.Pagename ? encodeURI(CommunityState.Pagename) : '',
+      Pagefbid: CommunityState.Pagefbid,
+      Pageid: CommunityState.Pageid,
       Type: tool_type.value,
       isTW: is_tw.value ? is_tw.value : 0,
       Plantime: item.plan_time,
       CreateUserId: localStorage.getItem("ddid"),
-      CreateUserName: localStorage.getItem('name')
+      CreateUserName: localStorage.getItem('name') */
+      MaterialTitle: encodeURI(item.title) || '',
+      MaterialSourceUrl: encodeURI(item.url) || '',
+      PlanTime: item.plan_time || ''
     }
   })
 
-  xhrHttp(`https://tool.anyelse.com/open/saveVideoPlanBatch`, param, 'post', 'application/json').then((res) => {
-    res = JSON.parse(res);
+  // 组成要发送的数据包
+  let PostData = {
+    SourceType: '2', //素材来源 1抖音 2tiktok 3youtube
+    PostType: '3', //帖子类型 2图文 3视频
+    JoinRole: state.JoinRole,
+    CommunityRole: state.CommunityRole,
+    IsTop: state.IsTop,
+    Communityid: CommunityState.Communityid,
+    Communityuserid: CommunityState.Communityuserid,
+    DishoutName: CommunityState.DishoutName,
+    BatchParam: params,
+    ddId: localStorage.getItem("ddid")
+  }
+
+  cjHttp(`ScheduledTask/BatchAdd`, PostData, 'post', 'application/json').then((res) => {
+    /* res = JSON.parse(res);
     if (res.r) {
       alert(`创建成功${res.successCount.length};失败${res.failCount.length}条`);
       failList.value = res.failCount;
     } else {
       alert(res.msg)
+    } */
+    if(res.StatusCode === 200) {
+      ElMessageBox.confirm
+        (
+          '排程创建成功!',
+          '温馨提示',
+          {
+            confirmButtonText: '确认',
+            showCancelButton: false
+          }
+        )
+      .then(() => {
+        prevStep();
+      })
+      .catch(() => {
+      });
+    }else {
+      alert(res.Message);
     }
     loadingTask.close();
   });
-
+  
 }
 
 
@@ -590,6 +690,113 @@ onBeforeMount(() => {
 
 
 <style scoped>
+/**
+flex布局
+*/
+  /**
+  主轴为水平方向
+  */
+  .flex-p {
+      display: flex;
+      display: -webkit-flex;
+      flex-direction: row;
+  }
 
+  /**
+  主轴为垂直方向
+  */
+  .flex-v {
+      display: flex;
+      display: -webkit-flex;
+      flex-direction: column;
+  }
+
+  /**
+  主轴水平方向，垂直方向统统居中
+  */
+  .flex-c {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: center;
+      align-items: center;
+  }
+
+  /**
+  主轴水平方向居中
+  */
+  .flex-pc {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: center;
+  }
+
+  /**
+  主轴垂直方向居中
+  */
+  .flex-vc {
+      display: flex;
+      display: -webkit-flex;
+      align-items: center;
+  }
+
+  /**
+  主轴水平方向两端分布
+  */
+  .flex-between {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: space-between;
+  }
+
+  /**
+  主轴水平方向均匀分布
+  */
+  .flex-around {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: space-around;
+  }
+
+  /**
+  主轴水平方向顺序
+  */
+  .flex-start {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: flex-start;
+  }
+
+  /**
+  主轴水平方向逆序
+  */
+  .flex-end {
+      display: flex;
+      display: -webkit-flex;
+      justify-content: flex-end;
+  }
+
+  /**
+  主轴水平方向换行
+  */
+  .flex-wrap {
+      display: flex;
+      display: -webkit-flex;
+      flex-wrap: wrap;
+  }
+
+  /**
+  主轴水平方向不换行
+  */
+  .flex-nowrap {
+      display: flex;
+      display: -webkit-flex;
+      flex-wrap: nowrap;
+  }
+
+  .form_title {
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 6px;
+  }
 </style>
 
