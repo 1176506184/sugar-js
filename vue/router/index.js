@@ -11,6 +11,7 @@ import TiktokVideo from "../view/tiktokVideo.vue";
 import FacebookVideo from "../view/FacebookVideoFrame.vue";
 import FBCollectHistory from "../view/FacebookHistoryFrame.vue";
 import TTCollectHistory from "../view/twitterHistoryFrame.vue";
+import InsCollectHistory from "../view/insHistoryFrame.vue";
 import douyinVideo from "../view/douyinVideo.vue";
 import TiktokFrame from "../view/tiktokFrame.vue";
 import TiktokVideoFrame from "../view/tiktokVideoFrame.vue";
@@ -111,6 +112,13 @@ const routes = [
         name: 'TTCollectHistory',
         path: '/TTCollectHistory',
         component: TTCollectHistory,
+        props: route => ({ query: route.query.q }),
+        meta: {}
+    },
+    {
+        name: 'InsCollectHistory',
+        path: '/InsCollectHistory',
+        component: InsCollectHistory,
         props: route => ({ query: route.query.q }),
         meta: {}
     },

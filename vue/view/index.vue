@@ -68,6 +68,7 @@
 
             </div>
           </el-collapse-item>
+
           <el-collapse-item title="推特图片" name="2">
             <div>
               <el-button
@@ -80,6 +81,7 @@
               <el-button type="warning" @click="collectTTHistory">自动采集历史</el-button>
             </div>
           </el-collapse-item>
+
           <el-collapse-item title="头条博主" name="3">
             <div style="display: flex">
               <el-input
@@ -102,6 +104,7 @@
               >
             </div>
           </el-collapse-item>
+
           <el-collapse-item title="搜狐博主" name="4">
             <div style="display: flex">
               <el-input
@@ -145,7 +148,7 @@
             </div>
           </el-collapse-item>
           
-          <el-collapse-item title="youtube博主" name="6">
+          <el-collapse-item title="Youtube博主" name="6">
             <div>
               <!--              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>-->
               <!--              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>-->
@@ -179,6 +182,13 @@
             </div>
           </el-collapse-item>
 
+          <el-collapse-item title="Ins博主" name="9">
+            <div>
+              <el-button type="warning" @click="collectInsHistory">自动采集历史</el-button>
+            </div>
+          </el-collapse-item>
+
+          
           <!--        <p>脸书社团</p>-->
           <!--        <div>-->
           <!--          <el-button @click="facebook_member" type="primary" :disabled="type!=='facebook'">手动采集</el-button>-->
@@ -241,7 +251,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v7.2.1",
+  version: "v7.2.2",
   system: 1
 });
 
@@ -1030,6 +1040,31 @@ async function collectTTHistory() {
     })
   }
 }
+
+
+// Ins博主采集历史
+async function collectInsHistory() {
+
+  let activeId = await getActiveId();
+  let pageId = await getId("InsCollectHistory");
+
+  // console.log(activeId, pageId)
+
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/InsCollectHistory?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
 
 async function collectTiktokFrame() {
   let pageId = await getId("TiktokFrame");

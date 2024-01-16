@@ -1,5 +1,6 @@
 var imgData = [];
 var user = {};
+var bozhuNameA = '';
 
 function getImage() {
 
@@ -98,6 +99,16 @@ window.addEventListener('message', function (res) {
                     var json_num = data.user.result.timeline_v2.timeline.instructions.length - 1;
                     // 开始采集
                     await CacheMertial(Data, json_num);
+                }
+
+                // 取视频博主名字
+                try {
+                    let resdata = res.data.data.data;
+                    let len = resdata.user.result.timeline_v2.timeline.instructions.length - 1;
+                    let bozhuName = resdata.user.result.timeline_v2.timeline.instructions[len].entries[0].content.itemContent.tweet_results.result.core.user_results.result.legacy.name;
+                    bozhuNameA = bozhuName;
+                }catch (e) {
+                    console.log(e);
                 }
 
                 handleData(res.data.data.data);
@@ -540,7 +551,8 @@ async function dealHistoryData() {
         Message: 'history',
         type: 'twitter',
         data: '',
-        author: document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0].innerText,
+        author: bozhuNameA ? bozhuNameA : (document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0] ? document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0].innerText : document.querySelector('div.css-175oi2r .r-1habvwh h2')?.innerText),
+        // author: document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0] ? document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0].innerText : document.querySelector('div.css-175oi2r .r-1habvwh h2')?.innerText,
         authorLink: location.href[location.href.length - 1] === '/' ? location.href.slice(0, -1) : location.href
     }).then(r => {
     })
