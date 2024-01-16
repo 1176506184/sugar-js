@@ -126,6 +126,7 @@ async function startCollect() {
       parseInt(route.query.activeId),
       {
         Message: "startCollectHistory",
+        frameId: route.query.activeId,
         Data: {
           max_collect: max_collect.value,
           finishTime: finishTime.value,
@@ -148,7 +149,8 @@ async function stopCollect() {
   chrome.tabs.sendMessage(
       parseInt(route.query.activeId),
       {
-        Message: "stopCollectHistory"
+        Message: "stopCollectHistory",
+        frameId: route.query.activeId
       },
       function (response) {
         if (response?.state !== 200) {
@@ -198,6 +200,7 @@ async function sendBloggerid(id) {
       parseInt(route.query.activeId),
       {
         Message: "sendBloggerid",
+        frameId: route.query.activeId,
         Data: {
           id: id
         }
@@ -260,7 +263,8 @@ async function dealTtHistory(Message) {
           chrome.tabs.sendMessage(
               active_id.value,
               {
-                Message: "history"
+                Message: "history",
+                frameId: route.query.activeId
               },
               function (response) {
                 if (response?.state !== 200) {
@@ -272,7 +276,7 @@ async function dealTtHistory(Message) {
           );
         }
     );
-  } else if(Message.Message == "history" && Message.type == "twitter") {
+  } else if(Message.Message == "history" && Message.type == "twitter" && Message.frameId.toString() === route.query.activeId.toString()) {
     // console.log(Message)
     author.value = Message.author.replace(/\s/g, '');
     authorLink.value = Message.authorLink.replace(/\s/g, '');
@@ -372,7 +376,8 @@ onMounted(async () => {
       chrome.tabs.sendMessage(
           parseInt(route.query.activeId),
           {
-            Message: "history"
+            Message: "history",
+            frameId: route.query.activeId
           },
           function (response) {
             if (response?.state !== 200) {

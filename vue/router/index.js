@@ -18,6 +18,7 @@ import TiktokVideoFrame from "../view/tiktokVideoFrame.vue";
 import TiktokVideoCommunitySchedulingFrame from "../view/tiktokVideoCommunitySchedulingFrame.vue";
 import YoutubeVideoCommunitySchedulingFramePW from "../view/youtubeVideoCommunitySchedulingFramePW.vue";
 import DouyinVideoCommunitySchedulingFrame from "../view/douyinVideoCommunitySchedulingFrame.vue";
+import TwitterImageCommunitySchedulingFram from "../view/twitterImageCommunitySchedulingFrame.vue";
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -163,6 +164,12 @@ const routes = [
         name: 'DouyinVideoCommunitySchedulingFrame',
         path: '/DouyinVideoCommunitySchedulingFrame',
         component: DouyinVideoCommunitySchedulingFrame,
+        props: route => ({ query: route.query.q }),
+        meta: {}
+    }, {
+        name: 'TwitterImageCommunitySchedulingFram',
+        path: '/TwitterImageCommunitySchedulingFram',
+        component: TwitterImageCommunitySchedulingFram,
         props: route => ({ query: route.query.q }),
         meta: {}
     }

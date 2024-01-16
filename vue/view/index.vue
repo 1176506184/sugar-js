@@ -80,6 +80,8 @@
               >小号素材库
               </el-button>
 
+              <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">批量源素材社团排程</el-button>
+
               <el-button type="warning" @click="collectTTHistory">自动采集历史</el-button>
             </div>
           </el-collapse-item>
@@ -998,29 +1000,6 @@ async function collectFBVideo() {
 }
 
 
-// 推特博主采集历史
-async function collectTTHistory() {
-
-  let activeId = await getActiveId();
-  let pageId = await getId("TTCollectHistory");
-
-  // console.log(activeId, pageId)
-
-  if (pageId !== false) {
-    await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
-  } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TTCollectHistory?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
-  }
-}
-
 
 // Ins博主采集历史
 async function collectInsHistory() {
@@ -1118,6 +1097,27 @@ async function collectYoutubeVideoCommunitySchedulingFramePW() {
     })
   }
 }
+
+
+// TwitterImage社团批量排程
+async function collectTwitterImageCommunitySchedulingFrame() {
+  let activeId = await getActiveId();
+  let pageId = await getId("TwitterImageCommunitySchedulingFram");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/TwitterImageCommunitySchedulingFram?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
 
 
 // DouyinVideo社团批量排程
@@ -1292,6 +1292,35 @@ async function getId(hash) {
   })
 }
 
+
+// 推特博主采集历史
+async function collectTTHistory() {
+
+  let activeId = await getActiveId();
+  /* let pageId = await getId("TTCollectHistory");
+
+  // console.log(activeId, pageId)
+
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId)
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/TTCollectHistory?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  } */
+  chrome.tabs.create({
+    url: '/html/out.html#/TTCollectHistory?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
+}
 
 // FB博主采集历史
 async function collectFBHistory() {

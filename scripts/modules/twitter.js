@@ -121,6 +121,10 @@ window.addEventListener('message', function (res) {
     }
 })
 
+let frameId = '';
+// 排程的图文数组
+var photo_urls_PaiCheng = []
+
 var CJtimer = null;
 var timeout = null;
 // 所有变量的声明
@@ -170,6 +174,7 @@ async function CacheMertial(Data, json_num) {
         var article_type = 0;
         // 转推贴
         var ifretweeted = false;
+
 
         try {
             console.log('第' + i);
@@ -279,7 +284,7 @@ async function CacheMertial(Data, json_num) {
             }
 
             try {
-                photo_url = await Picture(Data, i, json_num)//图片
+                photo_url = await Picture(Data, i, json_num); //图片
 
             }
             catch { }
@@ -287,6 +292,8 @@ async function CacheMertial(Data, json_num) {
                 console.log('图片：' + photo_url);
             }
 
+            // 图文排程
+            await PictureToPaicheng(Data, i, json_num, notes, views, likes, comments);
         } catch { }
 
 
@@ -384,10 +391,32 @@ async function Picture(jsonData, x, json_num) {
     for (var i = 0; i < photo_num; i++) {
         photo_url = photo_url + jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media[i].media_url_https + ';';
     }
+
     return photo_url;
 
 }
 
+//////////社团图文排程
+async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, comments) {
+    let TempArr = []
+    let photo_url = '';
+    var photo_num = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media.length;
+    // var photo_url = '';
+
+    var note = notes.split('https://t.co')[0];
+
+    for (var i = 0; i < photo_num; i++) {
+        photo_url = photo_url + jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media[i].media_url_https;
+        TempArr.push({
+            href: photo_url,
+            play: views,
+            likes: likes,
+            comments: comments,
+            title: note
+        })
+    }
+    photo_urls_PaiCheng = photo_urls_PaiCheng.concat(TempArr)
+}
 
 //////POST把抓包内容打包成数组，调用回传
 async function Post(blogger_id_send, note, article_type, article_url, source_urls, post_url, looks, likes, retweets, comments, move_total, post_time) {
@@ -499,6 +528,23 @@ async function UpdateFrameState(time, type) {
     })
 }
 
+
+// 社团源素材排程
+function getTwitterImageUrl() {
+    let data = []
+    // 排程数据
+    data = photo_urls_PaiCheng
+
+    let author = bozhuNameA ? bozhuNameA : (document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0] ? document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0].innerText : document.querySelector('div.css-175oi2r .r-1habvwh h2')?.innerText)
+
+    chrome.runtime.sendMessage({
+        Message: 'communityImage',
+        data: data,
+        author: author
+    }).then()
+
+}
+
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'image') {
         getImage();
@@ -519,7 +565,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         });
     } else if (Message.Message === 'history') {
         sendResponse({ state: 200 });
-        dealHistoryData().then();
+        dealHistoryData(Message).then();
         // 刷新计数清零
         max_collect_count = 0;
         finishTime_count = 0;
@@ -542,14 +588,29 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         /* if (timeout) {
             clearInterval(timeout);
         } */
+    } else if (Message.Message === 'community_image') {
+        // 社团图文排程
+        getTwitterImageUrl();
+        sendResponse({
+            state: 200
+        });
     }
 })
 
 // 推特采历史
-async function dealHistoryData() {
+async function dealHistoryData(data) {
+
+
+    if (frameId === "") {
+        frameId = data.frameId;
+    } else {
+        return
+    }
+
     chrome.runtime.sendMessage({
         Message: 'history',
         type: 'twitter',
+        frameId: frameId,
         data: '',
         author: bozhuNameA ? bozhuNameA : (document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0] ? document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0].innerText : document.querySelector('div.css-175oi2r .r-1habvwh h2')?.innerText),
         // author: document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0] ? document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0].innerText : document.querySelector('div.css-175oi2r .r-1habvwh h2')?.innerText,
