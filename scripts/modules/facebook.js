@@ -562,6 +562,7 @@ let noticed = false;
 let div = document.createElement('div');
 div.style = 'border:1px solid #cdcdcd;position:fixed;top:10px;left:10px;background:#fff;z-index:99999999999;border-radius:5px;display:flex;justify-content:center;align-items:center;padding:10px'
 let isInBody = false;
+let frameId = '';
 
 setInterval(() => {
 
@@ -587,6 +588,10 @@ setInterval(() => {
 
 function startCollectHistory(data) {
 
+    if (frameId !== data.frameId && frameId !== "") {
+        return
+    }
+
     if (!isInBody) {
         isInBody = true;
         document.body.appendChild(div);
@@ -599,7 +604,10 @@ function startCollectHistory(data) {
     collectHistory().then();
 }
 
-function pauseCollectHistory() {
+function pauseCollectHistory(data) {
+    if (frameId !== data.frameId && frameId !== "") {
+        return
+    }
     state = 0;
 }
 
@@ -627,32 +635,32 @@ async function collectHistory() {
                 tag = needCollect.querySelector('div' + ".x1yx25j4 x13crsa5 x6x52a7 x1rxj1xn xxpdul3".replaceAll(' ', '.'))?.textContent;
             }
 
-            if (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText && (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText?.length > tag?.length  || !tag)) {
+            if (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText && (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText?.length > tag?.length || !tag)) {
                 tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText;
                 tagType = 1;
             }
 
-            if (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText && (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent?.length > tag?.length  || !tag)) {
+            if (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.innerText && (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent?.length > tag?.length || !tag)) {
                 tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent;
                 tagType = 1;
             }
 
-            if (needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.textContent && (needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.textContent.length > tag?.length  || !tag)) {
+            if (needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.textContent && (needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.textContent.length > tag?.length || !tag)) {
                 tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.textContent;
                 tagType = 2;
             }
 
-            if (needCollect.querySelector('div' + ".x1iorvi4 x1pi30zi x1l90r2v x1swvt13".replaceAll(' ', '.'))?.textContent && (needCollect.querySelector('div' + ".x1iorvi4 x1pi30zi x1l90r2v x1swvt13".replaceAll(' ', '.'))?.textContent > tag?.length  || !tag)) {
+            if (needCollect.querySelector('div' + ".x1iorvi4 x1pi30zi x1l90r2v x1swvt13".replaceAll(' ', '.'))?.textContent && (needCollect.querySelector('div' + ".x1iorvi4 x1pi30zi x1l90r2v x1swvt13".replaceAll(' ', '.'))?.textContent > tag?.length || !tag)) {
                 tag = needCollect.querySelector('div' + ".x1iorvi4 x1pi30zi x1l90r2v x1swvt13".replaceAll(' ', '.'))?.textContent;
                 tagType = 2;
             }
 
-            if (needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm x17z8epw".replaceAll(' ', '.'))?.textContent && (needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm x17z8epw".replaceAll(' ', '.'))?.textContent.length > tag?.length  || !tag)) {
+            if (needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm x17z8epw".replaceAll(' ', '.'))?.textContent && (needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm x17z8epw".replaceAll(' ', '.'))?.textContent.length > tag?.length || !tag)) {
                 tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm x17z8epw".replaceAll(' ', '.'))?.textContent;
                 tagType = 3;
             }
 
-            if (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent && (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent.length > tag?.length  || !tag)) {
+            if (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent && (needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent.length > tag?.length || !tag)) {
                 tag = needCollect.querySelector('div' + ".xdj266r x11i5rnm xat24cr x1mh8g0r x1vvkbs".replaceAll(' ', '.'))?.textContent;
                 tagType = 3;
             }
@@ -865,6 +873,7 @@ async function collectHistory() {
                     div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
                     chrome.runtime.sendMessage({
                         Message: 'history_data',
+                        frameId: frameId,
                         type: 'facebook',
                         data: data
                     }).then(r => {
@@ -907,8 +916,17 @@ async function collectHistory() {
 
 // FB采历史
 async function dealHistoryData(data) {
+
+
+    if (frameId === "") {
+        frameId = data.frameId;
+    } else {
+        return
+    }
+
     chrome.runtime.sendMessage({
         Message: 'history',
+        frameId: frameId,
         type: 'facebook',
         data: '',
         author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,

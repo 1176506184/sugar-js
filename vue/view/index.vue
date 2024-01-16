@@ -63,8 +63,10 @@
               >视频采集
               </el-button
               >
-              
-              <el-button @click="collectDouyinVideoCommunitySchedulingFrame" type="primary" :disabled="type !== 'douyin'">批量源素材社团排程</el-button>
+
+              <el-button @click="collectDouyinVideoCommunitySchedulingFrame" type="primary"
+                         :disabled="type !== 'douyin'">批量源素材社团排程
+              </el-button>
 
             </div>
           </el-collapse-item>
@@ -147,7 +149,7 @@
               <el-button type="warning" @click="collectFBHistory">自动采集历史</el-button>
             </div>
           </el-collapse-item>
-          
+
           <el-collapse-item title="Youtube博主" name="6">
             <div>
               <!--              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>-->
@@ -188,7 +190,7 @@
             </div>
           </el-collapse-item>
 
-          
+
           <!--        <p>脸书社团</p>-->
           <!--        <div>-->
           <!--          <el-button @click="facebook_member" type="primary" :disabled="type!=='facebook'">手动采集</el-button>-->
@@ -995,28 +997,6 @@ async function collectFBVideo() {
   }
 }
 
-// FB博主采集历史
-async function collectFBHistory() {
-
-  let activeId = await getActiveId();
-  let pageId = await getId("FBCollectHistory");
-
-  // console.log(activeId, pageId)
-
-  if (pageId !== false) {
-    await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
-  } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/FBCollectHistory?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
-  }
-}
 
 // 推特博主采集历史
 async function collectTTHistory() {
@@ -1309,6 +1289,18 @@ async function getId(hash) {
       })
       r(false)
     })
+  })
+}
+
+
+// FB博主采集历史
+async function collectFBHistory() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/FBCollectHistory?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
   })
 }
 
