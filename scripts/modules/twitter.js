@@ -574,11 +574,11 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         console.log(Message.Data.id);
         blogger_id_send = Message?.Data?.id;
 
-    } else if (Message.Message === 'startCollectHistory') {
+    } else if (Message.Message === 'startCollectHistory' && frameId == Message.frameId) {
         sendResponse({ state: 200 });
         startCollectHistoryData(Message.Data).then();
 
-    } else if (Message.Message === 'stopCollectHistory') {
+    } else if (Message.Message === 'stopCollectHistory' && frameId == Message.frameId) {
         sendResponse({ state: 200 });
         // 关闭采集
         CollectFlag = false;
