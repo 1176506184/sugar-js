@@ -53,6 +53,8 @@
           <div style="font-size: 16px">
             <span>当前采集状态</span>：<span>{{ status === 0 ? '停止采集' : '采集中' }}</span><span
               style="margin-left: 20px">已采集帖子：{{ collectNum }}</span>
+            <span
+                style="margin-left: 20px">重复帖子数：{{ failNum }}</span>
             <!--            <span style="margin-left: 20px">距离上次获取贴文已经过：{{ waitNextTimeNum }}秒</span>-->
           </div>
           <div style="font-size: 12px;color:orangered;margin-top: 3px">
@@ -92,6 +94,7 @@ const status = ref(0)
 const collectNum = ref(0)
 const successPostNum = ref(0)
 const waitNextTimeNum = ref(0)
+const failNum = ref(0);
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -202,18 +205,20 @@ async function dealFbHistory(Message) {
     console.log(Message.data)
     if (collectNum.value < max_collect.value) {
       try {
-        let {state} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', [{
+        let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', [{
           blogger_id: blogger_id.value,
           ...Message.data
         }]);
-        if (state) {
-          successPostNum.value += 1;
+        if (state && count > 0) {
+          successPostNum.value += count;
+          collectNum.value += 1;
+        } else {
+          failNum.value += recount;
         }
       } catch (e) {
 
       }
 
-      collectNum.value += 1;
       if (collectNum.value >= max_collect.value) {
         UpdatedBlogger(Message.data.publish_time).then();
         pauseCollect().then();
