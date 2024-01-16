@@ -323,7 +323,7 @@ async function dealTtHistory(Message) {
       successPostNum.value += 1;
     } */
 
-  }else if(Message.Message == "endToAlert" && Message.type == "twitter") {
+  }else if(Message.Message == "endToAlert" && Message.type == "twitter" && Message.FrameId.toString() === route.query.activeId.toString()) {
 
     // 改变按钮状态
     status.value = 0;

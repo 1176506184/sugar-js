@@ -523,7 +523,8 @@ async function UpdateFrameState(time, type) {
         Message: 'endToAlert',
         AlertType: type,
         type: 'twitter',
-        Data: time
+        Data: time,
+        FrameId: frameId
     }).then(r => {
     })
 }
