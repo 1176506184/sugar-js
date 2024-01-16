@@ -598,10 +598,13 @@ function startCollectHistory(data) {
         div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
     }
 
-    state = 1;
-    finishTime = data.finishTime * 60
-    max_collect = data.max_collect
-    collectHistory().then();
+
+    if (state === 0) {
+        state = 1;
+        finishTime = data.finishTime * 60
+        max_collect = data.max_collect
+        collectHistory().then();
+    }
 }
 
 function pauseCollectHistory(data) {
