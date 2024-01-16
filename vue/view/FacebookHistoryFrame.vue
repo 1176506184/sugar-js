@@ -202,11 +202,11 @@ async function dealFbHistory(Message) {
     console.log(Message.data)
     if (collectNum.value < max_collect.value) {
       try {
-        let {state} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', [{
+        let {state, count} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', [{
           blogger_id: blogger_id.value,
           ...Message.data
         }]);
-        if (state) {
+        if (state && count > 0) {
           successPostNum.value += 1;
         }
       } catch (e) {
