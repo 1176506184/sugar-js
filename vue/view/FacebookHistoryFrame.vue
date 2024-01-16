@@ -219,7 +219,6 @@ async function dealFbHistory(Message) {
 
       }
 
-
       if (collectNum.value >= max_collect.value) {
         UpdatedBlogger(Message.data.publish_time).then();
         pauseCollect().then();
