@@ -56,21 +56,26 @@ window.addEventListener('message', function (res) {
                         })
                     }
 
-                    if (key === 'tweet_results') {
-                        if (data[key]['result']['legacy'].entities?.media) {
-                            imgData.unshift(data[key]['result']['legacy']);
-                        }
-                    } else if (key === 'legacy') {
-                        if (data[key]?.name && data[key]?.friends_count) {
-                            user = data[key];
-                        }
-                    } else {
+                    try {
+                        if (key === 'tweet_results') {
+                            if (data[key]['result']['legacy'].entities?.media) {
+                                imgData.unshift(data[key]['result']['legacy']);
+                            }
+                        } else if (key === 'legacy') {
+                            if (data[key]?.name && data[key]?.friends_count) {
+                                user = data[key];
+                            }
+                        } else {
 
-                        if (data[key] !== null && data[key] !== undefined) {
-                            swiftData(data[key]);
+                            if (data[key] !== null && data[key] !== undefined) {
+                                swiftData(data[key]);
+                            }
+
                         }
+                    }catch(e) {
 
                     }
+                    
 
                 }
             })
@@ -85,9 +90,14 @@ window.addEventListener('message', function (res) {
             }
         }
 
-        if (typeof res.data.data === 'object') {
-            swiftData(res.data.data);
+        try {
+            if (typeof res.data.data === 'object') {
+                swiftData(res.data.data);
+            }
+        }catch(e) {
+
         }
+        
 
         // 采集历史数据
         if (typeof res.data.data === 'object' && res.data.url && (res.data.url.indexOf("/UserTweets?") !== -1)) {
@@ -157,6 +167,7 @@ async function CacheMertial(Data, json_num) {
 
     var num = Data.user.result.timeline_v2.timeline.instructions[json_num].entries.length;
     console.log('帖子数' + num);
+
     
     for (var i = 0; i < num; i++) {
         var notes = "";
@@ -175,12 +186,24 @@ async function CacheMertial(Data, json_num) {
         // 转推贴
         var ifretweeted = false;
 
+        if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].entryId.indexOf('tweet-') == -1) {
+            continue;
+        }
+
+        let resultOrtweet = null;
+        
+        // 判断报文两种结构
+        if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.tweet) {
+            resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.tweet
+        } else {
+            resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result
+        }
 
         try {
             console.log('第' + i);
             //过滤掉可能出现的广告帖子
             try {
-                if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.core.user_results.result.legacy.name != blogger_name) {
+                if (resultOrtweet.core.user_results.result.legacy.name != blogger_name) {
                     continue;
                 }
 
@@ -189,7 +212,7 @@ async function CacheMertial(Data, json_num) {
 
             try {//转推帖过滤
                 //data.user.result.timeline_v2.timeline.instructions[1].entries[0].content.itemContent.tweet_results.result.legacy.retweeted_status_result.result
-                if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.retweeted_status_result.result != '') {
+                if (resultOrtweet.legacy.retweeted_status_result.result != '') {
                     ifretweeted = true;
                     continue;
                 } else {
@@ -201,17 +224,20 @@ async function CacheMertial(Data, json_num) {
 
 
             if (notes == '') {
-                notes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.full_text;
+                notes = resultOrtweet.legacy.full_text;
             }
 
 
             if (notes.indexOf('http') != -1 || notes.indexOf('https') != -1) {
                 try {
-                    if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.entities.urls[0].expanded_url != '') {
-                        article_url = article_url + Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.entities.urls[0].expanded_url + ';';
+                    
+                    if (resultOrtweet.legacy.entities.urls[0].expanded_url != '') {
+                        article_url = article_url + resultOrtweet.legacy.entities.urls[0].expanded_url + ';';
                     } else {
                         article_url = '';
                     }
+                    
+                    
 
                 } catch {
                     article_url = '';
@@ -236,41 +262,41 @@ async function CacheMertial(Data, json_num) {
 
             // full_text的文本超长时会转存到其他节点，获取长文本
             try {
-                if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.note_tweet != '') {
-                    notes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.note_tweet.note_tweet_results.result.text;
+                if (resultOrtweet.note_tweet != '') {
+                    notes = resultOrtweet.note_tweet.note_tweet_results.result.text;
                     console.log(notes);
                 }
             } catch {
 
             }
             if (notes == '') {
-                notes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.full_text;
+                notes = resultOrtweet.legacy.full_text;
             }
 
 
-            likes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.favorite_count;
+            likes = resultOrtweet.legacy.favorite_count;
             console.log('点赞：' + likes);
 
-            retweets = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.quote_count;
-            quotes = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.retweet_count;
+            retweets = resultOrtweet.legacy.quote_count;
+            quotes = resultOrtweet.legacy.retweet_count;
             shares = retweets + quotes;
             console.log('分享：' + shares);
 
-            comments = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.reply_count;
+            comments = resultOrtweet.legacy.reply_count;
             console.log('回复：' + comments);
             move_total = likes + shares + comments;
 
-            if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.views.count != '') {
-               views = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.views.count;
+            if (resultOrtweet.views.count != '') {
+                views = resultOrtweet.views.count;
             } else {
                views = 0;
             }
             console.log('观看：' + views);
 
-            post_url = location.href + '/status/' + Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.rest_id;
+            post_url = location.href + '/status/' + resultOrtweet.rest_id;
             console.log('帖子链接：' + post_url);
 
-            post_time = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.created_at;
+            post_time = resultOrtweet.legacy.created_at;
             var posttime = new Date(post_time);
             post_time = posttime.toISOString();
             console.log('发送时间：' + post_time);
@@ -346,16 +372,24 @@ async function CacheMertial(Data, json_num) {
 
 //////////找视频
 async function Video(jsonData, x, json_num) {
+    let resultOrtweet = null;
+    // 判断报文两种结构
+    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
+        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+    } else {
+        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+    }
 
-    var videoInfo = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media[0].video_info.variants[2].url;
-    video_num = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media.length;
+
+    var videoInfo = resultOrtweet.legacy.extended_entities.media[0].video_info.variants[2].url;
+    video_num = resultOrtweet.legacy.extended_entities.media.length;
     for (var j = 0; j < video_num; j++) {
-        var videoInfo = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media[j].video_info.variants[2].url;
+        var videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[2].url;
         if (videoInfo.includes('m3u8')) {
-            videoInfo = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media[j].video_info.variants[1].url;
+            videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[1].url;
             // 打印视频信息
             if (videoInfo.includes('m3u8')) {
-                videoInfo = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.extended_entities.media[j].video_info.variants[0].url;
+                videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[0].url;
                 // 打印视频信息
                 if (videoInfo.indexOf('m3u8') == 0) {
                     console.log(videoInfo);
@@ -385,11 +419,19 @@ async function Video(jsonData, x, json_num) {
 
 ///////////找图片
 async function Picture(jsonData, x, json_num) {
+    let resultOrtweet = null;
+    // 判断报文两种结构
+    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
+        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+    } else {
+        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+    }
+
     let photo_url = '';
-    var photo_num = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media.length;
+    var photo_num = resultOrtweet.legacy.entities.media.length;
     //var photo_url = '';
     for (var i = 0; i < photo_num; i++) {
-        photo_url = photo_url + jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media[i].media_url_https + ';';
+        photo_url = photo_url + resultOrtweet.legacy.entities.media[i].media_url_https + ';';
     }
 
     return photo_url;
@@ -398,15 +440,23 @@ async function Picture(jsonData, x, json_num) {
 
 //////////社团图文排程
 async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, comments) {
+    let resultOrtweet = null;
+    // 判断报文两种结构
+    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
+        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+    } else {
+        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+    }
+
     let TempObj = {}
     let photo_url = '';
-    var photo_num = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media.length;
+    var photo_num = resultOrtweet.legacy.entities.media.length;
     // var photo_url = '';
 
     var note = notes.split('https://t.co')[0];
 
     for (var i = 0; i < photo_num; i++) {
-        photo_url = photo_url + jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media[i].media_url_https;
+        photo_url = photo_url + resultOrtweet.legacy.entities.media[i].media_url_https;
         if (i !== (photo_num - 1)) {
             photo_url = photo_url + ',';
         }
