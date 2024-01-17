@@ -406,7 +406,10 @@ async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, com
     var note = notes.split('https://t.co')[0];
 
     for (var i = 0; i < photo_num; i++) {
-        photo_url = photo_url + jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media[i].media_url_https + ',';
+        photo_url = photo_url + jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media[i].media_url_https;
+        if (i !== (photo_num - 1)) {
+            photo_url = photo_url + ',';
+        }
     }
 
     TempObj = {
@@ -416,7 +419,7 @@ async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, com
         comments: comments,
         title: note
     }
-    
+
     photo_urls_PaiCheng.push(TempObj)
 }
 
