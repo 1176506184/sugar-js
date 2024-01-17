@@ -160,7 +160,7 @@
                   </div>
                 </el-col> -->
 
-                <el-col :span="4">
+                <el-col :span="3">
                   <div style="flex-v">
                     <div class="form_title">发帖身份</div>
                     <div>
@@ -176,7 +176,7 @@
                   </div>
                 </el-col>
 
-                <el-col :span="4">
+                <el-col :span="3">
                   <div style="flex-v">
                     <div class="form_title">社团角色</div>
                     <div>
@@ -195,11 +195,27 @@
                   </div>
                 </el-col>
 
-                <el-col :span="4">
+                <el-col :span="3">
                   <div style="flex-v">
                     <div class="form_title">是否置顶</div>
                     <div>
                       <el-select placeholder="是否置顶" v-model="state.IsTop">
+                        <el-option label="否" :value="0">
+                          否
+                        </el-option>
+                        <el-option label="是" :value="1">
+                          是
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </el-col>
+
+                <el-col :span="3">
+                  <div style="flex-v">
+                    <div class="form_title">是否繁简转换</div>
+                    <div>
+                      <el-select placeholder="是否繁简转换" v-model="state.IsTranslate">
                         <el-option label="否" :value="0">
                           否
                         </el-option>
@@ -285,7 +301,8 @@ const state = ref({
   JoinRole: 0,
   CommunityRole: 3,
   IsTop: 0,
-  SourceType: 2
+  SourceType: 2,
+  IsTranslate: 0
 })
 
 const langHover = ref(false)
@@ -640,6 +657,8 @@ async function Save() {
     JoinRole: state.value.JoinRole,
     CommunityRole: state.value.CommunityRole,
     IsTop: state.value.IsTop,
+    // 繁简转换
+    IsTranslate: state.value.IsTranslate,
     Communityid: CommunityState.Communityid,
     Communityuserid: CommunityState.Communityuserid,
     DishoutName: CommunityState.DishoutName,
