@@ -309,7 +309,7 @@ async function dealTtHistory(Message) {
       await sendBloggerid(resData.id);
     }
 
-  }else if(Message.Message == "sendData" && Message.type == "twitter") {
+  }else if(Message.Message == "sendData" && Message.type == "twitter" && Message.FrameId.toString() === route.query.activeId.toString()) {
 
     // console.log(Message);
 

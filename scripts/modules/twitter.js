@@ -398,7 +398,7 @@ async function Picture(jsonData, x, json_num) {
 
 //////////社团图文排程
 async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, comments) {
-    let TempArr = []
+    let TempObj = {}
     let photo_url = '';
     var photo_num = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media.length;
     // var photo_url = '';
@@ -406,16 +406,18 @@ async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, com
     var note = notes.split('https://t.co')[0];
 
     for (var i = 0; i < photo_num; i++) {
-        photo_url = photo_url + jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media[i].media_url_https;
-        TempArr.push({
-            href: photo_url,
-            play: views,
-            likes: likes,
-            comments: comments,
-            title: note
-        })
+        photo_url = photo_url + jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.legacy.entities.media[i].media_url_https + ',';
     }
-    photo_urls_PaiCheng = photo_urls_PaiCheng.concat(TempArr)
+
+    TempObj = {
+        href: photo_url,
+        play: views,
+        likes: likes,
+        comments: comments,
+        title: note
+    }
+    
+    photo_urls_PaiCheng.push(TempObj)
 }
 
 //////POST把抓包内容打包成数组，调用回传
@@ -480,7 +482,8 @@ async function taskCallBackData() {
                         chrome.runtime.sendMessage({
                             Message: 'sendData',
                             type: 'twitter',
-                            Data: PostDataArray[i]
+                            Data: PostDataArray[i],
+                            FrameId: frameId
                         }).then(r => {
                         })
 
