@@ -104,7 +104,7 @@ window.addEventListener('message', function (res) {
             
             try {
                 async function handleData(data) {
-                    console.log(data);
+                    // console.log(data);
                     let Data = data;
                     var json_num = data.user.result.timeline_v2.timeline.instructions.length - 1;
                     // 开始采集
@@ -646,8 +646,11 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             clearInterval(timeout);
         } */
     } else if (Message.Message === 'community_image') {
+        console.log('推特排程');
+
         // 社团图文排程
         getTwitterImageUrl();
+        
         sendResponse({
             state: 200
         });
