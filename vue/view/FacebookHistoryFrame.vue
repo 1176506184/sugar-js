@@ -237,6 +237,7 @@ async function dealFbHistory(Message) {
         if (state && count > 0) {
           successPostNum.value += count;
           collectNum.value += count;
+          failNum.value += recount;
         } else {
           failNum.value += recount;
         }
