@@ -526,6 +526,7 @@ async function taskCallBackData() {
                 console.log('采集已开始');
 
                 let post_num = Math.min(PostDataArray.length, max_collect_send_copy);
+                // let post_num = PostDataArray.length
                 if (post_num !== 0) {
                     for (let i = 0; i < post_num; i++) {
                         PostDataArray[i].blogger_id = blogger_id_send;
