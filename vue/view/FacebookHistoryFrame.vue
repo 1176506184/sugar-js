@@ -179,6 +179,8 @@ async function createBlogger() {
   }
 }
 
+let cacheList = [];
+
 async function dealFbHistory(Message) {
   if (Message.Message === 'history' && Message.frameId.toString() === route.query.activeId.toString()) {
     author.value = Message.author.replace(/\s/g, '');
@@ -204,24 +206,42 @@ async function dealFbHistory(Message) {
   } else if (Message.Message === 'history_data' && Message.frameId.toString() === route.query.activeId.toString()) {
     console.log(Message.data)
     if (collectNum.value < max_collect.value) {
-      try {
-        let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', [{
-          blogger_id: blogger_id.value,
-          ...Message.data
-        }]);
-        if (state && count > 0) {
-          successPostNum.value += count;
-          collectNum.value += 1;
-        } else {
-          failNum.value += recount;
-        }
-      } catch (e) {
+      cacheList.push({
+        blogger_id: blogger_id.value,
+        ...Message.data
+      })
 
+      if (cacheList.length >= 5) {
+        try {
+          let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
+          cacheList = [];
+          if (state && count > 0) {
+            successPostNum.value += count;
+            collectNum.value += count;
+          } else {
+            failNum.value += recount;
+          }
+        } catch (e) {
+
+        }
       }
 
       if (collectNum.value >= max_collect.value) {
         UpdatedBlogger(Message.data.publish_time).then();
         pauseCollect().then();
+      }
+    } else {
+      try {
+        let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
+        cacheList = [];
+        if (state && count > 0) {
+          successPostNum.value += count;
+          collectNum.value += count;
+        } else {
+          failNum.value += recount;
+        }
+      } catch (e) {
+
       }
     }
   } else if (Message.Message === 'error') {
