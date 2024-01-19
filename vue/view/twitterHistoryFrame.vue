@@ -314,11 +314,11 @@ async function dealTtHistory(Message) {
     // console.log(Message);
 
     let postArray = [];
-    postArray.push(Message.Data);
+    postArray = Message.Data;
 
     // 存数据接口
     let res = hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
-    collectNum.value += 1;
+    collectNum.value += postArray.length;
     /* if(res.state == true) {
       successPostNum.value += 1;
     } */
