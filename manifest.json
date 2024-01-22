@@ -43,17 +43,31 @@
     }
   ],
   "permissions": [
+    "cookies",
     "contextMenus",
     "webRequest",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "declarativeNetRequestFeedback",
     "tabs",
     "notifications",
     "storage",
     "scripting"
   ],
   "host_permissions": [
+    "<all_urls>",
     "http://*/*",
     "https://*/*"
   ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "/json/rules.json"
+      }
+    ]
+  },
   "externally_connectable": {
     "matches": [
       "*://*/*"

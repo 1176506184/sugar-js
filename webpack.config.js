@@ -61,6 +61,9 @@ module.exports = {
                 from: path.join(__dirname, 'scripts'),
                 to: path.join(__dirname, distDir + '/scripts')
             }, {
+                from: path.join(__dirname, 'json'),
+                to: path.join(__dirname, distDir + '/json')
+            },{
                 from: path.join(__dirname, 'utils'),
                 to: path.join(__dirname, distDir + '/utils')
             }, {

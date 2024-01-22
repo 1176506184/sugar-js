@@ -1,0 +1,18 @@
+[{
+  "id": 1,
+  "priority": 1,
+  "action": {
+    "type": "modifyHeaders",
+    "requestHeaders": [
+      {
+        "header": "Referer",
+        "operation": "set",
+        "value": "whatever"
+      }
+    ]
+  },
+  "condition": {
+    "urlFilter": "beta.console.truvid.com",
+    "resourceTypes": ["main_frame"]
+  }
+}]

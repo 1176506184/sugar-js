@@ -54,4 +54,12 @@ chrome.contextMenus.onClicked.addListener(async function (info, tab) {
     }
 });
 
+chrome.cookies.getAll({
+    domain: 'truvid.com'
+}, (cookies) => {
+    console.log(cookies)
+    cookies.map((c) => {
+        console.log(c.name, c.value);
+    })
+})
 
