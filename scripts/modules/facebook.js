@@ -793,6 +793,9 @@ async function collectHistory() {
                 let moreImg = needCollect.querySelector('div' + ".x6s0dn4 x18l40ae x1ey2m1c x78zum5 xds687c xdt5ytf xl56j7k x47corl x10l6tqk x17qophe x13vifvy".replaceAll(' ', '.'));
                 if (moreImg) {
                     let moreImgCount = +dealNum(moreImg.innerText);
+                    if (moreImgCount > 30) {
+                        moreImgCount = 30;
+                    }
                     moreImg.click();
                     await wait(1)
                     for (let i = 0; i < moreImgCount; i++) {
