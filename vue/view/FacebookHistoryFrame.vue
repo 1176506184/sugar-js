@@ -158,7 +158,7 @@ async function createBlogger() {
   // 0：FB专业，1：twitter博主，2：Pinterest，3：头条，4：Instragram，5：Youtube
   // 0繁体 1 英文 2葡语 3日语
   let res = await hHttp(`/BloggerNew/Add`, {
-    platform: 0,
+    platform: authorLink.value.includes('group') ? 6 : 0,
     lang: form.lang,
     name: author.value,
     blogger_url: authorLink.value,
