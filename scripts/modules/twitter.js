@@ -526,32 +526,32 @@ async function taskCallBackData() {
                 console.log('采集已开始');
 
                 let post_num = Math.min(PostDataArray.length, max_collect_send_copy);
-                if (post_num > 0) {
+                // let post_num = PostDataArray.length
+                if (post_num !== 0) {
                     for (let i = 0; i < post_num; i++) {
                         PostDataArray[i].blogger_id = blogger_id_send;
-
-                        console.log("采集数据回传--->", PostDataArray[i]);
-
-                        chrome.runtime.sendMessage({
-                            Message: 'sendData',
-                            type: 'twitter',
-                            Data: PostDataArray[i],
-                            FrameId: frameId
-                        }).then(r => {
-                        })
-
-                        // 采集条数计数
-                        max_collect_count += 1;
-                        // 发送条数倒着计数
-                        max_collect_send_copy -= 1;
-                        // 下拉无数据计时
-                        finishTime_count = 0;
                         /* if (timeout) {
                             clearInterval(timeout);
                         } */
                     }
-                    // 传完清空
-                    PostDataArray = [];
+
+                    console.log("采集数据回传--->", PostDataArray);
+
+                    chrome.runtime.sendMessage({
+                        Message: 'sendData',
+                        type: 'twitter',
+                        Data: PostDataArray,
+                        FrameId: frameId
+                    }).then(r => {
+                        // 采集条数计数
+                        max_collect_count += PostDataArray.length;
+                        // 发送条数倒着计数
+                        max_collect_send_copy -= PostDataArray.length;
+                        // 下拉无数据计时
+                        finishTime_count = 0;
+                        // 传完清空
+                        PostDataArray = [];
+                    })
                 }
             } else {
                 console.log('采集当前停止');

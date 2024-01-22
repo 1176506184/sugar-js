@@ -227,13 +227,13 @@ async function UpdatedBlogger(time, type) {
       '博主名称：' + author.value + '\n' +
       '博主平台：推特' + '\n' +
       '博主采集数量：' + max_collect.value + '\n' +
-      '入库成功数量：' + collectNum.value
+      '入库成功数量：' + max_collect.value
   }
   if(type == 'stop') {
     postString = '博主历史采集超过'+ finishTime.value +'分钟未采集' +'，请及时进入后台查看' + '\n' +
       '博主名称：' + author.value + '\n' +
       '博主平台：推特' + '\n' +
-      '博主采集数量：' + max_collect.value + '\n' +
+      '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + collectNum.value
   }
   
@@ -314,11 +314,11 @@ async function dealTtHistory(Message) {
     // console.log(Message);
 
     let postArray = [];
-    postArray.push(Message.Data);
+    postArray = Message.Data;
 
     // 存数据接口
     let res = hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
-    collectNum.value += 1;
+    collectNum.value += postArray.length;
     /* if(res.state == true) {
       successPostNum.value += 1;
     } */
