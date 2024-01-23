@@ -54,12 +54,42 @@ chrome.contextMenus.onClicked.addListener(async function (info, tab) {
     }
 });
 
-chrome.cookies.getAll({
-    domain: 'truvid.com'
-}, (cookies) => {
-    console.log(cookies)
-    cookies.map((c) => {
-        console.log(c.name, c.value);
-    })
-})
 
+function refreshSession() {
+    function task() {
+        chrome.tabs.query({}).then(tabs => {
+            tabs.forEach((tab) => {
+                if (tab.url.includes("refresh_ci_session=1")) {
+                    chrome.tabs.reload(tab.id).then(() => {
+
+                    });
+                }
+            })
+        })
+
+        chrome.cookies.getAll({
+            domain: 'truvid.com'
+        }, (cookies) => {
+            cookies.map((c) => {
+                if (c.name === 'ci_session') {
+                    console.log(c.value);
+                    fetch("http://captureapi.anyelse.com/SysConfig/update?key=truvid_cookie_from_plug&value=" + c.value + "&remarks=插件自动获取", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then((res) => {
+
+                    })
+                }
+            })
+        })
+    }
+
+    setInterval(() => {
+        task();
+    }, 1000 * 60 * 10)
+    task();
+}
+
+refreshSession();
