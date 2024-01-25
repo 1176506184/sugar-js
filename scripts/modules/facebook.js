@@ -564,6 +564,7 @@ let div = document.createElement('div');
 div.style = 'border:1px solid #cdcdcd;position:fixed;top:10px;left:10px;background:#fff;z-index:99999999999;border-radius:5px;display:flex;justify-content:center;align-items:center;padding:10px'
 let isInBody = false;
 let frameId = '';
+let openImage = true;
 
 setInterval(() => {
 
@@ -602,6 +603,7 @@ function startCollectHistory(data) {
 
     if (state === 0) {
         state = 1;
+        openImage = data.openImage;
         finishTime = data.finishTime * 60
         max_collect = data.max_collect
         collectHistory().then();
@@ -792,7 +794,7 @@ async function collectHistory() {
 
                 //隐藏起来的多余的图片
                 let moreImg = needCollect.querySelector('div' + ".x6s0dn4 x18l40ae x1ey2m1c x78zum5 xds687c xdt5ytf xl56j7k x47corl x10l6tqk x17qophe x13vifvy".replaceAll(' ', '.'));
-                if (moreImg) {
+                if (moreImg && openImage) {
                     let moreImgCount = +dealNum(moreImg.innerText);
                     if (moreImgCount > 30) {
                         moreImgCount = 30;
@@ -1029,6 +1031,14 @@ async function getFeedUrlInLink(needCollect) {
     return arturl
 }
 
+setInterval(() => {
+    try {
+        document.querySelector('[style="position: absolute; top: -10000px;"]').style.display = 'none'
+    } catch (e) {
+
+    }
+}, 60000)
+
 async function getVideoUrl(needCollect) {
     let url = ''
     let title = ''
@@ -1043,6 +1053,11 @@ async function getVideoUrl(needCollect) {
             //采集机器采集会丢视频链接
             url = elem.href.split('/videos/')[0] + '/videos/' + elem.href.split('/videos/')[1].split('/')[0];
         }
+
+        if (elem.href.indexOf('reel') > -1) {
+            url = elem.href.split('/?s=')[0];
+        }
+
         // let closeBtn = document.querySelector('div' + ".x1i10hfl x6umtig x1b1mbwd xaqea5y xav7gou x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x16tdsg8 x1hl2dhg xggy1nq x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x14yjl9h xudhj91 x18nykt9 xww2gxu x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x78zum5 xl56j7k xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 x1vqgdyp x100vrsf x18l40ae x14ctfv".replaceAll(' ', '.')).querySelector('i')
         // await waitCondition(() => {
         //     return closeBtn;
@@ -1058,6 +1073,12 @@ async function getVideoUrl(needCollect) {
         // if (document.querySelector('[data-pagelet="TahoeRightRail"] [class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xtoi2st x3x7a5m x1603h9y x1u7k74 x1xlr1w8 xzsf02u x1yc453h"]')) {
         //     title = document.querySelector('[data-pagelet="TahoeRightRail"] [class="x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xtoi2st x3x7a5m x1603h9y x1u7k74 x1xlr1w8 xzsf02u x1yc453h"]').textContent
         // }
+
+        if (elem.href.indexOf('/videos/') > -1) {
+            //采集机器采集会丢视频链接
+            url = elem.href.split('/videos/')[0] + '/videos/' + elem.href.split('/videos/')[1].split('/')[0];
+        }
+
         if (elem.href.indexOf('reel') > -1) {
             url = elem.href.split('/?s=')[0];
         }
@@ -1074,8 +1095,10 @@ async function getVideoUrl(needCollect) {
         if (elem.href.indexOf('/videos/') > -1) {
             posturl = elem.href.split('/videos/')[0] + '/videos/' + elem.href.split('/videos/')[1].split('/')[0];
         }
-        return posturl
+        if (elem.href.indexOf('reel') > -1) {
+            posturl = elem.href.split('/?s=')[0];
+        }
+        return {url: posturl, title}
     }
-
-    return posturl
+    return {url: posturl, title}
 }

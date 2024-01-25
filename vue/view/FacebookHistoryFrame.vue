@@ -38,14 +38,23 @@
         </div>
 
         <el-row gutter="10">
-          <el-col :span="12">
+          <el-col :span="10">
             <el-form-item label="采集数量上限">
               <el-input v-model="max_collect"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="10">
             <el-form-item label="下拉无数据后多少时间自动结束（分钟）">
               <el-input v-model="finishTime"></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="4">
+            <el-form-item label="是否展开图片">
+              <el-select v-model="openImage">
+                <el-option :value="true" label="是">是</el-option>
+                <el-option :value="false" label="否">否</el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -95,6 +104,7 @@ const collectNum = ref(0)
 const successPostNum = ref(0)
 const waitNextTimeNum = ref(0)
 const failNum = ref(0);
+const openImage = ref(true);
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -119,7 +129,8 @@ async function startCollect() {
         Message: "startCollectHistory",
         max_collect: max_collect.value,
         finishTime: finishTime.value,
-        frameId: route.query.activeId
+        frameId: route.query.activeId,
+        openImage: openImage.value
       },
       function (response) {
         if (response?.state !== 200) {
