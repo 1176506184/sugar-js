@@ -280,9 +280,12 @@ function getArrayIndex(arr, obj) {
 
 function select60() {
   for (let i = 0; i < 60; i++) {
-    TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
+    if(TableRef.value.store.states.data.value[i]){
+      TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
+    }
   }
 }
+
 
 function tabelSort({column, prop, order}) {
 
