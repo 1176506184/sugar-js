@@ -10,7 +10,8 @@
     <el-form label-position="top" style="height: calc(100vh - 57px);">
       <div style="padding: 0 10px 10px;">
         <el-form-item>
-          <el-table :data="data" @selection-change="handleSelectionChange" style="flex:1;height:calc(100vh - 230px)" ref="TableRef" @select="handleSelect"
+          <el-table :data="data" @selection-change="handleSelectionChange" style="flex:1;height:calc(100vh - 230px)"
+                    ref="TableRef" @select="handleSelect"
                     @sort-change="tabelSort">
             <el-table-column type="selection" width="55"/>
 
@@ -21,6 +22,8 @@
                 <div style="display: flex;align-items: center;">
                   <label>视频标题</label>
                   <el-input style="width: 250px;margin-left:10px;" placeholder="输入后筛选" v-model="title"
+                            @input="filterList"></el-input>
+                  <el-input style="width: 250px;margin-left:10px;" placeholder="时长筛选(,分割)" v-model="timeNum"
                             @input="filterList"></el-input>
                 </div>
 
@@ -163,6 +166,8 @@ const title = ref("")
 const active_id = ref("")
 const loading = ref(false)
 const loading_text = ref("检测封面图中");
+const timeNum = ref("")
+
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -227,8 +232,30 @@ function tabelSort({column, prop, order}) {
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1
+    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && (filterTime(item?.lengthText?.simpleText))
   })
+
+}
+
+function filterTime(num) {
+  if (!timeNum.value) {
+    return true
+  }
+  let temp = 0;
+  num = num.split(':');
+  if (num.length === 1) {
+    temp += parseInt(num[0])
+  } else if (num.length === 2) {
+    temp += parseInt(num[0]) * 60 + parseInt(num[1])
+  } else if (num.length === 3) {
+    temp += parseInt(num[0]) * 3600 + parseInt(num[1]) * 60 + parseInt(num[2]);
+  }
+
+  if (timeNum.value.includes(',')) {
+    return temp >= timeNum.value.split(',')[0] && temp <= timeNum.value.split(',')[1]
+  } else {
+    return temp <= timeNum.value
+  }
 
 }
 
@@ -395,7 +422,6 @@ function getArrayIndex(arr, obj) {
   }
   return -1;
 }
-
 
 
 onMounted(() => {

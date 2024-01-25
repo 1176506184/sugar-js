@@ -16,7 +16,8 @@
         <el-form label-position="top" style="height: calc(100vh - 57px);">
           <div style="padding: 0 10px 10px;">
             <el-form-item style="margin-bottom: 0">
-              <el-table :data="data" @selection-change="handleSelectionChange" style="flex:1;height:calc(100vh - 130px)" ref="TableRef" @select="handleSelect"
+              <el-table :data="data" @selection-change="handleSelectionChange" style="flex:1;height:calc(100vh - 130px)"
+                        ref="TableRef" @select="handleSelect"
                         @sort-change="tabelSort">
                 <el-table-column type="selection" width="55"/>
 
@@ -51,6 +52,7 @@
           <el-form-item>
             <div class="dialog-footer"
                  style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">
+              <el-button type="warning" @click="select60">勾选前60条</el-button>
               <el-button type="danger" @click="close">关闭</el-button>
               <el-button type="primary" style="margin-right: 10px" @click="nextStep">
                 下一步
@@ -276,7 +278,11 @@ function getArrayIndex(arr, obj) {
   return -1;
 }
 
-
+function select60() {
+  for (let i = 0; i < 60; i++) {
+    TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
+  }
+}
 
 function tabelSort({column, prop, order}) {
 

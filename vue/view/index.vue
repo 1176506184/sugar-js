@@ -13,6 +13,7 @@
           id="username"
           class="linear"
           style="font-size: 14px; float:right"
+          @click="logout"
       >
         {{ state.loginText }}
       </el-button>
@@ -221,7 +222,7 @@ import {parseDate} from "../../utils/formatDate";
 import store from "../store/store.js";
 import {computed} from "vue";
 import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(1)
 
@@ -255,9 +256,29 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v7.2.9",
+  version: "v7.3.0",
   system: 1
 });
+
+function logout() {
+  if (state.isLogin) {
+    ElMessageBox.confirm(
+        '是否退出登录？',
+        {
+          confirmButtonText: '确实',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+    )
+        .then(() => {
+          localStorage.clear();
+          location.reload();
+        })
+        .catch(() => {
+
+        })
+  }
+}
 
 const loading = ref(false);
 const canTiktokFrame = computed(() => {
@@ -1000,7 +1021,6 @@ async function collectFBVideo() {
 }
 
 
-
 // Ins博主采集历史
 async function collectInsHistory() {
 
@@ -1117,7 +1137,6 @@ async function collectTwitterImageCommunitySchedulingFrame() {
     })
   }
 }
-
 
 
 // DouyinVideo社团批量排程

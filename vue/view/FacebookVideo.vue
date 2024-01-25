@@ -22,6 +22,8 @@
                   <label>视频标题</label>
                   <el-input style="width: 250px;margin-left:10px;" placeholder="输入后筛选" v-model="title"
                             @input="filterList"></el-input>
+                  <el-input style="width: 250px;margin-left:10px;" placeholder="时长筛选(,分割)" v-model="timeNum"
+                            @input="filterList"></el-input>
                 </div>
 
               </template>
@@ -146,6 +148,7 @@ const ports = ref([])
 const categorys = ref([])
 const pages = ref([])
 const title = ref("")
+const timeNum = ref("")
 
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
@@ -174,8 +177,31 @@ const pageType = computed(() => {
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.title?.runs[0]?.text.toLowerCase().indexOf(title.value.toLowerCase()) > -1
+    return item.title?.runs[0]?.text.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && (filterTime(item.timeNum))
   })
+
+}
+
+
+function filterTime(num) {
+  if (!timeNum.value) {
+    return true
+  }
+  let temp = 0;
+  num = num.split(':');
+  if (num.length === 1) {
+    temp += parseInt(num[0])
+  } else if (num.length === 2) {
+    temp += parseInt(num[0]) * 60 + parseInt(num[1])
+  } else if (num.length === 3) {
+    temp += parseInt(num[0]) * 3600 + parseInt(num[1]) * 60 + parseInt(num[2]);
+  }
+
+  if (timeNum.value.includes(',')) {
+    return temp >= timeNum.value.split(',')[0] && temp <= timeNum.value.split(',')[1]
+  } else {
+    return temp <= timeNum.value
+  }
 
 }
 

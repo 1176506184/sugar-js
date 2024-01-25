@@ -349,6 +349,7 @@ async function dealVideoData() {
             d.play = node.querySelectorAll(dealClass("x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm x12scifz x1yc453h"))[1].innerText
             d.play = dealNum(d.play);
             d.author = document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText;
+            d.timeNum = node.querySelector(dealClass('x18l40ae xm3z3ea x1x8b98j x131883w x16mih1h xqo3gd x1923su1 xyqdw3p xsyo7zv xg8j3zb x16hj40l x47corl x10l6tqk xudsgdi')).innerText
 
             if (!facebookVideoHref.includes(d.url)) {
                 facebookVideoHref.push(d.url);
