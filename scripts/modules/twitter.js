@@ -134,6 +134,7 @@ window.addEventListener('message', function (res) {
 let frameId = '';
 // 排程的图文数组
 var photo_urls_PaiCheng = []
+var video_urls_PaiCheng = []
 
 var CJtimer = null;
 var timeout = null;
@@ -320,6 +321,8 @@ async function CacheMertial(Data, json_num) {
 
             // 图文排程
             await PictureToPaicheng(Data, i, json_num, notes, views, likes, comments);
+            // 视频排程
+            await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments);
         } catch { }
 
 
@@ -473,6 +476,64 @@ async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, com
     photo_urls_PaiCheng.push(TempObj)
 }
 
+// 社团视频排程
+async function VideoToPaicheng(jsonData, x, json_num, notes, views, likes, comments) {
+    let resultOrtweet = null;
+    // 判断报文两种结构
+    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
+        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+    } else {
+        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+    }
+
+    let TempObj = {}
+    let video_url = '';
+
+    var videoInfo = resultOrtweet.legacy.extended_entities.media[0].video_info.variants[2].url;
+    let video_num = resultOrtweet.legacy.extended_entities.media.length;
+
+    var note = notes.split('https://t.co')[0];
+
+    for (var j = 0; j < video_num; j++) {
+        var videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[2].url;
+        if (videoInfo.includes('m3u8')) {
+            videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[1].url;
+            // 打印视频信息
+            if (videoInfo.includes('m3u8')) {
+                videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[0].url;
+                // 打印视频信息
+                if (videoInfo.indexOf('m3u8') == 0) {
+                    console.log(videoInfo);
+                    video_url = videoInfo;
+                    // return video_url;
+                }
+            }
+            else {
+                // 打印视频信息
+                console.log(videoInfo);
+                video_url = videoInfo;
+                // return video_url;
+            }
+        }
+        else {
+            // 打印视频信息
+            console.log(videoInfo);
+            video_url = videoInfo;
+            // return video_url;
+        }
+    }
+
+    TempObj = {
+        href: video_url,
+        play: views,
+        likes: likes,
+        comments: comments,
+        title: note
+    }
+    video_urls_PaiCheng.push(TempObj)
+}
+
+
 //////POST把抓包内容打包成数组，调用回传
 async function Post(blogger_id_send, note, article_type, article_url, source_urls, post_url, looks, likes, retweets, comments, move_total, post_time) {
 
@@ -586,7 +647,7 @@ async function UpdateFrameState(time, type) {
 }
 
 
-// 社团源素材排程
+// 社团源素材排程（图文）
 function getTwitterImageUrl() {
     let data = []
     // 排程数据
@@ -601,6 +662,22 @@ function getTwitterImageUrl() {
     }).then()
 
 }
+// 社团源素材排程（视频）
+function getTwitterVideoUrl() {
+    let data = []
+    // 排程数据
+    data = video_urls_PaiCheng
+
+    let author = bozhuNameA ? bozhuNameA : (document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0] ? document.getElementsByClassName('css-1rynq56 r-bcqeeo r-qvutc0 r-37j5jr r-adyw6z r-135wba7 r-1vr29t4 r-1awozwy r-6koalj r-1udh08x')[0].innerText : document.querySelector('div.css-175oi2r .r-1habvwh h2')?.innerText)
+
+    chrome.runtime.sendMessage({
+        Message: 'communityVideo',
+        data: data,
+        author: author
+    }).then()
+
+}
+
 
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'image') {
@@ -651,6 +728,15 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         // 社团图文排程
         getTwitterImageUrl();
         
+        sendResponse({
+            state: 200
+        });
+    } else if (Message.Message === 'community_video') {
+        console.log('推特排程');
+
+        // 社团图文排程
+        getTwitterVideoUrl();
+
         sendResponse({
             state: 200
         });
