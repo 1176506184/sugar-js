@@ -1052,9 +1052,7 @@ async function getVideoUrl(needCollect) {
         if (elem.href.indexOf('/videos/') > -1) {
             //采集机器采集会丢视频链接
             url = elem.href.split('/videos/')[0] + '/videos/' + elem.href.split('/videos/')[1].split('/')[0];
-        }
-
-        if (elem.href.indexOf('reel') > -1) {
+        } else if (elem.href.indexOf('reel') > -1) {
             url = elem.href.split('/?s=')[0];
         }
 
@@ -1077,9 +1075,7 @@ async function getVideoUrl(needCollect) {
         if (elem.href.indexOf('/videos/') > -1) {
             //采集机器采集会丢视频链接
             url = elem.href.split('/videos/')[0] + '/videos/' + elem.href.split('/videos/')[1].split('/')[0];
-        }
-
-        if (elem.href.indexOf('reel') > -1) {
+        } else if (elem.href.indexOf('reel') > -1) {
             url = elem.href.split('/?s=')[0];
         }
         // let closeBtn = document.querySelector('div' + ".x1i10hfl x6umtig x1b1mbwd xaqea5y xav7gou x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x16tdsg8 x1hl2dhg xggy1nq x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x14yjl9h xudhj91 x18nykt9 xww2gxu x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x78zum5 xl56j7k xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 x1vqgdyp x100vrsf x18l40ae x14ctfv".replaceAll(' ', '.')).querySelector('i')
@@ -1093,12 +1089,11 @@ async function getVideoUrl(needCollect) {
     elem = needCollect.querySelector('a' + ".x1i10hfl x9f619 xe8uvvx x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1lku1pv xjbqb8w x76ihet xwmqs3e x112ta8 xxxdfa6 x1ypdohk x1rg5ohu x1qx5ct2 x1k70j0n x1w0mnb xzueoph x1mnrxsn x1iy03kw xexx8yu x4uap5 x18d9i69 xkhd6sd x1o7uuvo x1a2a7pz x1qo4wvw".replaceAll(' ', '.'));
     if (elem) {
         if (elem.href.indexOf('/videos/') > -1) {
-            posturl = elem.href.split('/videos/')[0] + '/videos/' + elem.href.split('/videos/')[1].split('/')[0];
+            url = elem.href.split('/videos/')[0] + '/videos/' + elem.href.split('/videos/')[1].split('/')[0];
+        } else if (elem.href.indexOf('reel') > -1) {
+            url = elem.href.split('/?s=')[0];
         }
-        if (elem.href.indexOf('reel') > -1) {
-            posturl = elem.href.split('/?s=')[0];
-        }
-        return {url: posturl, title}
+        return {url, title}
     }
-    return {url: posturl, title}
+    return {url, title}
 }
