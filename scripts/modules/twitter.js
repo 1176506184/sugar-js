@@ -319,11 +319,22 @@ async function CacheMertial(Data, json_num) {
                 console.log('图片：' + photo_url);
             }
 
-            // 图文排程
-            await PictureToPaicheng(Data, i, json_num, notes, views, likes, comments);
-            // 视频排程
-            await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time);
-        } catch { }
+            try {
+                // 图文排程
+                await PictureToPaicheng(Data, i, json_num, notes, views, likes, comments);
+            }catch(e) {
+                console.log(e)
+            }
+            
+            try {
+                // 视频排程
+                await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time);
+            } catch (e) {
+                console.log(e)
+            }
+        } catch {
+            // console.log(e)
+        }
 
 
         if (video_url != '') {
@@ -337,6 +348,7 @@ async function CacheMertial(Data, json_num) {
             article_url = '';
 
         }
+
         else if (article_url != '') {
             article_type = 1;
             var source_urls = '';
@@ -383,11 +395,12 @@ async function Video(jsonData, x, json_num) {
         resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
     }
 
+    let variants_length = resultOrtweet.legacy.extended_entities.media[0].video_info.variants.length;
+    var videoInfo = resultOrtweet.legacy.extended_entities.media[0].video_info.variants[variants_length-1].url;
 
-    var videoInfo = resultOrtweet.legacy.extended_entities.media[0].video_info.variants[2].url;
     video_num = resultOrtweet.legacy.extended_entities.media.length;
     for (var j = 0; j < video_num; j++) {
-        var videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[2].url;
+        /* var videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[2].url; */
         if (videoInfo.includes('m3u8')) {
             videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[1].url;
             // 打印视频信息
@@ -489,13 +502,20 @@ async function VideoToPaicheng(jsonData, x, json_num, notes, views, likes, comme
     let TempObj = {}
     let video_url = '';
 
-    var videoInfo = resultOrtweet.legacy.extended_entities.media[0].video_info.variants[2].url;
+    let variants_length = resultOrtweet.legacy.extended_entities.media[0].video_info.variants.length;
+
+    var videoInfo = resultOrtweet.legacy.extended_entities.media[0].video_info.variants[variants_length-1].url;
     let video_num = resultOrtweet.legacy.extended_entities.media.length;
 
     var note = notes.split('https://t.co')[0];
 
     for (var j = 0; j < video_num; j++) {
-        var videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[2].url;
+        /* if (variants_length === 3) {
+            videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[2].url;
+        }else {
+            videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[1].url;
+        } */
+       
         if (videoInfo.includes('m3u8')) {
             videoInfo = resultOrtweet.legacy.extended_entities.media[j].video_info.variants[1].url;
             // 打印视频信息
