@@ -322,7 +322,7 @@ async function CacheMertial(Data, json_num) {
             // 图文排程
             await PictureToPaicheng(Data, i, json_num, notes, views, likes, comments);
             // 视频排程
-            await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments);
+            await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time);
         } catch { }
 
 
@@ -477,7 +477,7 @@ async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, com
 }
 
 // 社团视频排程
-async function VideoToPaicheng(jsonData, x, json_num, notes, views, likes, comments) {
+async function VideoToPaicheng(jsonData, x, json_num, notes, views, likes, comments, post_time) {
     let resultOrtweet = null;
     // 判断报文两种结构
     if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
@@ -528,7 +528,8 @@ async function VideoToPaicheng(jsonData, x, json_num, notes, views, likes, comme
         play: views,
         likes: likes,
         comments: comments,
-        title: note
+        title: note,
+        create_time: post_time
     }
     video_urls_PaiCheng.push(TempObj)
 }
