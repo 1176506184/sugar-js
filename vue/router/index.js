@@ -20,6 +20,7 @@ import YoutubeVideoCommunitySchedulingFramePW from "../view/youtubeVideoCommunit
 import DouyinVideoCommunitySchedulingFrame from "../view/douyinVideoCommunitySchedulingFrame.vue";
 import TwitterImageCommunitySchedulingFram from "../view/twitterImageCommunitySchedulingFrame.vue";
 import TwitterVideoCommunitySchedulingFram from "../view/twitterVideoCommunitySchedulingFrame.vue";
+import TwitterVideoPW from "../view/twitterVideoPW.vue";
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -102,26 +103,26 @@ const routes = [
         component: FacebookVideo,
         props: route => ({query: route.query.q}),
         meta: {}
-    }, 
+    },
     {
         name: 'FBCollectHistory',
         path: '/FBCollectHistory',
         component: FBCollectHistory,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     },
     {
         name: 'TTCollectHistory',
         path: '/TTCollectHistory',
         component: TTCollectHistory,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     },
     {
         name: 'InsCollectHistory',
         path: '/InsCollectHistory',
         component: InsCollectHistory,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     },
     {
@@ -153,31 +154,37 @@ const routes = [
         name: 'TiktokVideoCommunitySchedulingFrame',
         path: '/TiktokVideoCommunitySchedulingFrame',
         component: TiktokVideoCommunitySchedulingFrame,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     }, {
         name: 'YoutubeVideoCommunitySchedulingFramePW',
         path: '/YoutubeVideoCommunitySchedulingFramePW',
         component: YoutubeVideoCommunitySchedulingFramePW,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     }, {
         name: 'DouyinVideoCommunitySchedulingFrame',
         path: '/DouyinVideoCommunitySchedulingFrame',
         component: DouyinVideoCommunitySchedulingFrame,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     }, {
         name: 'TwitterImageCommunitySchedulingFram',
         path: '/TwitterImageCommunitySchedulingFram',
         component: TwitterImageCommunitySchedulingFram,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     }, {
         name: 'TwitterVideoCommunitySchedulingFram',
         path: '/TwitterVideoCommunitySchedulingFram',
         component: TwitterVideoCommunitySchedulingFram,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'TwitterVideoPW',
+        path: '/TwitterVideoPW',
+        component: TwitterVideoPW,
+        props: route => ({query: route.query.q}),
         meta: {}
     }
 ]

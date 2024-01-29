@@ -83,8 +83,12 @@
 
               <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">社团排程（图片）</el-button>
               <el-button @click="collectTwitterVideoCommunitySchedulingFrame" type="primary">社团排程（视频）</el-button>
+              <el-button @click="collectTwitterPW" type="primary" >
+                采集视频并TOOL源视频排文
+              </el-button>
+              <el-button type="warning" @click="collectTTHistory" style="margin-top: 10px;margin-left: 0">自动采集历史</el-button>
 
-              <el-button type="warning" @click="collectTTHistory">自动采集历史</el-button>
+
             </div>
           </el-collapse-item>
 
@@ -1149,6 +1153,24 @@ async function collectTwitterVideoCommunitySchedulingFrame() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/TwitterVideoCommunitySchedulingFram?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+async function collectTwitterPW() {
+  let activeId = await getActiveId();
+  let pageId = await getId("TwitterVideoPW");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/TwitterVideoPW?activeId=' + activeId,
       active: true
     }, (tab) => {
 
