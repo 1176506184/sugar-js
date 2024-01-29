@@ -23,10 +23,10 @@
 
                 <el-table-column type="index" width="58" label="序号" align="center"></el-table-column>
 
-                <el-table-column label="图文标题" width="610">
+                <el-table-column label="视频标题" width="610">
                   <template #header>
                     <div style="display: flex;align-items: center;">
-                      <label>图文标题</label>
+                      <label>视频标题</label>
                       <el-input style="width: 250px;margin-left:10px;" placeholder="输入后筛选" v-model="title"
                                 @input="filterList"></el-input>
                     </div>
@@ -343,7 +343,7 @@ function dealYoutubeVideo(Message) {
           chrome.tabs.sendMessage(
               active_id.value,
               {
-                Message: "community_image"
+                Message: "community_video"
               },
               function (response) {
                 if (response?.state !== 200) {
@@ -357,7 +357,7 @@ function dealYoutubeVideo(Message) {
     );
 
     return
-  } else if (Message.Message === 'communityImage') {
+  } else if (Message.Message === 'communityVideo') {
     data.value = Message.data
     author.value = Message.author
     AllData.value = data.value
@@ -405,7 +405,7 @@ onMounted(() => {
       chrome.tabs.sendMessage(
           parseInt(route.query.activeId),
           {
-            Message: "community_image"
+            Message: "community_video"
           },
           function (response) {
             if (response?.state !== 200) {
@@ -544,7 +544,7 @@ function nextStep() {
 
 
   if (pwData.value.length === 0) {
-    ElMessage.warning("先请选择图文");
+    ElMessage.warning("先请选择视频");
     return
   }
 
@@ -606,7 +606,7 @@ async function Save() {
   // 组成要发送的数据包
   let PostData = {
     SourceType: '4', //素材来源 1抖音 2tiktok 3youtube 4twitter
-    PostType: '2', //帖子类型 2图文 3视频
+    PostType: '3', //帖子类型 2图文 3视频
     JoinRole: state.value.JoinRole,
     CommunityRole: state.value.CommunityRole,
     IsTop: state.value.IsTop,

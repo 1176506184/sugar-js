@@ -72,7 +72,7 @@
             </div>
           </el-collapse-item>
 
-          <el-collapse-item title="推特图片" name="2">
+          <el-collapse-item title="推特" name="2">
             <div>
               <el-button
                   @click="twitter_trumpet"
@@ -81,7 +81,8 @@
               >小号素材库
               </el-button>
 
-              <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">批量源素材社团排程</el-button>
+              <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">社团排程（图片）</el-button>
+              <el-button @click="collectTwitterVideoCommunitySchedulingFrame" type="primary">社团排程（视频）</el-button>
 
               <el-button type="warning" @click="collectTTHistory">自动采集历史</el-button>
             </div>
@@ -1119,7 +1120,7 @@ async function collectYoutubeVideoCommunitySchedulingFramePW() {
 }
 
 
-// TwitterImage社团批量排程
+// TwitterImage社团批量排程(图片)
 async function collectTwitterImageCommunitySchedulingFrame() {
   let activeId = await getActiveId();
   let pageId = await getId("TwitterImageCommunitySchedulingFram");
@@ -1131,6 +1132,23 @@ async function collectTwitterImageCommunitySchedulingFrame() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/TwitterImageCommunitySchedulingFram?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}// TwitterImage社团批量排程(视频)
+async function collectTwitterVideoCommunitySchedulingFrame() {
+  let activeId = await getActiveId();
+  let pageId = await getId("TwitterVideoCommunitySchedulingFram");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/TwitterVideoCommunitySchedulingFram?activeId=' + activeId,
       active: true
     }, (tab) => {
 
