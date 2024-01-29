@@ -111,6 +111,11 @@ const getNowDate = () => {
 
 
 function word2time(text) {
+
+    if (!text) {
+        return "";
+    }
+
     let time = "";
     let beforeTimeNum = parseInt(text);
     if (text.includes('年前')) {
