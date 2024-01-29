@@ -43,6 +43,17 @@
                 </el-table-column>
                 <el-table-column label="评论" prop="comments" sortable :sort-orders="['descending','ascending',null]">
                 </el-table-column>
+                <el-table-column label="发布时间" prop="create_time" sortable
+                                 :sort-orders="['descending','ascending',null]">
+                  <template #default="{row}">
+                    <div>
+                      {{ moment(row.create_time).format('YYYY-MM-DD') }}
+                    </div>
+                    <div>
+                      {{ moment(row.create_time).format('HH:mm:ss') }}
+                    </div>
+                  </template>
+                </el-table-column>
               </el-table>
 
             </el-form-item>

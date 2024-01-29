@@ -1,5 +1,8 @@
+import moment from "moment";
+
 const DIR = process.env.DIR;
 console.log(DIR)
+
 function guid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -107,6 +110,36 @@ const getNowDate = () => {
 }
 
 
+function word2time(text) {
+
+    if (!text) {
+        return "";
+    }
+
+    let time = "";
+    let beforeTimeNum = parseInt(text);
+    if (text.includes('年前')) {
+        time = moment().subtract(beforeTimeNum, 'year').format('YYYY-MM-DD 00:00:00');
+    }
+
+    if (text.includes('月前')) {
+        time = moment().subtract(beforeTimeNum, 'month').format('YYYY-MM-DD 00:00:00');
+    }
+
+    if (text.includes('周前')) {
+        time = moment().subtract(beforeTimeNum, 'week').format('YYYY-MM-DD 00:00:00');
+    }
+
+    if (text.includes('天前')) {
+        time = moment().subtract(beforeTimeNum, 'day').format('YYYY-MM-DD 00:00:00');
+    }
+
+    if (text.includes('小时前')) {
+        time = moment().subtract(beforeTimeNum, 'hour').format('YYYY-MM-DD HH:00:00');
+    }
+    return time
+}
+
 export {
     guid,
     queryURLParams,
@@ -114,5 +147,6 @@ export {
     GetQueryString,
     handleCopyValue,
     getNowDate,
-    DIR
+    DIR,
+    word2time
 }

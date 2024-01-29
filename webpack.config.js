@@ -10,6 +10,9 @@ const {
 } = require('unplugin-vue-components/resolvers')
 const {DefinePlugin} = require("webpack");
 
+
+const version = "v7.3.6";
+
 module.exports = {
     entry: './vue/main.js',
     node: false,
@@ -63,7 +66,7 @@ module.exports = {
             }, {
                 from: path.join(__dirname, 'json'),
                 to: path.join(__dirname, distDir + '/json')
-            },{
+            }, {
                 from: path.join(__dirname, 'utils'),
                 to: path.join(__dirname, distDir + '/utils')
             }, {
