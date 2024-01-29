@@ -18,7 +18,8 @@ window.onload = function () {
                 playCount: data[d].stats.playCount,
                 duration: data[d].video.duration,
                 width: data[d].video.width,
-                height: data[d].video.height
+                height: data[d].video.height,
+                create_time: data[d].createTime
             }
         }))
         videoIdsCode.push(...Object.keys(data))
@@ -146,7 +147,8 @@ function parseVideo(data) {
                                 playCount: item.stats.playCount,
                                 duration: item.video.duration,
                                 width: item.video.width,
-                                height: item.video.height
+                                height: item.video.height,
+                                create_time: item.createTime
                             });
                         }
                     })
