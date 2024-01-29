@@ -34,7 +34,11 @@
       </div>
       <div v-if="isHaveBlogger">
         <div style="margin: 30px 0;">
-          <span style="color: green;">已存在该博主：ID {{ blogger_id }}，已采集素材数 {{ collect_count }} </span>
+          <span style="color: red;font-size:22px;font-weight: bold">已存在该博主：ID {{
+              blogger_id
+            }}(创建人：{{ createUserName }},已采集素材数 {{
+              collect_count
+            }},创建时间{{ createTime }})</span>
         </div>
 
         <el-row gutter="10">
@@ -101,6 +105,8 @@ const max_collect = ref(1000)
 const finishTime = ref(10)
 const status = ref(0)
 const collectNum = ref(0)
+const createUserName = ref("");
+const createTime = ref("")
 const successPostNum = ref(0)
 const waitNextTimeNum = ref(0)
 const failNum = ref(0);
@@ -213,6 +219,9 @@ async function dealFbHistory(Message) {
       console.log(resData.id);
       blogger_id.value = resData.id
       collect_count.value = resData.capture_count ? resData.capture_count : '0'
+
+      createUserName.value = resData.create_name;
+      createTime.value = resData.create_time.split('T')[0];
     }
   } else if (Message.Message === 'history_data' && Message.frameId.toString() === route.query.activeId.toString()) {
     console.log(Message.data)
