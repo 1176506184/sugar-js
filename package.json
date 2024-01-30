@@ -31,6 +31,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
     "element-plus": "^2.2.32",
+    "filemanager-webpack-plugin": "^8.0.0",
     "keep-alive": "^0.1.0",
     "moment": "^2.29.4",
     "process": "^0.11.10",

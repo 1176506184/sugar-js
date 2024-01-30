@@ -217,6 +217,7 @@
 
 <script setup>
 import {useRouter} from "vue-router";
+import version from "../../version";
 
 const router = useRouter();
 import {guid, handleCopyValue} from "../utils/utils";
@@ -261,7 +262,7 @@ const type = computed(() => {
 let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
-  version: "v7.3.7",
+  version,
   system: 1
 });
 

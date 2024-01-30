@@ -9,9 +9,8 @@ const {
     ElementPlusResolver
 } = require('unplugin-vue-components/resolvers')
 const {DefinePlugin} = require("webpack");
-
-
-const version = "v7.3.6";
+const FileManagerPlugin = require('filemanager-webpack-plugin');
+const version = require('./version');
 
 module.exports = {
     entry: './vue/main.js',
@@ -85,6 +84,15 @@ module.exports = {
                 from: path.join(__dirname, 'icon.png'),
                 to: path.join(__dirname, distDir)
             }]
+        }),
+        new FileManagerPlugin({
+            events: {
+                onEnd: {
+                    archive: [
+                        {source: './dist', destination: `./CollectChrome_${version}.zip`}
+                    ]
+                }
+            }
         })
     ].filter(Boolean)
 };
