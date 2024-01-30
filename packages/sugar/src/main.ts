@@ -26,5 +26,4 @@ export {
   instance,
   watch,
   sugarUI
-
 };

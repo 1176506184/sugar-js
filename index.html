@@ -15,90 +15,65 @@
     }
 
     .title {
-        width: 100vw;
-        height: 40px;
-        background: #4faee8;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bolder;
+        font-size: 23px;
+        font-weight: bold;
+        line-height: 30px;
+        color: #2C2C2C;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
     }
 
     .nav {
-        margin: 5px 5px 0;
-        line-height: 30px;
-        font-size: 15px;
+        width: 100%;
+        height: 50px;
+        background: #F04142;
+        display: flex;
+        position: relative;
+        top: 0;
+        z-index: 999;
     }
 
-    .label {
-        margin: 5px;
-        font-size: 13px;
+    .nav img {
+        height: 35px;
     }
 
+    .nav .web_name {
+        font-size: 22px;
+        font-weight: 400;
+        color: #FFFFFF;
+        width: calc(40% - 20px);
+        padding-left: 20px;
+        height: 100%;
+        text-align: center;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+    }
+
+    .article_body {
+        width: 96%;
+        margin-left: 2%;
+        padding-top: 10px;
+    }
 </style>
 <script src="/dist/sugar.js"></script>
 <body>
 <div id="app">
-    <div class="title">
-        SUGAR-JS
+
+    <div class="nav">
+        <div class="web_name">
+            <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo">
+        </div>
     </div>
 
-    <div>
-        <button style="margin: 5px 5px 0;" class="sugar-button" @click="updateActive">切换界面:{{active}}</button>
+    <div class="article_body">
+        <div class="title">
+            {{state.title}}
+        </div>
+        <div class="content" s-html="state.content">
+        </div>
     </div>
 
-    <div s-if="active === 0">
-        <p class="label">计算属性</p>
-
-        <p class="label">{{title}}</p>
-
-        <p class="label">外部状态值：{{store.num}}</p>
-
-        <p class="label">s-for</p>
-
-        <button class="sugar-button" style="margin: 5px 5px 0;" s-for="item in state.list" :key="item.d"
-                @click="update(item,state.num)">
-            {{item.a}}
-        </button>
-
-        <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode">新增</button>
-
-        <!--测试注释-->
-
-        <p class="label">s-model</p>
-
-        <sugar-button s-for="item in state.list" @click="pushNode(state.num)" :key="'sugar_btn_' + item.d"
-                      :instance="button">
-            <span #default>
-                <span>测试</span>
-                <span>{{item.a}}</span>
-            </span>
-        </sugar-button>
-
-        <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
-
-        <sugar-dialog :model="showDialog" @close="closeDialog">
-            <div style="width: 80%;height: 300px;background-color: #fff;border-radius: 5px;">
-                <div>测试</div>
-                <div>{{state.num}}</div>
-            </div>
-        </sugar-dialog>
-
-        <p class="label">s-if</p>
-
-        <div s-if="show">{{show}}</div>
-
-        <p class="label">显示DiaLog</p>
-
-        <sugar-button @click="showDialogFun">
-            {{showDialog}}
-        </sugar-button>
-    </div>
-
-    <div s-if="active === 1">
-
-    </div>
 
 </div>
 
@@ -119,122 +94,25 @@
         sugarUI
     } = SUGAR;
 
-    const store = reactive({
-        num: 0
-    });
-
     var sugar = makeSugar({
         bulk() {
 
             const state = reactive({
-                num: 0,
-                list: [{
-                    d: 1,
-                    a: 1
-                }, {
-                    d: 2,
-                    a: 2
-                }, {
-                    d: 3,
-                    a: 3
-                }, {
-                    d: 4,
-                    a: 4
-                }],
-                classText: 'font-size:17px',
-                fontSize: 15,
-                choose: 1,
-                selectList: [{
-                    label: '选项一',
-                    value: 1
-                }, {
-                    label: '选项二',
-                    value: 2
-                }]
+                name: 0,
+                title: '狗狗因為太害怕人類，被安排于兩天后安樂死，幸好她出現了..',
+                content: `<p>自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業<span id="vft" data-wordc="231"></span></p><p style="font-weight: 600; color: #CC6633;font-size:15px !important ">
+                版權所有，禁止轉載。 違者必究法律責任。
+            </p>`
             });
 
-            const active = ref(0);
-
-            const button = instance(null);
-
-            const show = ref(false);
-
-            const showDialog = ref(false);
-
-            // createEffect(() => {
-            //     state.num = state.list.length;
-            // });
-
-            watch(showDialog, () => {
-                console.log('state发生了变化');
-            }, {
-                deep: true
-            });
-
-            function closeDialog() {
-                showDialog.value = false;
-            }
-
-            function pushNode(num) {
-                show.value = !show.value;
-                state.list.push({
-                    d: state.list.length + 1,
-                    a: state.list.length + 1
-                });
-            }
-
-            const title = reckon(() => {
-                return state.list.length;
-            });
-
-            const styleText = reckon(() => {
-                return `font-size:${state.fontSize}px`;
-            });
-
-            onMounted(() => {
-                // state.num += 1;
-            });
-
-            function update(item, num) {
-                item.a += 1;
-            }
-
-            function changeNum(e) {
-                state.num = e.target.value;
-            }
-
-            function changeChoose(e) {
-                state.choose = e;
-            }
-
-            function updateActive() {
-                active.value = active.value === 1 ? 0 : 1;
-            }
-
-            function showDialogFun() {
-                showDialog.value = true;
-            }
-
-            const testRef = ref('testRef');
+            watch(state,(state)=>{
+                console.log("change");
+            },{
+                deep:true
+            })
 
             return {
-                state,
-                update,
-                title,
-                styleText,
-                changeNum,
-                changeChoose,
-                testRef,
-                pushNode,
-                active,
-                updateActive,
-                store,
-                button,
-                showDialog,
-                show,
-                closeDialog,
-                showDialogFun
-
+                state
             };
         }
     });

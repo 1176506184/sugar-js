@@ -16,6 +16,10 @@ export function transform (context, helpers) {
         helpers.sModel(context, prop);
       }
 
+      if (prop.name === 's-html') {
+        helpers.sHtml(context, prop);
+      }
+
       if (prop.name === 'on') {
         helpers.transformEvent(context, prop);
       }

@@ -1,4 +1,4 @@
-import { reckon, ref } from '@sugar/sugar-reactive';
+import { nextTick, reckon, ref, watch } from '@sugar/sugar-reactive';
 
 const button = {
   name: 'sugar-button',
@@ -25,26 +25,36 @@ const button = {
 const dialog = {
   name: 'sugar-dialog',
   render: `<div>
-    <transition name="easy-in">
-        <div class="sugar-dialog-mode" s-if="show" @click.self="close">
+        <div class="sugar-dialog-mode" :style="'opacity:'+opacity" s-if="show" @click.self="close">
             <div class="sugar-dialog" s-if="show" @click.self="close">
                 <slot name="default"></slot>
             </div>
         </div>
-    </transition>
 </div>`,
   bulk (ctx) {
-    const show = reckon(() => {
-      return ctx.model.value;
+    const show: any = ref(false);
+    const opacity: any = ref(0);
+    watch(ctx.model, (value) => {
+      if (value) {
+        show.value = true;
+        setTimeout(() => {
+          opacity.value = 1;
+        }, 50);
+      } else {
+        opacity.value = 0;
+        setTimeout(() => {
+          show.value = false;
+        }, 300);
+      }
     });
 
     function close () {
       ctx.close();
     }
-
     return {
       show,
-      close
+      close,
+      opacity
     };
   }
 };

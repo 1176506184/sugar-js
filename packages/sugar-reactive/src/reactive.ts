@@ -32,7 +32,6 @@ const makeReactive = function (value) {
     const hadKey = isArray(target) ? Number(propKey) < target.length : hasOwn(target, propKey);
     const result = Reflect.set(target, propKey, value, receiver);
     const depsMap = targetMap.get(target);
-
     if (!depsMap) {
       return;
     }
@@ -70,6 +69,12 @@ const makeReactive = function (value) {
       dep();
       addEffect(dep);
     });
+
+    if (deps.length === 0) {
+      addEffect(() => {
+        console.log('clear');
+      });
+    }
 
     return result;
   };

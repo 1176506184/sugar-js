@@ -53,6 +53,11 @@ export function generate (ast) {
         str = `${ast.if.value} ? ${str + elStr} : _e()`;
       }
 
+      if (ast.htmlStatment) {
+        ex = true;
+        str += `_html(${ast.htmlStatment.value.content})`;
+      }
+
       if (!ex) {
         str += elStr;
       }

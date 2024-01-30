@@ -17,7 +17,6 @@ export function sugarRender () {
     const { code } = sugarCompiler(htmlCode);
     render = code;
     bindT(vm, data);
-
     update(vm);
     vm.forceUpdate = function () {
       update(vm);
@@ -30,13 +29,7 @@ export function sugarRender () {
       bindAttrAndEvent(vm, vnode);
       patchEx(vm, vnode);
       vm._vnode = vnode;
-    });
-    // createEffect(() => {
-    //   const vnode = render.call(vm);
-    //   bindAttrAndEvent(vm, vnode);
-    //   patchEx(vm, vnode);
-    //   vm._vnode = vnode;
-    // });
+    }, vm.appId);
   }
 
   return {
@@ -68,6 +61,10 @@ export function bindT (vm, data) {
     return new VNode();
   }
 
+  function _html (html) {
+    return html2Vnode(html);
+  }
+
   function _loop (fun: Function, data: any) {
     const nodes = [];
     data.forEach((item, index) => {
@@ -83,6 +80,7 @@ export function bindT (vm, data) {
   vm._s = _s;
   vm._e = _e;
   vm._loop = _loop;
+  vm._html = _html;
 }
 
 export function createElement (tag = 'div', data = {}, children = []) {
@@ -176,4 +174,38 @@ export function bindAttrAndEvent (vm, vnode) {
       }
     }
   }
+}
+
+export function html2Vnode (html) {
+  // console.log(html);
+  function work (dom) {
+    const attr = {
+      attrs: {},
+      on: {}
+    };
+    Array.from(dom.attributes).forEach((item: any) => {
+      attr.attrs[item.name] = item.value;
+    });
+    const vNode: any = createElement(dom.tagName, attr, []);
+    Array.from(dom.childNodes).forEach((child) => {
+      if (child.nodeType === 1) {
+        vNode.children.push(work(child));
+      } else if (child.nodeType === 3) {
+        vNode.children.push({
+          tag: '',
+          content: child.textContent,
+          children: [],
+          elm: undefined,
+          text: child.textContent,
+          key: undefined,
+          data: undefined
+        });
+      }
+    });
+    return vNode;
+  }
+
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return work(div);
 }

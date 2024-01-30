@@ -1,6 +1,6 @@
 import { deepClone, guid } from '@sugar/sugar-shared';
 import { mountHandleList, updateActiveId } from '@sugar/sugar-hook';
-import { createEffect, ref } from '@sugar/sugar-reactive';
+import { createEffect, ref, uiEffect } from '@sugar/sugar-reactive';
 import { bindAttrAndEvent, bindT } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patchEx from './patch';
@@ -118,19 +118,23 @@ export function componentRender () {
     bindT(vm, data);
     update(vm);
     vm.forceUpdate = function () {
-      update(vm);
+      uiUpdate(vm);
     };
     return vm.forceUpdate;
   }
 
   function update (vm) {
-    createEffect(() => {
-      const vnode = render.call(vm);
-      bindAttrAndEvent(vm, vnode);
-      assembling(vnode, vm.slot);
-      patchEx(vm, vnode);
-      vm._vnode = vnode;
-    });
+    uiEffect(() => {
+      uiUpdate(vm);
+    }, vm.appId);
+  }
+
+  function uiUpdate (vm) {
+    const vnode = render.call(vm);
+    bindAttrAndEvent(vm, vnode);
+    assembling(vnode, vm.slot);
+    patchEx(vm, vnode);
+    vm._vnode = vnode;
   }
 
   function assembling (_n, slot) {

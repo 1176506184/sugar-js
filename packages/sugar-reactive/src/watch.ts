@@ -1,4 +1,5 @@
 import { createEffect } from './signal/createEffect';
+import { deepClone, deepEqual } from '@sugar/sugar-shared';
 
 export function watch (source: any, cb: Function, options = { deep: false }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -13,10 +14,10 @@ export function watch (source: any, cb: Function, options = { deep: false }) {
     if (source?.value) {
       getter = source.value;
     }
-    if (init && (cache !== getter)) {
-      cb();
+    if (init && !deepEqual(cache, getter)) {
+      cb(source.value);
     }
-    cache = getter;
+    cache = deepClone(getter);
     init = true;
   });
 
