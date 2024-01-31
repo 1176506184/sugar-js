@@ -1,22 +1,31 @@
 import { NodeTypes } from '../parse';
 
-export function transformRef (context) {
+export function transformRef (context, lockItem = []) {
   context.props?.forEach((prop) => {
     if (prop.name === 'bind' && prop.arg.content !== 'instance') {
-      prop.exp.content = toDisPlay(prop.exp.content);
+      prop.exp.content = toDisPlay(prop.exp.content, lockItem);
     }
   });
 
-  if (context.if && !context.forStatment) {
-    context.if.value = toDisPlay(context.if.value);
+  if (context.if) {
+    context.if.value = toDisPlay(context.if.value, lockItem);
+  }
+
+  if (context.forStatment) {
+    context.forStatment.exp = toDisPlay(context.forStatment.exp, lockItem);
   }
 
   if (context.type === NodeTypes.INTERPOLATION) {
-    context.content.content = toDisPlay(context.content.content);
+    context.content.content = toDisPlay(context.content.content, lockItem);
   }
 }
 
-export function toDisPlay (context) {
+export function toDisPlay (context, lockItem) {
+  if (context.indexOf(lockItem) === 0 && (context.split(lockItem)[1].length === 0 ||
+    (!!context.split(lockItem)[1] &&
+      (context.split(lockItem)[1][0] === '.' || context.split(lockItem)[1][0] === '[')))) {
+    return context;
+  }
   let temp = '';
   let tempOnce = '';
   let index = 0;
@@ -46,5 +55,10 @@ export function toDisPlay (context) {
   return temp;
 }
 
-function isValid (str) { return /^\w+$/.test(str); }
-function isNumber (str) { return /^\d+$/.test(str); }
+function isValid (str) {
+  return /^\w+$/.test(str);
+}
+
+function isNumber (str) {
+  return /^\d+$/.test(str);
+}

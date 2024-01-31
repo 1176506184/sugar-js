@@ -52,8 +52,45 @@
 
     .article_body {
         width: 96%;
-        margin-left: 2%;
+        margin:0 auto;
         padding-top: 10px;
+    }
+
+    .item {
+        padding-top: 15px;
+        width: 92%;
+        margin-left: 4%;
+        margin-bottom: 32px;
+        display: block;
+        position: relative;
+    }
+
+
+    .label_box {
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 25px;
+        color: #2C2C2C;
+        margin-top: 15px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        font-weight: 400;
+        letter-spacing: 1px;
+    }
+
+
+    .image_box{
+        width: 92vw;
+        height: 48vw;
+        position: relative;
+    }
+
+    .image_box img{
+        width: 100%;
+        height: 100%;
     }
 </style>
 <script src="/dist/sugar.js"></script>
@@ -73,6 +110,23 @@
         <div class="content" s-html="state.content">
         </div>
     </div>
+
+    <div class="article_join">
+        <div class="item" s-for="item in list">
+            <div class="image_box">
+                <img :src="item.cover"/>
+            </div>
+            <div class="label_box">
+                {{item.title}}
+            </div>
+        </div>
+    </div>
+
+    <sugar-dialog :model="active" @close="close">
+        <div>
+
+        </div>
+    </sugar-dialog>
 
 
 </div>
@@ -105,14 +159,25 @@
             </p>`
             });
 
-            watch(state,(state)=>{
-                console.log("change");
-            },{
-                deep:true
-            })
+            const list = ref([{
+                title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
+                cover: '//static.rifusy.com/picture/20230206/BE/2BE30778C39Bw1000h525.jpeg'
+            }, {
+                title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
+                cover: '//static.rifusy.com/picture/20220904/72/4727F87A7A1Fw1000h525.jpeg'
+            }]);
+
+            const active = ref(false);
+
+            function close() {
+                active.value = false;
+            }
 
             return {
-                state
+                state,
+                active,
+                list,
+                close
             };
         }
     });
