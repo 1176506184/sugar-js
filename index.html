@@ -26,9 +26,10 @@
     .nav {
         width: 100%;
         height: 50px;
-        background: #F04142;
+        background: #4faee8;
         display: flex;
         position: relative;
+        align-items: center;
         top: 0;
         z-index: 999;
     }
@@ -52,46 +53,53 @@
 
     .article_body {
         width: 96%;
-        margin:0 auto;
+        margin: 0 auto;
         padding-top: 10px;
     }
 
     .item {
-        padding-top: 15px;
+        padding-top: 10px;
         width: 92%;
         margin-left: 4%;
-        margin-bottom: 32px;
+        padding-bottom: 10px;
         display: block;
         position: relative;
+        border-bottom: 1px solid #eee;
     }
 
 
     .label_box {
-        font-size: 17px;
+        font-size: 15px;
         font-weight: 400;
-        line-height: 25px;
+        line-height: 21px;
         color: #2C2C2C;
-        margin-top: 15px;
+        margin-top: 8px;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
-        font-weight: 400;
         letter-spacing: 1px;
     }
 
 
-    .image_box{
+    .image_box {
         width: 92vw;
         height: 48vw;
         position: relative;
     }
 
-    .image_box img{
+    .image_box img {
         width: 100%;
         height: 100%;
     }
+
+    .menu {
+        position: absolute;
+        right: 10px;
+        width: 18px;
+    }
+
 </style>
 <script src="/dist/sugar.js"></script>
 <body>
@@ -101,6 +109,7 @@
         <div class="web_name">
             <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo">
         </div>
+        <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu"/>
     </div>
 
     <div class="article_body">
@@ -112,7 +121,7 @@
     </div>
 
     <div class="article_join">
-        <div class="item" s-for="item in list">
+        <div class="item" s-for="(item,index) in list" :style="index === list.length ? 'border:0' : ''">
             <div class="image_box">
                 <img :src="item.cover"/>
             </div>

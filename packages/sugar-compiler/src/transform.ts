@@ -11,6 +11,7 @@ export function transform (context, helpers) {
       if (prop.name === 's-for') {
         helpers.sFor(context, prop);
         forItem.push(context.forStatment.item);
+        console.log(context.forStatment);
       }
 
       if (prop.name === 's-model') {

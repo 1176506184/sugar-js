@@ -1,5 +1,5 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
-import { createEffect, uiEffect } from '@sugar/sugar-reactive';
+import { uiEffect } from '@sugar/sugar-reactive';
 import patchEx from './patch';
 import { escape2Html } from '@sugar/sugar-shared';
 
@@ -15,6 +15,7 @@ export function sugarRender () {
     const serializer = new XMLSerializer();
     const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
     const { code } = sugarCompiler(htmlCode);
+    console.log(code);
     render = code;
     bindT(vm, data);
     update(vm);
