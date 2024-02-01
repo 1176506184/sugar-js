@@ -1,7 +1,7 @@
 import { NodeTypes } from './parse';
 
 export function transform (context, helpers) {
-  function work (context, forItem = []) {
+  function work (context) {
     const props = context.props;
     props?.forEach((prop) => {
       if (prop.name === 's-if') {
@@ -10,8 +10,6 @@ export function transform (context, helpers) {
 
       if (prop.name === 's-for') {
         helpers.sFor(context, prop);
-        forItem.push(context.forStatment.item);
-        console.log(context.forStatment);
       }
 
       if (prop.name === 's-model') {
@@ -31,11 +29,11 @@ export function transform (context, helpers) {
       context.type = NodeTypes.SLOT;
     }
 
-    helpers.transformRef(context, forItem);
+    helpers.transformRef(context, helpers.appendRef);
 
     if (context.children) {
-      context.children.forEach((child, index) => {
-        work(child, forItem);
+      context.children.forEach((child) => {
+        work(child);
       });
     }
   }

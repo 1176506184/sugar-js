@@ -100,6 +100,14 @@
         width: 18px;
     }
 
+    .menu_fixed_box {
+        width: 100%;
+        top: 0;
+        height: 50vh;
+        background-color: #fff;
+        position: absolute;
+    }
+
 </style>
 <script src="/dist/sugar.js"></script>
 <body>
@@ -109,7 +117,7 @@
         <div class="web_name">
             <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo">
         </div>
-        <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu"/>
+        <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open"/>
     </div>
 
     <div class="article_body">
@@ -121,7 +129,7 @@
     </div>
 
     <div class="article_join">
-        <div class="item" s-for="(item,index) in list" :style="index === list.length ? 'border:0' : ''">
+        <div class="item" s-for="(item,index) in list" :style="index === (list.length - 1) ? 'border:0' : ''">
             <div class="image_box">
                 <img :src="item.cover"/>
             </div>
@@ -132,7 +140,7 @@
     </div>
 
     <sugar-dialog :model="active" @close="close">
-        <div>
+        <div class="menu_fixed_box">
 
         </div>
     </sugar-dialog>
@@ -182,11 +190,16 @@
                 active.value = false;
             }
 
+            function open() {
+                active.value = true;
+            }
+
             return {
                 state,
                 active,
                 list,
-                close
+                close,
+                open
             };
         }
     });

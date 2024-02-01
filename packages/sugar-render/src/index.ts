@@ -14,7 +14,7 @@ export function sugarRender () {
     vm._vnode = el;
     const serializer = new XMLSerializer();
     const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
-    const { code } = sugarCompiler(htmlCode);
+    const { code } = sugarCompiler(htmlCode, data);
     console.log(code);
     render = code;
     bindT(vm, data);

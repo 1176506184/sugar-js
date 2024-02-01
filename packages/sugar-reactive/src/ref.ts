@@ -5,7 +5,9 @@ import { addEffect } from './signal/uiEffect';
 const subscribers = new Set();
 
 function ref (fun: any) {
-  const result = {};
+  const result = {
+    sugarReactiveDataType: 'Ref'
+  };
   if (typeof fun === 'string' || typeof fun === 'number' || typeof fun === 'boolean' || fun === null) {
     const data = {
       value: fun
