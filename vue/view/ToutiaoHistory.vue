@@ -36,9 +36,11 @@
         <div style="margin: 30px 0;">
           <span style="color: red;font-size:22px;font-weight: bold">已存在该博主：ID {{
               blogger_id
-            }}(创建人：{{ createUserName }},已采集素材数 {{
+            }}(创建人：{{ createUserName }}，已采集素材数 {{
               collect_count
-            }},创建时间{{ createTime }})</span>
+            }}，创建时间{{ createTime }})
+            <br/>
+            采集域名必须为https://www.toutiao.com或https://toutiao.com</span>
         </div>
 
         <el-row gutter="10">
@@ -175,7 +177,7 @@ async function createBlogger() {
   // 0：FB专业，1：twitter博主，2：Pinterest，3：头条，4：Instragram，5：Youtube
   // 0繁体 1 英文 2葡语 3日语
   let res = await hHttp(`/BloggerNew/Add`, {
-    platform: authorLink.value.includes('group') ? 6 : 0,
+    platform: 3,
     lang: form.lang,
     name: author.value,
     blogger_url: authorLink.value,
@@ -233,8 +235,9 @@ async function dealFbHistory(Message) {
 
       if (cacheList.length >= 5) {
         try {
-          let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
+          let tempData = cacheList;
           cacheList = [];
+          let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
           if (state && count > 0) {
             successPostNum.value += count;
             collectNum.value += count;
@@ -332,7 +335,7 @@ async function UpdatedBlogger(time) {
   console.log('完成了，发通知-', ddid);
   let postString = '博主已采集完毕，已采集到最后贴文发布时间' + post_time_last + '，请及时进入后台查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：Facebook' + '\n' +
+      '博主平台：微头条' + '\n' +
       '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + successPostNum.value
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
@@ -352,7 +355,7 @@ async function UpdatedBloggerError() {
   console.log('完成了，发通知-', ddid);
   let postString = '博主历史采集超过' + finishTime.value + '分钟未获取到新贴文，请查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：Facebook' + '\n' +
+      '博主平台：微头条' + '\n' +
       '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + successPostNum.value
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {

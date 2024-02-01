@@ -252,8 +252,9 @@ async function dealFbHistory(Message) {
       }
     } else {
       try {
-        let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
+        let tempData = cacheList;
         cacheList = [];
+        let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
         if (state && count > 0) {
           successPostNum.value += count;
           collectNum.value += count;
