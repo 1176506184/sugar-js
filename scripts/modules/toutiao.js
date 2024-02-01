@@ -143,6 +143,7 @@ div.style = 'border:1px solid #cdcdcd;position:fixed;top:10px;left:10px;backgrou
 let isInBody = false;
 let frameId = '';
 let openImage = true;
+let article_url_map = []
 
 setInterval(() => {
 
@@ -214,42 +215,46 @@ async function collectHistory() {
                     if (!item.article_url) {
                         item.article_url = "https://www.toutiao.com/article/" + item.id;
                     }
-                    let result = await getArticleBody(toutiaoData[i].article_url.replace('https://toutiao.com', location.origin));
-                    let text = result.querySelector('article').innerText;
-                    let imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
-                    console.log(text, imgs);
 
-                    let imgurl = '';
-                    for (let i = 0; i < imgs.length; i++) {
-                        imgurl += imgs[i] + ';';
+                    if (!article_url_map.includes(item.article_url)) {
+                        article_url_map.push(item.article_url);
+                        let result = await getArticleBody(toutiaoData[i].article_url.replace('https://toutiao.com', location.origin));
+                        let text = result.querySelector('article').innerText;
+                        let imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
+                        console.log(text, imgs);
+
+                        let imgurl = '';
+                        for (let i = 0; i < imgs.length; i++) {
+                            imgurl += imgs[i] + ';';
+                        }
+
+                        let data = {
+                            article_type: imgs.length ? 2 : 0,
+                            title: text,
+                            source_urls: imgurl,
+                            post_url: "",
+                            article_url: item.article_url,
+                            move_total: (item.digg_count + item.share_count + item.comment_count),
+                            looks: item.read_count,
+                            likes: item.digg_count,
+                            shares: item.share_count,
+                            comments: item.comment_count,
+                            return_msg: '',
+                            remark: '',
+                            publish_time: t2t(item.create_time)
+                        };
+
+                        data_map.push(data);
+                        div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
+                        chrome.runtime.sendMessage({
+                            Message: 'history_data',
+                            frameId: frameId,
+                            type: 'toutiao',
+                            data: data
+                        }).then(r => {
+
+                        })
                     }
-
-                    let data = {
-                        article_type: imgs.length ? 2 : 0,
-                        title: text,
-                        source_urls: imgurl,
-                        post_url: "",
-                        article_url: item.article_url,
-                        move_total: item.digg_count + item.share_count + item.comment_count,
-                        looks: item.read_count,
-                        likes: item.digg_count,
-                        shares: item.share_count,
-                        comments: item.comment_count,
-                        return_msg: '',
-                        remark: '',
-                        publish_time: t2t(item.create_time)
-                    };
-
-                    data_map.push(data);
-                    div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
-                    chrome.runtime.sendMessage({
-                        Message: 'history_data',
-                        frameId: frameId,
-                        type: 'toutiao',
-                        data: data
-                    }).then(r => {
-
-                    })
                 }
             }
             toutiaoData = [];
