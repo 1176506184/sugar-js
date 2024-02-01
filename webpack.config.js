@@ -11,6 +11,7 @@ const {
 const {DefinePlugin} = require("webpack");
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const version = require('./version');
+const NODE_ENV = process.env.NODE_ENV;
 
 module.exports = {
     entry: './vue/main.js',
@@ -85,7 +86,7 @@ module.exports = {
                 to: path.join(__dirname, distDir)
             }]
         }),
-        new FileManagerPlugin({
+        NODE_ENV === 'development' ? undefined : new FileManagerPlugin({
             events: {
                 onEnd: {
                     archive: [

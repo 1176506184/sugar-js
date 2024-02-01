@@ -119,3 +119,41 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({state: 200});
     }
 })
+
+//采集历史
+
+let historyCollectIndex = 1;
+let state = 0;
+let max_collect = 1000;
+let finishTime = 10 * 60;
+let data_map = []
+let data_last_length = 0;
+let no_art_time = 0
+let noticed = false;
+let div = document.createElement('div');
+div.style = 'border:1px solid #cdcdcd;position:fixed;top:10px;left:10px;background:#fff;z-index:99999999999;border-radius:5px;display:flex;justify-content:center;align-items:center;padding:10px'
+let isInBody = false;
+let frameId = '';
+let openImage = true;
+
+setInterval(() => {
+
+    if (state === 1) {
+        if (data_map.length === data_last_length) {
+            no_art_time += 1;
+            if (no_art_time > finishTime && !noticed) {
+                noticed = true;
+                chrome.runtime.sendMessage({
+                    Message: 'error',
+                    type: 'toutiao',
+                }).then(r => {
+
+                })
+            }
+        } else {
+            no_art_time = 0;
+            data_last_length = data_map.length;
+        }
+    }
+
+}, 1000)

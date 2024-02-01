@@ -21,6 +21,7 @@ import DouyinVideoCommunitySchedulingFrame from "../view/douyinVideoCommunitySch
 import TwitterImageCommunitySchedulingFram from "../view/twitterImageCommunitySchedulingFrame.vue";
 import TwitterVideoCommunitySchedulingFram from "../view/twitterVideoCommunitySchedulingFrame.vue";
 import TwitterVideoPW from "../view/twitterVideoPW.vue";
+import ToutiaoHistory from "../view/ToutiaoHistory.vue"
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -184,6 +185,12 @@ const routes = [
         name: 'TwitterVideoPW',
         path: '/TwitterVideoPW',
         component: TwitterVideoPW,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'ToutiaoHistory',
+        path: '/ToutiaoHistory',
+        component: ToutiaoHistory,
         props: route => ({query: route.query.q}),
         meta: {}
     }

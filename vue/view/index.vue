@@ -83,10 +83,11 @@
 
               <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">社团排程（图片）</el-button>
               <el-button @click="collectTwitterVideoCommunitySchedulingFrame" type="primary">社团排程（视频）</el-button>
-              <el-button @click="collectTwitterPW" type="primary" >
+              <el-button @click="collectTwitterPW" type="primary">
                 采集视频并TOOL源视频排文
               </el-button>
-              <el-button type="warning" @click="collectTTHistory" style="margin-top: 10px;margin-left: 0">自动采集历史</el-button>
+              <el-button type="warning" @click="collectTTHistory" style="margin-top: 10px;margin-left: 0">自动采集历史
+              </el-button>
 
 
             </div>
@@ -112,6 +113,8 @@
               >停止采集
               </el-button
               >
+              <el-button type="warning" @click="collectToutiaoHistory">自动采集历史</el-button>
+
             </div>
           </el-collapse-item>
 
@@ -1357,25 +1360,18 @@ async function getId(hash) {
 async function collectTTHistory() {
 
   let activeId = await getActiveId();
-  /* let pageId = await getId("TTCollectHistory");
-
-  // console.log(activeId, pageId)
-
-  if (pageId !== false) {
-    await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
-  } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TTCollectHistory?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
-  } */
   chrome.tabs.create({
     url: '/html/out.html#/TTCollectHistory?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
+}
+
+async function collectToutiaoHistory() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/ToutiaoHistory?activeId=' + activeId,
     active: true
   }, (tab) => {
 
