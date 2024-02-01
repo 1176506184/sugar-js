@@ -124,7 +124,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         startCollectHistory(Message);
     } else if (Message.Message === 'pauseCollectHistory') {
         sendResponse({state: 200});
-        pauseCollectHistory();
+        pauseCollectHistory(Message);
     }
 })
 
@@ -204,7 +204,6 @@ async function wait(s) {
 }
 
 async function collectHistory() {
-    console.log(toutiaoData);
     if (state === 1) {
         try {
             await scrollBottom();
@@ -231,16 +230,16 @@ async function collectHistory() {
                         source_urls: imgurl,
                         post_url: "",
                         article_url: item.article_url,
-                        move_total: item.read_count,
+                        move_total: item.digg_count + item.share_count + item.comment_count,
+                        looks: item.read_count,
                         likes: item.digg_count,
-                        shares: item.show_count,
+                        shares: item.share_count,
                         comments: item.comment_count,
                         return_msg: '',
                         remark: '',
                         publish_time: t2t(item.create_time)
                     };
 
-                    console.log(data);
                     data_map.push(data);
                     div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
                     chrome.runtime.sendMessage({

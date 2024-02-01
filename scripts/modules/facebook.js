@@ -280,7 +280,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         startCollectHistory(Message);
     } else if (Message.Message === 'pauseCollectHistory') {
         sendResponse({state: 200});
-        pauseCollectHistory();
+        pauseCollectHistory(Message);
     }
 })
 
