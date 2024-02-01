@@ -244,7 +244,7 @@ async function collectHistory() {
 
                         data_map.push(data);
                         div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
-                        if(state){
+                        if(state === 1){
                             chrome.runtime.sendMessage({
                                 Message: 'history_data',
                                 frameId: frameId,

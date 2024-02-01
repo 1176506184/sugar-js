@@ -113,6 +113,7 @@ const successPostNum = ref(0)
 const waitNextTimeNum = ref(0)
 const failNum = ref(0);
 const openImage = ref(true);
+let isNoticeFinished = false;
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -130,6 +131,7 @@ const form = reactive({
 })
 
 async function startCollect() {
+  isNoticeFinished = false;
   status.value = 1;
   chrome.tabs.sendMessage(
       parseInt(route.query.activeId),
@@ -328,8 +330,14 @@ function close() {
 }
 
 
+
+
 // 调发通知接口
 async function UpdatedBlogger(time) {
+  if (isNoticeFinished) {
+    return
+  }
+  isNoticeFinished = true
   let ddid = localStorage.getItem("ddid");
   let post_time_last = time ? time.split('T')[0] : time
   console.log('完成了，发通知-', ddid);

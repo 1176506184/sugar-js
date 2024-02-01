@@ -113,7 +113,7 @@
               >停止采集
               </el-button
               >
-              <el-button type="warning" @click="collectToutiaoHistory">自动采集历史</el-button>
+              <el-button type="warning" @click="collectToutiaoHistory">微头条采集</el-button>
 
             </div>
           </el-collapse-item>
