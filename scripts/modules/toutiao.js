@@ -226,7 +226,7 @@ async function collectHistory() {
                     }
 
                     let data = {
-                        article_type: 2,
+                        article_type: imgs.length ? 2 : 0,
                         title: text,
                         source_urls: imgurl,
                         post_url: "",
