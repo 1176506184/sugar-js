@@ -210,11 +210,9 @@ async function collectHistory() {
             await scrollBottom();
             await wait(5);
             for (let i = 0; i < toutiaoData.length; i++) {
-                if (toutiaoData[i].article_url || toutiaoData[i].id) {
+                if (toutiaoData[i].id) {
                     let item = toutiaoData[i];
-                    if (!item.article_url) {
-                        item.article_url = "https://www.toutiao.com/article/" + item.id;
-                    }
+                    item.article_url = "https://www.toutiao.com/article/" + item.id;
 
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
@@ -232,28 +230,30 @@ async function collectHistory() {
                             article_type: imgs.length ? 2 : 0,
                             title: text,
                             source_urls: imgurl,
-                            post_url: "",
+                            post_url: item.article_url,
                             article_url: item.article_url,
-                            move_total: (item.digg_count + item.share_count + item.comment_count),
+                            move_total: (item.like_count ? item.like_count : 0 + item.share_count + item.comment_count + item.digg_count ? item.digg_count : 0),
                             looks: item.read_count,
-                            likes: item.digg_count,
+                            likes: item.like_count ? item.like_count : item.digg_count,
                             shares: item.share_count,
                             comments: item.comment_count,
                             return_msg: '',
                             remark: '',
-                            publish_time: t2t(item.create_time)
+                            publish_time: item.create_time ? t2t(item.create_time) : t2t(item.publish_time)
                         };
 
                         data_map.push(data);
                         div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
-                        chrome.runtime.sendMessage({
-                            Message: 'history_data',
-                            frameId: frameId,
-                            type: 'toutiao',
-                            data: data
-                        }).then(r => {
+                        if(state){
+                            chrome.runtime.sendMessage({
+                                Message: 'history_data',
+                                frameId: frameId,
+                                type: 'toutiao',
+                                data: data
+                            }).then(r => {
 
-                        })
+                            })
+                        }
                     }
                 }
             }
