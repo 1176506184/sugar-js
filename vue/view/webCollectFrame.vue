@@ -6,7 +6,7 @@
       </el-input>
     </div>
 
-    <el-form  label-position="top" style="height: calc(100vh - 57px);">
+    <el-form label-position="top" style="height: calc(100vh - 57px);">
       <div style="padding: 0 10px 10px;">
         <el-form-item>
           <el-table :data="data" style="flex:1;height:calc(100vh - 150px)">
@@ -110,13 +110,21 @@ function uploadData() {
 
 }
 
+let href_map = [];
+
 function dealData(Message) {
 
   if (Message.Message === 'Origin') {
     origin.value = Message.data;
     getRule();
   } else if (Message.Message === 'web') {
-    data.value.push(...Message.data);
+    Message.data.forEach((item) => {
+      if (!href_map.includes(item.href)) {
+        data.value.push(item);
+        href_map.push(item.href);
+      }
+    })
+
   } else if (Message.Message === 'finish') {
     // finishTask();
   }
