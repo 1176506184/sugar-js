@@ -40,7 +40,7 @@ chrome.storage.local.get('open', (res) => {
         if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
             || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 ||
             location.href.indexOf('tiktok') !== -1 || location.href.indexOf('ce.xinli001.com') !== -1
-            || location.href.indexOf('beta.console.truvid.com') !== -1) {
+            || location.href.indexOf('beta.console.truvid.com') !== -1 || location.href.indexOf('pinterest') !== -1) {
             injectedScript('scripts/xhr/xhr.js').then(r => {
 
             })
@@ -125,6 +125,13 @@ if (location.origin.indexOf("douyin") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'tiktok.js'
+    }).then(() => {
+        console.log("注入完成")
+    })
+} else if (location.origin.indexOf("pinterest") !== -1) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'pinterest.js'
     }).then(() => {
         console.log("注入完成")
     })

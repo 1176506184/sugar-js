@@ -201,6 +201,11 @@
             </div>
           </el-collapse-item>
 
+          <el-collapse-item title="Pinterest博主" name="10">
+            <div>
+              <el-button @click="pinterestHistoryFrame" type="warning">自动采集历史</el-button>
+            </div>
+          </el-collapse-item>
 
           <!--        <p>脸书社团</p>-->
           <!--        <div>-->
@@ -335,6 +340,9 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "web") {
       activeNames.value.push("8");
       store.commit("changeType", "web");
+    } else if (Message.type === "pinterest") {
+      activeNames.value.push("10");
+      store.commit("changeType", "pinterest");
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
@@ -1051,6 +1059,29 @@ async function collectInsHistory() {
 
     })
   }
+}
+
+// pinterest博主采集历史
+async function pinterestHistoryFrame() {
+
+let activeId = await getActiveId();
+let pageId = await getId("pinterestHistoryFrame");
+
+// console.log(activeId, pageId)
+
+if (pageId !== false) {
+  await chrome.tabs.update(pageId, {
+    active: true
+  })
+  await updateActiveId(pageId, activeId);
+} else {
+  chrome.tabs.create({
+    url: '/html/out.html#/pinterestHistoryFrame?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
+}
 }
 
 

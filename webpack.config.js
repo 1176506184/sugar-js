@@ -49,6 +49,9 @@ module.exports = {
     },
     plugins: [
         new DefinePlugin({
+            __VUE_PROD_DEVTOOLS__: JSON.stringify(false)
+        }),
+        new DefinePlugin({
             'process.env.DIR': `"${distDir}"`,
         }),
         new CleanWebpackPlugin(),
