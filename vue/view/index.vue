@@ -607,6 +607,14 @@ function getVersion() {
   http("/home/GetVersion", {}).then((res) => {
     console.log(res.version_code);
     if (res.version_code > state.version && res.src) {
+      ElMessageBox.confirm(res.remark, {
+        title: '发现新版本',
+        confirmButtonText: '立即下载',
+        cancelButtonText: '稍后下载'
+      })
+          .then(() => {
+            window.open(res.src);
+          })
       state.version = "点击下载最新版本";
       document.querySelector("#v_p").addEventListener("click", () => {
         window.open(res.src);
@@ -1064,24 +1072,24 @@ async function collectInsHistory() {
 // pinterest博主采集历史
 async function pinterestHistoryFrame() {
 
-let activeId = await getActiveId();
-let pageId = await getId("pinterestHistoryFrame");
+  let activeId = await getActiveId();
+  let pageId = await getId("pinterestHistoryFrame");
 
 // console.log(activeId, pageId)
 
-if (pageId !== false) {
-  await chrome.tabs.update(pageId, {
-    active: true
-  })
-  await updateActiveId(pageId, activeId);
-} else {
-  chrome.tabs.create({
-    url: '/html/out.html#/pinterestHistoryFrame?activeId=' + activeId,
-    active: true
-  }, (tab) => {
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/pinterestHistoryFrame?activeId=' + activeId,
+      active: true
+    }, (tab) => {
 
-  })
-}
+    })
+  }
 }
 
 

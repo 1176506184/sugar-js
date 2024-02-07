@@ -5,15 +5,15 @@ let PrivateLink = {
     'dataCollect': 'http://captureapi.anyelse.com/'
 }
 
-if (NODE_ENV === 'development') {
-    PrivateLink = {
-        'trumpet': 'http://192.168.205.34:57968/',
-        // 's': 'http://192.168.205.34:44346',
-        's': 'http://107.150.124.12/',
-        'dataCollect': 'http://captureapi.anyelse.com/'
-    }
-}
-
+// if (NODE_ENV === 'development') {
+//     PrivateLink = {
+//         'trumpet': 'http://192.168.205.34:57968/',
+//         // 's': 'http://192.168.205.34:44346',
+//         's': 'http://107.150.124.12/',
+//         'dataCollect': 'http://captureapi.anyelse.com/'
+//     }
+// }
+//
 
 function xhrHttp(url, params, type = 'get', content_type = 'application/x-www-form-urlencoded; charset=UTF-8') {
     return new Promise((resolve, reject) => {
