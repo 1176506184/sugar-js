@@ -1,6 +1,6 @@
-import { createEffect, getCurrentObserver } from './signal/createEffect';
+import { getCurrentObserver } from './effect/createEffect';
 import reactive from './reactive';
-import { addEffect } from './signal/uiEffect';
+import { addEffect } from './effect/uiEffect';
 
 const subscribers = new Set();
 

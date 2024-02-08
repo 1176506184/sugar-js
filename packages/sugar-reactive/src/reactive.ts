@@ -1,6 +1,6 @@
-import { getCurrentObserver } from './signal/createEffect';
+import { getCurrentObserver } from './effect/createEffect';
 import { hasChanged, hasOwn, isIntegerKey } from '@sugar/sugar-shared';
-import { addEffect } from './signal/uiEffect';
+import { addEffect } from './effect/uiEffect';
 
 const targetMap = new WeakMap();
 const subscribers = new Set();

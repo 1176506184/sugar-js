@@ -124,14 +124,14 @@
         <div class="title">
             {{state.title}}
         </div>
-        <div class="content" s-html="state.content">
+        <div class="content" s-html="state.content" ref="htmlRef">
         </div>
     </div>
 
     <div class="article_join">
         <div class="item" s-for="(item,index) in list" :style="index === (list.length - 1) ? 'border:0' : ''">
             <div class="image_box">
-                <img :src="item.cover"/>
+                <img :src="item.cover" @click="showImage(item)"/>
             </div>
             <div class="label_box">
                 {{item.title}}
@@ -139,12 +139,15 @@
         </div>
     </div>
 
-    <sugar-dialog :model="active" @close="close">
+    <sugar-dialog :model="active" @close="close" :instance="htmlRef">
         <div class="menu_fixed_box">
 
         </div>
     </sugar-dialog>
 
+    <sugar-dialog :model="showImageActive" @close="closeImage">
+        <img :src="popImage" style="width: 100%;height: auto"/>
+    </sugar-dialog>
 
 </div>
 
@@ -186,6 +189,12 @@
 
             const active = ref(false);
 
+            const htmlRef = instance(null);
+
+            const showImageActive = ref(false);
+
+            const popImage = ref('');
+
             function close() {
                 active.value = false;
             }
@@ -194,12 +203,30 @@
                 active.value = true;
             }
 
+            function closeImage() {
+                showImageActive.value = false;
+            }
+
+            function showImage(item) {
+                popImage.value = item.cover;
+                showImageActive.value = true;
+            }
+
+            onMounted(()=>{
+
+            })
+
             return {
                 state,
                 active,
                 list,
                 close,
-                open
+                open,
+                htmlRef,
+                showImageActive,
+                closeImage,
+                popImage,
+                showImage
             };
         }
     });

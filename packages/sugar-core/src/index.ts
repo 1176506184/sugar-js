@@ -2,6 +2,7 @@ import { type Core } from './types';
 import { onMounted, mountHandleList, updateActiveId } from '@sugar/sugar-hook';
 import { sugarRender } from '@sugar/sugar-render';
 import { guid } from './utils/guid';
+import { nextTick } from '@sugar/sugar-reactive';
 
 function makeSugar (options: Core) {
   const appId = guid();
@@ -20,11 +21,13 @@ function makeSugar (options: Core) {
   };
 
   function mount (el) {
-    vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
-    mounted(vm, vm.$el, data);
-    mountHandleList[appId]?.forEach((item) => {
-      item.fun();
-      item.used = true;
+    vm._vnode = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
+    mounted(vm, data);
+    nextTick(() => {
+      mountHandleList[appId]?.forEach((item) => {
+        item.fun();
+        item.used = true;
+      });
     });
   }
 

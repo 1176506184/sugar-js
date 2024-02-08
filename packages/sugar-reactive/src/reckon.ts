@@ -1,4 +1,4 @@
-import { createEffect } from './signal/createEffect';
+import { createEffect } from './effect/createEffect';
 
 function reckon (fun: Function) {
   const result = {};

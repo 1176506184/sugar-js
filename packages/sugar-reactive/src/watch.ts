@@ -1,4 +1,4 @@
-import { createEffect } from './signal/createEffect';
+import { createEffect } from './effect/createEffect';
 import { deepClone, deepEqual } from '@sugar/sugar-shared';
 
 export function watch (source: any, cb: Function, options = { deep: false }) {

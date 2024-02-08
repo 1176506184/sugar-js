@@ -4,7 +4,7 @@ const Scheduler = [];
 const patchEffect = [];
 const callbacks = [];
 
-export function uiEffect (patch, appId) {
+export function uiEffect (patch) {
   patch();
   patchEffect.push(patch);
 }

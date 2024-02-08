@@ -1,21 +1,15 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import { uiEffect } from '@sugar/sugar-reactive';
-import patchEx from './patch';
+import patch from './patch';
 import { escape2Html } from '@sugar/sugar-shared';
 
 export function sugarRender () {
   let render = null;
 
-  function mounted (vm, el, data) {
-    if (!(el instanceof HTMLElement)) {
-      el = document.querySelector(el);
-    }
-    vm.$el = el;
-    vm._vnode = el;
+  function mounted (vm, data) {
     const serializer = new XMLSerializer();
     const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
     const { code } = sugarCompiler(htmlCode, data);
-    console.log(code);
     render = code;
     bindT(vm, data);
     update(vm);
@@ -28,9 +22,9 @@ export function sugarRender () {
     uiEffect(() => {
       const vnode = render.call(vm);
       bindAttrAndEvent(vm, vnode);
-      patchEx(vm, vnode);
+      patch(vm, vnode);
       vm._vnode = vnode;
-    }, vm.appId);
+    });
   }
 
   return {
