@@ -363,7 +363,7 @@ async function dealVideoData() {
         Message: 'Video',
         type: 'facebook',
         data: facebookVideo,
-        author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText
+        author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,
     }).then(r => {
 
     })
@@ -715,7 +715,7 @@ async function collectHistory() {
                 await wait(0.5);
                 let posturl = needCollect.querySelector('a' + ".x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm".replaceAll(' ', '.'))?.getAttribute("href");
 
-                if(!posturl){
+                if (!posturl) {
                     posturl = needCollect.querySelector('a' + ".x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm".replaceAll(' ', '.'))?.getAttribute("href");
                 }
 
@@ -816,6 +816,15 @@ async function collectHistory() {
                     }
                     await wait(1)
                     let closeBtn = document.querySelector('div' + ".x1i10hfl x6umtig x1b1mbwd xaqea5y xav7gou x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x16tdsg8 x1hl2dhg xggy1nq x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x14yjl9h xudhj91 x18nykt9 xww2gxu x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x78zum5 xl56j7k xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 x1vqgdyp x100vrsf x18l40ae x14ctfv".replaceAll(' ', '.')).querySelector('i')
+
+                    if (!closeBtn) {
+                        closeBtn = document.querySelector('div' + ".x1i10hfl x1ejq31n xd10rxx x1sy0etr x17r0tee x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x16tdsg8 x1hl2dhg xggy1nq x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x14yjl9h xudhj91 x18nykt9 xww2gxu x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x78zum5 xl56j7k xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 x1vqgdyp x100vrsf x18l40ae x14ctfv".replaceAll(' ', '.')).querySelector('i')
+                    }
+
+                    if(!closeBtn){
+                        closeBtn = document.querySelector('div[aria-label="关闭"] i')
+                    }
+
                     closeBtn.click();
                 }
 
