@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@vue/babel-plugin-jsx": "^1.1.5",
     "@vue/cli-plugin-babel": "^5.0.8",
     "add": "^2.0.6",

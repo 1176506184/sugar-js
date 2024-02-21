@@ -23,6 +23,7 @@ import TwitterVideoCommunitySchedulingFram from "../view/twitterVideoCommunitySc
 import TwitterVideoPW from "../view/twitterVideoPW.vue";
 import ToutiaoHistory from "../view/ToutiaoHistory.vue"
 import pinterestHistoryFrame from "../view/pinterestHistoryFrame.vue"
+import ImageCreate from "../view/imageCreate.vue"
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -198,6 +199,12 @@ const routes = [
         name: 'pinterestHistoryFrame',
         path: '/pinterestHistoryFrame',
         component: pinterestHistoryFrame,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'imageCreate',
+        path: '/imageCreate',
+        component: ImageCreate,
         props: route => ({query: route.query.q}),
         meta: {}
     }

@@ -192,6 +192,7 @@
               <el-button @click="collectWebFrame" type="primary">网站采集（新）</el-button>
               <el-button @click="collectNovel" type="primary">小说采集</el-button>
               <el-button @click="collectNovelSync" type="primary">小说采集（加延迟防检测）</el-button>
+              <el-button @click="imageCreate" type="primary">小说图标生成</el-button>
             </div>
           </el-collapse-item>
 
@@ -1422,6 +1423,15 @@ async function collectFBHistory() {
   let activeId = await getActiveId();
   chrome.tabs.create({
     url: '/html/out.html#/FBCollectHistory?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
+}
+
+function imageCreate() {
+  chrome.tabs.create({
+    url: '/html/out.html#/imageCreate',
     active: true
   }, (tab) => {
 
