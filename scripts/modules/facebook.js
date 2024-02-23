@@ -720,6 +720,12 @@ async function collectHistory() {
                 }
 
                 if (!posturl || posturl === '#') {
+                    FireEvent(needCollect.querySelector('a' + ".x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm".replaceAll(' ', '.')), 'pointerover');
+                    await wait(1);
+                    posturl = needCollect.querySelector('a' + ".x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv xo1l8bm".replaceAll(' ', '.'))?.getAttribute("href");
+                }
+
+                if (!posturl || posturl === '#') {
                     posturl = needCollect.querySelector('a' + ".x1i10hfl x1qjc9v5 xjbqb8w xjqpnuy xa49m3k xqeqjp1 x2hbi6w x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xdl72j9 x2lah0s xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x2lwn1j xeuugli xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1q0g3np x87ps6o x1lku1pv x1rg5ohu x1a2a7pz x1n2onr6 xh8yej3".replaceAll(' ', '.'))?.getAttribute("href");
                     posturl = 'https://www.facebook.com' + posturl;
                 }
@@ -727,13 +733,14 @@ async function collectHistory() {
                     posturl = needCollect.querySelector('a' + ".x1i10hfl x9f619 xe8uvvx x16tdsg8 x1hl2dhg xggy1nq x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1n2onr6 x87ps6o x1lku1pv xjbqb8w x76ihet xwmqs3e x112ta8 xxxdfa6 x1ypdohk x1rg5ohu x1qx5ct2 x1k70j0n x1w0mnb xzueoph x1mnrxsn x1iy03kw xexx8yu x4uap5 x18d9i69 xkhd6sd x1o7uuvo x1a2a7pz x1qo4wvw".replaceAll(' ', '.'))?.getAttribute("href");
                 }
 
+
                 FireEvent(dateMin, 'pointerover');
                 await wait(1);
                 let dateMax = ''
                 try {
                     dateMax = document.querySelector(".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1nxh6w3 x1sibtaa xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.innerText;
                     if (!dateMax) {
-                        dateMax = document.querySelector(".x78zum5 xdt5ytf xz62fqu x16ldp7u").replaceAll(' ', '.')?.innerText;
+                        dateMax = document.querySelector(".xu96u03 xm80bdy x10l6tqk x13vifvy x47corl".replaceAll(' ', '.'))?.innerText;
                     }
                 } catch (e) {
                     console.log(e)
@@ -821,7 +828,7 @@ async function collectHistory() {
                         closeBtn = document.querySelector('div' + ".x1i10hfl x1ejq31n xd10rxx x1sy0etr x17r0tee x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x16tdsg8 x1hl2dhg xggy1nq x87ps6o x1lku1pv x1a2a7pz x6s0dn4 x14yjl9h xudhj91 x18nykt9 xww2gxu x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x78zum5 xl56j7k xexx8yu x4uap5 x18d9i69 xkhd6sd x1n2onr6 x1vqgdyp x100vrsf x18l40ae x14ctfv".replaceAll(' ', '.'))
                     }
 
-                    if(!closeBtn){
+                    if (!closeBtn) {
                         closeBtn = document.querySelector('div[aria-label="关闭"] i')
                     }
 
