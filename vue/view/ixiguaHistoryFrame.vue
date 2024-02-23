@@ -164,10 +164,10 @@ async function stopCollect() {
 
 async function createBlogger() {
   // 创建博主接口
-  // 0：FB专业，1：twitter博主，2：Pinterest，3：头条，4：Instragram，5：Youtube
+  // 0：FB专业，1：twitter博主，2：Pinterest，3：头条，4：Instragram，5：Youtube，7：西瓜视频
   // 0繁体 1 英文 2葡语 3日语
   let res = await hHttp(`/BloggerNew/Add`, {
-    platform: 1,
+    platform: 7,
     lang: form.lang,
     name: author.value,
     blogger_url: authorLink.value,
@@ -276,7 +276,7 @@ async function dealTtHistory(Message) {
           );
         }
     );
-  } else if(Message.Message == "history" && Message.type == "twitter" && Message.frameId.toString() === route.query.activeId.toString()) {
+  } else if(Message.Message == "history" && Message.type == "ixigua" && Message.frameId.toString() === route.query.activeId.toString()) {
     // console.log(Message)
     author.value = Message.author.replace(/\s/g, '');
     authorLink.value = Message.authorLink.replace(/\s/g, '');
