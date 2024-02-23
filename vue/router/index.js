@@ -21,9 +21,13 @@ import DouyinVideoCommunitySchedulingFrame from "../view/douyinVideoCommunitySch
 import TwitterImageCommunitySchedulingFram from "../view/twitterImageCommunitySchedulingFrame.vue";
 import TwitterVideoCommunitySchedulingFram from "../view/twitterVideoCommunitySchedulingFrame.vue";
 import TwitterVideoPW from "../view/twitterVideoPW.vue";
-import ToutiaoHistory from "../view/ToutiaoHistory.vue"
-import pinterestHistoryFrame from "../view/pinterestHistoryFrame.vue"
+import ToutiaoHistory from "../view/ToutiaoHistory.vue";
+import pinterestHistoryFrame from "../view/pinterestHistoryFrame.vue";
+import ixiguaVideoFrame from "../view/ixiguaVideoFrame.vue";
+import ixiguaHistoryFrame from "../view/ixiguaHistoryFrame.vue";
 import ImageCreate from "../view/imageCreate.vue"
+
+
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -200,6 +204,18 @@ const routes = [
         path: '/pinterestHistoryFrame',
         component: pinterestHistoryFrame,
         props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'ixiguaVideoFrame',
+        path: '/ixiguaVideoFrame',
+        component: ixiguaVideoFrame,
+        props: route => ({ query: route.query.q }),
+        meta: {}
+    }, {
+        name: 'ixiguaHistoryFrame',
+        path: '/ixiguaHistoryFrame',
+        component: ixiguaHistoryFrame,
+        props: route => ({ query: route.query.q }),
         meta: {}
     }, {
         name: 'imageCreate',

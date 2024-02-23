@@ -210,7 +210,8 @@
 
           <el-collapse-item title="西瓜视频" name="11">
             <div>
-              <el-button @click="pinterestHistoryFrame" type="primary">采集视频并TOOL源视频排文</el-button>
+              <el-button @click="ixiguaVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
+              <el-button @click="ixiguaHistoryFrame" type="warning">自动采集历史</el-button>
             </div>
           </el-collapse-item>
 
@@ -1101,6 +1102,51 @@ async function pinterestHistoryFrame() {
     })
   }
 }
+
+
+// 西瓜视频博主源视频排程
+async function ixiguaVideoFrame() {
+
+  let activeId = await getActiveId();
+  let pageId = await getId("ixiguaVideoFrame");
+
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/ixiguaVideoFrame?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+
+// 西瓜视频博主自动采集历史
+async function ixiguaHistoryFrame() {
+
+  let activeId = await getActiveId();
+  let pageId = await getId("ixiguaHistoryFrame");
+
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/ixiguaHistoryFrame?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
 
 
 async function collectTiktokFrame() {
