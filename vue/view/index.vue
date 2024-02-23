@@ -208,6 +208,12 @@
             </div>
           </el-collapse-item>
 
+          <el-collapse-item title="西瓜视频" name="11">
+            <div>
+              <el-button @click="pinterestHistoryFrame" type="primary">采集视频并TOOL源视频排文</el-button>
+            </div>
+          </el-collapse-item>
+
           <!--        <p>脸书社团</p>-->
           <!--        <div>-->
           <!--          <el-button @click="facebook_member" type="primary" :disabled="type!=='facebook'">手动采集</el-button>-->
@@ -344,6 +350,9 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "pinterest") {
       activeNames.value.push("10");
       store.commit("changeType", "pinterest");
+    } else if (Message.type === "ixigua") {
+      activeNames.value.push("11");
+      store.commit("changeType", "ixigua");
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
