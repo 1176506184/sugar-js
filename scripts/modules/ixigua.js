@@ -1,14 +1,14 @@
 window.addEventListener('message', function (res) {
     if (res.data.Message === 'ajax') {
-        console.log(111111111);
-        // 采集历史数据
-        if (typeof res.data.data === 'object' && res.data.url && (res.data.url.indexOf("/author/new_video_list?") !== -1)) {
-
+        // ixigua采集历史数据
+        if (res.data && res.data.url && (res.data.url.indexOf("/author/new_video_list?") !== -1)) {
+            // console.log('拦截接口成功！', res.data.data);
             try {
                 async function handleData(data) {
                     let Data = data;
                     // 开始采集
-                    console.log(Data);
+                    CacheMertial(JSON.parse(Data), '0');
+                    // console.log(typeof(Data));
                 }
 
                 handleData(res.data.data);
@@ -52,204 +52,71 @@ var publish_time_last = ''
 
 // 第一屏数据
 var first_page_data = {};
+// 待解析数据
+var toFenxiList = [];
+
+async function CacheMertial(Data, type) {
+    // type == 1 第一屏数据
+    if (type === '1') {
+        console.log('西瓜视频：', Data.AuthorHomeVideoList);
+        let videoList = Data.AuthorHomeVideoList;
+        var num = videoList.videos.length;
+        toFenxiList = videoList.videos;
+        console.log('第一屏，视频帖子数' + num);
+    }else {
+        console.log('西瓜视频：', Data);
+        // 拦截接口数据
+        let videoList1 = Data.data;
+        var num = videoList1.videoList.length;
+        toFenxiList = videoList1.videoList;
+        console.log('接口，视频帖子数' + num);
+    }
+    
 
 
-async function CacheMertial(Data) {
-    console.log('西瓜视频：', Data.AuthorHomeVideoList);
-
-    let videoList = Data.AuthorHomeVideoList;
-    var num = videoList.videos.length;
-    console.log('视频帖子数' + num);
-
-    /*
     for (var i = 0; i < num; i++) {
         var notes = "";
         var views = 0;
         var likes = 0;
         var comments = 0;
-        var retweets = 0;
-        var quotes = 0;
+        var shares = 0;
         var move_total = 0;
         var article_url = ''
         var video_url = '';
-        var photo_url = '';
+        var source_urls = '';
         var post_url = '';
         var post_time = '';
-        var article_type = 0;
-        // 转推贴
-        var ifretweeted = false;
-
-        if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].entryId.indexOf('tweet-') == -1) {
-            continue;
-        }
-
-        let resultOrtweet = null;
-
-        // 判断报文两种结构
-        if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.tweet) {
-            resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.tweet
+        var article_type = 3;
+        // 导语标题
+        notes = toFenxiList[i].title;
+        // 互动
+        move_total = likes + shares + comments;
+        // 观看
+        if (toFenxiList[i].playNum && toFenxiList[i].playNum != '') {
+            views = toFenxiList[i].playNum;
         } else {
-            resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result
+            views = 0;
         }
-
-        try {
-            console.log('第' + i);
-            //过滤掉可能出现的广告帖子
-            try {
-                if (resultOrtweet.core.user_results.result.legacy.name != blogger_name) {
-                    continue;
-                }
-
-            } catch { }
-
-
-            try {//转推帖过滤
-                //data.user.result.timeline_v2.timeline.instructions[1].entries[0].content.itemContent.tweet_results.result.legacy.retweeted_status_result.result
-                if (resultOrtweet.legacy.retweeted_status_result.result != '') {
-                    ifretweeted = true;
-                    continue;
-                } else {
-                    ifretweeted = false;
-                }
-            } catch (ex) {
-                ifretweeted = false;
-            }
-
-
-            if (notes == '') {
-                notes = resultOrtweet.legacy.full_text;
-            }
-
-
-            if (notes.indexOf('http') != -1 || notes.indexOf('https') != -1) {
-                try {
-
-                    if (resultOrtweet.legacy.entities.urls[0].expanded_url != '') {
-                        article_url = article_url + resultOrtweet.legacy.entities.urls[0].expanded_url + ';';
-                    } else {
-                        article_url = '';
-                    }
-
-
-
-                } catch {
-                    article_url = '';
-                }
-                //极端情况（一个推中含有两个不同的外链），虽然它是上面代码的完善版本，但是没有找到真正的案例佐证，上面目前能跑就别动！
-                //try {
-                //    let article_urls = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.legacy.entities.urls;
-                //    for (var i = 0; i < article_urls.length; i++){
-                //        if (article_urls[i].expanded_url != '') {
-                //            article_url = article_url + article_urls[i].expanded_url + ';';
-                //        } else {
-                //            article_url = '';
-                //        }
-                //    }
-                //} catch {
-                //    article_url = '';
-                //}
-
-            } else {
-                article_url = '';
-            }
-
-            // full_text的文本超长时会转存到其他节点，获取长文本
-            try {
-                if (resultOrtweet.note_tweet != '') {
-                    notes = resultOrtweet.note_tweet.note_tweet_results.result.text;
-                    console.log(notes);
-                }
-            } catch {
-
-            }
-            if (notes == '') {
-                notes = resultOrtweet.legacy.full_text;
-            }
-
-
-            likes = resultOrtweet.legacy.favorite_count;
-            console.log('点赞：' + likes);
-
-            retweets = resultOrtweet.legacy.quote_count;
-            quotes = resultOrtweet.legacy.retweet_count;
-            shares = retweets + quotes;
-            console.log('分享：' + shares);
-
-            comments = resultOrtweet.legacy.reply_count;
-            console.log('回复：' + comments);
-            move_total = likes + shares + comments;
-
-            if (resultOrtweet.views.count != '') {
-                views = resultOrtweet.views.count;
-            } else {
-                views = 0;
-            }
-            console.log('观看：' + views);
-
-            post_url = location.href + '/status/' + resultOrtweet.rest_id;
-            console.log('帖子链接：' + post_url);
-
-            post_time = resultOrtweet.legacy.created_at;
-            var posttime = new Date(post_time);
-            post_time = posttime.toISOString();
-            console.log('发送时间：' + post_time);
-
-
-            try {
-                video_url = await Video(Data, i, json_num);   //视频
-            } catch { }
-            if (video_url != '') {
-                console.log('视频：' + video_url);
-            }
-
-            try {
-                photo_url = await Picture(Data, i, json_num); //图片
-
-            }
-            catch { }
-            if (photo_url != '') {
-                console.log('图片：' + photo_url);
-            }
-
-            try {
-                // 图文排程
-                await PictureToPaicheng(Data, i, json_num, notes, views, likes, comments);
-            } catch (e) {
-                console.log(e)
-            }
-
-            try {
-                // 视频排程
-                await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time);
-            } catch (e) {
-                console.log(e)
-            }
-        } catch {
-            // console.log(e)
-        }
-
-
-        if (video_url != '') {
-            article_type = 3;
-            var source_urls = video_url;
-            article_url = '';
-
-        } else if (photo_url != '') {
-            article_type = 2;
-            var source_urls = photo_url;
-            article_url = '';
-
-        }
-
-        else if (article_url != '') {
-            article_type = 1;
-            var source_urls = '';
-
+        console.log('播放：' + views);
+        // 发文时间
+        if (type === '1') {
+            post_time = toFenxiList[i].publishTime;
         } else {
-            article_type = 0;
-            var source_urls = '';
-            article_url = '';
+            post_time = toFenxiList[i].publish_time;
         }
+
+        // 时间戳为10位需*1000，时间戳为13位不需乘1000
+        var date = new Date(post_time * 1000);
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        const hours = ('0' + date.getHours()).slice(-2);
+        const minutes = ('0' + date.getMinutes()).slice(-2);
+        const seconds = ('0' + date.getSeconds()).slice(-2);
+        post_time = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+        console.log('发送时间：' + post_time);
+
+        // 帖子类型
         switch (article_type) {
             case 0:
                 console.log('文本帖');
@@ -265,6 +132,19 @@ async function CacheMertial(Data) {
                 break;
         }
 
+        if (type === '1') {
+            // 视频地址
+            source_urls = 'https://www.ixigua.com/' + toFenxiList[i].groupId + ';';
+
+            // 视频地址
+            post_url = 'https://www.ixigua.com/' + toFenxiList[i].groupId;
+        }else {
+            // 视频地址
+            source_urls = 'https://www.ixigua.com/' + toFenxiList[i].group_id + ';';
+
+            // 视频地址
+            post_url = 'https://www.ixigua.com/' + toFenxiList[i].group_id;
+        }
 
         if (post_url != '') {
             /////  POST把抓包内容打包成数组，调用回传
@@ -273,8 +153,7 @@ async function CacheMertial(Data) {
         } else {
             continue;
         }
-
-    } */
+    }
 }
 
 
@@ -403,7 +282,7 @@ async function dealHistoryData(data) {
     first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
     // console.log(first_page_data);
     // 处理第一屏的数据
-    CacheMertial(first_page_data);
+    CacheMertial(first_page_data, '1');
     
     // 去除链接多余参数
     let locationUrl = location.href;

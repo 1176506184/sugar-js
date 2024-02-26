@@ -115,6 +115,7 @@
               >
               <el-button type="warning" @click="collectToutiaoHistory">微头条采集</el-button>
 
+              <el-button @click="1" type="primary">微头条-社团排程</el-button>
             </div>
           </el-collapse-item>
 
@@ -210,7 +211,7 @@
 
           <el-collapse-item title="西瓜视频" name="11">
             <div>
-              <el-button @click="ixiguaVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
+              <!-- <el-button @click="ixiguaVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button> -->
               <el-button @click="ixiguaHistoryFrame" type="warning">自动采集历史</el-button>
             </div>
           </el-collapse-item>
