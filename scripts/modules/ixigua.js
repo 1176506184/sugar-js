@@ -92,10 +92,10 @@ async function CacheMertial(Data, type) {
         // 互动
         move_total = likes + shares + comments;
         // 观看
-        if (toFenxiList[i].playNum && toFenxiList[i].playNum != '') {
+        if (type === '1') {
             views = toFenxiList[i].playNum;
         } else {
-            views = 0;
+            views = toFenxiList[i].video_detail_info?.video_watch_count;
         }
         console.log('播放：' + views);
         // 发文时间
