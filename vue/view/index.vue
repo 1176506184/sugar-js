@@ -115,7 +115,7 @@
               >
               <el-button type="warning" @click="collectToutiaoHistory">微头条采集</el-button>
 
-              <el-button @click="1" type="primary">微头条-社团排程</el-button>
+              <el-button @click="collectToutiaoCommunitySchedulingFrame" type="primary">微头条-社团排程</el-button>
             </div>
           </el-collapse-item>
 
@@ -1203,6 +1203,24 @@ async function collectTiktokVideoCommunitySchedulingFrame() {
   }
 }
 
+// 微头条社团批量排程
+async function collectToutiaoCommunitySchedulingFrame() {
+  let activeId = await getActiveId();
+  let pageId = await getId("ToutiaoCommunitySchedulingFrame");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/ToutiaoCommunitySchedulingFrame?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
 
 // YoutubeVideo社团批量排程
 async function collectYoutubeVideoCommunitySchedulingFramePW() {
