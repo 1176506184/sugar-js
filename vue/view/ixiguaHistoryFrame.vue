@@ -225,14 +225,14 @@ async function UpdatedBlogger(time, type) {
   if(type == 'end') {
     postString = '博主已采集完毕，已采集到最后贴文发布时间'+ post_time_last +'，请及时进入后台查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：推特' + '\n' +
+      '博主平台：西瓜视频' + '\n' +
       '博主采集数量：' + max_collect.value + '\n' +
       '入库成功数量：' + max_collect.value
   }
   if(type == 'stop') {
     postString = '博主历史采集超过'+ finishTime.value +'分钟未采集' +'，请及时进入后台查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：推特' + '\n' +
+      '博主平台：西瓜视频' + '\n' +
       '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + collectNum.value
   }
@@ -309,7 +309,7 @@ async function dealTtHistory(Message) {
       await sendBloggerid(resData.id);
     }
 
-  }else if(Message.Message == "sendData" && Message.type == "twitter" && Message.FrameId.toString() === route.query.activeId.toString()) {
+  }else if(Message.Message == "sendData" && Message.type == "ixigua" && Message.FrameId.toString() === route.query.activeId.toString()) {
 
     // console.log(Message);
 
@@ -323,7 +323,7 @@ async function dealTtHistory(Message) {
       successPostNum.value += 1;
     } */
 
-  }else if(Message.Message == "endToAlert" && Message.type == "twitter" && Message.FrameId.toString() === route.query.activeId.toString()) {
+  }else if(Message.Message == "endToAlert" && Message.type == "ixigua" && Message.FrameId.toString() === route.query.activeId.toString()) {
 
     // 改变按钮状态
     status.value = 0;
