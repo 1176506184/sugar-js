@@ -18,7 +18,8 @@
             <el-form-item style="margin-bottom: 0">
               <el-table :data="data" @selection-change="handleSelectionChange" ref="TableRef" @select="handleSelect"
                         @sort-change="handleSortChange"
-                        style="flex:1;height:calc(100vh - 130px)">
+                        style="flex:1;height:calc(100vh - 130px)"
+                        v-loading="initLoading">
                 <el-table-column type="selection" width="30"/>
 
                 <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
@@ -38,13 +39,13 @@
                 </el-table-column>
                 <el-table-column label="播放量" prop="playCount" sortable :sort-orders="['descending','ascending',null]">
                 </el-table-column>
-                <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]">
+                <!-- <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]">
                 </el-table-column>
                 <el-table-column label="尺寸" prop="cup" sortable :sort-orders="['descending','ascending',null]">
                   <template #default="{row}">
                     {{ row.width }}×{{ row.height }}
                   </template>
-                </el-table-column>
+                </el-table-column> -->
 
                 <el-table-column label="发布时间" prop="create_time" sortable
                                  :sort-orders="['descending','ascending',null]">
@@ -232,6 +233,8 @@ const active_id = ref("")
 const loading = ref(false)
 const loading_text = ref("检测封面图中");
 const size = ref("")
+// 初始化Loading表格
+const initLoading = ref(false)
 
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -247,12 +250,13 @@ const form = reactive({
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && (size.value.split(',').includes(`${item.width}×${item.height}`) || !size.value)
+    // return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && (size.value.split(',').includes(`${item.width}×${item.height}`) || !size.value)
+    return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1
   })
 
 }
 
-function dealYoutubeVideo(Message) {
+function dealIxiguaVideo(Message) {
 
   if (Message.Message === 'updateActiveId') {
     active_id.value = Message.data;
@@ -281,7 +285,7 @@ function dealYoutubeVideo(Message) {
     );
 
     return
-  } else if (Message.Message === 'douyinVideo') {
+  } else if (Message.Message === 'ixiguaVideo') {
     data.value = Message.data
     author.value = Message.author
     AllData.value = data.value
@@ -324,7 +328,13 @@ function getPage(query) {
 }
 
 onMounted(() => {
-  chrome.runtime.onMessage.addListener(dealYoutubeVideo);
+  // 初始化Loading表格
+  initLoading.value = true
+  setTimeout(function() {
+    initLoading.value = false
+  }, 2000)
+
+  chrome.runtime.onMessage.addListener(dealIxiguaVideo);
   if (!!route.query.activeId) {
     nextTick(() => {
       console.log(route.query.activeId)
@@ -347,7 +357,7 @@ onMounted(() => {
 
 
 function close() {
-  chrome.runtime.onMessage.removeListener(dealYoutubeVideo)
+  chrome.runtime.onMessage.removeListener(dealIxiguaVideo)
   window.close();
 }
 

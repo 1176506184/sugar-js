@@ -86,6 +86,7 @@ async function CacheMertial(Data, type) {
         var source_urls = '';
         var post_url = '';
         var post_time = '';
+        var old_post_time = '';
         var article_type = 3;
         // 导语标题
         notes = toFenxiList[i].title;
@@ -101,8 +102,10 @@ async function CacheMertial(Data, type) {
         // 发文时间
         if (type === '1') {
             post_time = toFenxiList[i].publishTime;
+            old_post_time = toFenxiList[i].publishTime;
         } else {
             post_time = toFenxiList[i].publish_time;
+            old_post_time = toFenxiList[i].publish_time;
         }
 
         // 时间戳为10位需*1000，时间戳为13位不需乘1000
@@ -148,7 +151,7 @@ async function CacheMertial(Data, type) {
 
         if (post_url != '') {
             /////  POST把抓包内容打包成数组，调用回传
-            await Post(blogger_id_send, notes, article_type, article_url, source_urls, post_url, views, likes, shares, comments, move_total, post_time);
+            await Post(blogger_id_send, notes, article_type, article_url, source_urls, post_url, views, likes, shares, comments, move_total, post_time, old_post_time);
 
         } else {
             continue;
@@ -158,7 +161,7 @@ async function CacheMertial(Data, type) {
 
 
 //////POST把抓包内容打包成数组，调用回传
-async function Post(blogger_id_send, note, article_type, article_url, source_urls, post_url, looks, likes, retweets, comments, move_total, post_time) {
+async function Post(blogger_id_send, note, article_type, article_url, source_urls, post_url, looks, likes, retweets, comments, move_total, post_time, old_post_time) {
 
     try {
         PostDataArray.push({
@@ -175,6 +178,7 @@ async function Post(blogger_id_send, note, article_type, article_url, source_url
             'comments': comments,
             'move_total': move_total,
             'publish_time': post_time,
+            'old_post_time': old_post_time,
             'return_msg': '',
             'remark': ''
         });
@@ -303,7 +307,13 @@ async function dealHistoryData(data) {
 
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     console.log('收到插件消息', Message);
-    if (Message.Message === 'xhr') {
+
+    if (Message.Message === 'video') {
+        console.log("获取任务");
+        getVideo("ixigua");
+        sendResponse({ state: 200 });
+    }
+    else if (Message.Message === 'xhr') {
         sendResponse({ state: 200 });
     } else if (Message.Message === 'checkType') {
         chrome.runtime.sendMessage({
@@ -368,4 +378,39 @@ async function startCollectHistoryData(data) {
 function scrollBottom() {
     var pageHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);
     window.scrollTo(0, pageHeight - 50);
+}
+
+
+// 排程发送数据（接口）
+var videoData = []
+function getVideo(type) {
+    // console.log("开始返回数据")
+    first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
+    // 源视频排程
+    // 处理第一屏的数据
+    CacheMertial(first_page_data, '1');
+    // 加2秒延时，等待第一屏处理结束
+    setTimeout(function() {
+        if (type === 'ixigua') {
+            
+            // console.log(PostDataArray);
+            for (let i = 0; i < PostDataArray.length; i++) {
+                let TempObj = {
+                    title: PostDataArray[i].title,
+                    playCount: PostDataArray[i].looks,
+                    create_time: PostDataArray[i].old_post_time,
+                    href: PostDataArray[i].post_url,
+                    author: first_page_data.AuthorDetailInfo?.name
+                }
+                videoData.push(TempObj);
+            }
+
+            // 发送转换后的数据
+            chrome.runtime.sendMessage({
+                Message: 'ixiguaVideo',
+                data: videoData,
+                author: first_page_data.AuthorDetailInfo?.name
+            }).then()
+        }
+    }, 2000)
 }
