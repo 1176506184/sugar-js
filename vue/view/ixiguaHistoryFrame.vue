@@ -372,7 +372,8 @@ onMounted(async () => {
   if (!!route.query.activeId) {
     await nextTick(() => {
       console.log('路径1--', route.query.activeId)
-      active_id.value = route.query.activeId
+      active_id.value = route.query.activeId;
+      
       chrome.tabs.sendMessage(
           parseInt(route.query.activeId),
           {

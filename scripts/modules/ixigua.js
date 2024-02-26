@@ -58,6 +58,8 @@ var toFenxiList = [];
 async function CacheMertial(Data, type) {
     // type == 1 第一屏数据
     if (type === '1') {
+        // 每次处理第一屏先清空
+        PostDataArray = [];
         console.log('西瓜视频：', Data.AuthorHomeVideoList);
         let videoList = Data.AuthorHomeVideoList;
         var num = videoList.videos.length;
@@ -72,7 +74,6 @@ async function CacheMertial(Data, type) {
         console.log('接口，视频帖子数' + num);
     }
     
-
 
     for (var i = 0; i < num; i++) {
         var notes = "";
@@ -276,11 +277,12 @@ async function UpdateFrameState(time, type) {
 
 // 西瓜视频采历史
 async function dealHistoryData(data) {
+    console.log(data.frameId);
 
     if (frameId === "") {
         frameId = data.frameId;
     } else {
-        return;
+        return
     }
 
     first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
@@ -329,6 +331,8 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         });
     } else if (Message.Message === 'history') {
         sendResponse({ state: 200 });
+        console.log('进入history');
+
         dealHistoryData(Message).then();
         // 刷新计数清零
         max_collect_count = 0;
@@ -381,9 +385,10 @@ function scrollBottom() {
 }
 
 
-// 排程发送数据（接口）
-var videoData = []
+// 获取排程视频数据
 function getVideo(type) {
+    // 排程发送数据（接口）
+    var videoData = []
     // console.log("开始返回数据")
     first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
     // 源视频排程

@@ -66,8 +66,8 @@
           <el-form-item>
             <div class="dialog-footer"
                  style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">
-              <el-input style="width: 200px;margin-right: 12px;" placeholder="尺寸筛选(,分割)" v-model="size"
-                        @input="filterList"></el-input>
+              <!-- <el-input style="width: 200px;margin-right: 12px;" placeholder="尺寸筛选(,分割)" v-model="size"
+                        @input="filterList"></el-input> -->
               <el-button type="warning" @click="select60">勾选前60条</el-button>
               <el-button type="danger" @click="close">关闭</el-button>
               <el-button type="primary" style="margin-right: 10px" @click="nextStep">
