@@ -54,17 +54,23 @@ var publish_time_last = ''
 var first_page_data = {};
 // 待解析数据
 var toFenxiList = [];
+// 刷新时是否处理过第一屏
+var Flag = false;
 
 async function CacheMertial(Data, type) {
     // type == 1 第一屏数据
     if (type === '1') {
-        // 每次处理第一屏先清空
-        PostDataArray = [];
-        console.log('西瓜视频：', Data.AuthorHomeVideoList);
-        let videoList = Data.AuthorHomeVideoList;
-        var num = videoList.videos.length;
-        toFenxiList = videoList.videos;
-        console.log('第一屏，视频帖子数' + num);
+        // 检验是否处理过
+        if (!Flag) {
+            Flag = true;
+            console.log('西瓜视频：', Data.AuthorHomeVideoList);
+            let videoList = Data.AuthorHomeVideoList;
+            var num = videoList.videos.length;
+            toFenxiList = videoList.videos;
+            console.log('第一屏，视频帖子数' + num);
+        }else {
+            return;
+        }
     }else {
         console.log('西瓜视频：', Data);
         // 拦截接口数据
@@ -384,11 +390,10 @@ function scrollBottom() {
     window.scrollTo(0, pageHeight - 50);
 }
 
-
+// 排程发送数据（接口）
+var videoData = []
 // 获取排程视频数据
 function getVideo(type) {
-    // 排程发送数据（接口）
-    var videoData = []
     // console.log("开始返回数据")
     first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
     // 源视频排程
@@ -397,7 +402,7 @@ function getVideo(type) {
     // 加2秒延时，等待第一屏处理结束
     setTimeout(function() {
         if (type === 'ixigua') {
-            
+            videoData = []
             // console.log(PostDataArray);
             for (let i = 0; i < PostDataArray.length; i++) {
                 let TempObj = {

@@ -19,6 +19,7 @@
               <el-table :data="data" @selection-change="handleSelectionChange" ref="TableRef" @select="handleSelect"
                         @sort-change="handleSortChange"
                         style="flex:1;height:calc(100vh - 130px)"
+                        :default-sort="{ prop: 'create_time', order: 'descending' }"
                         v-loading="initLoading">
                 <el-table-column type="selection" width="30"/>
 
