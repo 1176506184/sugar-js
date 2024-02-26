@@ -45,7 +45,7 @@
 
         <el-row gutter="10">
           <el-col :span="12">
-            <el-form-item label="采集数量上限">
+            <el-form-item label="采集数量上限（请填写 30的倍数）">
               <el-input v-model="max_collect"></el-input>
             </el-form-item>
           </el-col>
