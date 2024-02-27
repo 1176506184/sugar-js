@@ -46,6 +46,17 @@
                   </template>
                 </el-table-column>
 
+                <el-table-column label="发布时间" prop="create_time" sortable
+                                 :sort-orders="['descending','ascending',null]">
+                  <template #default="{row}">
+                    <div>
+                      {{ moment(row.create_time * 1000).format('YYYY-MM-DD') }}
+                    </div>
+                    <div>
+                      {{ moment(row.create_time * 1000).format('HH:mm:ss') }}
+                    </div>
+                  </template>
+                </el-table-column>
               </el-table>
 
             </el-form-item>

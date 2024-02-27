@@ -183,6 +183,7 @@ async function CacheMertial(Data, json_num) {
         var photo_url = '';
         var post_url = '';
         var post_time = '';
+        var post_time_yuan = '';
         var article_type = 0;
         // 转推贴
         var ifretweeted = false;
@@ -298,6 +299,7 @@ async function CacheMertial(Data, json_num) {
             console.log('帖子链接：' + post_url);
 
             post_time = resultOrtweet.legacy.created_at;
+            post_time_yuan = resultOrtweet.legacy.created_at;
             var posttime = new Date(post_time);
             post_time = posttime.toISOString();
             console.log('发送时间：' + post_time);
@@ -321,14 +323,14 @@ async function CacheMertial(Data, json_num) {
 
             try {
                 // 图文排程
-                await PictureToPaicheng(Data, i, json_num, notes, views, likes, comments);
+                await PictureToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time, post_time_yuan);
             }catch(e) {
                 console.log(e)
             }
             
             try {
                 // 视频排程
-                await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time);
+                await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time, post_time_yuan);
             } catch (e) {
                 console.log(e)
             }
@@ -455,7 +457,7 @@ async function Picture(jsonData, x, json_num) {
 }
 
 //////////社团图文排程
-async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, comments) {
+async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, comments, post_time, post_time_yuan) {
     let resultOrtweet = null;
     // 判断报文两种结构
     if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
@@ -483,14 +485,16 @@ async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, com
         play: views,
         likes: likes,
         comments: comments,
-        title: note
+        title: note,
+        post_time: post_time,
+        post_time_yuan: post_time_yuan
     }
 
     photo_urls_PaiCheng.push(TempObj)
 }
 
 // 社团视频排程
-async function VideoToPaicheng(jsonData, x, json_num, notes, views, likes, comments, post_time) {
+async function VideoToPaicheng(jsonData, x, json_num, notes, views, likes, comments, post_time, post_time_yuan) {
     let resultOrtweet = null;
     // 判断报文两种结构
     if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
@@ -549,7 +553,8 @@ async function VideoToPaicheng(jsonData, x, json_num, notes, views, likes, comme
         likes: likes,
         comments: comments,
         title: note,
-        create_time: post_time
+        create_time: post_time,
+        post_time_yuan: post_time_yuan
     }
     video_urls_PaiCheng.push(TempObj)
 }
