@@ -125,11 +125,14 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'pauseCollectHistory') {
         sendResponse({state: 200});
         pauseCollectHistory(Message);
+    } else if (Message.Message === 'community_frame') {
+        sendResponse({ state: 200 });
+        // console.log(Message);
+        touTiaoCommunityScheduling();
     }
 })
 
 //采集历史
-
 let historyCollectIndex = 1;
 let state = 0;
 let max_collect = 1000;
@@ -310,7 +313,7 @@ function readBlob(blob) {
     })
 }
 
-// FB采历史
+// 微头条采历史
 async function dealHistoryData(data) {
 
 
@@ -331,6 +334,42 @@ async function dealHistoryData(data) {
 
     })
 }
+
+
+// 头条社区排文
+async function touTiaoCommunityScheduling() {
+    // 重组发送数据
+    let sendMessageData = [];
+    toutiaoData.forEach((t) => {
+        if (!t['isSend']) {
+            // t['isSend'] = true;
+            // console.log(t);
+            let data = {
+                "title": t.title,
+                "content": t.content,
+                "publish_time": t2t(t.publish_time),
+                "coverList": t?.detail_cover_list,
+                "read": t.read_count,
+                "comment": t.comment_count,
+                "upvote": t.digg_count,
+                "share": 0,
+                "articleId": t.id,
+                "articleUrl": "https://www.toutiao.com/w/"+t.id
+            };
+
+            sendMessageData.push(data);
+        }
+    })
+
+    chrome.runtime.sendMessage({
+        Message: 'Toutiao_community_frame',
+        data: sendMessageData,
+        author: document.querySelector('div.detail span.name').textContent
+    }).then()
+}
+
+
+
 
 async function scrollBottom() {
     // await startGetPageTask();

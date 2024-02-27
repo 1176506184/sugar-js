@@ -22,10 +22,10 @@
 
                 <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
-                <el-table-column label="视频标题" width="900">
+                <el-table-column label="微头条标题" width="720">
                   <template #header>
                     <div style="display: flex;align-items: center;">
-                      <label>视频标题</label>
+                      <label>微头条标题</label>
                       <el-input style="width: 250px;margin-left:10px;" placeholder="输入后筛选" v-model="title"
                                 @input="filterList"></el-input>
                     </div>
@@ -35,14 +35,19 @@
                     <el-input v-model="row.title"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="播放量" prop="viewCount" sortable :sort-orders="['descending','ascending',null]">
+                <el-table-column label="阅读量" prop="read" sortable :sort-orders="['descending','ascending',null]">
                 </el-table-column>
 
-                <el-table-column label="播放时长" prop="lengthText" sortable :sort-orders="['descending','ascending',null]">
+                <el-table-column label="点赞量" prop="upvote" sortable :sort-orders="['descending','ascending',null]">
+                </el-table-column>
+
+                <el-table-column label="评论量" prop="comment" sortable :sort-orders="['descending','ascending',null]">
+                </el-table-column>
+                <!-- <el-table-column label="播放时长" prop="lengthText" sortable :sort-orders="['descending','ascending',null]">
                   <template #default="{ row }">
                     {{ row?.lengthText?.simpleText }}
                   </template>
-                </el-table-column>
+                </el-table-column> -->
 
               </el-table>
 
@@ -91,13 +96,13 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="视频标题" width="480">
+                <el-table-column label="文章标题" width="480">
                   <template #default="{ row }">
                     <el-input autosize type="textarea" v-model="row.title"></el-input>
                   </template>
                 </el-table-column>
 
-                <el-table-column label="视频链接" width="280">
+                <el-table-column label="图片链接" width="280">
                   <template #default="{ row }">
                     <el-input v-model="row.url"></el-input>
                   </template>
@@ -363,7 +368,6 @@ function getArrayIndex(arr, obj) {
 
 
 function tabelSort({column, prop, order}) {
-
   if (prop === 'lengthText') {
     data.value = AllData.value.sort((a, b) => {
 
@@ -388,8 +392,6 @@ function tabelSort({column, prop, order}) {
 
     })
   }
-
-
 }
 
 function filterList() {
@@ -400,7 +402,7 @@ function filterList() {
 
 }
 
-function dealYoutubeVideo(Message) {
+function dealToutiaoImage(Message) {
 
   if (Message.Message === 'updateActiveId') {
     active_id.value = Message.data;
@@ -415,7 +417,7 @@ function dealYoutubeVideo(Message) {
           chrome.tabs.sendMessage(
               active_id.value,
               {
-                Message: "video_frame"
+                Message: "community_frame"
               },
               function (response) {
                 if (response?.state !== 200) {
@@ -429,29 +431,25 @@ function dealYoutubeVideo(Message) {
     );
 
     return
-  } else if (Message.Message === 'youtubeVideo') {
+  } else if (Message.Message === 'Toutiao_community_frame') {
     data.value = Message.data.map((d) => {
-      let titleTemp = "";
-      try {
-        if (d.headline?.simpleText) {
-          titleTemp = d.headline?.simpleText
-        } else {
-          titleTemp = d.title?.runs[0].text
-        }
-      } catch (e) {
-        console.log('未知字符串');
+      let titleTemp = '';
+      // 微头条没有标题，从内容中截取标题
+      if(d.content.length > 30) {
+        titleTemp = d.content.substring(0, 30) + '...'
+      }else {
+        titleTemp = d.content;
       }
       return {
         ...d,
-        title: titleTemp,
-        viewCount: dealNum(d.viewCountText?.simpleText)
+        title: titleTemp
       }
     })
+
     author.value = Message.author
     AllData.value = data.value
     console.log(data.value)
   }
-
 
 }
 
@@ -512,7 +510,7 @@ function getCommuity(query) {
 }
 
 onMounted(() => {
-  chrome.runtime.onMessage.addListener(dealYoutubeVideo);
+  chrome.runtime.onMessage.addListener(dealToutiaoImage);
 
   if (!!route.query.activeId) {
     nextTick(() => {
@@ -520,7 +518,7 @@ onMounted(() => {
       chrome.tabs.sendMessage(
           parseInt(route.query.activeId),
           {
-            Message: "video_frame"
+            Message: "community_frame"
           },
           function (response) {
             if (response?.state !== 200) {
@@ -536,7 +534,7 @@ onMounted(() => {
 
 
 function close() {
-  chrome.runtime.onMessage.removeListener(dealYoutubeVideo)
+  chrome.runtime.onMessage.removeListener(dealToutiaoImage)
   window.close();
 }
 
@@ -580,11 +578,26 @@ function nextStep() {
     return
   }
 
+  // 检验图片地址
+  // console.log(upData.value)
+
   pwData.value = upData.value.map((r) => {
+    let imageUrl = ''
+    if(r.coverList.length > 1) {
+      for(let j=0; j < r.coverList.length; j++) {
+        imageUrl += r.coverList[j].url
+        if(j < r.coverList.length-1) {
+          imageUrl += ','
+        }
+      }
+    }else {
+      imageUrl = r.coverList[0].url
+    }
     return {
       title: r.title,
-      videoId: r.videoId,
-      url: `https://www.youtube.com/watch?v=${r.videoId}`,
+      content: r.content,
+      videoId: r.articleId,
+      url: imageUrl,
       author: r.author ? r.author : author.value,
       plan_time: ''
     }
@@ -644,16 +657,16 @@ async function Save() {
       Plantime: item.plan_time,
       CreateUserId: localStorage.getItem("ddid"),
       CreateUserName: localStorage.getItem('name') */
-      MaterialTitle: encodeURI(item.title) || '',
-      MaterialSourceUrl: encodeURI(item.url) || '',
+      MaterialTitle: encodeURI(item.content) || '',
+      MaterialSourceUrl: (item.url) || '',
       PlanTime: item.plan_time || ''
     }
   })
 
   // 组成要发送的数据包
   let PostData = {
-    SourceType: '3', //素材来源 1抖音 2tiktok 3youtube
-    PostType: '3', //帖子类型 2图文 3视频
+    SourceType: '5', //素材来源 1抖音 2tiktok 3youtube 4推特 5微头条
+    PostType: '2', //帖子类型 2图文 3视频
     JoinRole: state.value.JoinRole,
     CommunityRole: state.value.CommunityRole,
     IsTop: state.value.IsTop,
