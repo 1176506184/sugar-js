@@ -59,7 +59,7 @@ function refreshSession() {
     function task() {
         chrome.tabs.query({}).then(tabs => {
             tabs.forEach((tab) => {
-                if (tab.url.includes("refresh_ci_session=1")) {
+                if (tab.url.includes("truvid.com")) {
                     chrome.tabs.reload(tab.id).then(() => {
 
                     });
