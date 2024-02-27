@@ -42,6 +42,12 @@
                 </el-table-column>
                 <el-table-column label="评论" prop="comments" sortable :sort-orders="['descending','ascending',null]">
                 </el-table-column>
+                <el-table-column label="发布时间" width="116" prop="post_time" sortable :sort-orders="['descending','ascending',null]">
+                  <template #default="{ row }">
+                    <div>{{ (row.post_time).split('T')[0] }}</div>
+                    <div>{{ (row.post_time).split('T')[1].replace('Z', '') }}</div>
+                  </template>
+                </el-table-column>
               </el-table>
 
             </el-form-item>

@@ -98,7 +98,8 @@
 
                 <el-table-column label="文章标题" width="480">
                   <template #default="{ row }">
-                    <el-input autosize type="textarea" v-model="row.title"></el-input>
+                    <!-- autosize -->
+                    <el-input type="textarea" :rows="8" v-model="row.title" style="max-height: 280px;overflow-y: auto;overflow-x: hidden;"></el-input>
                   </template>
                 </el-table-column>
 
@@ -186,12 +187,12 @@
                     <div class="form_title">社团角色</div>
                     <div>
                       <el-select placeholder="社团角色" v-model="state.CommunityRole">
-                        <!-- <el-option label="普通成员" :value="1">
+                        <el-option label="普通成员" :value="1">
                           普通成员
                         </el-option>
                         <el-option label="社团版主" :value="2">
                           社团版主
-                        </el-option> -->
+                        </el-option>
                         <el-option label="管理员" :value="3">
                           管理员
                         </el-option>
@@ -594,7 +595,7 @@ function nextStep() {
       imageUrl = r.coverList[0].url
     }
     return {
-      title: r.title,
+      title: r.content,
       content: r.content,
       videoId: r.articleId,
       url: imageUrl,
@@ -657,7 +658,7 @@ async function Save() {
       Plantime: item.plan_time,
       CreateUserId: localStorage.getItem("ddid"),
       CreateUserName: localStorage.getItem('name') */
-      MaterialTitle: encodeURI(item.content) || '',
+      MaterialTitle: encodeURI(item.title) || '',
       MaterialSourceUrl: (item.url) || '',
       PlanTime: item.plan_time || ''
     }

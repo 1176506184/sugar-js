@@ -22,7 +22,7 @@
 
                 <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
-                <el-table-column label="视频标题" width="900">
+                <el-table-column label="视频标题" width="820">
                   <template #header>
                     <div style="display: flex;align-items: center;">
                       <label>视频标题</label>
