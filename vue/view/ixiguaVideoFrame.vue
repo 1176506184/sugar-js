@@ -21,6 +21,7 @@
                         style="flex:1;height:calc(100vh - 130px)"
                         :default-sort="{ prop: 'create_time', order: 'descending' }"
                         v-loading="initLoading">
+                        <!-- 默认时间倒叙 -->
                 <el-table-column type="selection" width="30"/>
 
                 <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
