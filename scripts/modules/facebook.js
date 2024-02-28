@@ -640,6 +640,12 @@ async function collectHistory() {
                 await wait(2);
             }
 
+            let upBtn = findDivWithText('展开', needCollect);
+            if (upBtn) {
+                upBtn.click();
+                await wait(2);
+            }
+
             let tagType = 0;
             let tag = needCollect.querySelector('span' + ".x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u x1yc453h".replaceAll(' ', '.'))?.innerText;
             if (needCollect.querySelector('div' + ".x1yx25j4 x13crsa5 x6x52a7 x1rxj1xn xxpdul3".replaceAll(' ', '.'))?.textContent && (needCollect.querySelector('div' + ".x1yx25j4 x13crsa5 x6x52a7 x1rxj1xn xxpdul3".replaceAll(' ', '.'))?.textContent.length > tag?.length || !tag)) {
