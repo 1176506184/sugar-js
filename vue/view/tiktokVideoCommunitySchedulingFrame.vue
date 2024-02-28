@@ -197,8 +197,7 @@
                   <div style="flex-v">
                     <div class="form_title">社团角色</div>
                     <div>
-                      <el-select placeholder="社团角色" v-model="state.CommunityRole">
-                        <!-- 
+                      <!-- 
                         <el-option label="普通成员" :value="1">
                           普通成员
                         </el-option>
@@ -206,6 +205,8 @@
                           社团版主
                         </el-option>
                         -->
+                      <el-select placeholder="社团角色" v-model="state.CommunityRole">
+                        
                         <el-option label="管理员" :value="3">
                           管理员
                         </el-option>
