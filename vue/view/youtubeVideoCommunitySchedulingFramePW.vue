@@ -22,7 +22,7 @@
 
                 <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
-                <el-table-column label="视频标题" width="820">
+                <el-table-column label="视频标题" width="750">
                   <template #header>
                     <div style="display: flex;align-items: center;">
                       <label>视频标题</label>
@@ -41,6 +41,15 @@
                 <el-table-column label="播放时长" prop="lengthText" sortable :sort-orders="['descending','ascending',null]">
                   <template #default="{ row }">
                     {{ row?.lengthText?.simpleText }}
+                  </template>
+                </el-table-column>
+
+                <el-table-column label="发布时间" prop="create_time" sortable
+                                 :sort-orders="['descending','ascending',null]">
+                  <template #default="{row}">
+                    <div>
+                      {{ row?.create_time }}
+                    </div>
                   </template>
                 </el-table-column>
 
@@ -262,6 +271,7 @@ import {Swiper, SwiperSlide} from 'swiper/vue';
 import {Controller} from 'swiper/modules';
 import 'swiper/css';
 import moment from "moment";
+import {word2time} from "../utils/utils";
 
 const controlledSwiper = ref(null);
 
@@ -444,7 +454,8 @@ function dealYoutubeVideo(Message) {
       return {
         ...d,
         title: titleTemp,
-        viewCount: dealNum(d.viewCountText?.simpleText)
+        viewCount: dealNum(d.viewCountText?.simpleText),
+        create_time: word2time(d?.publishedTimeText?.simpleText)
       }
     })
     author.value = Message.author
