@@ -239,7 +239,6 @@ async function collectHistory() {
                             publish_time: item.create_time ? t2t(item.create_time) : t2t(item.publish_time)
                         }
 
-
                         data_map.push(data);
                         div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
                         if (state === 1) {
