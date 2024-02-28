@@ -65,46 +65,48 @@ chrome.contextMenus.onClicked.addListener(async function (info, tab) {
         chrome.tabs.create({
             url: '/html/out.html#/CenterControl',
             active: true
-        }, {})
+        }, () => {
+
+        })
     }
 });
 
+//
+// function refreshSession() {
+//     function task() {
+//         chrome.tabs.query({}).then(tabs => {
+//             tabs.forEach((tab) => {
+//                 if (tab.url.includes("truvid.com")) {
+//                     chrome.tabs.reload(tab.id).then(() => {
+//
+//                     });
+//                 }
+//             })
+//         })
+//
+//         chrome.cookies.getAll({
+//             domain: 'truvid.com'
+//         }, (cookies) => {
+//             cookies.map((c) => {
+//                 if (c.name === 'ci_session') {
+//                     console.log(c.value);
+//                     fetch("http://captureapi.anyelse.com/SysConfig/update?key=truvid_cookie_from_plug&value=" + c.value + "&remarks=插件自动获取", {
+//                         method: 'POST',
+//                         headers: {
+//                             'Content-Type': 'application/json'
+//                         }
+//                     }).then((res) => {
+//
+//                     })
+//                 }
+//             })
+//         })
+//     }
+//
+//     setInterval(() => {
+//         task();
+//     }, 1000 * 60 * 10)
+//     task();
+// }
 
-function refreshSession() {
-    function task() {
-        chrome.tabs.query({}).then(tabs => {
-            tabs.forEach((tab) => {
-                if (tab.url.includes("truvid.com")) {
-                    chrome.tabs.reload(tab.id).then(() => {
-
-                    });
-                }
-            })
-        })
-
-        chrome.cookies.getAll({
-            domain: 'truvid.com'
-        }, (cookies) => {
-            cookies.map((c) => {
-                if (c.name === 'ci_session') {
-                    console.log(c.value);
-                    fetch("http://captureapi.anyelse.com/SysConfig/update?key=truvid_cookie_from_plug&value=" + c.value + "&remarks=插件自动获取", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }).then((res) => {
-
-                    })
-                }
-            })
-        })
-    }
-
-    setInterval(() => {
-        task();
-    }, 1000 * 60 * 10)
-    task();
-}
-
-refreshSession();
+// refreshSession();

@@ -16,3 +16,18 @@ function autoLoginIn() {
         document.querySelector('#login-btn').click();
     }
 }
+
+console.log("等待20s后检测")
+setTimeout(() => {
+    if (location.href.includes('login')) {
+        autoLoginIn()
+    } else {
+        chrome.runtime.sendMessage({
+            Message: 'updateCiSession',
+            type: 'truvid',
+        }).then(r => {
+
+        })
+    }
+}, 20000)
+

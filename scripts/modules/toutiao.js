@@ -126,7 +126,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({state: 200});
         pauseCollectHistory(Message);
     } else if (Message.Message === 'community_frame') {
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         // console.log(Message);
         touTiaoCommunityScheduling();
     }
@@ -219,22 +219,42 @@ async function collectHistory() {
 
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
-                        let result = await getArticleBody(toutiaoData[i].article_url.replace('https://toutiao.com', location.origin));
-                        let text = result.querySelector('article').innerText;
-                        let imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
-                        console.log(text, imgs);
+                        // let result = await getArticleBody(toutiaoData[i].article_url.replace('https://toutiao.com', location.origin));
+                        // let text = result.querySelector('article').innerText;
+                        // let imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
+                        // console.log(text, imgs);
+                        //
+                        // let imgurl = '';
+                        // for (let i = 0; i < imgs.length; i++) {
+                        //     imgurl += imgs[i] + ';';
+                        // }
+                        //
+                        // let data = {
+                        //     article_type: imgs.length ? 2 : 0,
+                        //     title: text,
+                        //     source_urls: imgurl,
+                        //     post_url: item.article_url,
+                        //     article_url: item.article_url,
+                        //     move_total: (item.like_count ? item.like_count : 0 + item.share_count + item.comment_count + item.digg_count ? item.digg_count : 0),
+                        //     looks: item.read_count,
+                        //     likes: item.like_count ? item.like_count : item.digg_count,
+                        //     shares: item.share_count,
+                        //     comments: item.comment_count,
+                        //     return_msg: '',
+                        //     remark: '',
+                        //     publish_time: item.create_time ? t2t(item.create_time) : t2t(item.publish_time)
+                        // };
 
                         let imgurl = '';
-                        for (let i = 0; i < imgs.length; i++) {
-                            imgurl += imgs[i] + ';';
+                        for (let i = 0; i < item?.detail_cover_list.length; i++) {
+                            imgurl += item?.detail_cover_list[i].url + ';';
                         }
-
                         let data = {
-                            article_type: imgs.length ? 2 : 0,
-                            title: text,
+                            article_type: item?.detail_cover_list?.length > 0 ? 2 : 0,
                             source_urls: imgurl,
-                            post_url: item.article_url,
-                            article_url: item.article_url,
+                            title: item.content,
+                            article_url: "https://www.toutiao.com/w/" + item.id,
+                            post_url: "https://www.toutiao.com/w/" + item.id,
                             move_total: (item.like_count ? item.like_count : 0 + item.share_count + item.comment_count + item.digg_count ? item.digg_count : 0),
                             looks: item.read_count,
                             likes: item.like_count ? item.like_count : item.digg_count,
@@ -243,11 +263,12 @@ async function collectHistory() {
                             return_msg: '',
                             remark: '',
                             publish_time: item.create_time ? t2t(item.create_time) : t2t(item.publish_time)
-                        };
+                        }
+
 
                         data_map.push(data);
                         div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
-                        if(state === 1){
+                        if (state === 1) {
                             chrome.runtime.sendMessage({
                                 Message: 'history_data',
                                 frameId: frameId,
@@ -354,7 +375,7 @@ async function touTiaoCommunityScheduling() {
                 "upvote": t.digg_count,
                 "share": 0,
                 "articleId": t.id,
-                "articleUrl": "https://www.toutiao.com/w/"+t.id
+                "articleUrl": "https://www.toutiao.com/w/" + t.id
             };
 
             sendMessageData.push(data);
@@ -367,8 +388,6 @@ async function touTiaoCommunityScheduling() {
         author: document.querySelector('div.detail span.name').textContent
     }).then()
 }
-
-
 
 
 async function scrollBottom() {

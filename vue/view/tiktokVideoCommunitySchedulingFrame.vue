@@ -142,21 +142,22 @@
 
               <el-row gutter="10" style="width: 880px;float: left">
                 <el-col :span="12">
-                  <div style="flex-v">
+                  <div class="flex-v">
                     <div class="form_title">排程社团</div>
                     <div>
                       <el-select placeholder="搜索社团名称或ID" v-model="state.communityNameAndUid"
-                                filterable
-                                clearable
-                                remote
-                                reserve-keyword
-                                :loading="pageLoading"
-                                :remote-method="getCommuity"
-                                @change="changePage"
-                                value-key="CommunityCode"
-                                style="width: 100%">
-                        <el-option v-for="item in communitys" :label="item.Name + ' ' + item.CommunityCode" :value="item"
-                                  :key="item.CommunityCode"/>
+                                 filterable
+                                 clearable
+                                 remote
+                                 reserve-keyword
+                                 :loading="pageLoading"
+                                 :remote-method="getCommuity"
+                                 @change="changePage"
+                                 value-key="CommunityCode"
+                                 style="width: 100%">
+                        <el-option v-for="item in communitys" :label="item.Name + ' ' + item.CommunityCode"
+                                   :value="item"
+                                   :key="item.CommunityCode"/>
                       </el-select>
                     </div>
                   </div>
@@ -178,7 +179,7 @@
                 </el-col> -->
 
                 <el-col :span="3">
-                  <div style="flex-v">
+                  <div class="flex-v">
                     <div class="form_title">发帖身份</div>
                     <div>
                       <el-select placeholder="发帖身份" v-model="state.JoinRole">
@@ -194,10 +195,10 @@
                 </el-col>
 
                 <el-col :span="3">
-                  <div style="flex-v">
+                  <div class="flex-v">
                     <div class="form_title">社团角色</div>
                     <div>
-                      <!-- 
+                      <!--
                         <el-option label="普通成员" :value="1">
                           普通成员
                         </el-option>
@@ -206,7 +207,7 @@
                         </el-option>
                         -->
                       <el-select placeholder="社团角色" v-model="state.CommunityRole">
-                        
+
                         <el-option label="管理员" :value="3">
                           管理员
                         </el-option>
@@ -216,7 +217,7 @@
                 </el-col>
 
                 <el-col :span="3">
-                  <div style="flex-v">
+                  <div class="flex-v">
                     <div class="form_title">是否置顶</div>
                     <div>
                       <el-select placeholder="是否置顶" v-model="state.IsTop">
@@ -232,7 +233,7 @@
                 </el-col>
 
                 <el-col :span="3">
-                  <div style="flex-v">
+                  <div class="flex-v">
                     <div class="form_title">是否繁简转换</div>
                     <div>
                       <el-select placeholder="是否繁简转换" v-model="state.IsTranslate">
@@ -567,7 +568,7 @@ async function Save() {
     ElMessage.error("请补全视频的标题/链接/排程时间");
     return;
   }
-  
+
 
   if (state.value.JoinRole === '' || state.value.CommunityRole === '' || state.value.IsTop === '') {
     ElMessage.error("请将排程信息填写完整");
@@ -579,8 +580,6 @@ async function Save() {
     text: '数据上传中',
     background: 'rgba(0, 0, 0, 0.6)',
   })
-
-  
 
 
   let params = pwData.value.map((item) => {
@@ -625,27 +624,27 @@ async function Save() {
     } else {
       alert(res.msg)
     } */
-    if(res.StatusCode === 200) {
+    if (res.StatusCode === 200) {
       ElMessageBox.confirm
-        (
+      (
           '排程创建成功!',
           '温馨提示',
           {
             confirmButtonText: '确认',
             showCancelButton: false
           }
-        )
-      .then(() => {
-        prevStep();
-      })
-      .catch(() => {
-      });
-    }else {
+      )
+          .then(() => {
+            prevStep();
+          })
+          .catch(() => {
+          });
+    } else {
       alert(res.Message);
     }
     loadingTask.close();
   });
-  
+
 }
 
 
@@ -659,109 +658,109 @@ const interval_num = ref("")
 /**
 flex布局
 */
-  /**
-  主轴为水平方向
-  */
-  .flex-p {
-      display: flex;
-      display: -webkit-flex;
-      flex-direction: row;
-  }
+/**
+主轴为水平方向
+*/
+.flex-p {
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: row;
+}
 
-  /**
-  主轴为垂直方向
-  */
-  .flex-v {
-      display: flex;
-      display: -webkit-flex;
-      flex-direction: column;
-  }
+/**
+主轴为垂直方向
+*/
+.flex-v {
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: column;
+}
 
-  /**
-  主轴水平方向，垂直方向统统居中
-  */
-  .flex-c {
-      display: flex;
-      display: -webkit-flex;
-      justify-content: center;
-      align-items: center;
-  }
+/**
+主轴水平方向，垂直方向统统居中
+*/
+.flex-c {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  /**
-  主轴水平方向居中
-  */
-  .flex-pc {
-      display: flex;
-      display: -webkit-flex;
-      justify-content: center;
-  }
+/**
+主轴水平方向居中
+*/
+.flex-pc {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: center;
+}
 
-  /**
-  主轴垂直方向居中
-  */
-  .flex-vc {
-      display: flex;
-      display: -webkit-flex;
-      align-items: center;
-  }
+/**
+主轴垂直方向居中
+*/
+.flex-vc {
+  display: flex;
+  display: -webkit-flex;
+  align-items: center;
+}
 
-  /**
-  主轴水平方向两端分布
-  */
-  .flex-between {
-      display: flex;
-      display: -webkit-flex;
-      justify-content: space-between;
-  }
+/**
+主轴水平方向两端分布
+*/
+.flex-between {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: space-between;
+}
 
-  /**
-  主轴水平方向均匀分布
-  */
-  .flex-around {
-      display: flex;
-      display: -webkit-flex;
-      justify-content: space-around;
-  }
+/**
+主轴水平方向均匀分布
+*/
+.flex-around {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: space-around;
+}
 
-  /**
-  主轴水平方向顺序
-  */
-  .flex-start {
-      display: flex;
-      display: -webkit-flex;
-      justify-content: flex-start;
-  }
+/**
+主轴水平方向顺序
+*/
+.flex-start {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: flex-start;
+}
 
-  /**
-  主轴水平方向逆序
-  */
-  .flex-end {
-      display: flex;
-      display: -webkit-flex;
-      justify-content: flex-end;
-  }
+/**
+主轴水平方向逆序
+*/
+.flex-end {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: flex-end;
+}
 
-  /**
-  主轴水平方向换行
-  */
-  .flex-wrap {
-      display: flex;
-      display: -webkit-flex;
-      flex-wrap: wrap;
-  }
+/**
+主轴水平方向换行
+*/
+.flex-wrap {
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+}
 
-  /**
-  主轴水平方向不换行
-  */
-  .flex-nowrap {
-      display: flex;
-      display: -webkit-flex;
-      flex-wrap: nowrap;
-  }
+/**
+主轴水平方向不换行
+*/
+.flex-nowrap {
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: nowrap;
+}
 
-  .form_title {
-    font-size: 14px;
-    margin-top: -10px;
-    margin-bottom: 6px;
-  }
+.form_title {
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 6px;
+}
 </style>

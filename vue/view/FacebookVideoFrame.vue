@@ -16,7 +16,7 @@
 
             <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
-            <el-table-column label="视频标题" width="850">
+            <el-table-column label="视频标题" width="750">
               <template #header>
                 <div style="display: flex;align-items: center;">
                   <label>视频标题</label>
@@ -35,6 +35,13 @@
             <el-table-column label="播放量" prop="play" sortable :sort-orders="['descending','ascending',null]">
             </el-table-column>
             <el-table-column label="播放时长" prop="timeNum" sortable :sort-orders="['descending','ascending',null]">
+            </el-table-column>
+            <el-table-column label="发布时间" prop="create_time" sortable :sort-orders="['descending','ascending',null]">
+              <template #default="{row}">
+                <div>
+                  {{ row?.create_time }}
+                </div>
+              </template>
             </el-table-column>
           </el-table>
 
@@ -141,7 +148,7 @@ import {computed, nextTick, onMounted, reactive, ref} from "vue";
 import store from "../store/store";
 import {testHttp, xhrHttp} from "../utils/request";
 import {ElLoading, ElMessage} from "element-plus";
-import {handleCopyValue} from "../utils/utils";
+import {handleCopyValue, word2time} from "../utils/utils";
 import {useRoute} from "vue-router";
 
 const route = useRoute()
@@ -241,7 +248,8 @@ function dealYoutubeVideo(Message) {
     data.value = Message.data.map((item) => {
       return {
         ...item,
-        play: Number(item.play)
+        play: Number(item.play),
+        create_time: word2time(item.create_time)
       }
     })
     author.value = Message.author
