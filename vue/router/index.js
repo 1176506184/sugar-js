@@ -27,7 +27,7 @@ import pinterestHistoryFrame from "../view/pinterestHistoryFrame.vue";
 import ixiguaVideoFrame from "../view/ixiguaVideoFrame.vue";
 import ixiguaHistoryFrame from "../view/ixiguaHistoryFrame.vue";
 import ImageCreate from "../view/imageCreate.vue"
-
+import CenterControl from '../view/centerControl.vue';
 
 
 import novel from "../view/novel.vue";
@@ -168,7 +168,7 @@ const routes = [
         name: 'ToutiaoCommunitySchedulingFrame',
         path: '/ToutiaoCommunitySchedulingFrame',
         component: ToutiaoCommunitySchedulingFrame,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     }, {
         name: 'YoutubeVideoCommunitySchedulingFramePW',
@@ -216,18 +216,24 @@ const routes = [
         name: 'ixiguaVideoFrame',
         path: '/ixiguaVideoFrame',
         component: ixiguaVideoFrame,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     }, {
         name: 'ixiguaHistoryFrame',
         path: '/ixiguaHistoryFrame',
         component: ixiguaHistoryFrame,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     }, {
         name: 'imageCreate',
         path: '/imageCreate',
         component: ImageCreate,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'CenterControl',
+        path: '/CenterControl',
+        component: CenterControl,
         props: route => ({query: route.query.q}),
         meta: {}
     }

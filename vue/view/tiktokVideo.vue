@@ -28,15 +28,28 @@
                 {{ row.title }}
               </template>
             </el-table-column>
-            <el-table-column label="播放量" prop="playCount" sortable :sort-orders="['descending','ascending',null]">
+            <el-table-column label="播放量" prop="playCount" sortable :sort-orders="['descending','ascending',null]" width="70">
             </el-table-column>
-            <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]">
+            <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]" width="70">
             </el-table-column>
             <el-table-column label="尺寸" prop="playCount" sortable :sort-orders="['descending','ascending',null]">
               <template #default="{row}">
-                {{ row.width }}×{{ row.height }}
+                {{ row.width }}<br/>×{{ row.height }}
               </template>
             </el-table-column>
+
+            <el-table-column label="发布时间" prop="create_time" sortable
+                             :sort-orders="['descending','ascending',null]">
+              <template #default="{row}">
+                <div>
+                  {{ moment(row.create_time * 1000).format('YYYY-MM-DD') }}
+                </div>
+                <div>
+                  {{ moment(row.create_time * 1000).format('HH:mm:ss') }}
+                </div>
+              </template>
+            </el-table-column>
+
           </el-table>
 
         </el-form-item>
@@ -71,6 +84,7 @@ import store from "../store/store";
 import {testHttp, xhrHttp} from "../utils/request";
 import {ElMessage} from "element-plus";
 import {handleCopyValue} from "../utils/utils";
+import moment from "moment";
 
 const data = ref([])
 const AllData = ref([])

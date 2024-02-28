@@ -32,6 +32,16 @@ chrome.contextMenus.create({
     "contexts": ["page", "selection"],
     type: 'normal'
 });
+
+//中控
+chrome.contextMenus.create({
+    "id": "center_control",
+    "title": "煎蛋插件中控",
+    "contexts": ["page", "selection"],
+    type: 'normal'
+});
+
+
 // 他的点击事件
 chrome.contextMenus.onClicked.addListener(async function (info, tab) {
     if (info.menuItemId === "tool_ow") {
@@ -51,6 +61,11 @@ chrome.contextMenus.onClicked.addListener(async function (info, tab) {
 
             })
         }
+    } else if (info.menuItemId === 'center_control') {
+        chrome.tabs.create({
+            url: '/html/out.html#/CenterControl',
+            active: true
+        }, {})
     }
 });
 

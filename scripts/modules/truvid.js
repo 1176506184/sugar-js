@@ -10,13 +10,9 @@ function autoLoginOut() {
     }
 }
 
-
-setTimeout(() => {
-    console.log('到时间了，登录')
+function autoLoginIn() {
     if (document.querySelector('#login')) {
         localStorage.setItem('lastLogin', (new Date()).getTime())
         document.querySelector('#login-btn').click();
-    } else {
-        autoLoginOut();
     }
-}, 60000)
+}
