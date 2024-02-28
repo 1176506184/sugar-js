@@ -219,35 +219,9 @@ async function collectHistory() {
 
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
-                        // let result = await getArticleBody(toutiaoData[i].article_url.replace('https://toutiao.com', location.origin));
-                        // let text = result.querySelector('article').innerText;
-                        // let imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
-                        // console.log(text, imgs);
-                        //
-                        // let imgurl = '';
-                        // for (let i = 0; i < imgs.length; i++) {
-                        //     imgurl += imgs[i] + ';';
-                        // }
-                        //
-                        // let data = {
-                        //     article_type: imgs.length ? 2 : 0,
-                        //     title: text,
-                        //     source_urls: imgurl,
-                        //     post_url: item.article_url,
-                        //     article_url: item.article_url,
-                        //     move_total: (item.like_count ? item.like_count : 0 + item.share_count + item.comment_count + item.digg_count ? item.digg_count : 0),
-                        //     looks: item.read_count,
-                        //     likes: item.like_count ? item.like_count : item.digg_count,
-                        //     shares: item.share_count,
-                        //     comments: item.comment_count,
-                        //     return_msg: '',
-                        //     remark: '',
-                        //     publish_time: item.create_time ? t2t(item.create_time) : t2t(item.publish_time)
-                        // };
-
                         let imgurl = '';
-                        for (let i = 0; i < item?.detail_cover_list.length; i++) {
-                            imgurl += item?.detail_cover_list[i].url + ';';
+                        for (let j = 0; j < item?.detail_cover_list?.length; j++) {
+                            imgurl += item?.detail_cover_list[j].url + ';';
                         }
                         let data = {
                             article_type: item?.detail_cover_list?.length > 0 ? 2 : 0,
