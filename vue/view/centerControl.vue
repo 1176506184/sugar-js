@@ -85,6 +85,14 @@ chrome.runtime.onMessage.addListener(async (Message) => {
         }
       }
     })
+  } else if (Message.Message === 'closeCiSession') {
+    chrome.tabs.query({}, (tabs) => {
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].url.includes('truvid.com')) {
+          chrome.tabs.remove(tabs[i].id);
+        }
+      }
+    })
   }
 });
 

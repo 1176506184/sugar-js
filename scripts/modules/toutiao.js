@@ -216,6 +216,7 @@ async function collectHistory() {
                 if (toutiaoData[i].id) {
                     let item = toutiaoData[i];
                     item.article_url = "https://www.toutiao.com/article/" + item.id;
+                    let move_total = item.share_count + item.comment_count + item.digg_count
 
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
@@ -229,9 +230,9 @@ async function collectHistory() {
                             title: item.content,
                             article_url: "https://www.toutiao.com/w/" + item.id,
                             post_url: "https://www.toutiao.com/w/" + item.id,
-                            move_total: (item.like_count ? item.like_count : 0 + item.share_count + item.comment_count + item.digg_count ? item.digg_count : 0),
+                            move_total,
                             looks: item.read_count,
-                            likes: item.like_count ? item.like_count : item.digg_count,
+                            likes: item.digg_count,
                             shares: item.share_count,
                             comments: item.comment_count,
                             return_msg: '',

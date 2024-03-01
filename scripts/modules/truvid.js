@@ -14,6 +14,15 @@ function autoLoginIn() {
     if (document.querySelector('#login')) {
         localStorage.setItem('lastLogin', (new Date()).getTime())
         document.querySelector('#login-btn').click();
+        setTimeout(() => {
+            console.log("登录超时，多点登录");
+            chrome.runtime.sendMessage({
+                Message: 'closeCiSession',
+                type: 'truvid',
+            }).then(r => {
+
+            })
+        }, 60 * 1000)
     }
 }
 
