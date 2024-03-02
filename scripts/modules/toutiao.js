@@ -335,15 +335,21 @@ async function dealHistoryData(data) {
 async function touTiaoCommunityScheduling() {
     // 重组发送数据
     let sendMessageData = [];
-    toutiaoData.forEach((t) => {
+    let i = 0;
+    toutiaoData.forEach(async (t) => {
         if (!t['isSend']) {
-            // t['isSend'] = true;
-            // console.log(t);
+            t['index'] = i;
+            i += 1;
+            let result = await getArticleBody("https://www.toutiao.com/w/" + t.id);
+            let imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
+            // console.log(t.index);
             let data = {
+                "index": t['index'],
                 "title": t.title,
                 "content": t.content,
                 "publish_time": t2t(t.publish_time),
                 "coverList": t?.detail_cover_list,
+                "imageString": imgs.join(','),
                 "read": t.read_count,
                 "comment": t.comment_count,
                 "upvote": t.digg_count,
@@ -353,14 +359,16 @@ async function touTiaoCommunityScheduling() {
             };
 
             sendMessageData.push(data);
+
+            if (sendMessageData.length === toutiaoData.length) {
+                chrome.runtime.sendMessage({
+                    Message: 'Toutiao_community_frame',
+                    data: sendMessageData,
+                    author: document.querySelector('div.detail span.name').textContent
+                }).then()
+            }
         }
     })
-
-    chrome.runtime.sendMessage({
-        Message: 'Toutiao_community_frame',
-        data: sendMessageData,
-        author: document.querySelector('div.detail span.name').textContent
-    }).then()
 }
 
 

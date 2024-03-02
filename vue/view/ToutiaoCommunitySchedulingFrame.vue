@@ -448,8 +448,10 @@ function dealToutiaoImage(Message) {
     })
 
     author.value = Message.author
-    AllData.value = data.value
-    console.log(data.value)
+    AllData.value = data.value.sort(function(a, b) {
+      return a.index - b.index
+    })
+    console.log(AllData.value)
   }
 
 }
@@ -583,8 +585,10 @@ function nextStep() {
   // console.log(upData.value)
 
   pwData.value = upData.value.map((r) => {
-    let imageUrl = ''
-    if(r.coverList.length > 1) {
+    // 取原文URL
+    // 放弃封面图URL
+    let imageUrl = r.imageString;
+    /* if(r.coverList.length > 1) {
       for(let j=0; j < r.coverList.length; j++) {
         imageUrl += r.coverList[j].url
         if(j < r.coverList.length-1) {
@@ -593,7 +597,7 @@ function nextStep() {
       }
     }else {
       imageUrl = r.coverList[0].url
-    }
+    } */
     return {
       title: r.content,
       content: r.content,
