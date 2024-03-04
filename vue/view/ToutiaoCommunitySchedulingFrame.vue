@@ -634,9 +634,10 @@ async function Save() {
 
 
   if (pwData.value.filter((item, index) => {
-    return !item.url || !item.title || !item.plan_time
+    return !item.title || !item.plan_time
+    // return !item.url || !item.title || !item.plan_time
   }).length > 0) {
-    ElMessage.error("请补全视频的标题/链接/排程时间");
+    ElMessage.error("请补全视频的标题/排程时间");
     return;
   }
   
@@ -676,7 +677,7 @@ async function Save() {
   // 组成要发送的数据包
   let PostData = {
     SourceType: '5', //素材来源 1抖音 2tiktok 3youtube 4推特 5微头条
-    PostType: '2', //帖子类型 2图文 3视频
+    PostType: '2', //帖子类型 2图文 3视频 4纯文本
     JoinRole: state.value.JoinRole,
     CommunityRole: state.value.CommunityRole,
     IsTop: state.value.IsTop,
