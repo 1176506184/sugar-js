@@ -342,7 +342,7 @@ async function touTiaoCommunityScheduling() {
             i += 1;
             let result = await getArticleBody("https://www.toutiao.com/w/" + t.id);
             let imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
-            // console.log(t.index);
+            console.log(t.index);
             let data = {
                 "index": t['index'],
                 "title": t.title,

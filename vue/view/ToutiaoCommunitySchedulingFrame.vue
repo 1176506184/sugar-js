@@ -433,13 +433,18 @@ function dealToutiaoImage(Message) {
 
     return
   } else if (Message.Message === 'Toutiao_community_frame') {
+    console.log(Message.data)
     data.value = Message.data.map((d) => {
       let titleTemp = '';
       // 微头条没有标题，从内容中截取标题
-      if(d.content.length > 30) {
+      if(d.content && d.content.length > 30) {
         titleTemp = d.content.substring(0, 30) + '...'
       }else {
-        titleTemp = d.content;
+        if(d.content) {
+          titleTemp = d.content;
+        }else {
+          titleTemp = d.title;
+        }
       }
       return {
         ...d,
