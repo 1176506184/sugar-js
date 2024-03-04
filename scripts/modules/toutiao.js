@@ -217,7 +217,6 @@ async function collectHistory() {
                     let item = toutiaoData[i];
                     item.article_url = "https://www.toutiao.com/article/" + item.id;
                     let move_total = (item.like_count ? item.like_count : 0) + (item.share_count ? item.share_count : 0) + (item.comment_count ? item.comment_count : 0) + (item.digg_count ? item.digg_count : 0)
-                    console.log(move_total)
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
                         let result = await getArticleBody(toutiaoData[i].article_url.replace('https://toutiao.com', location.origin));
@@ -227,7 +226,6 @@ async function collectHistory() {
                         for (let i = 0; i < imgs.length; i++) {
                             imgurl += imgs[i] + ';';
                         }
-
                         let data = {
                             article_type: imgs.length > 0 ? 2 : 0,
                             source_urls: imgurl,
