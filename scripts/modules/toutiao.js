@@ -220,14 +220,18 @@ async function collectHistory() {
                     console.log(move_total)
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
+                        let result = await getArticleBody(toutiaoData[i].article_url.replace('https://toutiao.com', location.origin));
+                        let text = result.querySelector('article').innerText;
+                        let imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
                         let imgurl = '';
-                        for (let j = 0; j < item?.detail_cover_list?.length; j++) {
-                            imgurl += item?.detail_cover_list[j].url + ';';
+                        for (let i = 0; i < imgs.length; i++) {
+                            imgurl += imgs[i] + ';';
                         }
+
                         let data = {
-                            article_type: item?.detail_cover_list?.length > 0 ? 2 : 0,
+                            article_type: imgs.length > 0 ? 2 : 0,
                             source_urls: imgurl,
-                            title: item.content,
+                            title: text,
                             article_url: "https://www.toutiao.com/w/" + item.id,
                             post_url: "https://www.toutiao.com/w/" + item.id,
                             move_total,
