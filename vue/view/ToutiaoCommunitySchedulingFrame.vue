@@ -433,13 +433,18 @@ function dealToutiaoImage(Message) {
 
     return
   } else if (Message.Message === 'Toutiao_community_frame') {
+    console.log(Message.data)
     data.value = Message.data.map((d) => {
       let titleTemp = '';
       // 微头条没有标题，从内容中截取标题
-      if(d.content.length > 30) {
+      if(d.content && d.content.length > 30) {
         titleTemp = d.content.substring(0, 30) + '...'
       }else {
-        titleTemp = d.content;
+        if(d.content) {
+          titleTemp = d.content;
+        }else {
+          titleTemp = d.title;
+        }
       }
       return {
         ...d,
@@ -448,8 +453,10 @@ function dealToutiaoImage(Message) {
     })
 
     author.value = Message.author
-    AllData.value = data.value
-    console.log(data.value)
+    AllData.value = data.value.sort(function(a, b) {
+      return a.index - b.index
+    })
+    console.log(AllData.value)
   }
 
 }
@@ -583,8 +590,10 @@ function nextStep() {
   // console.log(upData.value)
 
   pwData.value = upData.value.map((r) => {
-    let imageUrl = ''
-    if(r.coverList.length > 1) {
+    // 取原文URL
+    // 放弃封面图URL
+    let imageUrl = r.imageString;
+    /* if(r.coverList.length > 1) {
       for(let j=0; j < r.coverList.length; j++) {
         imageUrl += r.coverList[j].url
         if(j < r.coverList.length-1) {
@@ -593,7 +602,7 @@ function nextStep() {
       }
     }else {
       imageUrl = r.coverList[0].url
-    }
+    } */
     return {
       title: r.content,
       content: r.content,
