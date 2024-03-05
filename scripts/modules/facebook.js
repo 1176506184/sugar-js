@@ -623,6 +623,9 @@ async function collectHistory() {
 
         try {
             if (!document.querySelector(`div[aria-posinset="${historyCollectIndex}"]`)) {
+                if(document.querySelector('div[aria-label="关闭"]')){
+                    document.querySelector('div[aria-label="关闭"]').click();
+                }
                 await scrollBottom();
                 await waitCondition(() => {
                     return document.querySelector(`div[aria-posinset="${historyCollectIndex}"]`)

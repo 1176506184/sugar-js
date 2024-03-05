@@ -42,20 +42,20 @@
         <el-collapse v-model="activeNames" @change="handleChange" style="border-top: 0">
           <el-collapse-item title="抖音视频" name="1">
             <div>
-              <el-button
-                  @click="trumpet_video"
-                  type="primary"
-                  :disabled="type !== 'douyin'"
-              >小号素材库
-              </el-button
-              >
-              <el-button
-                  @click="trumpet_video_hx"
-                  type="primary"
-                  :disabled="type !== 'douyin'"
-              >欢享网
-              </el-button
-              >
+<!--              <el-button-->
+<!--                  @click="trumpet_video"-->
+<!--                  type="primary"-->
+<!--                  :disabled="type !== 'douyin'"-->
+<!--              >小号素材库-->
+<!--              </el-button-->
+<!--              >-->
+<!--              <el-button-->
+<!--                  @click="trumpet_video_hx"-->
+<!--                  type="primary"-->
+<!--                  :disabled="type !== 'douyin'"-->
+<!--              >欢享网-->
+<!--              </el-button-->
+<!--              >-->
 
               <el-button
                   @click="Copy_douyin"
@@ -74,12 +74,12 @@
 
           <el-collapse-item title="推特" name="2">
             <div>
-              <el-button
-                  @click="twitter_trumpet"
-                  type="primary"
-                  :disabled="type !== 'twitter'"
-              >小号素材库
-              </el-button>
+<!--              <el-button-->
+<!--                  @click="twitter_trumpet"-->
+<!--                  type="primary"-->
+<!--                  :disabled="type !== 'twitter'"-->
+<!--              >小号素材库-->
+<!--              </el-button>-->
 
               <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">社团排程（图片）</el-button>
               <el-button @click="collectTwitterVideoCommunitySchedulingFrame" type="primary">社团排程（视频）</el-button>
