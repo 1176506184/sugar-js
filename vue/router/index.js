@@ -28,6 +28,7 @@ import ixiguaVideoFrame from "../view/ixiguaVideoFrame.vue";
 import ixiguaHistoryFrame from "../view/ixiguaHistoryFrame.vue";
 import ImageCreate from "../view/imageCreate.vue"
 import CenterControl from '../view/centerControl.vue';
+import InsHistory from '../view/insHistory.vue';
 
 
 import novel from "../view/novel.vue";
@@ -234,6 +235,12 @@ const routes = [
         name: 'CenterControl',
         path: '/CenterControl',
         component: CenterControl,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'InsHistory',
+        path: '/InsHistory',
+        component: InsHistory,
         props: route => ({query: route.query.q}),
         meta: {}
     }

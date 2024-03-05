@@ -42,20 +42,20 @@
         <el-collapse v-model="activeNames" @change="handleChange" style="border-top: 0">
           <el-collapse-item title="抖音视频" name="1">
             <div>
-<!--              <el-button-->
-<!--                  @click="trumpet_video"-->
-<!--                  type="primary"-->
-<!--                  :disabled="type !== 'douyin'"-->
-<!--              >小号素材库-->
-<!--              </el-button-->
-<!--              >-->
-<!--              <el-button-->
-<!--                  @click="trumpet_video_hx"-->
-<!--                  type="primary"-->
-<!--                  :disabled="type !== 'douyin'"-->
-<!--              >欢享网-->
-<!--              </el-button-->
-<!--              >-->
+              <!--              <el-button-->
+              <!--                  @click="trumpet_video"-->
+              <!--                  type="primary"-->
+              <!--                  :disabled="type !== 'douyin'"-->
+              <!--              >小号素材库-->
+              <!--              </el-button-->
+              <!--              >-->
+              <!--              <el-button-->
+              <!--                  @click="trumpet_video_hx"-->
+              <!--                  type="primary"-->
+              <!--                  :disabled="type !== 'douyin'"-->
+              <!--              >欢享网-->
+              <!--              </el-button-->
+              <!--              >-->
 
               <el-button
                   @click="Copy_douyin"
@@ -74,12 +74,12 @@
 
           <el-collapse-item title="推特" name="2">
             <div>
-<!--              <el-button-->
-<!--                  @click="twitter_trumpet"-->
-<!--                  type="primary"-->
-<!--                  :disabled="type !== 'twitter'"-->
-<!--              >小号素材库-->
-<!--              </el-button>-->
+              <!--              <el-button-->
+              <!--                  @click="twitter_trumpet"-->
+              <!--                  type="primary"-->
+              <!--                  :disabled="type !== 'twitter'"-->
+              <!--              >小号素材库-->
+              <!--              </el-button>-->
 
               <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">社团排程（图片）</el-button>
               <el-button @click="collectTwitterVideoCommunitySchedulingFrame" type="primary">社团排程（视频）</el-button>
@@ -263,6 +263,15 @@ const handleChange = (val) => {
   console.log(val)
 }
 
+function absoluteCollapse() {
+  nextTick(() => {
+    const targetPanel = document.querySelector(`.el-collapse-item.is-active`);
+    if (targetPanel) {
+      targetPanel.scrollIntoView({behavior: 'smooth'});
+    }
+  })
+}
+
 let data = {
   facebook: {},
   video: "",
@@ -349,6 +358,9 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "web") {
       activeNames.value.push("8");
       store.commit("changeType", "web");
+    } else if (Message.type === "ins") {
+      activeNames.value.push("9");
+      store.commit("changeType", "ins");
     } else if (Message.type === "pinterest") {
       activeNames.value.push("10");
       store.commit("changeType", "pinterest");
@@ -358,6 +370,7 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
+    absoluteCollapse()
   } else if (Message.Message === "video") {
     loading.value = true;
     data.video = Message.url;
@@ -1073,7 +1086,7 @@ async function collectInsHistory() {
     await updateActiveId(pageId, activeId);
   } else {
     chrome.tabs.create({
-      url: '/html/out.html#/InsCollectHistory?activeId=' + activeId,
+      url: '/html/out.html#/InsHistory?activeId=' + activeId,
       active: true
     }, (tab) => {
 
@@ -1147,7 +1160,6 @@ async function ixiguaHistoryFrame() {
     })
   }
 }
-
 
 
 async function collectTiktokFrame() {
