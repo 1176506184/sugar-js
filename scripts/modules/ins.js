@@ -232,12 +232,24 @@ async function collectHistory() {
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
                         let imgurl = '';
-                        item.carousel_media.map((img) => {
-                            imgurl += img.image_versions2.candidates[0].url + ';';
-                        })
+                        let videoURL = '';
+                        if (item.carousel_media) {
+                            item.carousel_media.map((img) => {
+                                imgurl += img.image_versions2.candidates[0].url + ';';
+                            })
+                        }
+
+                        if (item.image_versions2) {
+                            imgurl += item.image_versions2.candidates[0].url + ';';
+                        }
+
+                        if (item.video_versions) {
+                            videoURL = item.video_versions[0].url + ';';
+                        }
+
                         let data = {
-                            article_type: 2,
-                            source_urls: imgurl,
+                            article_type: videoURL ? 3 : 2,
+                            source_urls: videoURL ? videoURL : imgurl,
                             title: item.title,
                             article_url: "https://www.ins.com/w/" + item.id,
                             post_url: "https://www.ins.com/w/" + item.id,
@@ -246,7 +258,7 @@ async function collectHistory() {
                             comments: item.comment_count,
                             return_msg: '',
                             remark: '',
-                            publish_time: t2t(item.caption.created_at)
+                            publish_time: t2t(item.taken_at)
                         }
 
                         data_map.push(data);

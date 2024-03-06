@@ -51,15 +51,6 @@
               <el-input v-model="finishTime"></el-input>
             </el-form-item>
           </el-col>
-
-          <el-col :span="4">
-            <el-form-item label="是否展开图片">
-              <el-select v-model="openImage">
-                <el-option :value="true" label="是">是</el-option>
-                <el-option :value="false" label="否">否</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
         </el-row>
         <div style="margin: 30px 0;">
           <div style="font-size: 16px">
