@@ -236,7 +236,7 @@ async function collectHistory() {
                             })
                         }
 
-                        if (item.image_versions2) {
+                        if (item.image_versions2 && !item.carousel_media) {
                             imgurl += item.image_versions2.candidates[0].url + ';';
                         }
 
@@ -247,9 +247,9 @@ async function collectHistory() {
                         let data = {
                             article_type: videoURL ? 3 : 2,
                             source_urls: videoURL ? videoURL : imgurl,
-                            title: item.title,
-                            article_url: "https://instagram.com/p/" + item.id,
-                            post_url: "https://instagram.com/p/" + item.id,
+                            title: item.caption?.text,
+                            article_url: item.article_url,
+                            post_url: item.article_url,
                             move_total: item.comment_count + item.like_count,
                             likes: item.like_count,
                             comments: item.comment_count,
