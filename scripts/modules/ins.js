@@ -22,10 +22,7 @@ function startCollect(max) {
     timer = setInterval(() => {
         if ((insData.length < max && pending === "start") || (!max && pending === "start")) {
             scrollBottom()
-            sendData();
-
         } else {
-            sendData();
             chrome.runtime.sendMessage({
                 Message: 'stop',
                 type: 'ins',
@@ -251,8 +248,8 @@ async function collectHistory() {
                             article_type: videoURL ? 3 : 2,
                             source_urls: videoURL ? videoURL : imgurl,
                             title: item.title,
-                            article_url: "https://www.ins.com/w/" + item.id,
-                            post_url: "https://www.ins.com/w/" + item.id,
+                            article_url: "https://instagram.com/p/" + item.id,
+                            post_url: "https://instagram.com/p/" + item.id,
                             move_total: item.comment_count + item.like_count,
                             likes: item.like_count,
                             comments: item.comment_count,
