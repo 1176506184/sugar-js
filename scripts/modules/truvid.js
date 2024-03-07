@@ -18,6 +18,9 @@ function autoLoginIn() {
             document.querySelector('#login-btn').click();
         }, 10 * 1000)
         setTimeout(() => {
+            document.querySelector('#login-btn').click();
+        }, 30 * 1000)
+        setTimeout(() => {
             console.log("登录超时，多点登录");
             chrome.runtime.sendMessage({
                 Message: 'closeCiSession',
