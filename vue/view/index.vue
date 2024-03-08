@@ -86,10 +86,8 @@
               <el-button @click="collectTwitterPW" type="primary">
                 采集视频并TOOL源视频排文
               </el-button>
-              <el-button type="warning" @click="collectTTHistory" style="margin-top: 10px;margin-left: 0">自动采集历史
+              <el-button type="warning" @click="collectTTHistory" style="margin-top: 0px;">自动采集历史
               </el-button>
-
-
             </div>
           </el-collapse-item>
 
@@ -213,7 +211,7 @@
             <div>
               <el-button @click="ixiguaVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
               <el-button @click="ixiguaHistoryFrame" type="warning">自动采集历史</el-button>
-              <el-button @click="ixiguaVideoArticle" type="warning">生成视频文章-Truvid并发布</el-button>
+              <el-button @click="ixiguaVideoArticle" type="primary">生成视频文章-Truvid并发布</el-button>
             </div>
           </el-collapse-item>
 
