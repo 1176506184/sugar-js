@@ -26,6 +26,7 @@ import ToutiaoHistory from "../view/ToutiaoHistory.vue";
 import pinterestHistoryFrame from "../view/pinterestHistoryFrame.vue";
 import ixiguaVideoFrame from "../view/ixiguaVideoFrame.vue";
 import ixiguaHistoryFrame from "../view/ixiguaHistoryFrame.vue";
+import ixiguaVideoArticle from "../view/ixiguaVideoArticle.vue";
 import ImageCreate from "../view/imageCreate.vue"
 import CenterControl from '../view/centerControl.vue';
 import InsHistory from '../view/insHistory.vue';
@@ -225,7 +226,13 @@ const routes = [
         component: ixiguaHistoryFrame,
         props: route => ({query: route.query.q}),
         meta: {}
-    }, {
+    },{
+        name: 'ixiguaVideoArticle',
+        path: '/ixiguaVideoArticle',
+        component: ixiguaVideoArticle,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    },{
         name: 'imageCreate',
         path: '/imageCreate',
         component: ImageCreate,

@@ -95,6 +95,10 @@ async function CacheMertial(Data, type) {
         var post_time = '';
         var old_post_time = '';
         var article_type = 3;
+        var coverUrl = '';
+        var duration = '';
+        coverUrl = toFenxiList[i].coverUrl;
+        duration = +toFenxiList[i].duration;
         // 导语标题
         notes = toFenxiList[i].title;
         // 互动
@@ -158,7 +162,7 @@ async function CacheMertial(Data, type) {
 
         if (post_url != '') {
             /////  POST把抓包内容打包成数组，调用回传
-            await Post(blogger_id_send, notes, article_type, article_url, source_urls, post_url, views, likes, shares, comments, move_total, post_time, old_post_time);
+            await Post(blogger_id_send, notes, article_type, article_url, source_urls, post_url, views, likes, shares, comments, move_total, post_time, old_post_time, coverUrl, duration);
 
         } else {
             continue;
@@ -168,7 +172,7 @@ async function CacheMertial(Data, type) {
 
 
 //////POST把抓包内容打包成数组，调用回传
-async function Post(blogger_id_send, note, article_type, article_url, source_urls, post_url, looks, likes, retweets, comments, move_total, post_time, old_post_time) {
+async function Post(blogger_id_send, note, article_type, article_url, source_urls, post_url, looks, likes, retweets, comments, move_total, post_time, old_post_time, coverUrl, duration) {
 
     try {
         PostDataArray.push({
@@ -187,7 +191,11 @@ async function Post(blogger_id_send, note, article_type, article_url, source_url
             'publish_time': post_time,
             'old_post_time': old_post_time,
             'return_msg': '',
-            'remark': ''
+            'remark': '',
+            // 添加封面图片及视频时长
+            'duration': duration,
+            'cover': coverUrl
+
         });
 
         publish_time_last = post_time;
@@ -410,6 +418,8 @@ function getVideo(type) {
                     playCount: PostDataArray[i].looks,
                     create_time: PostDataArray[i].old_post_time,
                     href: PostDataArray[i].post_url,
+                    duration: PostDataArray[i].duration,
+                    cover: PostDataArray[i].cover,
                     author: first_page_data.AuthorDetailInfo?.name
                 }
                 videoData.push(TempObj);

@@ -213,6 +213,7 @@
             <div>
               <el-button @click="ixiguaVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
               <el-button @click="ixiguaHistoryFrame" type="warning">自动采集历史</el-button>
+              <el-button @click="ixiguaVideoArticle" type="warning">生成视频文章-Truvid并发布</el-button>
             </div>
           </el-collapse-item>
 
@@ -1154,6 +1155,28 @@ async function ixiguaHistoryFrame() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/ixiguaHistoryFrame?activeId=' + activeId,
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+
+// 西瓜视频生成视频文章-Truvid发布
+async function ixiguaVideoArticle() {
+
+  let activeId = await getActiveId();
+  let pageId = await getId("ixiguaVideoArticle");
+
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+    await updateActiveId(pageId, activeId);
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/ixiguaVideoArticle?activeId=' + activeId,
       active: true
     }, (tab) => {
 
