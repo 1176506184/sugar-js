@@ -64,7 +64,7 @@
             <el-form-item label="生成内容类型">
               <el-select v-model="form.content_type" placeholder="请选择" @change="getPortList">
                 <el-option label="快讯" :value="0" />
-                <el-option label="文章" :value="1" />
+                <!-- <el-option label="文章" :value="1" /> -->
               </el-select>
             </el-form-item>
           </el-col>
