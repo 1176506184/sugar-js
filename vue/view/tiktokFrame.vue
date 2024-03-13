@@ -68,6 +68,20 @@ const form = reactive({
 
 const timeInterval = 240000
 let lastTimeStamp = 0;
+let lastUpDataTimeStamp = 0;
+
+setInterval(() => {
+  chrome.tabs.query(
+      {},
+      function (tabs) {
+        tabs.map((tab) => {
+          if (!tab.url.includes('out.html#/TiktokFrame') && tab.url.includes('tiktok.com') && !tab.url.includes('isCollect')) {
+            uid.value += 1;
+            getNextCollect(uid.value)
+          }
+        })
+      });
+}, timeInterval * 2)
 
 setInterval(() => {
   if ((parseInt((new Date()).getTime() / 1000) - lastTimeStamp > 300) && lastTimeStamp !== 0) {
@@ -260,6 +274,7 @@ function dealYoutubeVideo(Message) {
 }
 
 async function nextUrl(homepage) {
+  lastUpDataTimeStamp = (new Date()).getTime();
   let callBackUrl = "";
   if (DIR === 'dist') {
     callBackUrl = 'http://101.201.222.226/tictok/CallBackForCollectionLog';

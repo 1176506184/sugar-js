@@ -223,13 +223,11 @@ if (location.href.indexOf('instagram') !== -1 || location.href.indexOf('douyin')
             var send = XHR.send;
             XHR.send = function (postData) {
                 this.addEventListener("load", function (e) {
-                    // console.log(e.currentTarget.responseURL)
                     window.postMessage({
                         Message: 'ajax',
                         url: e.currentTarget.responseURL,
                         data: e.currentTarget.responseText
                     })
-                    // console.log(e.currentTarget.responseText)
                 })
                 return send.apply(this, arguments);
             }
