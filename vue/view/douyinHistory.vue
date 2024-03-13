@@ -2,7 +2,7 @@
   <div style="height: 100vh;margin: 0;padding: 0;border-right: 1px solid #ccc;border-left: 1px solid #ccc">
     <div class="layout_top" style="height: 20px;display: flex;align-items: center;justify-content: flex-start">
       <div>
-        <span style="font-size: 15px;font-weight: bold;margin-right: 5px">微头条-历史自动采集</span>
+        <span style="font-size: 15px;font-weight: bold;margin-right: 5px">抖音-历史自动采集</span>
       </div>
     </div>
 
@@ -170,7 +170,7 @@ async function createBlogger() {
   // 0：FB专业，1：twitter博主，2：Pinterest，3：头条，4：Instragram，5：Youtube
   // 0繁体 1 英文 2葡语 3日语
   let res = await hHttp(`/BloggerNew/Add`, {
-    platform: 3,
+    platform: 8,
     lang: form.lang,
     name: author.value,
     blogger_url: authorLink.value,
@@ -334,7 +334,7 @@ async function UpdatedBlogger(time) {
   console.log('完成了，发通知-', ddid);
   let postString = '博主已采集完毕，已采集到最后贴文发布时间' + post_time_last + '，请及时进入后台查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：微头条' + '\n' +
+      '博主平台：抖音' + '\n' +
       '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + successPostNum.value
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
@@ -354,7 +354,7 @@ async function UpdatedBloggerError() {
   console.log('完成了，发通知-', ddid);
   let postString = '博主历史采集超过' + finishTime.value + '分钟未获取到新贴文，请查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：微头条' + '\n' +
+      '博主平台：抖音' + '\n' +
       '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + successPostNum.value
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {

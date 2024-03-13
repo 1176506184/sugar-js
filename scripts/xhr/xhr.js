@@ -218,15 +218,20 @@ if (location.href.indexOf('instagram') !== -1 || location.href.indexOf('douyin')
     if (location.href.indexOf('twtest.anyelse.com') === -1) {
         window.fetch = ajax_tools_space.myFetch;
         if (location.href.indexOf('douyin') !== -1) {
-            let xhr = XMLHttpRequest.prototype;
-            let originSend = xhr.send;
-            xhr.send = async function (postData) {
-                window.postMessage({
-                    Message: 'ajax',
-                    url: "douyin",
-                    data: postData
+            var XHR = XMLHttpRequest.prototype
+            var open = XHR.open;
+            var send = XHR.send;
+            XHR.send = function (postData) {
+                this.addEventListener("load", function (e) {
+                    // console.log(e.currentTarget.responseURL)
+                    window.postMessage({
+                        Message: 'ajax',
+                        url: e.currentTarget.responseURL,
+                        data: e.currentTarget.responseText
+                    })
+                    // console.log(e.currentTarget.responseText)
                 })
-                return originSend.apply(this, arguments);
+                return send.apply(this, arguments);
             }
         } else {
             window.XMLHttpRequest = ajax_tools_space.myXHR;

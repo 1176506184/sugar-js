@@ -30,6 +30,8 @@ import ixiguaVideoArticle from "../view/ixiguaVideoArticle.vue";
 import ImageCreate from "../view/imageCreate.vue"
 import CenterControl from '../view/centerControl.vue';
 import InsHistory from '../view/insHistory.vue';
+import DouyinHistory from '../view/douyinHistory.vue';
+import DouyinTruvid from '../view/douyinTruvid.vue';
 
 
 import novel from "../view/novel.vue";
@@ -226,13 +228,13 @@ const routes = [
         component: ixiguaHistoryFrame,
         props: route => ({query: route.query.q}),
         meta: {}
-    },{
+    }, {
         name: 'ixiguaVideoArticle',
         path: '/ixiguaVideoArticle',
         component: ixiguaVideoArticle,
         props: route => ({query: route.query.q}),
         meta: {}
-    },{
+    }, {
         name: 'imageCreate',
         path: '/imageCreate',
         component: ImageCreate,
@@ -250,8 +252,21 @@ const routes = [
         component: InsHistory,
         props: route => ({query: route.query.q}),
         meta: {}
+    }, {
+        name: 'DouyinHistory',
+        path: '/DouyinHistory',
+        component: DouyinHistory,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'DouyinTruvid',
+        path: '/DouyinTruvid',
+        component: DouyinTruvid,
+        props: route => ({query: route.query.q}),
+        meta: {}
     }
 ]
+
 
 const router = createRouter({
     // 4. 内部提供了 history 模式的实现。为了简单起见，我们在这里使用 hash 模式。

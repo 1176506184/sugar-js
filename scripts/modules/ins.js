@@ -141,7 +141,7 @@ async function dealHistoryData(data) {
     chrome.runtime.sendMessage({
         Message: 'history',
         frameId: frameId,
-        type: 'toutiao',
+        type: 'ins',
         data: '',
         author: document.querySelector('h2').textContent,
         authorLink: location.origin + location.pathname,

@@ -62,11 +62,24 @@
                   type="primary"
                   :disabled="type !== 'douyin'"
               >视频采集
-              </el-button
-              >
+              </el-button>
 
               <el-button @click="collectDouyinVideoCommunitySchedulingFrame" type="primary"
                          :disabled="type !== 'douyin'">批量源素材社团排程
+              </el-button>
+
+              <el-button
+                  @click="douyin_history"
+                  type="primary"
+                  :disabled="type !== 'douyin'"
+              >历史采集
+              </el-button>
+
+              <el-button
+                  @click="douyin_truvid"
+                  type="primary"
+                  :disabled="type !== 'douyin'"
+              >生成视频文章-Truvid并发布
               </el-button>
 
             </div>
@@ -1539,6 +1552,26 @@ async function collectFBHistory() {
 function imageCreate() {
   chrome.tabs.create({
     url: '/html/out.html#/imageCreate',
+    active: true
+  }, (tab) => {
+
+  })
+}
+
+async function douyin_history() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/DouyinHistory?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
+}
+
+async function douyin_truvid() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/DouyinTruvid?activeId=' + activeId,
     active: true
   }, (tab) => {
 
