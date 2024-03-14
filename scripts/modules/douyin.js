@@ -400,7 +400,7 @@ async function collectHistory() {
                     item.article_url = `https://www.douyin.com/video/${item.aweme_id}`;
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
-                        let videoURL = item.article_url;
+                        let videoURL = item.article_url + ';';
                         let data = {
                             article_type: 3,
                             source_urls: videoURL,

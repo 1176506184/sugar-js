@@ -75,12 +75,12 @@
               >历史采集
               </el-button>
 
-<!--              <el-button-->
-<!--                  @click="douyin_truvid"-->
-<!--                  type="primary"-->
-<!--                  :disabled="type !== 'douyin'"-->
-<!--              >生成视频文章-Truvid并发布-->
-<!--              </el-button>-->
+              <el-button
+                  @click="douyin_truvid"
+                  type="primary"
+                  :disabled="type !== 'douyin'"
+              >生成视频文章-Truvid并发布
+              </el-button>
 
             </div>
           </el-collapse-item>

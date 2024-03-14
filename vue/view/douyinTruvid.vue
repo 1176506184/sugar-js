@@ -1,225 +1,146 @@
 <template>
   <div style="height: 100vh;margin: 0;padding: 0;border-right: 1px solid #ccc;border-left: 1px solid #ccc">
 
-    <Swiper :modules="[Controller]"
-            :controller="{ control: controlledSwiper }"
-            @swiper="setController" :allowTouchMove="false">
+    <div class="layout_top"
+         style="height: 35px;display: flex;align-items: center;justify-content: flex-start;position: relative">
+      <span style="font-size: 15px;font-weight: bold;margin-right: 5px">博主名称</span>
+      <el-input v-model="author" style="display: inline-flex;flex:1;width: 500px">
+        <template #append>可修改</template>
+      </el-input>
+    </div>
 
-      <swiper-slide>
-        <div class="layout_top"
-             style="height: 35px;display: flex;align-items: center;justify-content: flex-start;position: relative">
-          <span style="font-size: 15px;font-weight: bold;margin-right: 5px">博主名称</span>
-          <el-input v-model="author" style="display: inline-flex;flex:1;width: 500px">
-            <template #append>可修改</template>
-          </el-input>
-        </div>
-        <el-form label-position="top" style="height: calc(100vh - 57px);">
-          <div style="padding: 0 10px 10px;">
-            <el-form-item style="margin-bottom: 0">
-              <el-table :data="data" @selection-change="handleSelectionChange" ref="TableRef" @select="handleSelect"
-                        @sort-change="handleSortChange"
-                        style="flex:1;height:calc(100vh - 130px)"
-                        :default-sort="{ prop: 'create_time', order: 'descending' }"
-                        v-loading="initLoading">
-                <!-- 默认时间倒叙 -->
-                <el-table-column type="selection" width="30"/>
+    <el-form label-position="top" style="height: calc(100vh - 57px);">
+      <div style="padding: 0 10px 10px;">
 
-                <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
+        <el-form-item>
 
-                <el-table-column label="视频标题" width="570">
-                  <template #header>
-                    <div style="display: flex;align-items: center;">
-                      <label>视频标题</label>
-                      <el-input style="width: 250px;margin-left:10px;" placeholder="输入后筛选" v-model="title"
-                                @input="filterList"></el-input>
-                    </div>
+          <el-table :data="data" @selection-change="handleSelectionChange" ref="TableRef" @select="handleSelect"
+                    @sort-change="handleSortChange" style="flex:1;height:calc(100vh - 230px)"
+                    :default-sort="{ prop: 'create_time', order: 'descending' }" v-loading="initLoading">
+            <el-table-column type="selection" width="30" />
 
-                  </template>
-                  <template #default="{ row }">
-                    {{ row.title }}
-                  </template>
-                </el-table-column>
-                <el-table-column label="播放量" prop="playCount" sortable :sort-orders="['descending','ascending',null]">
-                </el-table-column>
-                <!-- <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]">
-                </el-table-column>
-                <el-table-column label="尺寸" prop="cup" sortable :sort-orders="['descending','ascending',null]">
-                  <template #default="{row}">
-                    {{ row.width }}×{{ row.height }}
-                  </template>
-                </el-table-column> -->
+            <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
-                <el-table-column label="发布时间" prop="create_time" sortable
-                                 :sort-orders="['descending','ascending',null]">
-                  <template #default="{row}">
-                    <div>
-                      {{ moment(row.create_time * 1000).format('YYYY-MM-DD') }}
-                    </div>
-                    <div>
-                      {{ moment(row.create_time * 1000).format('HH:mm:ss') }}
-                    </div>
-                  </template>
-                </el-table-column>
+            <el-table-column label="视频标题">
+              <template #header>
+                <div style="display: flex;align-items: center;">
+                  <label>视频标题</label>
+                  <el-input style="width: 250px;margin-left:10px;" placeholder="输入后筛选" v-model="title"
+                            @input="filterList"></el-input>
+                  <el-input style="width: 250px;margin-left:10px;" placeholder="时长筛选(,分割单位分钟)" v-model="section"
+                            @input="filterTimeList"></el-input>
+                </div>
 
-              </el-table>
+              </template>
+              <template #default="{ row }">
+                {{ row.title }}
+              </template>
+            </el-table-column>
+            <el-table-column label="播放量" prop="playCount" sortable width="150"
+                             :sort-orders="['descending', 'ascending', null]">
+            </el-table-column>
+            <el-table-column label="播放时长" prop="duration" :formatter="formatTime" sortable width="150"
+                             :sort-orders="['descending', 'ascending', null]">
 
-            </el-form-item>
-          </div>
-          <el-form-item>
-            <div class="dialog-footer"
-                 style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">
-              <!-- <el-input style="width: 200px;margin-right: 12px;" placeholder="尺寸筛选(,分割)" v-model="size"
-                        @input="filterList"></el-input> -->
-              <el-button type="warning" @click="select60">勾选前60条</el-button>
-              <el-button type="danger" @click="close">关闭</el-button>
-              <el-button type="primary" style="margin-right: 10px" @click="nextStep">
-                下一步
-              </el-button>
-            </div>
-          </el-form-item>
+            </el-table-column>
 
-        </el-form>
+          </el-table>
 
-      </swiper-slide>
-      <swiper-slide style="width: 100%;height: 100vh">
-        <div class="layout_top"
-             style="height: 35px;display: flex;align-items: center;justify-content: flex-start;position: relative">
-          <span style="font-size: 15px;font-weight: bold;margin-right: 5px">批量排程</span>
-        </div>
-        <el-form label-position="left" style="height: calc(100vh - 57px);">
-          <div style="padding: 0 10px 10px;">
-            <el-form-item label="批量设置排程时间" style="margin-top: 10px">
-              <el-date-picker
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  v-model="startTime"
-                  type="datetime"
-                  placeholder="开始时间"
-              />
-              <el-select v-model="interval_type" style="width: 80px;margin-left: 5px">
-                <el-option label="分" :value="0">分</el-option>
-                <el-option label="时" :value="1">时</el-option>
+        </el-form-item>
+
+        <el-row gutter="5">
+          <el-col :span="4">
+            <el-form-item label="语言">
+              <el-select v-model="form.lang" class="smallWidthInput" placeholder="请选择" @change="getPortList">
+                <el-option label="繁体" :value="0" />
+                <el-option label="英语" :value="1" />
+                <el-option label="葡语" :value="2" />
+                <el-option label="日语" :value="3" />
               </el-select>
-              <el-input v-model="interval_num" placeholder="间隔时间" style="width: 130px;margin-left:5px;"
-                        type="number"></el-input>
-              <el-button type="primary" style="margin-left:5px;" @click="create_plan">确认</el-button>
             </el-form-item>
-            <el-form-item style="border-bottom: 0;margin-bottom: 0">
-              <el-table :data="pwData" style="flex:1;height:calc(100vh - 190px)">
+          </el-col>
 
-                <el-table-column width="55" label="序号" align="center">
-                  <template #default="{ row, column, $index }">
-                    <span :style="failList.includes($index) ? 'color:red' : ''">{{ $index + 1 }}</span>
-                  </template>
-                </el-table-column>
-
-                <el-table-column label="视频标题" width="480">
-                  <template #default="{ row }">
-                    <el-input autosize type="textarea" v-model="row.title"></el-input>
-                  </template>
-                </el-table-column>
-
-                <el-table-column label="视频链接" width="280">
-                  <template #default="{ row }">
-                    <el-input v-model="row.url"></el-input>
-                  </template>
-                </el-table-column>
-
-                <el-table-column label="排程时间" width="250">
-                  <template #default="{ row }">
-                    <el-date-picker type="datetime" v-model="row.plan_time"></el-date-picker>
-                  </template>
-                </el-table-column>
-
-                <el-table-column label="操作">
-                  <template #default="{ row, column, $index }">
-                    <el-button size="small" type="danger" @click="delPlan($index)">删除</el-button>
-                  </template>
-                </el-table-column>
-
-              </el-table>
+          <el-col :span="4">
+            <el-form-item label="生成内容类型">
+              <el-select v-model="form.content_type" placeholder="请选择" @change="getPortList">
+                <el-option label="快讯" :value="0" />
+                <!-- <el-option label="文章" :value="1" /> -->
+              </el-select>
             </el-form-item>
-          </div>
-          <el-form-item>
-            <div class="dialog-footer"
-                 style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;">
+          </el-col>
 
-              <el-row gutter="10" style="width: 620px;float: left">
-                <el-col :span="10">
-                  <el-select placeholder="搜索专页名称或专页ID" v-model="form.pageuid"
-                             filterable
-                             clearable
-                             remote
-                             reserve-keyword
-                             :loading="pageLoading"
-                             :remote-method="getPage"
-                             @change="changePage"
-                             value-key="Pagefbid"
-                             style="width: 100%">
-                    <el-option v-for="item in pages" :label="item.Name + ' - ' + item.Pagefbid" :value="item"
-                               :key="item.Pagefbid"/>
-                  </el-select>
-                </el-col>
-                <el-col :span="7">
-                  <el-select placeholder="排程类型" v-model="tool_type">
-                    <el-option label="Reels" :value="4">
-                      Reels
-                    </el-option>
-                    <el-option label="时间线" :value="0">
-                      时间线
-                    </el-option>
-                  </el-select>
-                </el-col>
+          <el-col :span="4">
+            <el-form-item label="是否需要审核">
+              <el-select v-model="form.needProcess" class="smallWidthInput" placeholder="请选择">
+                <el-option label="否" :value="0" />
+                <el-option label="是" :value="1" />
+              </el-select>
+            </el-form-item>
+          </el-col>
 
-                <el-col :span="7">
-                  <el-select placeholder="是否简繁转换" v-model="is_tw">
-                    <el-option label="否" :value="0">
-                      否
-                    </el-option>
-                    <el-option label="是" :value="1">
-                      是
-                    </el-option>
-                  </el-select>
-                </el-col>
+          <el-col :span="4">
+            <el-form-item label="生成内容域名">
+              <el-select placeholder="请选择" v-model="form.host" @change="getCateGory" filterable>
+                <el-option v-for="item in ports" :label="item" :value="item" />
+              </el-select>
+            </el-form-item>
+          </el-col>
 
-              </el-row>
+          <el-col :span="4">
+            <el-form-item label="生成内容分类">
+              <el-select placeholder="请选择" v-model="form.category" filterable>
+                <el-option v-for="item in categorys" :label="item" :value="item" />
+              </el-select>
+            </el-form-item>
+          </el-col>
 
-              <el-button type="danger" @click="close">关闭</el-button>
-              <el-button @click="prevStep">上一步</el-button>
-              <el-button type="primary" style="margin-right: 10px" @click="Save">
-                创建TOOL源视频排程
-              </el-button>
-            </div>
-          </el-form-item>
-        </el-form>
+          <el-col :span="4">
+            <el-form-item label="标题是否chatgpt处理">
+              <el-select v-model="form.needChapgpt" class="smallWidthInput" placeholder="请选择">
+                <el-option label="否" :value="0" />
+                <el-option label="是" :value="1" />
+              </el-select>
+            </el-form-item>
+          </el-col>
 
+        </el-row>
 
-        <el-dialog v-model="loading" width="500" :show-close="false">
-          {{ loading_text }}
-        </el-dialog>
+      </div>
 
-      </swiper-slide>
+      <el-form-item>
+        <div class="dialog-footer"
+             style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
 
-    </Swiper>
+          <el-row gutter="10" style="width: 420px;float: left">
+            <el-col :span="12">
+              <el-select-v2 placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%"
+                            :options="pages">
+              </el-select-v2>
+            </el-col>
+            <el-col :span="12"
+                    style="color:orange;font-size: 12px;line-height: 17px;white-space: pre-wrap; text-align: left;">
+              {{ pageType }}
+            </el-col>
+          </el-row>
+
+          <el-button @click="close">取消</el-button>
+          <el-button type="primary" style="margin-right: 10px" @click="Save">
+            创建任务
+          </el-button>
+        </div>
+      </el-form-item>
+
+    </el-form>
 
 
   </div>
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, ref, nextTick, onBeforeMount} from "vue";
-import {testHttp, xhrHttp} from "../utils/request";
-import {ElLoading, ElMessage} from "element-plus";
-import {useRoute} from "vue-router";
-import {Swiper, SwiperSlide} from 'swiper/vue';
-import {Controller} from 'swiper/modules';
-import 'swiper/css';
-import moment from "moment";
-
-const controlledSwiper = ref(null);
-
-function setController(swiper) {
-  controlledSwiper.value = swiper
-}
+import { computed, onMounted, reactive, ref, nextTick, onBeforeMount } from "vue";
+import { testHttp, xhrHttp } from "../utils/request";
+import { ElLoading, ElMessage } from "element-plus";
+import { useRoute } from "vue-router";
 
 onBeforeMount(() => {
   document.body.style.width = "1200px"
@@ -229,36 +150,111 @@ const route = useRoute()
 const data = ref([])
 const AllData = ref([])
 const author = ref("")
+
 const pages = ref([])
+const categorys = ref([])
+const ports = ref([])
+
 const title = ref("")
 const active_id = ref("")
-const loading = ref(false)
-const loading_text = ref("检测封面图中");
-const size = ref("")
-// 初始化Loading表格
+
+const section = ref("")
+
 const initLoading = ref(false)
 
-const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
   lang: 0,
   content_type: 0,
   host: '',
   category: '',
   pageuid: '',
-  needProcess: 0
+  needProcess: 0,
+  needChapgpt: 1
 })
 
+function formatTime(row) {
+  let h = Math.floor(row.duration / 3600);
+  let m = Math.floor((row.duration / 60 % 60));
+  let s = Math.floor((row.duration % 60));
+  if (s < 10) {
+    s = `0${s}`
+  }
+  if (h) {
+    return `${h}:${m}:${s}`;
+  } else if (m) {
+    return `${m}:${s}`;
+  } else {
+    return `${s}`;
+  }
+}
 
 function filterList() {
 
   data.value = AllData.value.filter((item) => {
-    // return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1 && (size.value.split(',').includes(`${item.width}×${item.height}`) || !size.value)
     return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1
   })
 
 }
 
-function dealDouyinVideo(Message) {
+function filterTimeList() {
+  if (section.value.includes(',')) {
+    let time = section.value.split(',')
+    data.value = AllData.value.filter((item) => {
+      return (item.duration > (+time[0] * 60) && item.duration < (+time[1] * 60)) ||
+          (item.duration < (+time[0] * 60) && item.duration > (+time[1] * 60))
+    })
+  } else {
+    data.value = AllData.value
+  }
+
+}
+
+function getPortList() {
+  xhrHttp(`http://gpt.anyelse.com/callback/capturehostlist`, {
+    content_type: form.content_type,
+    lang: form.lang
+  }, 'post', 'application/json').then((res) => {
+    ports.value = JSON.parse(res).data
+  });
+}
+
+function getCateGory() {
+  xhrHttp(`http://gpt.anyelse.com/callback/capturecategorylist`, {
+    content_type: form.content_type,
+    lang: form.lang,
+    host: form.host
+  }, 'post', 'application/json').then((res) => {
+    categorys.value = JSON.parse(res).data
+  });
+}
+
+function getPage() {
+  xhrHttp(`http://gpt.anyelse.com/callback/capturefacebooklist`, {}, 'post', 'application/json').then((res) => {
+    pages.value = JSON.parse(res).data.map((item) => {
+      return {
+        ...item,
+        value: item.uid,
+        label: item.name + ' - ' + item.uid
+      }
+    })
+  });
+}
+
+const pageType = computed(() => {
+
+  for (let i = 0; i < pages.value.length; i++) {
+
+    if (form.pageuid === pages.value[i].uid) {
+      return `发帖形式：${pages.value[i].post_typename}\n排期类型：${pages.value[i].plan_typename} `
+    }
+
+  }
+
+  return ``
+
+})
+
+function dealIxiguaVideo(Message) {
 
   if (Message.Message === 'updateActiveId') {
     active_id.value = Message.data;
@@ -297,46 +293,14 @@ function dealDouyinVideo(Message) {
 }
 
 
-const pageLoading = ref(false);
-var reg = /^[1-9]\d*$|^0$/;
-const pageState = reactive({
-  Pagename: '',
-  Pagefbid: '',
-  Pageid: ''
-})
-const failList = ref([])
-
-function changePage(data) {
-  console.log(data)
-  pageState.Pagefbid = data.Pagefbid;
-  pageState.Pageid = data.id;
-  pageState.Pagename = data.Name;
-}
-
-function getPage(query) {
-  if (query) {
-    pageLoading.value = true;
-    xhrHttp(`https://tool.anyelse.com/open/getPage`, {
-      pagename: reg.test(query) ? null : query,
-      fbid: reg.test(query) ? query : null,
-    }, 'post', 'application/json').then((res) => {
-      pages.value = JSON.parse(res).data
-      pageLoading.value = false;
-    });
-  } else {
-    pages.value = []
-  }
-
-}
-
 onMounted(() => {
-  // 初始化Loading表格
   initLoading.value = true
-  setTimeout(function() {
+
+  setTimeout(function () {
     initLoading.value = false
   }, 2000)
 
-  chrome.runtime.onMessage.addListener(dealDouyinVideo);
+  chrome.runtime.onMessage.addListener(dealIxiguaVideo);
   if (!!route.query.activeId) {
     nextTick(() => {
       console.log(route.query.activeId)
@@ -355,24 +319,27 @@ onMounted(() => {
       );
     })
   }
+
+  getPortList();
+  getPage();
+
+
 })
 
 
 function close() {
-  chrome.runtime.onMessage.removeListener(dealDouyinVideo)
+  chrome.runtime.onMessage.removeListener(dealIxiguaVideo)
   window.close();
 }
 
 const upData = ref([])
-const tool_type = ref('')
-const is_tw = ref('')
 
 const handleSelectionChange = (val) => {
   upData.value = TableRef.value.getSelectionRows()
 }
 
-const handleSortChange = ({column, prop, order}) => {
-  console.log({column, prop, order})
+const handleSortChange = ({ column, prop, order }) => {
+  console.log({ column, prop, order })
 }
 
 const langHover = ref(false)
@@ -427,88 +394,21 @@ function getArrayIndex(arr, obj) {
   return -1;
 }
 
-function select60() {
-  for (let i = 0; i < 60; i++) {
-    if (TableRef.value.store.states.data.value[i]) {
-      TableRef.value.toggleRowSelection(TableRef.value.store.states.data.value[i], true);
-    }
-  }
-}
-
-function delPlan(index) {
-  pwData.value.splice(index, 1)
-}
-
-function create_plan() {
-
-  if (!startTime.value) {
-    ElMessage.warning("请选择开始时间");
-    return;
-  }
-
-  if (!interval_num.value) {
-    ElMessage.warning("请输入间隔时间");
-    return;
-  }
-
-  pwData.value.forEach((r, index) => {
-    r.plan_time = moment(startTime.value).add(interval_num.value * index, interval_type.value === 0 ? 'minute' : 'hour').format('YYYY-MM-DD HH:mm:ss');
-    console.log(r.plan_time)
-  })
-
-}
-
-const pwData = ref([])
-
-function nextStep() {
-  if (upData.value.length > 60) {
-    ElMessage.error("最多一次排程60条");
-    return
-  }
-
-
-  pwData.value = upData.value.map((r) => {
-    return {
-      title: r.title,
-      url: r.href,
-      author: r.author ? r.author : author.value,
-      plan_time: ''
-    }
-  })
-
-
-  if (pwData.value.length === 0) {
-    ElMessage.warning("先请选择视频");
-    return
-  }
-
-  controlledSwiper.value.slideTo(1);
-}
-
-function prevStep() {
-  controlledSwiper.value.slideTo(0);
-}
-
 async function Save() {
-
-  if (!pageState.Pageid) {
+  if (!form.pageuid) {
     ElMessage.warning("请选择专页");
     return;
   }
-
-  failList.value = []
-
-
-  if (pwData.value.filter((item, index) => {
-    failList.value.push(index)
-    return !item.url || !item.title || !item.plan_time
-  }).length > 0) {
-    ElMessage.warning("请补全视频的标题/链接/排程时间");
-    return
+  if (!form.host) {
+    ElMessage.warning("请选择域名");
+    return;
   }
-
-  if (tool_type.value === '' || tool_type.value === undefined || tool_type.value === null) {
-    ElMessage.warning("请选择排程类型");
+  if (!form.category) {
+    ElMessage.warning("请选择分类");
+    return;
+  }
+  if (upData.value.length == 0) {
+    ElMessage.warning("请选择视频");
     return;
   }
 
@@ -518,41 +418,26 @@ async function Save() {
     background: 'rgba(0, 0, 0, 0.6)',
   })
 
+  let params = {
+    ...form,
+    videoData: JSON.stringify(upData.value),
+    dduserid: localStorage.getItem("ddid")
+  }
 
-  let param = pwData.value.map((item) => {
-    return {
-      Title: encodeURI(item.title),
-      Url: encodeURI(item.url),
-      Pagename: pageState.Pagename ? encodeURI(pageState.Pagename) : '',
-      Pagefbid: pageState.Pagefbid,
-      Pageid: pageState.Pageid,
-      Type: tool_type.value,
-      isTW: is_tw.value ? is_tw.value : 0,
-      Plantime: item.plan_time,
-      CreateUserId: localStorage.getItem("ddid"),
-      CreateUserName: localStorage.getItem('name')
-    }
-  })
-
-  xhrHttp(`https://tool.anyelse.com/open/saveVideoPlanBatch`, param, 'post', 'application/json').then((res) => {
+  xhrHttp(`http://captureapi.anyelse.com/Callback/CaptureDouYinTask`, params, 'post', 'application/json').then((res) => {
     res = JSON.parse(res);
-    if (res.r) {
-      alert(`创建成功${res.successCount.length};失败${res.failCount.length}条`);
-      failList.value = res.failCount;
+    if (res.state) {
+      alert(`${res.msg}`);
     } else {
       alert(res.msg)
     }
     loadingTask.close();
   });
+
+
 }
 
 
-const startTime = ref("")
-const interval_type = ref(0)
-const interval_num = ref("")
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
