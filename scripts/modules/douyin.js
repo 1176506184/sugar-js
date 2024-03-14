@@ -470,10 +470,15 @@ function truvidData() {
             return {
                 title: item.preview_title,
                 href: `https://www.douyin.com/video/${item.aweme_id}`,
-                cover: item.mix_info?.cover_url?.url_list[0],
-                duration: item.duration,
+                cover: item.video.cover.url_list[0],
+                duration: item.duration / 1000,
                 create_time: item.create_time,
-                playCount: item.statistics.digg_count
+                playCount: 0,
+                upvotecount: item.statistics.digg_count,
+                commentcount: item.statistics.comment_count,
+                sharecount: item.statistics.share_count,
+                author: author,
+                authorLink: author_url
             }
         }),
         author: author,
