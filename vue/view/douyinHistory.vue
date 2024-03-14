@@ -39,8 +39,7 @@
             }}(创建人：{{ createUserName }}，已采集素材数 {{
               collect_count
             }}，创建时间{{ createTime }})
-            <br/>
-            采集域名必须为https://www.toutiao.com或https://toutiao.com</span>
+            <br/></span>
         </div>
 
         <el-row gutter="10">
