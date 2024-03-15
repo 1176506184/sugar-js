@@ -2,7 +2,7 @@
   <div style="height: 100vh;margin: 0;padding: 0;border-right: 1px solid #ccc;border-left: 1px solid #ccc">
 
     <div class="layout_top"
-      style="height: 35px;display: flex;align-items: center;justify-content: flex-start;position: relative">
+         style="height: 35px;display: flex;align-items: center;justify-content: flex-start;position: relative">
       <span style="font-size: 15px;font-weight: bold;margin-right: 5px">博主名称</span>
       <el-input v-model="author" style="display: inline-flex;flex:1;width: 500px">
         <template #append>可修改</template>
@@ -15,9 +15,9 @@
         <el-form-item>
 
           <el-table :data="data" @selection-change="handleSelectionChange" ref="TableRef" @select="handleSelect"
-            @sort-change="handleSortChange" style="flex:1;height:calc(100vh - 230px)"
-            :default-sort="{ prop: 'create_time', order: 'descending' }" v-loading="initLoading">
-            <el-table-column type="selection" width="30" />
+                    @sort-change="handleSortChange" style="flex:1;height:calc(100vh - 385px)"
+                    :default-sort="{ prop: 'create_time', order: 'descending' }" v-loading="initLoading">
+            <el-table-column type="selection" width="30"/>
 
             <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
@@ -26,9 +26,9 @@
                 <div style="display: flex;align-items: center;">
                   <label>视频标题</label>
                   <el-input style="width: 250px;margin-left:10px;" placeholder="输入后筛选" v-model="title"
-                    @input="filterList"></el-input>
+                            @input="filterList"></el-input>
                   <el-input style="width: 250px;margin-left:10px;" placeholder="时长筛选(,分割单位分钟)" v-model="section"
-                    @input="filterTimeList"></el-input>
+                            @input="filterTimeList"></el-input>
                 </div>
 
               </template>
@@ -37,10 +37,10 @@
               </template>
             </el-table-column>
             <el-table-column label="播放量" prop="playCount" sortable width="150"
-              :sort-orders="['descending', 'ascending', null]">
+                             :sort-orders="['descending', 'ascending', null]">
             </el-table-column>
             <el-table-column label="播放时长" prop="duration" :formatter="formatTime" sortable width="150"
-              :sort-orders="['descending', 'ascending', null]">
+                             :sort-orders="['descending', 'ascending', null]">
 
             </el-table-column>
 
@@ -48,77 +48,95 @@
 
         </el-form-item>
 
-        <el-row gutter="5">
-          <el-col :span="4">
+        <el-form-item label="ChatGPT指令[生成快讯文章标题]" required>
+          <el-row style="width: 100%;">
+            <el-col :span="4">
+              <el-select v-model="form.needChapgpt" style="width: 100%">
+                <el-option label="使用原标题" :value="0"/>
+                <el-option label="不使用原标题" :value="1"/>
+              </el-select>
+            </el-col>
+            <el-col :span="20" style="padding-left: 5px">
+              <el-input style="width: 100%" :disabled="!form.needChapgpt" v-model="gptTitle"/>
+            </el-col>
+          </el-row>
+        </el-form-item>
+
+        <el-form-item label="ChatGPT指令[生成快讯文章正文]" required>
+          <el-input style="width: 100%" v-model="gptContent"/>
+        </el-form-item>
+
+        <div style="display: flex">
+          <div style="width: calc(20% - 4px);">
             <el-form-item label="语言">
               <el-select v-model="form.lang" class="smallWidthInput" placeholder="请选择" @change="getPortList">
-                <el-option label="繁体" :value="0" />
-                <el-option label="英语" :value="1" />
-                <el-option label="葡语" :value="2" />
-                <el-option label="日语" :value="3" />
+                <el-option label="繁体" :value="0"/>
+                <el-option label="英语" :value="1"/>
+                <el-option label="葡语" :value="2"/>
+                <el-option label="日语" :value="3"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
+          <div style="width: calc(20% - 4px);margin-left: 5px;">
             <el-form-item label="生成内容类型">
               <el-select v-model="form.content_type" placeholder="请选择" @change="getPortList">
-                <el-option label="快讯" :value="0" />
-                <!-- <el-option label="文章" :value="1" /> -->
+                <el-option label="快讯" :value="0"/>
+                <el-option label="文章" :value="1"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
+          <div style="width: calc(20% - 4px);margin-left: 5px;">
             <el-form-item label="是否需要审核">
               <el-select v-model="form.needProcess" class="smallWidthInput" placeholder="请选择">
-                <el-option label="否" :value="0" />
-                <el-option label="是" :value="1" />
+                <el-option label="否" :value="0"/>
+                <el-option label="是" :value="1"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
+          <div style="width: calc(20% - 4px);margin-left: 5px;">
             <el-form-item label="生成内容域名">
               <el-select placeholder="请选择" v-model="form.host" @change="getCateGory" filterable>
-                <el-option v-for="item in ports" :label="item" :value="item" />
+                <el-option v-for="item in ports" :label="item" :value="item"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
+          <div style="width: calc(20% - 4px);margin-left: 5px;">
             <el-form-item label="生成内容分类">
               <el-select placeholder="请选择" v-model="form.category" filterable>
-                <el-option v-for="item in categorys" :label="item" :value="item" />
+                <el-option v-for="item in categorys" :label="item" :value="item"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
-            <el-form-item label="标题是否chatgpt处理">
-              <el-select v-model="form.needChapgpt" class="smallWidthInput" placeholder="请选择">
-                <el-option label="否" :value="0" />
-                <el-option label="是" :value="1" />
-              </el-select>
-            </el-form-item>
-          </el-col>
+          <!--          <el-col :span="4">-->
+          <!--            <el-form-item label="标题是否chatgpt处理">-->
+          <!--              <el-select v-model="form.needChapgpt" class="smallWidthInput" placeholder="请选择">-->
+          <!--                <el-option label="否" :value="0"/>-->
+          <!--                <el-option label="是" :value="1"/>-->
+          <!--              </el-select>-->
+          <!--            </el-form-item>-->
+          <!--          </el-col>-->
 
-        </el-row>
+        </div>
 
       </div>
 
       <el-form-item>
         <div class="dialog-footer"
-          style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
+             style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
 
           <el-row gutter="10" style="width: 420px;float: left">
             <el-col :span="12">
               <el-select-v2 placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%"
-                :options="pages">
+                            :options="pages">
               </el-select-v2>
             </el-col>
             <el-col :span="12"
-              style="color:orange;font-size: 12px;line-height: 17px;white-space: pre-wrap; text-align: left;">
+                    style="color:orange;font-size: 12px;line-height: 17px;white-space: pre-wrap; text-align: left;">
               {{ pageType }}
             </el-col>
           </el-row>
@@ -137,10 +155,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, nextTick, onBeforeMount } from "vue";
-import { testHttp, xhrHttp } from "../utils/request";
-import { ElLoading, ElMessage } from "element-plus";
-import { useRoute } from "vue-router";
+import {computed, onMounted, reactive, ref, nextTick, onBeforeMount, watchEffect} from "vue";
+import {testHttp, xhrHttp} from "../utils/request";
+import {ElLoading, ElMessage} from "element-plus";
+import {useRoute} from "vue-router";
 
 onBeforeMount(() => {
   document.body.style.width = "1200px"
@@ -172,6 +190,16 @@ const form = reactive({
   needChapgpt: 1
 })
 
+const gptTitle = ref('')
+const gptContent = ref('')
+watchEffect(() => {
+  xhrHttp(`http://captureapi.anyelse.com/callback/CaptureVideoGPTOrder?lang=${form.lang}`, {}, 'get', 'application/json').then((res) => {
+    res = JSON.parse(res);
+    gptTitle.value = res.order_title;
+    gptContent.value = res.order_content;
+  });
+})
+
 function formatTime(row) {
   let h = Math.floor(row.duration / 3600);
   let m = Math.floor((row.duration / 60 % 60));
@@ -201,7 +229,7 @@ function filterTimeList() {
     let time = section.value.split(',')
     data.value = AllData.value.filter((item) => {
       return (item.duration > (+time[0] * 60) && item.duration < (+time[1] * 60)) ||
-        (item.duration < (+time[0] * 60) && item.duration > (+time[1] * 60))
+          (item.duration < (+time[0] * 60) && item.duration > (+time[1] * 60))
     })
   } else {
     data.value = AllData.value
@@ -260,26 +288,26 @@ function dealIxiguaVideo(Message) {
     active_id.value = Message.data;
     console.log(active_id.value)
     chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        console.log(active_id.value)
-        chrome.tabs.sendMessage(
-          active_id.value,
-          {
-            Message: "video"
-          },
-          function (response) {
-            if (response?.state !== 200) {
-              ElMessage.warning({
-                message: '未获取到内容，请重试'
-              })
-            }
-          }
-        );
-      }
+        {
+          active: true,
+          currentWindow: true,
+        },
+        function (tabs) {
+          console.log(active_id.value)
+          chrome.tabs.sendMessage(
+              active_id.value,
+              {
+                Message: "video"
+              },
+              function (response) {
+                if (response?.state !== 200) {
+                  ElMessage.warning({
+                    message: '未获取到内容，请重试'
+                  })
+                }
+              }
+          );
+        }
     );
 
     return
@@ -305,17 +333,17 @@ onMounted(() => {
     nextTick(() => {
       console.log(route.query.activeId)
       chrome.tabs.sendMessage(
-        parseInt(route.query.activeId),
-        {
-          Message: "video"
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            ElMessage.warning({
-              message: '未获取到内容，请重试'
-            })
+          parseInt(route.query.activeId),
+          {
+            Message: "video"
+          },
+          function (response) {
+            if (response?.state !== 200) {
+              ElMessage.warning({
+                message: '未获取到内容，请重试'
+              })
+            }
           }
-        }
       );
     })
   }
@@ -338,8 +366,8 @@ const handleSelectionChange = (val) => {
   upData.value = TableRef.value.getSelectionRows()
 }
 
-const handleSortChange = ({ column, prop, order }) => {
-  console.log({ column, prop, order })
+const handleSortChange = ({column, prop, order}) => {
+  console.log({column, prop, order})
 }
 
 const langHover = ref(false)
@@ -421,7 +449,9 @@ async function Save() {
   let params = {
     ...form,
     videoData: JSON.stringify(upData.value),
-    dduserid: localStorage.getItem("ddid")
+    dduserid: localStorage.getItem("ddid"),
+    order_title: gptTitle.value,
+    order_content: gptContent.value
   }
 
   xhrHttp(`http://captureapi.anyelse.com/Callback/CaptureXiGuaTask`, params, 'post', 'application/json').then((res) => {
@@ -433,7 +463,7 @@ async function Save() {
     }
     loadingTask.close();
   });
-  
+
 
 }
 

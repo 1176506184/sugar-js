@@ -15,7 +15,7 @@
         <el-form-item>
 
           <el-table :data="data" @selection-change="handleSelectionChange" ref="TableRef" @select="handleSelect"
-                    @sort-change="handleSortChange" style="flex:1;height:calc(100vh - 230px)"
+                    @sort-change="handleSortChange" style="flex:1;height:calc(100vh - 385px)"
                     :default-sort="{ prop: 'create_time', order: 'descending' }" v-loading="initLoading">
             <el-table-column type="selection" width="30" />
 
@@ -48,62 +48,80 @@
 
         </el-form-item>
 
-        <el-row gutter="5">
-          <el-col :span="4">
+        <el-form-item label="ChatGPT指令[生成快讯文章标题]" required>
+          <el-row style="width: 100%;">
+            <el-col :span="4">
+              <el-select v-model="form.needChapgpt" style="width: 100%">
+                <el-option label="使用原标题" :value="0"/>
+                <el-option label="不使用原标题" :value="1"/>
+              </el-select>
+            </el-col>
+            <el-col :span="20" style="padding-left: 5px">
+              <el-input style="width: 100%" :disabled="!form.needChapgpt" v-model="gptTitle"/>
+            </el-col>
+          </el-row>
+        </el-form-item>
+
+        <el-form-item label="ChatGPT指令[生成快讯文章正文]" required>
+          <el-input style="width: 100%" v-model="gptContent"/>
+        </el-form-item>
+
+        <div style="display: flex">
+          <div style="width: calc(20% - 4px);">
             <el-form-item label="语言">
               <el-select v-model="form.lang" class="smallWidthInput" placeholder="请选择" @change="getPortList">
-                <el-option label="繁体" :value="0" />
-                <el-option label="英语" :value="1" />
-                <el-option label="葡语" :value="2" />
-                <el-option label="日语" :value="3" />
+                <el-option label="繁体" :value="0"/>
+                <el-option label="英语" :value="1"/>
+                <el-option label="葡语" :value="2"/>
+                <el-option label="日语" :value="3"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
+          <div style="width: calc(20% - 4px);margin-left: 5px;">
             <el-form-item label="生成内容类型">
               <el-select v-model="form.content_type" placeholder="请选择" @change="getPortList">
-                <el-option label="快讯" :value="0" />
-                <!-- <el-option label="文章" :value="1" /> -->
+                <el-option label="快讯" :value="0"/>
+                <el-option label="文章" :value="1"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
+          <div style="width: calc(20% - 4px);margin-left: 5px;">
             <el-form-item label="是否需要审核">
               <el-select v-model="form.needProcess" class="smallWidthInput" placeholder="请选择">
-                <el-option label="否" :value="0" />
-                <el-option label="是" :value="1" />
+                <el-option label="否" :value="0"/>
+                <el-option label="是" :value="1"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
+          <div style="width: calc(20% - 4px);margin-left: 5px;">
             <el-form-item label="生成内容域名">
               <el-select placeholder="请选择" v-model="form.host" @change="getCateGory" filterable>
-                <el-option v-for="item in ports" :label="item" :value="item" />
+                <el-option v-for="item in ports" :label="item" :value="item"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
+          <div style="width: calc(20% - 4px);margin-left: 5px;">
             <el-form-item label="生成内容分类">
               <el-select placeholder="请选择" v-model="form.category" filterable>
-                <el-option v-for="item in categorys" :label="item" :value="item" />
+                <el-option v-for="item in categorys" :label="item" :value="item"/>
               </el-select>
             </el-form-item>
-          </el-col>
+          </div>
 
-          <el-col :span="4">
-            <el-form-item label="标题是否chatgpt处理">
-              <el-select v-model="form.needChapgpt" class="smallWidthInput" placeholder="请选择">
-                <el-option label="否" :value="0" />
-                <el-option label="是" :value="1" />
-              </el-select>
-            </el-form-item>
-          </el-col>
+          <!--          <el-col :span="4">-->
+          <!--            <el-form-item label="标题是否chatgpt处理">-->
+          <!--              <el-select v-model="form.needChapgpt" class="smallWidthInput" placeholder="请选择">-->
+          <!--                <el-option label="否" :value="0"/>-->
+          <!--                <el-option label="是" :value="1"/>-->
+          <!--              </el-select>-->
+          <!--            </el-form-item>-->
+          <!--          </el-col>-->
 
-        </el-row>
+        </div>
 
       </div>
 
@@ -137,7 +155,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, nextTick, onBeforeMount } from "vue";
+import {computed, onMounted, reactive, ref, nextTick, onBeforeMount, watchEffect} from "vue";
 import { testHttp, xhrHttp } from "../utils/request";
 import { ElLoading, ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
@@ -170,6 +188,16 @@ const form = reactive({
   pageuid: '',
   needProcess: 0,
   needChapgpt: 1
+})
+
+const gptTitle = ref('')
+const gptContent = ref('')
+watchEffect(() => {
+  xhrHttp(`http://captureapi.anyelse.com/callback/CaptureVideoGPTOrder?lang=${form.lang}`, {}, 'get', 'application/json').then((res) => {
+    res = JSON.parse(res);
+    gptTitle.value = res.order_title;
+    gptContent.value = res.order_content;
+  });
 })
 
 function formatTime(row) {
@@ -421,7 +449,9 @@ async function Save() {
   let params = {
     ...form,
     videoData: JSON.stringify(upData.value),
-    dduserid: localStorage.getItem("ddid")
+    dduserid: localStorage.getItem("ddid"),
+    order_title: gptTitle.value,
+    order_content: gptContent.value
   }
 
   xhrHttp(`http://captureapi.anyelse.com/Callback/CaptureDouYinTask`, params, 'post', 'application/json').then((res) => {
