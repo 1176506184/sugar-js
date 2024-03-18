@@ -441,7 +441,7 @@ async function Save() {
     ElMessage.warning("请选择分类");
     return;
   }
-  if (upData.value.length == 0) {
+  if (upData.value.length === 0) {
     ElMessage.warning("请选择视频");
     return;
   }
