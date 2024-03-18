@@ -17,7 +17,7 @@
           <el-table :data="data" @selection-change="handleSelectionChange" ref="TableRef" @select="handleSelect"
                     @sort-change="handleSortChange" style="flex:1;height:calc(100vh - 385px)"
                     :default-sort="{ prop: 'create_time', order: 'descending' }" v-loading="initLoading">
-            <el-table-column type="selection" width="30" />
+            <el-table-column type="selection" width="30"/>
 
             <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
 
@@ -156,9 +156,9 @@
 
 <script setup>
 import {computed, onMounted, reactive, ref, nextTick, onBeforeMount, watchEffect} from "vue";
-import { testHttp, xhrHttp } from "../utils/request";
-import { ElLoading, ElMessage } from "element-plus";
-import { useRoute } from "vue-router";
+import {testHttp, xhrHttp} from "../utils/request";
+import {ElLoading, ElMessage} from "element-plus";
+import {useRoute} from "vue-router";
 
 onBeforeMount(() => {
   document.body.style.width = "1200px"
@@ -366,8 +366,8 @@ const handleSelectionChange = (val) => {
   upData.value = TableRef.value.getSelectionRows()
 }
 
-const handleSortChange = ({ column, prop, order }) => {
-  console.log({ column, prop, order })
+const handleSortChange = ({column, prop, order}) => {
+  console.log({column, prop, order})
 }
 
 const langHover = ref(false)
@@ -423,6 +423,12 @@ function getArrayIndex(arr, obj) {
 }
 
 async function Save() {
+
+  if (upData.value.length > 30) {
+    ElMessage.error("一次最多上传30个视频")
+    return;
+  }
+
   if (!form.pageuid) {
     ElMessage.warning("请选择专页");
     return;
