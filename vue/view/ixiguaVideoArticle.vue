@@ -423,6 +423,13 @@ function getArrayIndex(arr, obj) {
 }
 
 async function Save() {
+  if (upData.value.length == 0) {
+    ElMessage.warning("请选择视频");
+    return;
+  } else if (upData.value.length > 30) {
+    ElMessage.warning("每个博主每次最多创建30条");
+    return;
+  }
   if (!form.pageuid) {
     ElMessage.warning("请选择专页");
     return;
@@ -433,10 +440,6 @@ async function Save() {
   }
   if (!form.category) {
     ElMessage.warning("请选择分类");
-    return;
-  }
-  if (upData.value.length == 0) {
-    ElMessage.warning("请选择视频");
     return;
   }
 

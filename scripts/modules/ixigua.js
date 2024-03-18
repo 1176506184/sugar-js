@@ -78,6 +78,9 @@ async function CacheMertial(Data, type) {
         var num = videoList1.videoList.length;
         toFenxiList = videoList1.videoList;
         console.log('接口，视频帖子数' + num);
+        // 第二屏数据封面地址与播放时长
+        // coverUrl = data.videoList[0].video_detail_info.detail_video_large_image.url
+        // duration = data.videoList[0].video_duration
     }
     
 
@@ -97,17 +100,24 @@ async function CacheMertial(Data, type) {
         var article_type = 3;
         var coverUrl = '';
         var duration = '';
-        coverUrl = toFenxiList[i].coverUrl;
-        duration = +toFenxiList[i].duration;
+        
         // 导语标题
         notes = toFenxiList[i].title;
         // 互动
         move_total = likes + shares + comments;
         // 观看
         if (type === '1') {
+            // 封面地址
+            coverUrl = toFenxiList[i].coverUrl;
+            // 播放时长
+            duration = +toFenxiList[i].duration;
             views = toFenxiList[i].playNum;
         } else {
-            views = toFenxiList[i].video_detail_info?.video_watch_count;
+            views = toFenxiList[i].video_detail_info?.video_watch_count; 
+            // 封面地址
+            coverUrl = toFenxiList[i].video_detail_info.detail_video_large_image.url;
+            // 播放时长
+            duration = +toFenxiList[i].video_duration;
         }
         console.log('播放：' + views);
         // 发文时间
