@@ -289,11 +289,11 @@ const list = {
             nextPage: null
         }
     },
-    "https://movieweb.com/person/gal-gadot/": {
+    "https://movieweb.com/": {
         type: NODE,
         node: {
             item: function () {
-                return document.querySelectorAll('.display-card')
+                return document.querySelectorAll('.listing-content .display-card.active-content')
             },
             href: function (parentNode) {
                 return parentNode.querySelector('.display-card-title a').href
@@ -308,7 +308,7 @@ const list = {
             nextPage: null
         }
     },
-    "https://collider.com/tag/keanu-reeves": {
+    "https://collider.com/": {
         type: NODE,
         node: {
             item: function () {
@@ -645,6 +645,25 @@ const list = {
             play: null,
             nextPage: function () {
                 return document.querySelector('.pagination__next')?.querySelector('a')
+            }
+        }
+    },
+    "https://www.cheatsheet.com/": {
+        type: NODE,
+        node: {
+            item: function () {
+                return document.querySelectorAll('article.card,card--default')
+            },
+            href: function (parentNode) {
+                return parentNode.querySelector('a').href
+            },
+            title: function (parentNode) {
+                return parentNode.querySelector('.card__title').innerText
+            },
+            time: null,
+            play: null,
+            nextPage: function () {
+                return document.querySelector('a.next.page-numbers')
             }
         }
     },
