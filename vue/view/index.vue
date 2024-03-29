@@ -177,7 +177,7 @@
             <div>
               <!--              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>-->
               <!--              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>-->
-              <el-button @click="collectYoutubeNew" type="primary">采集视频 / SHORTS并自动分发</el-button>
+              <el-button @click="collectYoutubeNew" type="primary">采集视频 / SHORTS并自动分发 / Truvid</el-button>
               <el-button @click="collectYoutubeNewPW" type="primary">采集视频 / SHORTS并TOOL源视频排文</el-button>
 
               <el-button @click="collectYoutubeVideoCommunitySchedulingFramePW" type="primary">批量源素材社团排程</el-button>
