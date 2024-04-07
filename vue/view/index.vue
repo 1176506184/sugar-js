@@ -193,7 +193,10 @@
               <el-button @click="collectTiktokVideoCommunitySchedulingFrame" type="primary">批量源素材社团排程</el-button>
 
               <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">
-                自动化更新视频（个人勿点）
+                更新视频
+              </el-button>
+              <el-button @click="collectTiktokFrameScroll" type="primary" :disabled="canTiktokFrame">
+                更新历史
               </el-button>
             </div>
           </el-collapse-item>
@@ -1205,6 +1208,22 @@ async function collectTiktokFrame() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/TiktokFrame',
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+async function collectTiktokFrameScroll(){
+  let pageId = await getId("TiktokFrameScroll");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/TiktokFrameScroll',
       active: true
     }, (tab) => {
 

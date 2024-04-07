@@ -3,11 +3,34 @@ const videoIdsCode = []
 
 
 let videoData = {}
-const videoIds = []
 let isCollected = false;
+let needScroll = false;
 let isOnload = false;
-// console.log(chrome.tabs.)
-window.onload = function () {
+let hasMore = true;
+let scrollNum = 0;
+let videoDataList = []
+
+async function wait(s) {
+    return new Promise(r => {
+        setTimeout(() => {
+            r(true)
+        }, s * 1000)
+    })
+}
+
+
+async function scrollBottom() {
+
+    scrollNum += 1;
+    window.scrollTo(0, document.documentElement.scrollHeight);
+    await wait(60 * 3.5);
+    console.log(scrollNum, hasMore)
+    if (scrollNum < 13 && hasMore) {
+        await scrollBottom();
+    }// await startGetPageTask();
+}
+
+window.onload = async function () {
     try {
         let data = document.querySelector('#SIGI_STATE').innerHTML
         data = JSON.parse(data).ItemModule;
@@ -26,8 +49,16 @@ window.onload = function () {
     } catch (e) {
 
     }
+
+    if (location.href.includes('|scroll')) {
+        needScroll = true;
+    }
+
     if (location.href.includes('#isCollect')) {
         isCollected = true;
+        if (needScroll) {
+            await scrollBottom();
+        }
         try {
             let data = document.querySelector('#SIGI_STATE')?.innerHTML
             if (data) {
@@ -36,11 +67,19 @@ window.onload = function () {
                     getVideoFrame();
                     return;
                 }
-                videoData = {
-                    itemList: Object.values(data).map((d) => {
+
+                if (!needScroll) {
+                    videoData = {
+                        itemList: Object.values(data).map((d) => {
+                            return d
+                        })
+                    }
+                } else {
+                    videoDataList.push(...Object.values(data).map((d) => {
                         return d
-                    })
+                    }));
                 }
+
                 getVideoFrame();
             } else {
 
@@ -70,6 +109,7 @@ window.addEventListener('message', function (res) {
     if (res.data.Message === 'ajax') {
         if (res.data.url && (res.data.url.indexOf("/api/post/item_list") !== -1)) {
             videoData = res.data.data;
+            videoDataList.push(...res.data.data.itemList);
             parseVideo(res.data.data)
         }
     }
@@ -79,8 +119,9 @@ window.addEventListener('message', function (res) {
 function getVideoFrame() {
     try {
 
+        console.log(videoDataList)
 
-        if (!videoData) {
+        if (!videoData && videoDataList.length === 0) {
             chrome.runtime.sendMessage({
                 Message: 'tiktokFrame',
                 data: {
@@ -101,12 +142,31 @@ function getVideoFrame() {
             }
         })
 
-        if (videoData) {
+        if (videoData && !needScroll) {
             chrome.runtime.sendMessage({
                 Message: 'tiktokFrame',
                 data: videoData,
                 author: document.querySelector('h1[data-e2e="user-title"]')?.innerText,
-                homepage: location.href.replace('#isCollect', '')
+                homepage: location.href.replace('#isCollect', '').replace('|scroll', '')
+            }).then(() => {
+                isCollected = false;
+            })
+        } else if (needScroll) {
+            chrome.runtime.sendMessage({
+                Message: 'tiktokFrame',
+                data: {
+                    itemList: removeDuplicatesById(videoDataList.map((item) => {
+                        return {
+                            authorId: item.author.id,
+                            stats: item.stats,
+                            video: item.video,
+                            desc: item.desc,
+                            id: item.id
+                        }
+                    }))
+                },
+                author: document.querySelector('h1[data-e2e="user-title"]')?.innerText,
+                homepage: location.href.replace('#isCollect', '').replace('|scroll', '')
             }).then(() => {
                 isCollected = false;
             })
@@ -117,17 +177,27 @@ function getVideoFrame() {
                     itemList: []
                 },
                 author: document.querySelector('h1[data-e2e="user-title"]')?.innerText,
-                homepage: location.href.replace('#isCollect', '')
+                homepage: location.href.replace('#isCollect', '').replace('|scroll', '')
             }).then(() => {
                 isCollected = false;
             })
         }
     } catch (e) {
-
+        console.log(e)
     }
 
 }
 
+function removeDuplicatesById(array) {
+    return [...new Set(array.map(item => item.id))].map(id => {
+        // Assuming there is a function or way to retrieve an object by its id
+        return getObjectById(array, id);
+    });
+}
+
+function getObjectById(array, id) {
+    return array.find(obj => obj.id === id);
+}
 
 function parseVideo(data) {
 
@@ -136,6 +206,11 @@ function parseVideo(data) {
         if (typeof d === 'object' && !!d) {
 
             Object.keys(d).forEach((key) => {
+
+                if (key === 'hasMore') {
+                    hasMore = d[key];
+                }
+
                 if (key === 'itemList') {
                     console.log(d[key])
                     d[key].map(item => {
@@ -198,6 +273,6 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             });
         }
 
-        location.href = Message.nextHref + '#isCollect'
+        location.href = Message.nextHref + '#isCollect' + (Message.Scroll ? '|scroll' : '')
     }
 })

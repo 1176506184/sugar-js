@@ -32,6 +32,7 @@ import CenterControl from '../view/centerControl.vue';
 import InsHistory from '../view/insHistory.vue';
 import DouyinHistory from '../view/douyinHistory.vue';
 import DouyinTruvid from '../view/douyinTruvid.vue';
+import TiktokFrameScroll from '../view/tiktokFrameScroll.vue'
 
 
 import novel from "../view/novel.vue";
@@ -148,6 +149,13 @@ const routes = [
         name: 'TiktokFrame',
         path: '/TiktokFrame',
         component: TiktokFrame,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    },
+    {
+        name: 'TiktokFrameScroll',
+        path: '/TiktokFrameScroll',
+        component: TiktokFrameScroll,
         props: route => ({query: route.query.q}),
         meta: {}
     }, {
