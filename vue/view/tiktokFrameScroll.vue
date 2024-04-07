@@ -23,6 +23,14 @@
         <el-input v-model="lastGetAuthor" readonly></el-input>
       </el-form-item>
 
+      <el-form-item label="打开新tiktok倒计时">
+        <el-input v-model="timeValue" readonly></el-input>
+      </el-form-item>
+
+      <el-form-item label="重启任务倒计时">
+        <el-input v-model="timeValueNext" readonly></el-input>
+      </el-form-item>
+
     </el-form>
 
   </div>
@@ -54,6 +62,7 @@ const pageMap = new Map();
 let restartArr = [];
 const uid = ref(0);
 
+
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
   lang: 0,
@@ -67,8 +76,16 @@ const form = reactive({
 const timeInterval = 1000 * 60 * 40;
 let lastTimeStamp = 0;
 let lastUpDataTimeStamp = 0;
+const timeValue = ref(timeInterval * 2);
+const timeValueNext = ref(timeInterval * 1.5);
 
 setInterval(() => {
+  timeValue.value -= 1;
+  timeValueNext.value -= 1;
+}, 1000)
+
+setInterval(() => {
+  timeValue.value = timeInterval * 2;
   chrome.tabs.query(
       {},
       function (tabs) {
@@ -82,6 +99,7 @@ setInterval(() => {
 }, timeInterval * 2)
 
 setInterval(() => {
+  timeValueNext.value = timeInterval * 1.5;
   if ((parseInt((new Date()).getTime() / 1000) - lastTimeStamp > 300) && lastTimeStamp !== 0) {
     uid.value += 1;
 
@@ -122,7 +140,6 @@ async function getNextCollect(u) {
       data = active_page;
     } else {
       lastGetTime.value = getNowDate();
-      callUp();
       data = await xhrHttp('http://101.201.222.226/tictok/GetMirrorOldTask', {}, 'post');
     }
   } catch (e) {
@@ -203,6 +220,7 @@ function sendTask(tab, data) {
           console.log(response)
           if (response?.state === 200 && !response.isCollected) {
             active_page = null
+            restartArr = [];
             r(1)
           } else {
             r(-1)
@@ -282,17 +300,6 @@ function close() {
   window.close();
 }
 
-function callUp() {
-  try {
-    xhrHttp('http://107.150.124.12/Bot/PushorUpdateTiktokBot', {
-      FrameId: tiktokGuid
-    }, 'post', 'application/json').then(() => {
-
-    })
-  } catch (e) {
-
-  }
-}
 
 </script>
 
