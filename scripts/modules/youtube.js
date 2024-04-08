@@ -223,6 +223,28 @@ async function collectHistory() {
     }
 }
 
+setInterval(() => {
+
+    if (state === 1) {
+        if (data_map.length === data_last_length) {
+            no_art_time += 1;
+            if (no_art_time > finishTime && !noticed) {
+                noticed = true;
+                chrome.runtime.sendMessage({
+                    Message: 'error',
+                    type: 'youtube',
+                }).then(r => {
+
+                })
+            }
+        } else {
+            no_art_time = 0;
+            data_last_length = data_map.length;
+        }
+    }
+
+}, 1000)
+
 function word2time(text) {
 
     if (!text) {
