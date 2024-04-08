@@ -181,6 +181,10 @@
               <el-button @click="collectYoutubeNewPW" type="primary">采集视频 / SHORTS并TOOL源视频排文</el-button>
 
               <el-button @click="collectYoutubeVideoCommunitySchedulingFramePW" type="primary">批量源素材社团排程</el-button>
+
+              <br/>
+
+              <el-button @click="collectYoutubeHistory" type="primary" style="margin-top: 5px">采集历史</el-button>
             </div>
           </el-collapse-item>
 
@@ -1215,7 +1219,7 @@ async function collectTiktokFrame() {
   }
 }
 
-async function collectTiktokFrameScroll(){
+async function collectTiktokFrameScroll() {
   let pageId = await getId("TiktokFrameScroll");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
@@ -1541,6 +1545,18 @@ async function collectTTHistory() {
   let activeId = await getActiveId();
   chrome.tabs.create({
     url: '/html/out.html#/TTCollectHistory?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
+}
+
+// 推特博主采集历史
+async function collectYoutubeHistory() {
+
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/YoutubeHistory?activeId=' + activeId,
     active: true
   }, (tab) => {
 

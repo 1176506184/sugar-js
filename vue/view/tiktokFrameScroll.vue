@@ -76,8 +76,8 @@ const form = reactive({
 const timeInterval = 1000 * 60 * 40;
 let lastTimeStamp = 0;
 let lastUpDataTimeStamp = 0;
-const timeValue = ref(timeInterval * 2);
-const timeValueNext = ref(timeInterval * 1.5);
+const timeValue = ref(timeInterval / 1000 * 2);
+const timeValueNext = ref(timeInterval / 1000 * 1.5);
 
 setInterval(() => {
   timeValue.value -= 1;
@@ -85,7 +85,7 @@ setInterval(() => {
 }, 1000)
 
 setInterval(() => {
-  timeValue.value = timeInterval * 2;
+  timeValue.value = timeInterval / 1000 * 2;
   chrome.tabs.query(
       {},
       function (tabs) {
@@ -99,7 +99,7 @@ setInterval(() => {
 }, timeInterval * 2)
 
 setInterval(() => {
-  timeValueNext.value = timeInterval * 1.5;
+  timeValueNext.value = timeInterval / 1000 * 1.5;
   if ((parseInt((new Date()).getTime() / 1000) - lastTimeStamp > 300) && lastTimeStamp !== 0) {
     uid.value += 1;
 
