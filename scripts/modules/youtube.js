@@ -1,7 +1,12 @@
 const videoData = []
 const videoIds = []
 
+
 //采集历史
+
+var youtubeData = [];
+var pending = "lock"
+var timer = null;
 let historyCollectIndex = 1;
 let state = 0;
 let max_collect = 1000;
@@ -28,7 +33,7 @@ async function dealHistoryData(data) {
         return
     }
 
-    let author = document.querySelector('ytd-channel-name[id="channel-name"] yt-formatted-string')?.textContent;
+    let author = document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText;
 
     let author_url = location.href + location.pathname
 
@@ -131,6 +136,7 @@ function parseVideo(data) {
                         videoIds.push(d[key]?.videoId)
                         d[key].author = document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText
                         videoData.push(d[key]);
+                        youtubeData.push(d[key])
                     }
 
                 } else {
@@ -152,25 +158,36 @@ async function collectHistory() {
             await scrollBottom();
             await wait(5);
             for (let i = 0; i < youtubeData.length; i++) {
-                if (youtubeData[i].aweme_id) {
+                if (youtubeData[i].videoId) {
                     let item = youtubeData[i]
-                    item.article_url = `https://www.douyin.com/video/${item.aweme_id}`;
+                    item.article_url = `https://www.youtube.com/watch?v=${item.videoId}`;
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
                         let videoURL = item.article_url + ';';
+                        let titleTemp = "";
+                        try {
+                            if (item.headline?.simpleText) {
+                                titleTemp = item.headline?.simpleText
+                            } else {
+                                titleTemp = item.title?.runs[0].text
+                            }
+                        } catch (e) {
+                            console.log('未知字符串');
+                        }
                         let data = {
                             article_type: 3,
                             source_urls: videoURL,
-                            title: item.preview_title,
+                            title: titleTemp,
                             article_url: item.article_url,
                             post_url: item.article_url,
-                            move_total: item.statistics.digg_count + item.statistics.comment_count + item.statistics.share_count,
-                            likes: item.statistics.digg_count,
-                            comments: item.statistics.comment_count,
-                            shares: item.statistics.share_count,
+                            move_total: 0,
+                            looks: dealNum(item.viewCountText?.simpleText),
+                            likes: 0,
+                            comments: 0,
+                            shares: 0,
                             return_msg: '',
                             remark: '',
-                            publish_time: t2t(item.create_time)
+                            publish_time: word2time(item?.publishedTimeText?.simpleText)
                         }
 
                         data_map.push(data);
@@ -179,7 +196,7 @@ async function collectHistory() {
                             chrome.runtime.sendMessage({
                                 Message: 'history_data',
                                 frameId: frameId,
-                                type: 'douyin',
+                                type: 'youtube',
                                 data: data
                             }).then(r => {
 
@@ -200,6 +217,58 @@ async function collectHistory() {
                 collectHistory().then();
             }
         }
+    }
+}
+
+function word2time(text) {
+
+    if (!text) {
+        return "";
+    }
+
+    let time = "";
+    let beforeTimeNum = parseInt(text);
+    if (text.includes('年前')) {
+        time = moment().subtract(beforeTimeNum, 'year').format('YYYY-MM-DD 00:00:00');
+    }
+
+    if (text.includes('月前')) {
+        time = moment().subtract(beforeTimeNum, 'month').format('YYYY-MM-DD 00:00:00');
+    }
+
+    if (text.includes('周前')) {
+        time = moment().subtract(beforeTimeNum, 'week').format('YYYY-MM-DD 00:00:00');
+    }
+
+    if (text.includes('天前')) {
+        time = moment().subtract(beforeTimeNum, 'day').format('YYYY-MM-DD 00:00:00');
+    }
+
+    if (text.includes('小时前')) {
+        time = moment().subtract(beforeTimeNum, 'hour').format('YYYY-MM-DD HH:00:00');
+    }
+    return time
+}
+
+function dealNum(num) {
+
+    let result = num
+
+    if (num === "" || num == null) {
+        return 0;
+    } else {
+
+        result = num.replace(/[^\d.]/ig, "");
+
+        if (num.toString().includes('万')) {
+            result = result * 10000;
+        }
+
+        if (num.toString().includes('K')) {
+            result = result * 1000;
+        }
+
+        return Number(result);
     }
 }
 
@@ -229,5 +298,11 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'history') {
         sendResponse({state: 200});
         dealHistoryData(Message).then();
+    } else if (Message.Message === 'startCollectHistory') {
+        sendResponse({state: 200});
+        startCollectHistory(Message);
+    } else if (Message.Message === 'pauseCollectHistory') {
+        sendResponse({state: 200});
+        pauseCollectHistory(Message);
     }
 })
