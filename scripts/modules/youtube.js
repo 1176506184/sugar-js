@@ -34,6 +34,9 @@ async function dealHistoryData(data) {
     }
 
     let author = document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText;
+    if (!author) {
+        author = document.querySelector('h1.dynamic-text-view-model-wiz__h1').textContent
+    }
 
     let author_url = location.href + location.pathname
 
@@ -100,13 +103,13 @@ function getVideo(type) {
         chrome.runtime.sendMessage({
             Message: 'youtubeVideo',
             data: videoData,
-            author: document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText
+            author: document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText ? document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText : document.querySelector('h1.dynamic-text-view-model-wiz__h1').textContent
         }).then()
     } else {
         chrome.runtime.sendMessage({
             Message: 'youtubeVideo',
             data: videoData,
-            author: document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText
+            author: document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText ? document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText : document.querySelector('h1.dynamic-text-view-model-wiz__h1').textContent
         }).then()
     }
 
@@ -134,7 +137,7 @@ function parseVideo(data) {
 
                     if (!videoIds.includes(d[key]?.videoId)) {
                         videoIds.push(d[key]?.videoId)
-                        d[key].author = document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText
+                        d[key].author = document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText ? document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText : document.querySelector('h1.dynamic-text-view-model-wiz__h1').textContent
                         videoData.push(d[key]);
                         youtubeData.push(d[key])
                     }
