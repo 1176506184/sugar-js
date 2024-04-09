@@ -141,6 +141,10 @@
             </el-col>
           </el-row>
 
+          <el-input style="width:60px;" placeholder="起始" v-model="filterState.startIndex"></el-input>
+          <el-input style="width: 60px;margin-left: 10px;margin-right: 10px;" placeholder="结束" v-model="filterState.endIndex"></el-input>
+          <el-button type="warning" @click="filterAction">勾选</el-button>
+
           <el-button @click="close">取消</el-button>
           <el-button type="primary" style="margin-right: 10px" @click="Save">
             创建任务
@@ -189,6 +193,27 @@ const form = reactive({
   needProcess: 0,
   needChapgpt: 1
 })
+
+const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
+const filterState = reactive({
+  startIndex: 1,
+  endIndex: 60
+})
+
+function filterAction() {
+  if (pattern.test(filterState.startIndex) && pattern.test(filterState.endIndex)) {
+    TableRef.value.clearSelection();
+    console.log(TableRef.value.store.states.data.value.slice(filterState.startIndex - 1, filterState.endIndex - filterState.startIndex + 1))
+    TableRef.value.store.states.data.value.slice(filterState.startIndex - 1, filterState.endIndex).map(r => {
+      TableRef.value.toggleRowSelection(r, true);
+    })
+  } else {
+    ElMessage.warning({
+      message: '请输入正确的页码'
+    })
+  }
+}
+
 
 const gptTitle = ref('')
 const gptContent = ref('')

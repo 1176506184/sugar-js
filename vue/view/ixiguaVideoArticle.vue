@@ -129,6 +129,8 @@
         <div class="dialog-footer"
              style="text-align: right;width: calc(100% - 20px);padding: 10px;background-color: #fff;z-index:20;border-top: 1px solid #ececec;">
 
+
+
           <el-row gutter="10" style="width: 420px;float: left">
             <el-col :span="12">
               <el-select-v2 placeholder="请选择分发专页" v-model="form.pageuid" filterable clearable style="width: 100%"
@@ -140,6 +142,10 @@
               {{ pageType }}
             </el-col>
           </el-row>
+
+          <el-input style="width:60px;" placeholder="起始" v-model="filterState.startIndex"></el-input>
+          <el-input style="width: 60px;margin-left: 10px;margin-right: 10px;" placeholder="结束" v-model="filterState.endIndex"></el-input>
+          <el-button type="warning" @click="filterAction">勾选</el-button>
 
           <el-button @click="close">取消</el-button>
           <el-button type="primary" style="margin-right: 10px" @click="Save">
@@ -159,6 +165,27 @@ import {computed, onMounted, reactive, ref, nextTick, onBeforeMount, watchEffect
 import {testHttp, xhrHttp} from "../utils/request";
 import {ElLoading, ElMessage} from "element-plus";
 import {useRoute} from "vue-router";
+
+const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
+const filterState = reactive({
+  startIndex: 1,
+  endIndex: 60
+})
+
+function filterAction() {
+  if (pattern.test(filterState.startIndex) && pattern.test(filterState.endIndex)) {
+    TableRef.value.clearSelection();
+    console.log(TableRef.value.store.states.data.value.slice(filterState.startIndex - 1, filterState.endIndex - filterState.startIndex + 1))
+    TableRef.value.store.states.data.value.slice(filterState.startIndex - 1, filterState.endIndex).map(r => {
+      TableRef.value.toggleRowSelection(r, true);
+    })
+  } else {
+    ElMessage.warning({
+      message: '请输入正确的页码'
+    })
+  }
+}
+
 
 onBeforeMount(() => {
   document.body.style.width = "1200px"
