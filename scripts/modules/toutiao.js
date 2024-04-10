@@ -256,7 +256,12 @@ async function collectHistory() {
                             data.title = item.title;
                             data.article_url = "https://www.toutiao.com/article/" + item.id;
                             data.post_url = "https://www.toutiao.com/article/" + item.id;
-                            data.source_urls = item.image_list[0].url + ';';
+                            if (item.large_image_list) {
+                                data.source_urls = item.large_image_list[0].url + ';';
+                            } else {
+                                data.source_urls = item.image_list[0].url + ';';
+                            }
+
                             if (item.aggr_type !== 2) {
                                 continue;
                             }

@@ -2,7 +2,7 @@
   <div style="height: 100vh;margin: 0;padding: 0;border-right: 1px solid #ccc;border-left: 1px solid #ccc">
     <div class="layout_top" style="height: 20px;display: flex;align-items: center;justify-content: flex-start">
       <div>
-        <span style="font-size: 15px;font-weight: bold;margin-right: 5px">微头条-历史自动采集</span>
+        <span style="font-size: 15px;font-weight: bold;margin-right: 5px">头条-历史自动采集</span>
       </div>
     </div>
 
