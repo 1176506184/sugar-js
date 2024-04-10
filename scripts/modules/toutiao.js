@@ -257,6 +257,13 @@ async function collectHistory() {
                             data.article_url = "https://www.toutiao.com/article/" + item.id;
                             data.post_url = "https://www.toutiao.com/article/" + item.id;
                             data.source_urls = item.image_list[0].url + ';';
+                            if (item.aggr_type !== 2) {
+                                continue;
+                            }
+                        } else {
+                            if (item.aggr_type === 2) {
+                                continue;
+                            }
                         }
 
                         data_map.push(data);
