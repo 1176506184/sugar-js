@@ -25,7 +25,7 @@ async function scrollBottom() {
     window.scrollTo(0, document.documentElement.scrollHeight);
     await wait(60 * 3.5);
     console.log(scrollNum, hasMore)
-    if (scrollNum < 13 && hasMore) {
+    if (scrollNum < 12 && hasMore) {
         await scrollBottom();
     }// await startGetPageTask();
 }

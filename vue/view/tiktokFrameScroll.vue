@@ -23,12 +23,8 @@
         <el-input v-model="lastGetAuthor" readonly></el-input>
       </el-form-item>
 
-      <el-form-item label="打开新tiktok倒计时">
+      <el-form-item label="获取新任务倒计时">
         <el-input v-model="timeValue" readonly></el-input>
-      </el-form-item>
-
-      <el-form-item label="重启任务倒计时">
-        <el-input v-model="timeValueNext" readonly></el-input>
       </el-form-item>
 
     </el-form>
@@ -77,11 +73,9 @@ const timeInterval = 1000 * 60 * 40;
 let lastTimeStamp = 0;
 let lastUpDataTimeStamp = 0;
 const timeValue = ref(timeInterval / 1000 * 2);
-const timeValueNext = ref(timeInterval / 1000 * 1.5);
 
 setInterval(() => {
   timeValue.value -= 1;
-  timeValueNext.value -= 1;
 }, 1000)
 
 setInterval(() => {
@@ -90,51 +84,13 @@ setInterval(() => {
       {},
       function (tabs) {
         tabs.map((tab) => {
-          if (!tab.url.includes('out.html#/TiktokFrame') && tab.url.includes('tiktok.com') && !tab.url.includes('isCollect')) {
+          if (!tab.url.includes('out.html#/TiktokFrame') && tab.url.includes('tiktok.com')) {
             uid.value += 1;
             getNextCollect(uid.value)
           }
         })
       });
 }, timeInterval * 2)
-
-setInterval(() => {
-  timeValueNext.value = timeInterval / 1000 * 1.5;
-  if ((parseInt((new Date()).getTime() / 1000) - lastTimeStamp > 300) && lastTimeStamp !== 0) {
-    uid.value += 1;
-
-    chrome.tabs.query(
-        {},
-        function (tabs) {
-          tabs.map((tab) => {
-            if (!tab.url.includes('out.html#/TiktokFrame')) {
-              chrome.tabs.remove(tab.id);
-            }
-          })
-        });
-
-    chrome.windows.create({
-      url: "https://www.tiktok.com",
-    }, () => {
-      setTimeout(() => {
-        getNextCollect(uid.value);
-      }, 10000)
-    });
-    // chrome.tabs.create({
-    //   url: 'https://www.tiktok.com',
-    //   active: true,
-    //   openerTabId: null
-    // }, (tab) => {
-    //
-    //   setTimeout(() => {
-    //     getNextCollect(uid.value);
-    //   }, 10000)
-    //
-    // })
-
-
-  }
-}, timeInterval * 1.5)
 
 async function getNextCollect(u) {
 
@@ -148,6 +104,7 @@ async function getNextCollect(u) {
       data = active_page;
     } else {
       lastGetTime.value = getNowDate();
+      timeValue.value = timeInterval / 1000 * 2;
       data = await xhrHttp('http://101.201.222.226/tictok/GetMirrorOldTask', {}, 'post');
     }
   } catch (e) {
