@@ -385,6 +385,11 @@ const handleSelectionChange = (val) => {
 
 async function Save() {
 
+  if (upData.value.length > 60) {
+    ElMessage.error("一次最多上传60个视频")
+    return;
+  }
+
   const loadingTask = ElLoading.service({
     lock: true,
     text: '数据上传中',

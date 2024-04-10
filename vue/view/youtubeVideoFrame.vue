@@ -32,10 +32,12 @@
                 <el-input v-model="row.title"></el-input>
               </template>
             </el-table-column>
-            <el-table-column label="播放量" prop="viewCount" sortable :sort-orders="['descending','ascending',null]" width="100">
+            <el-table-column label="播放量" prop="viewCount" sortable :sort-orders="['descending','ascending',null]"
+                             width="100">
             </el-table-column>
 
-            <el-table-column label="播放时长" prop="lengthText" sortable :sort-orders="['descending','ascending',null]"  width="120">
+            <el-table-column label="播放时长" prop="lengthText" sortable :sort-orders="['descending','ascending',null]"
+                             width="120">
               <template #default="{ row }">
                 {{ row?.lengthText?.simpleText }}
               </template>
@@ -159,7 +161,8 @@
           </el-row>
 
           <el-input style="width:60px;" placeholder="起始" v-model="filterState.startIndex"></el-input>
-          <el-input style="width: 60px;margin-left: 10px;margin-right: 10px;" placeholder="结束" v-model="filterState.endIndex"></el-input>
+          <el-input style="width: 60px;margin-left: 10px;margin-right: 10px;" placeholder="结束"
+                    v-model="filterState.endIndex"></el-input>
           <el-button type="warning" @click="filterAction">勾选</el-button>
 
           <el-button type="primary" @click="copyEx">
@@ -532,6 +535,11 @@ const handleSelectionChange = (val) => {
 }
 
 async function Save() {
+
+  if (upData.value.length > 60) {
+    ElMessage.error("一次最多上传60个视频")
+    return;
+  }
 
   let videoData = []
   loading_text.value = `封面图检测中（0/${upData.value.length}）`;
