@@ -52,7 +52,8 @@
     "tabs",
     "notifications",
     "storage",
-    "scripting"
+    "scripting",
+    "windows"
   ],
   "host_permissions": [
     "<all_urls>",

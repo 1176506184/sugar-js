@@ -113,16 +113,24 @@ setInterval(() => {
           })
         });
 
-    chrome.tabs.create({
-      url: 'https://www.tiktok.com',
-      active: true
-    }, (tab) => {
-
+    chrome.windows.create({
+      url: "https://www.tiktok.com",
+    }, () => {
       setTimeout(() => {
         getNextCollect(uid.value);
       }, 10000)
-
-    })
+    });
+    // chrome.tabs.create({
+    //   url: 'https://www.tiktok.com',
+    //   active: true,
+    //   openerTabId: null
+    // }, (tab) => {
+    //
+    //   setTimeout(() => {
+    //     getNextCollect(uid.value);
+    //   }, 10000)
+    //
+    // })
 
 
   }
