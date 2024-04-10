@@ -23,6 +23,7 @@ import TwitterImageCommunitySchedulingFram from "../view/twitterImageCommunitySc
 import TwitterVideoCommunitySchedulingFram from "../view/twitterVideoCommunitySchedulingFrame.vue";
 import TwitterVideoPW from "../view/twitterVideoPW.vue";
 import ToutiaoHistory from "../view/ToutiaoHistory.vue";
+import ToutiaoVHistory from "../view/ToutiaoVHistory.vue";
 import pinterestHistoryFrame from "../view/pinterestHistoryFrame.vue";
 import ixiguaVideoFrame from "../view/ixiguaVideoFrame.vue";
 import ixiguaHistoryFrame from "../view/ixiguaHistoryFrame.vue";
@@ -216,6 +217,12 @@ const routes = [
         name: 'ToutiaoHistory',
         path: '/ToutiaoHistory',
         component: ToutiaoHistory,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'ToutiaoVHistory',
+        path: '/ToutiaoVHistory',
+        component: ToutiaoVHistory,
         props: route => ({query: route.query.q}),
         meta: {}
     }, {

@@ -2,6 +2,7 @@ var toutiaoData = []
 var pending = "lock"
 var toutiaoMax = ""
 var timer = null;
+var collectType = 0;
 
 window.addEventListener('message', function (res) {
 
@@ -123,6 +124,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         dealHistoryData(Message).then();
     } else if (Message.Message === 'startCollectHistory') {
         sendResponse({state: 200});
+        collectType = Message.collectType ? Message.collectType : 0;
         startCollectHistory(Message);
     } else if (Message.Message === 'pauseCollectHistory') {
         sendResponse({state: 200});
@@ -130,7 +132,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'community_frame') {
         sendResponse({state: 200});
         // console.log(Message);
-        touTiaoCommunityScheduling();
+        await touTiaoCommunityScheduling();
     }
 })
 
@@ -221,13 +223,19 @@ async function collectHistory() {
                     let move_total = (item.like_count ? item.like_count : 0) + (item.share_count ? item.share_count : 0) + (item.comment_count ? item.comment_count : 0) + (item.digg_count ? item.digg_count : 0)
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
-                        let result = await getArticleBody(toutiaoData[i].article_url.replace('https://toutiao.com', location.origin));
-                        let text = result.querySelector('article').innerText;
-                        let imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
+
+                        let text = '';
+                        let imgs = []
                         let imgurl = '';
-                        for (let i = 0; i < imgs.length; i++) {
-                            imgurl += imgs[i] + ';';
+                        if (collectType !== 1) {
+                            let result = await getArticleBody(toutiaoData[i].article_url.replace('https://toutiao.com', location.origin));
+                            imgs = Array.from(result.querySelectorAll('article img')).map((item) => item.src);
+                            text = result.querySelector('article').innerText;
+                            for (let i = 0; i < imgs.length; i++) {
+                                imgurl += imgs[i] + ';';
+                            }
                         }
+
                         let data = {
                             article_type: imgs.length > 0 ? 2 : 0,
                             source_urls: imgurl,
@@ -242,6 +250,13 @@ async function collectHistory() {
                             return_msg: '',
                             remark: '',
                             publish_time: item.create_time ? t2t(item.create_time) : t2t(item.publish_time)
+                        }
+
+                        if (collectType === 1) {
+                            data.title = item.title;
+                            data.article_url = "https://www.toutiao.com/article/" + item.id;
+                            data.post_url = "https://www.toutiao.com/article/" + item.id;
+                            data.source_urls = item.image_list[0].url + ';';
                         }
 
                         data_map.push(data);

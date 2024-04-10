@@ -131,8 +131,7 @@ async function startCollect() {
         max_collect: max_collect.value,
         finishTime: finishTime.value,
         frameId: route.query.activeId,
-        openImage: openImage.value,
-        collectType: 1
+        openImage: openImage.value
       },
       function (response) {
         if (response?.state !== 200) {
@@ -171,7 +170,7 @@ async function createBlogger() {
   // 0：FB专业，1：twitter博主，2：Pinterest，3：头条，4：Instragram，5：Youtube
   // 0繁体 1 英文 2葡语 3日语
   let res = await hHttp(`/BloggerNew/Add`, {
-    platform: 3,
+    platform: 9,
     lang: form.lang,
     name: author.value,
     blogger_url: authorLink.value,
@@ -197,7 +196,7 @@ let cacheList = [];
 async function dealFbHistory(Message) {
   if (Message.Message === 'history' && Message.frameId.toString() === route.query.activeId.toString()) {
     author.value = Message.author.replace(/\s/g, '');
-    authorLink.value = Message.authorLink.replace(/\s/g, '') + '?tab=all';
+    authorLink.value = Message.authorLink.replace(/\s/g, '');
     // 查询库里有没有该博主
     const loadingTask = ElLoading.service({
       lock: true,
@@ -322,6 +321,8 @@ function close() {
 }
 
 
+
+
 // 调发通知接口
 async function UpdatedBlogger(time) {
   if (isNoticeFinished) {
@@ -333,7 +334,7 @@ async function UpdatedBlogger(time) {
   console.log('完成了，发通知-', ddid);
   let postString = '博主已采集完毕，已采集到最后贴文发布时间' + post_time_last + '，请及时进入后台查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：头条' + '\n' +
+      '博主平台：微头条' + '\n' +
       '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + successPostNum.value
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
@@ -353,7 +354,7 @@ async function UpdatedBloggerError() {
   console.log('完成了，发通知-', ddid);
   let postString = '博主历史采集超过' + finishTime.value + '分钟未获取到新贴文，请查看' + '\n' +
       '博主名称：' + author.value + '\n' +
-      '博主平台：头条' + '\n' +
+      '博主平台：微头条' + '\n' +
       '博主采集数量：' + collectNum.value + '\n' +
       '入库成功数量：' + successPostNum.value
   let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {

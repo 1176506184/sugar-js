@@ -124,7 +124,9 @@
               >停止采集
               </el-button
               >
-              <el-button type="warning" @click="collectToutiaoHistory">微头条采集</el-button>
+              <el-button type="warning" @click="collectToutiaoVHistory">微头条采集</el-button>
+
+              <el-button type="warning" @click="collectToutiaoHistory">头条采集</el-button>
 
               <el-button @click="collectToutiaoCommunitySchedulingFrame" type="primary">微头条-社团排程</el-button>
             </div>
@@ -1572,6 +1574,17 @@ async function collectToutiaoHistory() {
 
   })
 }
+
+async function collectToutiaoVHistory() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/ToutiaoVHistory?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
+}
+
 
 // FB博主采集历史
 async function collectFBHistory() {
