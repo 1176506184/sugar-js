@@ -240,7 +240,7 @@ async function collectHistory() {
                             article_type: imgs.length > 0 ? 2 : 0,
                             source_urls: imgurl,
                             title: text,
-                            article_url: "https://www.toutiao.com/w/" + item.id,
+                            article_url: '',
                             post_url: "https://www.toutiao.com/w/" + item.id,
                             move_total,
                             looks: item.read_count,
