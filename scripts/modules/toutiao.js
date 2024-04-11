@@ -253,12 +253,15 @@ async function collectHistory() {
                         }
 
                         if (collectType === 1) {
+                            data.article_type = 1;
                             data.title = item.title;
                             data.article_url = "https://www.toutiao.com/article/" + item.id;
                             data.post_url = "https://www.toutiao.com/article/" + item.id;
-                            if (item.large_image_list) {
+                            if (item.large_image_list && item.large_image_list.length > 1) {
                                 data.source_urls = item.large_image_list[0].url + ';';
-                            } else {
+                            } else if(item.detail_cover_list && item.detail_cover_list.length){
+                                data.source_urls = item.detail_cover_list[0].url + ';';
+                            }else {
                                 data.source_urls = item.image_list[0].url + ';';
                             }
 

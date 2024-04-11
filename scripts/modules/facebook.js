@@ -645,6 +645,11 @@ async function collectHistory() {
             }
 
             let upBtn = findDivWithText('展开', needCollect);
+
+            if(!upBtn){
+                upBtn = findDivWithText('查看更多', needCollect);
+            }
+
             if (upBtn) {
                 upBtn.click();
                 await wait(2);
