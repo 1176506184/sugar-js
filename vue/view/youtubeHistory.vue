@@ -52,12 +52,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="严格模式（上传不超过设置的数量）">
+            <el-form-item label="严格模式（上传不超过采集数量）">
               <el-select v-model="strict">
-                <el-option :value="true" label="开启">
+                <el-option label="开启" :value="true">
                   开启
                 </el-option>
-                <el-option :value="false" label="关闭">
+                <el-option label="关闭" :value="false">
                   关闭
                 </el-option>
               </el-select>
@@ -115,6 +115,7 @@ const failNum = ref(0);
 const openImage = ref(true);
 let isNoticeFinished = false;
 const strict = ref(true)
+const collectFinish = ref(false);
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -224,11 +225,15 @@ async function dealFbHistory(Message) {
       console.log(resData.id);
       blogger_id.value = resData.id
       collect_count.value = resData.capture_count ? resData.capture_count : '0'
+
       createUserName.value = resData.create_name;
       createTime.value = resData.create_time.split('T')[0];
     }
   } else if (Message.Message === 'history_data' && Message.frameId.toString() === route.query.activeId.toString()) {
     console.log(Message.data)
+    if (collectFinish.value) {
+      return
+    }
     if (collectNum.value < max_collect.value) {
       cacheList.push({
         blogger_id: blogger_id.value,
@@ -236,13 +241,25 @@ async function dealFbHistory(Message) {
       })
 
       if (cacheList.length >= 5) {
-        collectNum.value += 5;
         try {
           let tempData = cacheList;
+          if (strict.value) {
+            collectNum.value += 5;
+          }
           cacheList = [];
-          let {count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
-          successPostNum.value += count;
-          failNum.value += recount;
+          if (collectNum.value >= max_collect.value && strict.value) {
+            collectFinish.value = true;
+            return;
+          }
+          let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
+          if (state && count > 0) {
+            successPostNum.value += count;
+            if (!strict.value) {
+              collectNum.value += count;
+            }
+          } else {
+            failNum.value += recount;
+          }
         } catch (e) {
 
         }
@@ -252,13 +269,17 @@ async function dealFbHistory(Message) {
         UpdatedBlogger(Message.data.publish_time).then();
         pauseCollect().then();
       }
-    } else if (!strict.value) {
+    } else if(!strict.value){
       try {
-        let {count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
+        let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
         cacheList = [];
-        successPostNum.value += count;
-        collectNum.value += count;
-        failNum.value += recount;
+        if (state && count > 0) {
+          successPostNum.value += count;
+          collectNum.value += count;
+          failNum.value += recount;
+        } else {
+          failNum.value += recount;
+        }
       } catch (e) {
 
       }
