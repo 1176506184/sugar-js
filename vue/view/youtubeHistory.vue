@@ -41,14 +41,26 @@
         </div>
 
         <el-row gutter="10">
-          <el-col :span="10">
+          <el-col :span="8">
             <el-form-item label="采集数量上限">
               <el-input v-model="max_collect"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
+          <el-col :span="8">
             <el-form-item label="下拉无数据后多少时间自动结束（分钟）">
               <el-input v-model="finishTime"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="严格模式（上传不超过设置的数量）">
+              <el-select v-model="strict">
+                <el-option :value="true" label="开启">
+                  开启
+                </el-option>
+                <el-option :value="false" label="关闭">
+                  关闭
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -102,6 +114,7 @@ const waitNextTimeNum = ref(0)
 const failNum = ref(0);
 const openImage = ref(true);
 let isNoticeFinished = false;
+const strict = ref(true)
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -211,7 +224,6 @@ async function dealFbHistory(Message) {
       console.log(resData.id);
       blogger_id.value = resData.id
       collect_count.value = resData.capture_count ? resData.capture_count : '0'
-
       createUserName.value = resData.create_name;
       createTime.value = resData.create_time.split('T')[0];
     }
@@ -224,16 +236,13 @@ async function dealFbHistory(Message) {
       })
 
       if (cacheList.length >= 5) {
+        collectNum.value += 5;
         try {
           let tempData = cacheList;
           cacheList = [];
-          let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
-          if (state && count > 0) {
-            successPostNum.value += count;
-            collectNum.value += count;
-          } else {
-            failNum.value += recount;
-          }
+          let {count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
+          successPostNum.value += count;
+          failNum.value += recount;
         } catch (e) {
 
         }
@@ -243,17 +252,13 @@ async function dealFbHistory(Message) {
         UpdatedBlogger(Message.data.publish_time).then();
         pauseCollect().then();
       }
-    } else {
+    } else if (!strict.value) {
       try {
-        let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
+        let {count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
         cacheList = [];
-        if (state && count > 0) {
-          successPostNum.value += count;
-          collectNum.value += count;
-          failNum.value += recount;
-        } else {
-          failNum.value += recount;
-        }
+        successPostNum.value += count;
+        collectNum.value += count;
+        failNum.value += recount;
       } catch (e) {
 
       }
@@ -316,8 +321,6 @@ function close() {
   chrome.runtime.onMessage.removeListener(dealFbHistory)
   window.close();
 }
-
-
 
 
 // 调发通知接口
