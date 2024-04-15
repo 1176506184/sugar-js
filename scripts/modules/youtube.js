@@ -164,6 +164,7 @@ async function collectHistory() {
                 if (youtubeData[i].videoId) {
                     let item = youtubeData[i]
                     item.article_url = `https://www.youtube.com/watch?v=${item.videoId}`;
+
                     if (!article_url_map.includes(item.article_url)) {
                         article_url_map.push(item.article_url);
                         let videoURL = item.article_url + ';';

@@ -41,26 +41,14 @@
         </div>
 
         <el-row gutter="10">
-          <el-col :span="8">
+          <el-col :span="10">
             <el-form-item label="采集数量上限">
               <el-input v-model="max_collect"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="10">
             <el-form-item label="下拉无数据后多少时间自动结束（分钟）">
               <el-input v-model="finishTime"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="严格模式（上传不超过采集数量）">
-              <el-select v-model="strict">
-                <el-option label="开启" :value="true">
-                  开启
-                </el-option>
-                <el-option label="关闭" :value="false">
-                  关闭
-                </el-option>
-              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -110,12 +98,9 @@ const collectNum = ref(0)
 const createUserName = ref("");
 const createTime = ref("")
 const successPostNum = ref(0)
-const waitNextTimeNum = ref(0)
 const failNum = ref(0);
 const openImage = ref(true);
 let isNoticeFinished = false;
-const strict = ref(true)
-const collectFinish = ref(false);
 const langList = ref([
   {lang: 0, name: '繁体'},
   {lang: 1, name: '英文'},
@@ -134,6 +119,11 @@ const form = reactive({
 
 async function startCollect() {
   isNoticeFinished = false;
+  cacheList = [];
+  threadMockList = [];
+  MockPending = false;
+  collectFinish = false;
+
   status.value = 1;
   chrome.tabs.sendMessage(
       parseInt(route.query.activeId),
@@ -203,6 +193,43 @@ async function createBlogger() {
 }
 
 let cacheList = [];
+let threadMockList = [];
+let MockPending = false;
+let collectFinish = false;
+
+//伪线程处理
+async function threadMock(data) {
+  threadMockList.push(data);
+  if (cacheList.length <= 10 || MockPending) {
+    cacheList.push({
+      blogger_id: blogger_id.value,
+      ...data
+    })
+  } else if (!MockPending) {
+    MockPending = true;
+    let tempData = cacheList;
+    cacheList = [];
+    if ((collectNum.value + tempData.length) > max_collect.value) {
+      tempData = tempData.slice(0, max_collect.value - collectNum.value);
+      collectFinish = true;
+    }
+    let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
+    if (state && count > 0) {
+      successPostNum.value += count;
+      collectNum.value += (count + recount);
+      failNum.value += recount;
+    } else {
+      collectNum.value += recount;
+      failNum.value += recount;
+    }
+    if (collectFinish) {
+      UpdatedBlogger(data.publish_time).then();
+      pauseCollect().then();
+    } else {
+      MockPending = false;
+    }
+  }
+}
 
 async function dealFbHistory(Message) {
   if (Message.Message === 'history' && Message.frameId.toString() === route.query.activeId.toString()) {
@@ -230,60 +257,49 @@ async function dealFbHistory(Message) {
       createTime.value = resData.create_time.split('T')[0];
     }
   } else if (Message.Message === 'history_data' && Message.frameId.toString() === route.query.activeId.toString()) {
-    console.log(Message.data)
-    if (collectFinish.value) {
-      return
-    }
-    if (collectNum.value < max_collect.value) {
-      cacheList.push({
-        blogger_id: blogger_id.value,
-        ...Message.data
-      })
-
-      if (cacheList.length >= 5) {
-        try {
-          let tempData = cacheList;
-          if (strict.value) {
-            collectNum.value += 5;
-          }
-          cacheList = [];
-          if (collectNum.value >= max_collect.value && strict.value) {
-            collectFinish.value = true;
-            return;
-          }
-          let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
-          if (state && count > 0) {
-            successPostNum.value += count;
-            if (!strict.value) {
-              collectNum.value += count;
-            }
-          } else {
-            failNum.value += recount;
-          }
-        } catch (e) {
-
-        }
-      }
-
-      if (collectNum.value >= max_collect.value) {
-        UpdatedBlogger(Message.data.publish_time).then();
-        pauseCollect().then();
-      }
-    } else if(!strict.value){
-      try {
-        let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
-        cacheList = [];
-        if (state && count > 0) {
-          successPostNum.value += count;
-          collectNum.value += count;
-          failNum.value += recount;
-        } else {
-          failNum.value += recount;
-        }
-      } catch (e) {
-
-      }
-    }
+    threadMock(Message.data).then();
+    // console.log(Message.data)
+    // if (collectNum.value < max_collect.value) {
+    //   cacheList.push({
+    //     blogger_id: blogger_id.value,
+    //     ...Message.data
+    //   })
+    //
+    //   if (cacheList.length >= 5) {
+    //     try {
+    //       let tempData = cacheList;
+    //       cacheList = [];
+    //       let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
+    //       if (state && count > 0) {
+    //         successPostNum.value += count;
+    //         collectNum.value += count;
+    //       } else {
+    //         failNum.value += recount;
+    //       }
+    //     } catch (e) {
+    //
+    //     }
+    //   }
+    //
+    //   if (collectNum.value >= max_collect.value) {
+    //     UpdatedBlogger(Message.data.publish_time).then();
+    //     pauseCollect().then();
+    //   }
+    // } else {
+    //   try {
+    //     let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
+    //     cacheList = [];
+    //     if (state && count > 0) {
+    //       successPostNum.value += count;
+    //       collectNum.value += count;
+    //       failNum.value += recount;
+    //     } else {
+    //       failNum.value += recount;
+    //     }
+    //   } catch (e) {
+    //
+    //   }
+    // }
   } else if (Message.Message === 'error') {
     UpdatedBloggerError().then();
   }
@@ -388,6 +404,7 @@ async function UpdatedBloggerError() {
     })
   }
 }
+
 
 </script>
 
