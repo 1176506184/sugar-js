@@ -110,7 +110,7 @@
 
                 <el-table-column label="排程时间" width="250">
                   <template #default="{ row }">
-                    <el-date-picker type="datetime" v-model="row.plan_time"></el-date-picker>
+                    <el-date-picker type="datetime" v-model="row.plan_time" :class="row.errorDate ? 'error':''"></el-date-picker>
                   </template>
                 </el-table-column>
 
@@ -259,7 +259,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, ref, nextTick, onBeforeMount} from "vue";
+import {computed, onMounted, reactive, ref, nextTick, onBeforeMount, watchEffect} from "vue";
 import {testHttp, sHttp, cjHttp} from "../utils/request";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import {useRoute} from "vue-router";
@@ -573,6 +573,15 @@ function prevStep() {
   controlledSwiper.value.slideTo(0);
 }
 
+watchEffect(() => {
+  for (let i = 0; i < pwData.value.length; i++) {
+    let d = pwData.value[i];
+    let t = (new Date(d.plan_time)).getTime() / 1000;
+    let at = (new Date()).getTime() / 1000;
+    d.errorDate = t - at > 60 * 60 * 24 * 30;
+  }
+})
+
 async function Save() {
 
   if (!CommunityState.Communityid || !CommunityState.Communityuserid) {
@@ -781,5 +790,9 @@ flex布局
   font-size: 14px;
   margin-top: -10px;
   margin-bottom: 6px;
+}
+
+:deep(.error .el-input__wrapper) {
+  box-shadow: 0 0 0 1px red inset;
 }
 </style>

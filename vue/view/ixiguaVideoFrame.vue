@@ -128,7 +128,7 @@
 
                 <el-table-column label="排程时间" width="250">
                   <template #default="{ row }">
-                    <el-date-picker type="datetime" v-model="row.plan_time"></el-date-picker>
+                    <el-date-picker type="datetime" v-model="row.plan_time" :class="row.errorDate ? 'error':''"></el-date-picker>
                   </template>
                 </el-table-column>
 
@@ -208,7 +208,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, ref, nextTick, onBeforeMount} from "vue";
+import {computed, onMounted, reactive, ref, nextTick, onBeforeMount, watchEffect} from "vue";
 import {testHttp, xhrHttp} from "../utils/request";
 import {ElLoading, ElMessage} from "element-plus";
 import {useRoute} from "vue-router";
@@ -481,8 +481,19 @@ function create_plan() {
 }
 
 const pwData = ref([])
+watchEffect(() => {
+  for (let i = 0; i < pwData.value.length; i++) {
+    let d = pwData.value[i];
+    let t = (new Date(d.plan_time)).getTime() / 1000;
+    let at = (new Date()).getTime() / 1000;
+    d.errorDate = t - at > 60 * 60 * 24 * 30;
+  }
+})
+
 
 function nextStep() {
+
+
   if (upData.value.length > 60) {
     ElMessage.error("最多一次排程60条");
     return
@@ -512,6 +523,17 @@ function prevStep() {
 }
 
 async function Save() {
+
+
+  for (let i = 0; i < pwData.value.length; i++) {
+    let d = pwData.value[i];
+    let t = (new Date(d.plan_time)).getTime() / 1000;
+    let at = (new Date()).getTime() / 1000;
+    if (t - at > 60 * 60 * 24 * 30) {
+      ElMessage.warning("日期不能超过一个月");
+      return
+    }
+  }
 
   if (!pageState.Pageid) {
     ElMessage.warning("请选择专页");
@@ -576,5 +598,7 @@ const interval_num = ref("")
 </script>
 
 <style scoped>
-
+:deep(.error .el-input__wrapper) {
+  box-shadow: 0 0 0 1px red inset;
+}
 </style>

@@ -64,7 +64,8 @@
               <!-- <el-input style="width: 200px;margin-right: 12px;" placeholder="尺寸筛选(,分割)" v-model="size"
                         @input="filterList"></el-input> -->
               <el-input style="width:60px;" placeholder="起始" v-model="filterState.startIndex"></el-input>
-              <el-input style="width: 60px;margin-left: 10px;margin-right: 10px;" placeholder="结束" v-model="filterState.endIndex"></el-input>
+              <el-input style="width: 60px;margin-left: 10px;margin-right: 10px;" placeholder="结束"
+                        v-model="filterState.endIndex"></el-input>
               <el-button type="warning" @click="filterAction">勾选</el-button>
               <el-button type="danger" @click="close">关闭</el-button>
               <el-button type="primary" style="margin-right: 10px" @click="nextStep">
@@ -122,7 +123,8 @@
 
                 <el-table-column label="排程时间" width="250">
                   <template #default="{ row }">
-                    <el-date-picker type="datetime" v-model="row.plan_time"></el-date-picker>
+                    <el-date-picker type="datetime" v-model="row.plan_time"
+                                    :class="row.errorDate ? 'error':''"></el-date-picker>
                   </template>
                 </el-table-column>
 
@@ -204,7 +206,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, ref, nextTick, onBeforeMount} from "vue";
+import {computed, onMounted, reactive, ref, nextTick, onBeforeMount, watchEffect} from "vue";
 import {testHttp, sHttp, cjHttp, xhrHttp} from "../utils/request";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import {useRoute} from "vue-router";
@@ -526,7 +528,26 @@ function prevStep() {
   controlledSwiper.value.slideTo(0);
 }
 
+watchEffect(() => {
+  for (let i = 0; i < pwData.value.length; i++) {
+    let d = pwData.value[i];
+    let t = (new Date(d.plan_time)).getTime() / 1000;
+    let at = (new Date()).getTime() / 1000;
+    d.errorDate = t - at > 60 * 60 * 24 * 30;
+  }
+})
+
 async function Save() {
+
+  for (let i = 0; i < pwData.value.length; i++) {
+    let d = pwData.value[i];
+    let t = (new Date(d.plan_time)).getTime() / 1000;
+    let at = (new Date()).getTime() / 1000;
+    if (t - at > 60 * 60 * 24 * 30) {
+      ElMessage.warning("日期不能超过一个月");
+      return
+    }
+  }
 
   if (!pageState.Pageid) {
     ElMessage.warning("请选择专页");
@@ -592,6 +613,11 @@ const interval_num = ref("")
 </script>
 
 <style scoped>
+
+:deep(.error .el-input__wrapper) {
+  box-shadow: 0 0 0 1px red inset;
+}
+
 /**
 flex布局
 */
