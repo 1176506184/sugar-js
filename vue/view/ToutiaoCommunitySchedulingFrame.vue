@@ -651,14 +651,14 @@ function prevStep() {
   controlledSwiper.value.slideTo(0);
 }
 
-watchEffect(() => {
-  for (let i = 0; i < pwData.value.length; i++) {
-    let d = pwData.value[i];
-    let t = (new Date(d.plan_time)).getTime() / 1000;
-    let at = (new Date()).getTime() / 1000;
-    d.errorDate = t - at > 60 * 60 * 24 * 30;
-  }
-})
+// watchEffect(() => {
+//   for (let i = 0; i < pwData.value.length; i++) {
+//     let d = pwData.value[i];
+//     let t = (new Date(d.plan_time)).getTime() / 1000;
+//     let at = (new Date()).getTime() / 1000;
+//     d.errorDate = t - at > 60 * 60 * 24 * 30;
+//   }
+// })
 
 
 async function Save() {
