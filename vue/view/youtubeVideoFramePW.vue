@@ -566,9 +566,10 @@ watchEffect(() => {
     let d = pwData.value[i];
     let t = (new Date(d.plan_time)).getTime() / 1000;
     let at = (new Date()).getTime() / 1000;
-    d.errorDate = t - at > 60 * 60 * 24 * 30;
+    d.errorDate = (t - at > 60 * 60 * 24 * 30) || (t - at < 0);
   }
 })
+
 
 async function Save() {
   for (let i = 0; i < pwData.value.length; i++) {
@@ -577,6 +578,9 @@ async function Save() {
     let at = (new Date()).getTime() / 1000;
     if (t - at > 60 * 60 * 24 * 30) {
       ElMessage.warning("日期不能超过一个月");
+      return
+    } else if (t - at < 0) {
+      ElMessage.warning("日期不能小于当前时间");
       return
     }
   }
