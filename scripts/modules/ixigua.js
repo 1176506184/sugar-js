@@ -273,15 +273,15 @@ async function taskCallBackData() {
             // 保证数据传输，延时下拉
             setTimeout(function () {
                 scrollBottom();
-            }, 1000);
+            }, 800);
         }
 
         if (CollectFlag == true) {
-            finishTime_count += 3;
+            finishTime_count += 5;
             console.log('无数据计时：', finishTime_count);
             console.log('限时总计时：', finishTime_send);
         }
-    }, 3000);
+    }, 5000);
 }
 
 // 通知插件完成采集
