@@ -61,7 +61,7 @@
             <span 
               style="margin-left: 20px">已采集帖子：{{ collectNum }}</span>
             <span
-              style="margin-left: 20px; color: green;">已入库成功：{{ collectNum }}</span>
+              style="margin-left: 20px; color: green;">已入库成功：{{ successPostNum }}</span>
           </div>
           <div style="font-size: 12px;color:orangered;margin-top: 3px">
             点击开启后，开始自动向下滚动，页面请不要关闭，关闭自动停止
@@ -98,7 +98,7 @@ const author = ref("")
 const authorLink = ref("")
 const blogger_id = ref("")
 const collect_count = ref("")
-const max_collect = ref(1000)
+const max_collect = ref(900)
 const finishTime = ref(10)
 const status = ref(0)
 const collectNum = ref(0)
@@ -222,31 +222,32 @@ async function UpdatedBlogger(time, type) {
   let postString = ''
   console.log('完成了，发通知-', ddid);
 
-  if(type == 'end') {
-    postString = '博主已采集完毕，已采集到最后贴文发布时间'+ post_time_last +'，请及时进入后台查看' + '\n' +
-      '博主名称：' + author.value + '\n' +
-      '博主平台：西瓜视频' + '\n' +
-      '博主采集数量：' + max_collect.value + '\n' +
-      '入库成功数量：' + max_collect.value
-  }
-  if(type == 'stop') {
-    postString = '博主历史采集超过'+ finishTime.value +'分钟未采集' +'，请及时进入后台查看' + '\n' +
-      '博主名称：' + author.value + '\n' +
-      '博主平台：西瓜视频' + '\n' +
-      '博主采集数量：' + collectNum.value + '\n' +
-      '入库成功数量：' + collectNum.value
-  }
-  
-  let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
-    id: ddid,
-    content: postString
-  })
-  if(hres.state == true) {
-    ElMessage.success({
-      message: '采集完成，已发送钉钉通知'
+  setTimeout(async function() {
+    if(type == 'end') {
+      postString = '博主已采集完毕，已采集到最后贴文发布时间'+ post_time_last +'，请及时进入后台查看' + '\n' +
+        '博主名称：' + author.value + '\n' +
+        '博主平台：西瓜视频' + '\n' +
+        '博主采集数量：' + max_collect.value + '\n' +
+        '入库成功数量：' + successPostNum.value
+    }
+    if(type == 'stop') {
+      postString = '博主历史采集超过'+ finishTime.value +'分钟未采集' +'，请及时进入后台查看' + '\n' +
+        '博主名称：' + author.value + '\n' +
+        '博主平台：西瓜视频' + '\n' +
+        '博主采集数量：' + collectNum.value + '\n' +
+        '入库成功数量：' + successPostNum.value
+    }
+    
+    let hres = await hHttp(`/BloggerCaptureHistoryNew/SendDDInfo`, {
+      id: ddid,
+      content: postString
     })
-  }
-  
+    if(hres.state == true) {
+      ElMessage.success({
+        message: '采集完成，已发送钉钉通知'
+      })
+    }
+  }, 800)
 }
 
 
@@ -317,29 +318,40 @@ async function dealTtHistory(Message) {
     postArray = Message.Data;
 
     // 存数据接口
-    let res = hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
+    let res = await hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
+    sendCount += 1;
     collectNum.value += postArray.length;
-    /* if(res.state == true) {
-      successPostNum.value += 1;
-    } */
+    if(res.state == true) {
+      resCount += 1;
+      successPostNum.value += res.count;
+    }
 
   }else if(Message.Message == "endToAlert" && Message.type == "ixigua" && Message.FrameId.toString() === route.query.activeId.toString()) {
 
     // 改变按钮状态
     status.value = 0;
 
-    if(Message.AlertType == 'end') {
-      // 通知后台完成状态
-      await UpdatedBlogger(Message.Data, 'end');
-    }
+    Timer = setInterval(async function() {
+      if(sendCount == resCount) {
+        // 发通知即停止
+        clearInterval(Timer);
 
-    if(Message.AlertType == 'stop') {
-      // 通知后台完成状态
-      await UpdatedBlogger(Message.Data, 'stop');
-    }
+        if(Message.AlertType == 'end') {
+          // 通知后台完成状态
+          await UpdatedBlogger(Message.Data, 'end');
+        }
 
+        if(Message.AlertType == 'stop') {
+          // 通知后台完成状态
+          await UpdatedBlogger(Message.Data, 'stop');
+        }
+      }
+    }, 2000)
   }
 }
+var sendCount = 0;
+var resCount = 0;
+var Timer = null;
 
 
 onMounted(async () => {
