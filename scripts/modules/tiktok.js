@@ -9,6 +9,17 @@ let isOnload = false;
 let hasMore = true;
 let scrollNum = 0;
 let videoDataList = []
+let quick = false;
+let collectTimeNum = 0;
+let div;
+if (location.href.includes('#isCollect|quick')) {
+    div = document.createElement('div');
+    div.style = 'border:1px solid #cdcdcd;position:fixed;top:10px;right:10px;background:#fff;z-index:99999999999;border-radius:5px;display:flex;justify-content:center;align-items:center;padding:10px'
+    window.addEventListener('load', () => {
+        document.body.append(div)
+        div.innerText = '开始中'
+    })
+}
 
 async function wait(s) {
     return new Promise(r => {
@@ -18,17 +29,26 @@ async function wait(s) {
     })
 }
 
+setInterval(() => {
+    collectTimeNum += 1;
+}, 1000)
 
 async function scrollBottom() {
 
     scrollNum += 1;
     window.scrollTo(0, document.documentElement.scrollHeight);
-    await wait(60 * 3.5);
-    console.log(scrollNum, hasMore)
-    if (scrollNum < 12 && hasMore) {
+    if (!quick) {
+        await wait(60 * 3.5);
+    } else {
+        await wait(2);
+    }
+
+    console.log(scrollNum, hasMore, videoDataList.length)
+    if (scrollNum < 12 && hasMore || quick && videoDataList.length < 400 && collectTimeNum < 120 && hasMore) {
         await scrollBottom();
-    }// await startGetPageTask();
+    }
 }
+
 
 window.onload = async function () {
     try {
@@ -51,6 +71,11 @@ window.onload = async function () {
     }
 
     if (location.href.includes('|scroll')) {
+        needScroll = true;
+    }
+
+    if (location.href.includes('|quick')) {
+        quick = true;
         needScroll = true;
     }
 
@@ -110,6 +135,11 @@ window.addEventListener('message', function (res) {
         if (res.data.url && (res.data.url.indexOf("/api/post/item_list") !== -1)) {
             videoData = res.data.data;
             videoDataList.push(...res.data.data.itemList);
+            try {
+                div.innerText = `当前已采集${videoDataList.length}条数据，目标数量400，已采集${collectTimeNum}秒，最大采集120秒`;
+            } catch (e) {
+
+            }
             parseVideo(res.data.data)
         }
     }
@@ -274,5 +304,10 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         }
 
         location.href = Message.nextHref + '#isCollect' + (Message.Scroll ? '|scroll' : '')
+    } else if (Message.Message === 'video_frame_quick') {
+        location.href = Message.nextHref + '#isCollect|quick'
+        sendResponse({
+            state: 200
+        });
     }
 })

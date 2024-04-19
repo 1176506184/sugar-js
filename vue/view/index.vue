@@ -39,7 +39,7 @@
 
       <div id="login_container" v-if="state.isLogin === false"></div>
       <div id="menu" v-if="state.isLogin">
-        <el-collapse v-model="activeNames" @change="handleChange" style="border-top: 0">
+        <el-collapse v-if="owner === 0" v-model="activeNames" @change="handleChange" style="border-top: 0">
           <el-collapse-item title="抖音视频" name="1">
             <div>
               <!--              <el-button-->
@@ -198,11 +198,14 @@
 
               <el-button @click="collectTiktokVideoCommunitySchedulingFrame" type="primary">批量源素材社团排程</el-button>
 
-              <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">
-                更新视频
-              </el-button>
-              <el-button @click="collectTiktokFrameScroll" type="primary" :disabled="canTiktokFrame">
-                更新历史
+              <!--              <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">-->
+              <!--                更新视频-->
+              <!--              </el-button>-->
+              <!--              <el-button @click="collectTiktokFrameScroll" type="primary" :disabled="canTiktokFrame">-->
+              <!--                更新历史-->
+              <!--              </el-button>-->
+              <el-button @click="collectTiktokCollectHistoryVideo" type="primary" :disabled="canTiktokFrame">
+                更新历史（人工）
               </el-button>
             </div>
           </el-collapse-item>
@@ -244,6 +247,15 @@
           <!--        </div>-->
           <!--        <div class="border"></div>-->
         </el-collapse>
+        <el-collapse v-if="owner === 1" v-model="activeNames" @change="handleChange" style="border-top: 0">
+          <el-collapse-item title="TikTok" name="7">
+            <div>
+              <el-button @click="collectTiktokCollectHistoryVideo" type="primary">
+                更新历史（人工）
+              </el-button>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
       </div>
 
     </div>
@@ -269,6 +281,7 @@ import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(1)
+const owner = ref(1)
 
 function changeOpen() {
   chrome.storage.local.set({
@@ -650,6 +663,9 @@ function checkMP4(url) {
 }
 
 function getVersion() {
+  if (owner.value === 1) {
+    return
+  }
   http("/home/GetVersion", {}).then((res) => {
     console.log(res.version_code);
     if (res.version_code > state.version && res.src) {
@@ -1235,6 +1251,16 @@ async function collectTiktokFrameScroll() {
 
     })
   }
+}
+
+async function collectTiktokCollectHistoryVideo() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/TiktokCollectHistoryVideo?activeId=' + activeId,
+    active: true,
+  }, (tab) => {
+
+  })
 }
 
 async function collectTiktokVideoFrame() {
