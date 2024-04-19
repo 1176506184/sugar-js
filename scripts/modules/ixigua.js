@@ -26,8 +26,8 @@ let frameId = '';
 var CJtimer = null;
 var timeout = null;
 // 所有变量的声明
-var max_collect_send = 1000
-var max_collect_send_copy = 1000
+var max_collect_send = 900
+var max_collect_send_copy = 900
 var max_collect_count = 0
 var finishTime_send = 10 * 60
 var finishTime_count = 0

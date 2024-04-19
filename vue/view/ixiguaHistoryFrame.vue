@@ -98,7 +98,7 @@ const author = ref("")
 const authorLink = ref("")
 const blogger_id = ref("")
 const collect_count = ref("")
-const max_collect = ref(1000)
+const max_collect = ref(900)
 const finishTime = ref(10)
 const status = ref(0)
 const collectNum = ref(0)
@@ -247,7 +247,7 @@ async function UpdatedBlogger(time, type) {
         message: '采集完成，已发送钉钉通知'
       })
     }
-  }, 1000)
+  }, 800)
 }
 
 
@@ -319,8 +319,10 @@ async function dealTtHistory(Message) {
 
     // 存数据接口
     let res = await hHttp("/BloggerCaptureHistoryNew/AddArticle", postArray);
+    sendCount += 1;
     collectNum.value += postArray.length;
     if(res.state == true) {
+      resCount += 1;
       successPostNum.value += res.count;
     }
 
@@ -329,18 +331,27 @@ async function dealTtHistory(Message) {
     // 改变按钮状态
     status.value = 0;
 
-    if(Message.AlertType == 'end') {
-      // 通知后台完成状态
-      await UpdatedBlogger(Message.Data, 'end');
-    }
+    Timer = setInterval(async function() {
+      if(sendCount == resCount) {
+        // 发通知即停止
+        clearInterval(Timer);
 
-    if(Message.AlertType == 'stop') {
-      // 通知后台完成状态
-      await UpdatedBlogger(Message.Data, 'stop');
-    }
+        if(Message.AlertType == 'end') {
+          // 通知后台完成状态
+          await UpdatedBlogger(Message.Data, 'end');
+        }
 
+        if(Message.AlertType == 'stop') {
+          // 通知后台完成状态
+          await UpdatedBlogger(Message.Data, 'stop');
+        }
+      }
+    }, 2000)
   }
 }
+var sendCount = 0;
+var resCount = 0;
+var Timer = null;
 
 
 onMounted(async () => {
