@@ -41,7 +41,7 @@ chrome.storage.local.get('open', (res) => {
             || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 ||
             location.href.indexOf('tiktok') !== -1 || location.href.indexOf('ce.xinli001.com') !== -1
             || location.href.indexOf('beta.console.truvid.com') !== -1 || location.href.indexOf('pinterest') !== -1
-            || location.href.indexOf('ixigua') !== -1) {
+            || location.href.indexOf('ixigua') !== -1 || location.href.indexOf('isee.weishi.qq.com') !== -1) {
 
             injectedScript('scripts/xhr/xhr.js').then(r => {
 
@@ -178,6 +178,13 @@ if (location.origin.indexOf("douyin") !== -1) {
         script: 'novel.js'
     }).then(() => {
         console.log("注入小说采集完成")
+    })
+} else if (location.href.includes('isee.weishi.qq.com')) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'weishi.js'
+    }).then(() => {
+        console.log("注入微视完成")
     })
 } else if (location.href) {
     chrome.runtime.sendMessage({

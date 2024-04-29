@@ -189,7 +189,11 @@ function getVideoFrame() {
                         return {
                             authorId: item.author.id,
                             stats: item.stats,
-                            video: item.video,
+                            video: {
+                                duration: item.video.duration,
+                                cover: item.video.cover,
+                                downloadAddr: item.video.downloadAddr
+                            },
                             desc: item.desc,
                             id: item.id
                         }

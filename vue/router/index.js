@@ -36,6 +36,7 @@ import DouyinTruvid from '../view/douyinTruvid.vue';
 import TiktokFrameScroll from '../view/tiktokFrameScroll.vue'
 import TiktokCollectHistoryVideo from '../view/tiktokCollectHistoryVideo.vue'
 import YoutubeHistory from '../view/youtubeHistory.vue'
+import WeishiHistory from '../view/weishiHistory.vue'
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -290,6 +291,12 @@ const routes = [
         name: 'TiktokCollectHistoryVideo',
         path: '/TiktokCollectHistoryVideo',
         component: TiktokCollectHistoryVideo,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'WeishiHistory',
+        path: '/WeishiHistory',
+        component: WeishiHistory,
         props: route => ({query: route.query.q}),
         meta: {}
     }

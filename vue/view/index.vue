@@ -255,6 +255,13 @@
               </el-button>
             </div>
           </el-collapse-item>
+          <el-collapse-item title="微视" name="20">
+            <div>
+              <el-button @click="collectWeishiHistory" type="primary">
+                更新历史（人工）
+              </el-button>
+            </div>
+          </el-collapse-item>
         </el-collapse>
       </div>
 
@@ -401,6 +408,9 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "ixigua") {
       activeNames.value.push("11");
       store.commit("changeType", "ixigua");
+    }else if (Message.type === "weishi") {
+      activeNames.value.push("20");
+      store.commit("changeType", "weishi");
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
@@ -1257,6 +1267,16 @@ async function collectTiktokCollectHistoryVideo() {
   let activeId = await getActiveId();
   chrome.tabs.create({
     url: '/html/out.html#/TiktokCollectHistoryVideo?activeId=' + activeId,
+    active: true,
+  }, (tab) => {
+
+  })
+}
+
+async function collectWeishiHistory() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/WeishiHistory?activeId=' + activeId,
     active: true,
   }, (tab) => {
 
