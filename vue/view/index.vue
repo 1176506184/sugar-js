@@ -223,6 +223,7 @@
           <el-collapse-item title="Ins博主" name="9">
             <div>
               <el-button type="warning" @click="collectInsHistory">自动采集历史</el-button>
+              <el-button type="primary" @click="collectInsVideo"></el-button>
             </div>
           </el-collapse-item>
 
@@ -288,7 +289,7 @@ import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(1)
-const owner = ref(1)
+const owner = ref(0)
 
 function changeOpen() {
   chrome.storage.local.set({
@@ -408,7 +409,7 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "ixigua") {
       activeNames.value.push("11");
       store.commit("changeType", "ixigua");
-    }else if (Message.type === "weishi") {
+    } else if (Message.type === "weishi") {
       activeNames.value.push("20");
       store.commit("changeType", "weishi");
     } else if (Message.type === "empty") {
@@ -1139,6 +1140,16 @@ async function collectInsHistory() {
 
     })
   }
+}
+
+async function collectInsVideo() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/InsVideo?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
 }
 
 // pinterest博主采集历史
