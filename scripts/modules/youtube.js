@@ -38,7 +38,7 @@ async function dealHistoryData(data) {
         author = document.querySelector('h1.dynamic-text-view-model-wiz__h1').textContent
     }
 
-    let author_url = location.href + location.pathname
+    let author_url = location.host + location.pathname
 
     chrome.runtime.sendMessage({
         Message: 'history',
