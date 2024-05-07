@@ -46,16 +46,18 @@ const form = reactive({
 const collectStatus = ref(0)
 
 function sendTask() {
-  collectStatus.value = 1
-  chrome.tabs.sendMessage(
-      parseInt(route.query.activeId),
-      {
-        Message: "getHistory"
-      }
-  );
-  chrome.tabs.update(parseInt(route.query.activeId), {
-    active: true
-  })
+  if (collectStatus.value === 0) {
+    collectStatus.value = 1
+    chrome.tabs.sendMessage(
+        parseInt(route.query.activeId),
+        {
+          Message: "getHistory"
+        }
+    );
+    chrome.tabs.update(parseInt(route.query.activeId), {
+      active: true
+    })
+  }
 }
 
 function dealYoutubeVideo(Message) {
