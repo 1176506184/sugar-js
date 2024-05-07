@@ -223,7 +223,7 @@
           <el-collapse-item title="Ins博主" name="9">
             <div>
               <el-button type="warning" @click="collectInsHistory">自动采集历史</el-button>
-              <el-button type="primary" @click="collectInsVideo"></el-button>
+<!--              <el-button type="primary" @click="collectInsVideo">采集视频/TOOL源视频排文</el-button>-->
             </div>
           </el-collapse-item>
 
