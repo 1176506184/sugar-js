@@ -217,6 +217,10 @@ async function threadMock(data) {
     MockPending = true;
     let tempData = cacheList;
     cacheList = [];
+    cacheList.push({
+      blogger_id: blogger_id.value,
+      ...data
+    })
     if ((collectNum.value + tempData.length) > max_collect.value) {
       tempData = tempData.slice(0, max_collect.value - collectNum.value);
       collectFinish = true;
