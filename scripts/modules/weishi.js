@@ -29,7 +29,8 @@ async function scrollBottom() {
         await scrollBottom();
     } else {
         div.innerText = '采集完成，请关闭当前页面，待插件页面显示采集完成后再关闭插件页面'
-        const result = videoDataList.map((r) => {
+        console.log(videoDataList)
+        const result = videoDataList.filter(r => r.video).map((r) => {
             return {
                 id: r.id,
                 images: r.images[0]?.url,
