@@ -196,9 +196,17 @@ let cacheList = [];
 let threadMockList = [];
 let MockPending = false;
 let collectFinish = false;
+let timestamp = 0;
 
 //伪线程处理
 async function threadMock(data) {
+  timestamp = Date.now();
+  let temp_timestamp = Date.now();
+  setTimeout(() => {
+    if (temp_timestamp === timestamp) {
+      clearCache();
+    }
+  }, 7000)
   threadMockList.push(data);
   if (cacheList.length <= 10 || MockPending) {
     cacheList.push({
@@ -206,6 +214,33 @@ async function threadMock(data) {
       ...data
     })
   } else if (!MockPending) {
+    MockPending = true;
+    let tempData = cacheList;
+    cacheList = [];
+    if ((collectNum.value + tempData.length) > max_collect.value) {
+      tempData = tempData.slice(0, max_collect.value - collectNum.value);
+      collectFinish = true;
+    }
+    let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
+    if (state && count > 0) {
+      successPostNum.value += count;
+      collectNum.value += (count + recount);
+      failNum.value += recount;
+    } else {
+      collectNum.value += recount;
+      failNum.value += recount;
+    }
+    if (collectFinish) {
+      UpdatedBlogger(data.publish_time).then();
+      pauseCollect().then();
+    } else {
+      MockPending = false;
+    }
+  }
+}
+
+async function clearCache() {
+  if (cacheList.length && !collectFinish && !MockPending) {
     MockPending = true;
     let tempData = cacheList;
     cacheList = [];
@@ -258,48 +293,6 @@ async function dealFbHistory(Message) {
     }
   } else if (Message.Message === 'history_data' && Message.frameId.toString() === route.query.activeId.toString()) {
     threadMock(Message.data).then();
-    // console.log(Message.data)
-    // if (collectNum.value < max_collect.value) {
-    //   cacheList.push({
-    //     blogger_id: blogger_id.value,
-    //     ...Message.data
-    //   })
-    //
-    //   if (cacheList.length >= 5) {
-    //     try {
-    //       let tempData = cacheList;
-    //       cacheList = [];
-    //       let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
-    //       if (state && count > 0) {
-    //         successPostNum.value += count;
-    //         collectNum.value += count;
-    //       } else {
-    //         failNum.value += recount;
-    //       }
-    //     } catch (e) {
-    //
-    //     }
-    //   }
-    //
-    //   if (collectNum.value >= max_collect.value) {
-    //     UpdatedBlogger(Message.data.publish_time).then();
-    //     pauseCollect().then();
-    //   }
-    // } else {
-    //   try {
-    //     let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
-    //     cacheList = [];
-    //     if (state && count > 0) {
-    //       successPostNum.value += count;
-    //       collectNum.value += count;
-    //       failNum.value += recount;
-    //     } else {
-    //       failNum.value += recount;
-    //     }
-    //   } catch (e) {
-    //
-    //   }
-    // }
   } else if (Message.Message === 'error') {
     UpdatedBloggerError().then();
   }
