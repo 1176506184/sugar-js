@@ -6,7 +6,7 @@ var timer = null;
 window.addEventListener('message', function (res) {
 
     if (res.data.Message === 'ajax') {
-        if (res.data.url && (res.data.url.indexOf("/api/graphql") !== -1)) {
+        if (res.data.url && (res.data.url.indexOf("/api/graphql") !== -1 || res.data.url.indexOf("/graphql/query") !== -1)) {
             try {
                 if (Object.keys(JSON.parse(res.data.data).data).includes("xdt_api__v1__feed__user_timeline_graphql_connection")) {
                     insData.push(...JSON.parse(res.data.data).data["xdt_api__v1__feed__user_timeline_graphql_connection"].edges)
