@@ -38,6 +38,7 @@ import TiktokCollectHistoryVideo from '../view/tiktokCollectHistoryVideo.vue'
 import YoutubeHistory from '../view/youtubeHistory.vue'
 import WeishiHistory from '../view/weishiHistory.vue'
 import InsVideo from '../view/insVideo.vue'
+import DouyinFrameScroll from '../view/douyinFrameScroll.vue'
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -304,6 +305,12 @@ const routes = [
         name: 'InsVideo',
         path: '/InsVideo',
         component: InsVideo,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'DouyinFrameScroll',
+        path: '/DouyinFrameScroll',
+        component: DouyinFrameScroll,
         props: route => ({query: route.query.q}),
         meta: {}
     }

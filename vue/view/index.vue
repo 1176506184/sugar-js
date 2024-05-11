@@ -82,6 +82,10 @@
               >生成视频文章-Truvid并发布
               </el-button>
 
+              <el-button @click="collectDouyinFrame" type="primary" :disabled="canTiktokFrame">
+                自动采最新
+              </el-button>
+
             </div>
           </el-collapse-item>
 
@@ -223,7 +227,7 @@
           <el-collapse-item title="Ins博主" name="9">
             <div>
               <el-button type="warning" @click="collectInsHistory">自动采集历史</el-button>
-<!--              <el-button type="primary" @click="collectInsVideo">采集视频/TOOL源视频排文</el-button>-->
+              <!--              <el-button type="primary" @click="collectInsVideo">采集视频/TOOL源视频排文</el-button>-->
             </div>
           </el-collapse-item>
 
@@ -1251,6 +1255,22 @@ async function collectTiktokFrame() {
   } else {
     chrome.tabs.create({
       url: '/html/out.html#/TiktokFrame',
+      active: true
+    }, (tab) => {
+
+    })
+  }
+}
+
+async function collectDouyinFrame() {
+  let pageId = await getId("TiktokFrame");
+  if (pageId !== false) {
+    await chrome.tabs.update(pageId, {
+      active: true
+    })
+  } else {
+    chrome.tabs.create({
+      url: '/html/out.html#/DouyinFrameScroll',
       active: true
     }, (tab) => {
 

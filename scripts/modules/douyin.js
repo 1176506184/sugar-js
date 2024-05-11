@@ -1,6 +1,12 @@
 const videoData = [];
 const godComment = [];
 
+//抖音自动采最新
+let isOnload = false;
+let hasMore = true;
+let isCollected = false;
+
+
 function getVideo() {
 
     console.log(godComment);
@@ -257,9 +263,40 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'videoTruvid') {
         sendResponse({state: 200});
         truvidData();
+    } else if (Message.Message === 'video_frame') {
+        let noLoad = !isOnload
+        if (noLoad) {
+            sendResponse({
+                state: 200,
+                isCollected: isCollected
+            });
+        } else {
+            sendResponse({
+                state: 200,
+                isCollected
+            });
+        }
+
+        location.href = Message.nextHref + '#isCollect'
     }
 })
 
+window.addEventListener('load', () => {
+    if (location.href.includes('#isCollect')) {
+        isCollected = true;
+        try {
+
+        } catch (e) {
+            setTimeout(() => {
+                getVideoFrame();
+            }, 3000)
+        }
+    }
+})
+
+function getVideoFrame() {
+    console.log(douyinData)
+}
 
 var douyinData = [];
 var pending = "lock"
