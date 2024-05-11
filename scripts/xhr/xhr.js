@@ -222,12 +222,26 @@ if (location.href.indexOf('instagram') !== -1 || location.href.indexOf('douyin')
             var open = XHR.open;
             var send = XHR.send;
             XHR.send = function (postData) {
+                setTimeout(() => {
+                    if (this._url && (this._url.includes("aweme/v1/web/aweme/post/?device_platform=webapp") || this._url.includes("/aweme/v1/web/tab/feed/?device_platform=webapp"))) {
+                        window.postMessage({
+                            Message: 'ajax',
+                            url: this.responseURL,
+                            data: this.responseText
+                        })
+                    }
+                }, 7000)
+
                 this.addEventListener("load", function (e) {
-                    window.postMessage({
-                        Message: 'ajax',
-                        url: e.currentTarget.responseURL,
-                        data: e.currentTarget.responseText
-                    })
+                    try {
+                        window.postMessage({
+                            Message: 'ajax',
+                            url: e.currentTarget.responseURL,
+                            data: e.currentTarget.responseText
+                        })
+                    } catch (error) {
+
+                    }
                 })
                 return send.apply(this, arguments);
             }

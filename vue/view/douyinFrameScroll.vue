@@ -69,7 +69,7 @@ const form = reactive({
   needProcess: 0
 })
 
-const timeInterval = 1000 * 60 * 40;
+const timeInterval = 1000 * 60 * 2;
 let lastTimeStamp = 0;
 let lastUpDataTimeStamp = 0;
 const timeValue = ref(timeInterval / 1000 * 2);
@@ -105,7 +105,7 @@ async function getNextCollect(u) {
     } else {
       lastGetTime.value = getNowDate();
       timeValue.value = timeInterval / 1000 * 2;
-      data = await xhrHttp('http://172.18.0.250:8060/api/gtask?type=1', {}, 'post');
+      data = await xhrHttp('http://172.18.0.250:8060/api/gtask?type=11', {}, 'post');
       data = data[0]
     }
   } catch (e) {
@@ -115,7 +115,7 @@ async function getNextCollect(u) {
     return
   }
 
-  if (data['errorCode'] === -1) {
+  if (!data['pageid']) {
     setTimeout(() => {
       getNextCollect(u);
     }, timeInterval)
@@ -134,11 +134,11 @@ async function getNextCollect(u) {
     return
   }
 
-  author.value = data.homepage;
+  author.value = data.usereid;
   active_page = data;
-  lastGetAuthor.value = data.homepage;
+  lastGetAuthor.value = data.usereid;
 
-  if (pageMap.get(data.homepage)) {
+  if (pageMap.get('https://www.douyin.com/user/' + data.usereid)) {
     setTimeout(() => {
       active_page = null;
       getNextCollect(u);
@@ -146,12 +146,7 @@ async function getNextCollect(u) {
     return
   }
 
-  pageMap.set(data.homepage, {
-    page_id: data.page_id,
-    homepage: data.homepage,
-    author_id: data.author_id,
-    log_id: data.log_id
-  })
+  pageMap.set('https://www.douyin.com/user/' + data.usereid, data)
 
   chrome.tabs.query(
       {},
@@ -198,8 +193,7 @@ function sendTask(tab, data) {
 
 function dealYoutubeVideo(Message) {
   console.log(Message)
-  if (Message.Message === 'tiktokFrame') {
-    data.value = Message.data;
+  if (Message.Message === 'douyinFrame') {
     try {
       var pageObj = pageMap.get(Message.homepage);
       if (!pageObj) {
@@ -207,27 +201,17 @@ function dealYoutubeVideo(Message) {
         return;
       }
 
+      data.value = Message.data.map(item => {
+        return {
+          ...item,
+          pid: pageObj.pageid
+        }
+      });
+
       let callBackUrl = 'http://172.18.112.210:8080/CopyrightSend/SendAppCopyright_C?isFirst=1&projectType=1&mode=WEB:MC';
       lastTimeStamp = parseInt((new Date()).getTime() / 1000);
 
-      xhrHttp(callBackUrl, {
-        ...data.value,
-        itemList: data.value.itemList?.map((item) => {
-          let authorId = item.authorId;
-          if (!authorId && item.author) {
-            authorId = item.author.id
-          }
-          return {
-            ...item,
-            authorId
-          }
-        }),
-        page_id: pageObj.page_id,
-        author_id: pageObj.author_id,
-        homepage: pageObj.homepage,
-        log_id: pageObj.log_id,
-        statusCode: 0
-      }, 'post', 'application/json').then(() => {
+      xhrHttp(callBackUrl, data.value, 'post', 'application/x-www-form-urlencoded').then(() => {
         pageMap.delete(Message.homepage);
       })
     } catch (e) {

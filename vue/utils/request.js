@@ -18,7 +18,7 @@ let PrivateLink = {
 function xhrHttp(url, params, type = 'get', content_type = 'application/x-www-form-urlencoded; charset=UTF-8') {
     return new Promise((resolve, reject) => {
 
-        if (content_type === 'application/json') {
+        if (content_type === 'application/json' || content_type === 'application/x-www-form-urlencoded') {
             params = JSON.stringify(params)
         }
 

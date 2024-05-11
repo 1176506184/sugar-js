@@ -192,7 +192,6 @@ function dealNum(num) {
 let truvid_data = []
 
 window.addEventListener('message', function (res) {
-
     if (res.data.Message === 'ajax') {
         if (res.data.url && (res.data.url.indexOf("aweme/v1/web/aweme/post/?device_platform=webapp") !== -1 || res.data.url.indexOf("/aweme/v1/web/tab/feed/?device_platform=webapp") !== -1)) {
             videoData.push(JSON.parse(res.data.data))
@@ -284,18 +283,32 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
 window.addEventListener('load', () => {
     if (location.href.includes('#isCollect')) {
         isCollected = true;
-        try {
-
-        } catch (e) {
-            setTimeout(() => {
-                getVideoFrame();
-            }, 3000)
-        }
+        setTimeout(() => {
+            getVideoFrame();
+        }, 15000)
     }
 })
 
 function getVideoFrame() {
     console.log(douyinData)
+
+    chrome.runtime.sendMessage({
+        Message: 'douyinFrame',
+        homepage: location.href.replace('#isCollect', ''),
+        data: douyinData.map((item) => {
+            return {
+                uid: item.author.uid.toString(),
+                uname: item.author.nickname,
+                vid: item.aweme_id.toString(),
+                vlink: item.video.play_addr.url_list[0].toString(),
+                duration: item.video.duration.toString(),
+                cdate: item.create_time.toString()
+            }
+        })
+    }).then(() => {
+        isCollected = false;
+    })
+
 }
 
 var douyinData = [];
