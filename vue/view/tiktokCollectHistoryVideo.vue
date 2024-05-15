@@ -6,17 +6,21 @@
       <span style="font-size: 15px;font-weight: bold;margin-right: 5px">当前博主</span>
       <el-input v-model="author.homepage" style="display: inline-flex;flex:1;width: 500px" readonly>
         <template #append>
-          {{ collectStatus === 0 ? '待获取' : collectStatus === 1 ? '采集中' : '获取成功' }}
+          <el-button
+              :loading="upLoading"
+              style="background:#409eff;color:#fff;border-top-left-radius: 0;border-bottom-left-radius: 0;overflow: hidden;border:0">
+            {{ collectStatus === 0 ? '待获取' : collectStatus === 1 ? '采集中' : '获取成功' }}
+          </el-button>
         </template>
       </el-input>
     </div>
 
-    <el-form label-position="top" style="height: auto;padding: 20px;" v-loading="loading">
+    <el-form label-position="top" style="height: auto;padding: 20px;">
 
       <el-form-item label="采旧任务ID">
         <el-input v-model="uid">
           <template #append>
-            <el-button :icon="Search" @click="getAuthor"/>
+            <el-button  style="background:#409eff;color:#fff;border-top-left-radius: 0;border-bottom-left-radius: 0;overflow: hidden;border:0" :icon="Search" @click="getAuthor" :loading="loading"/>
           </template>
         </el-input>
       </el-form-item>
@@ -40,6 +44,7 @@ const AllData = ref([])
 const author = ref({})
 const title = ref("")
 const loading = ref(false)
+const upLoading = ref(false)
 const uid = ref('');
 const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
@@ -91,6 +96,7 @@ function sendTask() {
 
 function dealYoutubeVideo(Message) {
   console.log(Message)
+  upLoading.value = true;
   if (Message.Message === 'tiktokFrame') {
     data.value = Message.data;
     try {
@@ -122,6 +128,8 @@ function dealYoutubeVideo(Message) {
       console.log(e)
     }
   }
+  upLoading.value = false
+
 }
 
 onMounted(() => {
