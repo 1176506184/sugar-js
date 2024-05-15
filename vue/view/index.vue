@@ -226,6 +226,7 @@
 
           <el-collapse-item title="Ins博主" name="9">
             <div>
+              <el-button type="primary" @click="SortIns">一键自动排序</el-button>
               <el-button type="warning" @click="collectInsHistory">自动采集历史</el-button>
               <!--              <el-button type="primary" @click="collectInsVideo">采集视频/TOOL源视频排文</el-button>-->
             </div>
@@ -1122,6 +1123,27 @@ async function collectFBVideo() {
   }
 }
 
+async function SortIns() {
+  chrome.tabs.query(
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "sort"
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
+      }
+  );
+}
 
 // Ins博主采集历史
 async function collectInsHistory() {
