@@ -455,7 +455,7 @@ async function videoCollect() {
     }
     if (collectVideoType === 'all') {
         let node = document.createElement('button');
-        node.style = 'padding:5px 10px;border-radius:3px;z-index:99999;position:fixed;top:10px;left:10px;width:130px;height:30px;display:flex;justify-content:center;align-items:center;'
+        node.style = 'padding:5px 10px;border-radius:3px;z-index:99999;position:fixed;top:10px;left:10px;width:auto;white-space:nowrap;height:30px;display:flex;justify-content:center;align-items:center;'
         node.innerText = '停止采集并上传'
         node.addEventListener('click', () => {
             collectVideoStop = true;
