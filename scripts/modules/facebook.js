@@ -623,7 +623,7 @@ async function collectHistory() {
 
         try {
             if (!document.querySelector(`div[aria-posinset="${historyCollectIndex}"]`)) {
-                if(document.querySelector('div[aria-label="关闭"]')){
+                if (document.querySelector('div[aria-label="关闭"]')) {
                     document.querySelector('div[aria-label="关闭"]').click();
                 }
                 await scrollBottom();
@@ -646,7 +646,7 @@ async function collectHistory() {
 
             let upBtn = findDivWithText('展开', needCollect);
 
-            if(!upBtn){
+            if (!upBtn) {
                 upBtn = findDivWithText('查看更多', needCollect);
             }
 
@@ -749,7 +749,13 @@ async function collectHistory() {
 
                 if (!posturl || posturl === '#') {
                     posturl = needCollect.querySelector('a' + ".x1i10hfl x1qjc9v5 xjbqb8w xjqpnuy xa49m3k xqeqjp1 x2hbi6w x13fuv20 xu3j5b3 x1q0q8m5 x26u7qi x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xdl72j9 x2lah0s xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x2lwn1j xeuugli xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1ja2u2z x1t137rt x1o1ewxj x3x9cwd x1e5q0jg x13rtm0m x1q0g3np x87ps6o x1lku1pv x1rg5ohu x1a2a7pz x1n2onr6 xh8yej3".replaceAll(' ', '.'))?.getAttribute("href");
-                    posturl = 'https://www.facebook.com' + posturl;
+                    if (posturl !== undefined) {
+                        posturl = 'https://www.facebook.com' + posturl;
+                    }
+                }
+
+                if (!posturl || posturl === '#') {
+                    posturl = needCollect.querySelector(dealClass('x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1sur9pj xkrqix3 xo1l8bm')).href;
                 }
 
                 FireEvent(dateMin, 'pointerover');
@@ -853,7 +859,7 @@ async function collectHistory() {
                     closeBtn.click();
                 }
 
-                if ((posturl.indexOf('watch/') > -1 || posturl.indexOf('reel') > -1 || !!needCollect.querySelector('.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 video') || !!needCollect.querySelector(dealClass('x6s0dn4 xatbrnm x9f619 x78zum5 x5yr21d xl56j7k x6ikm8r x10wlt62 x889kno x1iji9kk x1a8lsjc x1sln4lm xh8yej3')))) {
+                if ((posturl?.indexOf('watch/') > -1 || posturl?.indexOf('reel') > -1 || !!needCollect.querySelector('.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6 video') || !!needCollect.querySelector(dealClass('x6s0dn4 xatbrnm x9f619 x78zum5 x5yr21d xl56j7k x6ikm8r x10wlt62 x889kno x1iji9kk x1a8lsjc x1sln4lm xh8yej3')))) {
                     PageType = 3;
                 } else if (needCollect.querySelector('span' + dealClass('x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84'))?.clientHeight > 0 || (needCollect.querySelector('a' + dealClass('x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g xt0b8zv x5yr21d x10l6tqk x17qophe x13vifvy xh8yej3 x1vjfegm')))) {
                     PageType = 1;

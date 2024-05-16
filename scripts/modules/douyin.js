@@ -5,7 +5,9 @@ const godComment = [];
 let isOnload = false;
 let hasMore = true;
 let isCollected = false;
-
+let collectVideoType = 'first'
+let collectVideoHasMore = 1
+let collectVideoStop = false
 
 function getVideo() {
 
@@ -197,6 +199,7 @@ window.addEventListener('message', function (res) {
             videoData.push(JSON.parse(res.data.data))
             truvid_data.push(...JSON.parse(res.data.data).aweme_list)
             douyinData.push(...JSON.parse(res.data.data).aweme_list)
+            collectVideoHasMore = JSON.parse(res.data.data).has_more
             console.log(douyinData)
         }
         try {
@@ -250,6 +253,12 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({
             state: 200
         });
+    } else if (Message.Message === 'startVideoCollectTask') {
+        collectVideoType = Message.type
+        sendResponse({
+            state: 200
+        });
+        videoCollect().then();
     } else if (Message.Message === 'history') {
         sendResponse({state: 200});
         dealHistoryData(Message).then();
@@ -438,6 +447,42 @@ async function scrollBottom() {
     window.scrollTo(0, document.documentElement.scrollHeight)
 }
 
+
+async function videoCollect() {
+    if (!document.querySelector('div[data-e2e="live-avatar"]')) {
+        alert('请先登录');
+        return
+    }
+    if (collectVideoType === 'all') {
+        let node = document.createElement('button');
+        node.style = 'padding:5px 10px;border-radius:3px;z-index:99999;position:fixed;top:10px;left:10px;width:130px;height:30px;display:flex;justify-content:center;align-items:center;'
+        node.innerText = '停止采集并上传'
+        node.addEventListener('click', () => {
+            collectVideoStop = true;
+        })
+        document.body.append(node)
+        await scrollVideo();
+        node.remove()
+    }
+
+    chrome.runtime.sendMessage({
+        Message: 'finish',
+        type: 'douyin',
+        data: douyinData,
+        author: location.href
+    }).then(r => {
+
+    })
+
+}
+
+async function scrollVideo() {
+    await wait(2);
+    await scrollBottom();
+    if (collectVideoHasMore === 1 && !collectVideoStop) {
+        await scrollVideo()
+    }
+}
 
 async function collectHistory() {
     if (state === 1) {

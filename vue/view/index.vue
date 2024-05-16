@@ -268,6 +268,14 @@
               </el-button>
             </div>
           </el-collapse-item>
+          <el-collapse-item title="抖音视频" name="1">
+            <el-button
+                @click="collectDouyin"
+                type="primary"
+                :disabled="type !== 'douyin'"
+            >视频自动化采集
+            </el-button>
+          </el-collapse-item>
         </el-collapse>
       </div>
 
@@ -294,7 +302,7 @@ import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(1)
-const owner = ref(0)
+const owner = ref(1)
 
 function changeOpen() {
   chrome.storage.local.set({
@@ -1330,6 +1338,16 @@ async function collectWeishiHistory() {
   let activeId = await getActiveId();
   chrome.tabs.create({
     url: '/html/out.html#/WeishiHistory?activeId=' + activeId,
+    active: true,
+  }, (tab) => {
+
+  })
+}
+
+async function collectDouyin() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/DouyinVideoCollect?activeId=' + activeId,
     active: true,
   }, (tab) => {
 

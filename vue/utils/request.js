@@ -42,6 +42,28 @@ function xhrHttp(url, params, type = 'get', content_type = 'application/x-www-fo
     })
 }
 
+async function apiFetch(url, data) {
+    return new Promise((r) => {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        data = JSON.stringify(data);
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: data,
+            redirect: 'follow'
+        };
+        fetch(url, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                r(result)
+            })
+            .catch(error => console.log('error', r(error)));
+    })
+
+
+}
+
 function testHttp(url, params = {}, type = 'get') {
     return new Promise((resolve, reject) => {
 
@@ -219,5 +241,6 @@ export {
     testHttp,
     xHttp,
     hHttp,
-    cjHttp
+    cjHttp,
+    apiFetch
 }
