@@ -16,7 +16,11 @@ const NODE_ENV = process.env.NODE_ENV;
 module.exports = {
     entry: './vue/main.js',
     node: false,
+    mode: 'production',
     devtool: "source-map",
+    optimization: {
+        usedExports: true // 启用tree-shaking
+    },
     output: {
         filename: 'vMin.js',
         path: path.resolve(__dirname, distDir + '/scripts/vue'),

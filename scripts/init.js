@@ -37,7 +37,7 @@ async function injectedScript(path) {
 
 chrome.storage.local.get('open', (res) => {
     if (res.open !== 0) {
-        if (location.href.indexOf('instagram') !== -1 || location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
+        if (location.href.indexOf('x.com') !== -1 || location.href.indexOf('instagram') !== -1 || location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
             || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 ||
             location.href.indexOf('tiktok') !== -1 || location.href.indexOf('ce.xinli001.com') !== -1
             || location.href.indexOf('beta.console.truvid.com') !== -1 || location.href.indexOf('pinterest') !== -1
@@ -102,7 +102,7 @@ if (location.origin.indexOf("douyin") !== -1) {
         console.log("注入完成")
     })
 
-} else if (location.origin.indexOf("twitter") !== -1) {
+} else if (location.origin.indexOf("twitter") !== -1 || location.origin.indexOf("x.com") !== -1) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'twitter.js'

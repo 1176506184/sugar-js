@@ -211,7 +211,7 @@ var ajax_tools_space = {
         // })
     }
 }
-if (location.href.indexOf('instagram') !== -1 || location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
+if (location.href.indexOf('x.com') !== -1 ||location.href.indexOf('instagram') !== -1 || location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
     || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 || location.href.indexOf('tiktok') !== -1 || location.href.indexOf('ce.xinli001.com') !== -1 || location.href.indexOf('pinterest') !== -1
     || location.href.indexOf('ixigua') !== -1 || location.href.indexOf('isee.weishi.qq.com') !== -1) {
 
