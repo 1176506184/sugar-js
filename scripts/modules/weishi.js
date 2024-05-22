@@ -18,6 +18,11 @@ if (location.href.includes('&history=1')) {
     })
 }
 
+function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var params = new URLSearchParams(url);
+    return params.get(name);
+}
 
 async function scrollBottom() {
     document.querySelector('.pc-container').scrollTop = document.querySelector('.pc-container').scrollHeight;
@@ -30,7 +35,7 @@ async function scrollBottom() {
     } else {
         div.innerText = '采集完成，请关闭当前页面，待插件页面显示采集完成后再关闭插件页面'
         console.log(videoDataList)
-        const result = videoDataList.filter(r => r.video).map((r) => {
+        const result = videoDataList.filter(r => r.video && r.poster_id === getParameterByName('id')).map((r) => {
             return {
                 id: r.id,
                 images: r.images[0]?.url,
