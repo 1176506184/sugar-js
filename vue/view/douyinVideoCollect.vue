@@ -18,6 +18,11 @@
             :props="props"
         />
       </el-form-item>
+      <el-form-item v-if="authorId">
+        <el-input v-model="authorId" readonly style="width: 100%">
+          <template #prepend>作者ID</template>
+        </el-input>
+      </el-form-item>
       <el-form-item style="margin-bottom: 0;">
         <div style="width: 100%;display: flex;justify-content: flex-end">
           <el-button type="primary" @click="sendTask('all')" :loading="loading">
@@ -45,6 +50,7 @@ const collectType = ref('first')
 const callBackUrl = computed(() => {
   return collectType.value === 'first' ? 'http://101.201.222.226/Author/AddDy' : 'http://101.201.222.226/Resource/RefreshDy'
 })
+const authorId = ref("")
 
 const type = ref(null)
 const author = ref('')
@@ -103,6 +109,9 @@ async function EventListener(Message) {
       status_code: 0
     });
     ElMessage.info(msg)
+    if (msg.includes("该作者系统已存在")) {
+      authorId.value = Message.data[0].author.uid
+    }
     loading.value = false;
   }
 }
