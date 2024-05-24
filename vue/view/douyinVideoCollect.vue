@@ -109,7 +109,7 @@ async function EventListener(Message) {
       status_code: 0
     });
     ElMessage.info(msg)
-    if (msg.includes("该作者系统已存在")) {
+    if (msg.includes("该作者系统已存在") || msg.includes("该博主已在审核池存在")) {
       authorId.value = Message.data[0].author.uid
     }
     loading.value = false;
