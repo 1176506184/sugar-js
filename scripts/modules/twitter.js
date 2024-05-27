@@ -115,16 +115,39 @@ window.addEventListener('message', function (res) {
                 try {
                     let resdata = res.data.data.data;
                     let len = resdata.user.result.timeline_v2.timeline.instructions.length - 1;
-                    let bozhuName = resdata.user.result.timeline_v2.timeline.instructions[len].entries[0].content.itemContent.tweet_results.result.core.user_results.result.legacy.name;
+                    let bozhuName = ''
+
+                    if (resdata.user.result.timeline_v2.timeline.instructions[len].entries[0].content.items) {
+                        try {
+                            bozhuName = resdata.user.result.timeline_v2.timeline.instructions[len].entries[0].content.items[0].item.itemContent.tweet_results.result.core.user_results.result.legacy.name;
+                        } catch (err) {
+
+                            bozhuName = resdata.user.result.timeline_v2.timeline.instructions[len].entries[0].content.items[0].item.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.name;
+                        }
+
+                    }else {
+                        try {
+                            bozhuName = resdata.user.result.timeline_v2.timeline.instructions[len].entries[0].content.itemContent.tweet_results.result.core.user_results.result.legacy.name;
+                        } catch (err) {
+                            bozhuName = resdata.user.result.timeline_v2.timeline.instructions[len].entries[0].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.name;
+                        }
+                    }
+                    
+                    
                     bozhuNameA = bozhuName;
                 }catch (e) {
                     console.log(e);
                 }
 
+                console.log('1111111111111111111111111')
+                console.log(res.data.data)
+                
                 handleData(res.data.data.data);
+                
             } catch (e) {
 
                 console.log(e)
+                console.log('222222222222222222222222')
             }
         }
 
@@ -188,18 +211,30 @@ async function CacheMertial(Data, json_num) {
         // 转推贴
         var ifretweeted = false;
 
-        if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].entryId.indexOf('tweet-') == -1) {
+        if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].entryId.indexOf('tweet-') > -1 || Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].entryId.indexOf('profile-') > -1) {
+          console.log('成功进入')  
+        }else{
             continue;
         }
 
         let resultOrtweet = null;
         
         // 判断报文两种结构
-        if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.tweet) {
-            resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.tweet
-        } else {
-            resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result
+        if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.items) {
+            if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.items[0].item.itemContent.tweet_results.result.tweet) {
+                resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.items[0].item.itemContent.tweet_results.result.tweet
+            } else {
+                resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.items[0].item.itemContent.tweet_results.result
+            }
+        }else {
+            if (Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.tweet) {
+                resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result.tweet
+            } else {
+                resultOrtweet = Data.user.result.timeline_v2.timeline.instructions[json_num].entries[i].content.itemContent.tweet_results.result
+            }
         }
+
+        
 
         try {
             console.log('第' + i);
@@ -326,14 +361,15 @@ async function CacheMertial(Data, json_num) {
                 await PictureToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time, post_time_yuan);
             }catch(e) {
                 console.log(e)
+
+                try {
+                    // 视频排程
+                    await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time, post_time_yuan);
+                } catch (e) {
+                    console.log(e)
+                }
             }
             
-            try {
-                // 视频排程
-                await VideoToPaicheng(Data, i, json_num, notes, views, likes, comments, post_time, post_time_yuan);
-            } catch (e) {
-                console.log(e)
-            }
         } catch {
             // console.log(e)
         }
@@ -391,11 +427,20 @@ async function CacheMertial(Data, json_num) {
 async function Video(jsonData, x, json_num) {
     let resultOrtweet = null;
     // 判断报文两种结构
-    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
-        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
-    } else {
-        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items) {
+        if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result.tweet) {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result.tweet
+        } else {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result
+        }
+    }else {
+        if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+        } else {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+        }
     }
+    
 
     let variants_length = resultOrtweet.legacy.extended_entities.media[0].video_info.variants.length;
     var videoInfo = resultOrtweet.legacy.extended_entities.media[0].video_info.variants[variants_length-1].url;
@@ -439,10 +484,18 @@ async function Video(jsonData, x, json_num) {
 async function Picture(jsonData, x, json_num) {
     let resultOrtweet = null;
     // 判断报文两种结构
-    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
-        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items) {
+        if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result.tweet) {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result.tweet
+        } else {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result
+        }
     } else {
-        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+        if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+        } else {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+        }
     }
 
     let photo_url = '';
@@ -460,10 +513,18 @@ async function Picture(jsonData, x, json_num) {
 async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, comments, post_time, post_time_yuan) {
     let resultOrtweet = null;
     // 判断报文两种结构
-    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
-        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items) {
+        if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result.tweet) {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result.tweet
+        } else {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result
+        }
     } else {
-        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+        if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+        } else {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+        }
     }
 
     let TempObj = {}
@@ -497,10 +558,18 @@ async function PictureToPaicheng(jsonData, x, json_num, notes, views, likes, com
 async function VideoToPaicheng(jsonData, x, json_num, notes, views, likes, comments, post_time, post_time_yuan) {
     let resultOrtweet = null;
     // 判断报文两种结构
-    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
-        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+    if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items) {
+        if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result.tweet) {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result.tweet
+        } else {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.items[0].item.itemContent.tweet_results.result
+        }
     } else {
-        resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+        if (jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet) {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result.tweet
+        } else {
+            resultOrtweet = jsonData.user.result.timeline_v2.timeline.instructions[json_num].entries[x].content.itemContent.tweet_results.result
+        }
     }
 
     let TempObj = {}
