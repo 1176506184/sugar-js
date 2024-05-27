@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "通用采集工具",
-  "version": "7.7.5",
+  "version": "7.7.6",
   "description": "通用采集工具",
   "icons": {
     "16": "icon.png",
