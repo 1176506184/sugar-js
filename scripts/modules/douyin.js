@@ -449,10 +449,10 @@ async function scrollBottom() {
 
 
 async function videoCollect() {
-    if (!document.querySelector('div[data-e2e="live-avatar"]')) {
-        alert('请先登录');
-        return
-    }
+    // if (!document.querySelector('div[data-e2e="live-avatar"]')) {
+    //     alert('请先登录');
+    //     return
+    // }
     if (collectVideoType === 'all') {
         let node = document.createElement('button');
         node.style = 'padding:5px 10px;border-radius:3px;z-index:99999;position:fixed;top:10px;left:10px;width:auto;white-space:nowrap;height:30px;display:flex;justify-content:center;align-items:center;'
