@@ -217,7 +217,7 @@ if (location.href.indexOf('x.com') !== -1 ||location.href.indexOf('instagram') !
 
     if (location.href.indexOf('twtest.anyelse.com') === -1) {
         window.fetch = ajax_tools_space.myFetch;
-        if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('isee.weishi.qq.com') !== -1) {
+        if (location.href.indexOf('douyin') !== -1 || location.href.indexOf('isee.weishi.qq.com') !== -1 || location.href.indexOf('toutiao.com/') !== -1) {
             var XHR = XMLHttpRequest.prototype
             var open = XHR.open;
             var send = XHR.send;
