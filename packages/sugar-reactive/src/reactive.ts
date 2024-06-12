@@ -33,7 +33,7 @@ const makeReactive = function (value) {
     const result = Reflect.set(target, propKey, value, receiver);
     const depsMap = targetMap.get(target);
     if (!depsMap) {
-      return;
+      return true;
     }
     let deps: any[] = [];
     deps = Object.values(depsMap);

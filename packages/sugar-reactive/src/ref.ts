@@ -6,7 +6,8 @@ const subscribers = new Set();
 
 function ref (fun: any) {
   const result = {
-    sugarReactiveDataType: 'Ref'
+    sugarReactiveDataType: 'Ref',
+    sugarRefDataType: 'Ref'
   };
   if (typeof fun === 'string' || typeof fun === 'number' || typeof fun === 'boolean' || fun === null) {
     const data = {
@@ -51,6 +52,15 @@ function ref (fun: any) {
       set (newValue) {
         if (newValue !== data.value) {
           data.value = newValue;
+          const subscribersToRun = new Set();
+          const currentObserver = getCurrentObserver();
+          subscribers.forEach((subscriber: any) => {
+            if (subscribers !== currentObserver) {
+              subscribersToRun.add(subscriber);
+            }
+          });
+          subscribersToRun.forEach((subscriber: any) => subscriber());
+          addEffect(subscribersToRun);
         }
       }
     });

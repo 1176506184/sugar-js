@@ -1,6 +1,4 @@
 import { extend, isArray } from './utils';
-import { deepClone } from '@sugar/sugar-shared';
-
 export function parse (context: any, ancestors: any) {
   const parent: any = last(ancestors);
   const nodes = [];

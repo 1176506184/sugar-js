@@ -49,4 +49,5 @@ export function nextTick (cb: Function) {
       cb();
     }
   });
+  timerFunc();
 }

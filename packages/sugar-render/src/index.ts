@@ -12,6 +12,13 @@ export function sugarRender () {
     const { code } = sugarCompiler(htmlCode, data);
     render = code;
     bindT(vm, data);
+    Object.values(data).forEach((item: any) => {
+      if (typeof item === 'object' && item.sugarRefDataType === 'useState') {
+        item.initDep(() => {
+          update(vm);
+        });
+      }
+    });
     update(vm);
     vm.forceUpdate = function () {
       update(vm);
@@ -182,7 +189,7 @@ export function html2Vnode (html) {
       attr.attrs[item.name] = item.value;
     });
     const vNode: any = createElement(dom.tagName, attr, []);
-    Array.from(dom.childNodes).forEach((child) => {
+    Array.from(dom.childNodes).forEach((child: any) => {
       if (child.nodeType === 1) {
         vNode.children.push(work(child));
       } else if (child.nodeType === 3) {

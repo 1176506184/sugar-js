@@ -37,7 +37,7 @@ export function baseCompile (template: string, data = {}) {
 
 function appendValueIfMatch (str, target) {
   // 构造一个用于查找目标子字符串，并且其后面紧跟特定字符的正则表达式
-  const regex = new RegExp(`\\b${target}(?=[\\s:]*([.]|\\[|$))`, 'g');
+  const regex = new RegExp(`(?<![\"'])\\b${target}\\b(?!['\"])(?![\"'])`, 'gs');
 
   // 使用replace方法在满足条件的位置插入".value"
   return str.replace(regex, `${target}.value`);

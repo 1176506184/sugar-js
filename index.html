@@ -92,6 +92,7 @@
     .image_box img {
         width: 100%;
         height: 100%;
+        object-fit: cover;
     }
 
     .menu {
@@ -106,6 +107,7 @@
         height: 50vh;
         background-color: #fff;
         position: absolute;
+        transition: 0.3s;
     }
 
 </style>
@@ -115,9 +117,9 @@
 
     <div class="nav">
         <div class="web_name">
-            <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo">
+            <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo" alt="">
         </div>
-        <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open"/>
+        <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
 
     <div class="article_body">
@@ -140,7 +142,7 @@
     </div>
 
     <sugar-dialog :model="active" @close="close" :instance="htmlRef">
-        <div class="menu_fixed_box">
+        <div class="menu_fixed_box" :style="'top:' + top + 'vh'">
 
         </div>
     </sugar-dialog>
@@ -158,20 +160,19 @@
 
     const {
         makeSugar,
-        reactive,
-        reckon,
         onMounted,
         ref,
-        createEffect,
         instance,
-        watch,
-        sugarUI
+        sugarUI,
+        useState,
+        useEffect,
+        nextTick
     } = SUGAR;
 
     var sugar = makeSugar({
         bulk() {
 
-            const state = reactive({
+            const [state, setState] = useState({
                 name: 0,
                 title: '狗狗因為太害怕人類，被安排于兩天后安樂死，幸好她出現了..',
                 content: `<p>自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業<span id="vft" data-wordc="231"></span></p><p style="font-weight: 600; color: #CC6633;font-size:15px !important ">
@@ -179,42 +180,52 @@
             </p>`
             });
 
-            const list = ref([{
-                title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
-                cover: '//static.rifusy.com/picture/20230206/BE/2BE30778C39Bw1000h525.jpeg'
-            }, {
-                title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
-                cover: '//static.rifusy.com/picture/20220904/72/4727F87A7A1Fw1000h525.jpeg'
-            }]);
+            const [list, setList] = useState([]);
 
-            const active = ref(false);
+            const [active, setActive] = useState(false);
 
             const htmlRef = instance(null);
 
-            const showImageActive = ref(false);
+            const [showImageActive, setShowImageActive] = useState(false);
 
-            const popImage = ref('');
+            const [popImage, setPopImage] = useState('');
+
+            const [top, setTop] = useState(-50);
 
             function close() {
-                active.value = false;
+                setTop(-50);
+                setActive(false);
             }
 
             function open() {
-                active.value = true;
+                setActive(true);
+                setTimeout(()=>{
+                    setTop(0);
+                },300)
             }
 
             function closeImage() {
-                showImageActive.value = false;
+                setShowImageActive(false);
             }
 
             function showImage(item) {
-                popImage.value = item.cover;
-                showImageActive.value = true;
+                setPopImage(item.cover);
+                setShowImageActive(true);
             }
 
-            onMounted(()=>{
+            onMounted(() => {
+                setList([{
+                    title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
+                    cover: '//cdn.supertime01.com/thumb.ashx?path=%2fdpxs%2f20240520%2f2DA622C0761Ew800h1200.Jpeg&width=150&height=200'
+                }, {
+                    title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
+                    cover: '//cdn.sweetastes.com/thumb.ashx?path=%2fdpxs%2f20221007%2f6F15A9339A07w300h400.Jpeg&width=150&height=200'
+                }]);
+            });
 
-            })
+            useEffect(() => {
+                console.log('检测到了', active.value);
+            }, [active]);
 
             return {
                 state,
@@ -226,7 +237,8 @@
                 showImageActive,
                 closeImage,
                 popImage,
-                showImage
+                showImage,
+                top
             };
         }
     });

@@ -9,176 +9,122 @@ npm install sugar-reactive-js
 ## Use
 
         <div id="app">
-            <div class="title">
-                SUGAR-JS
+
+            <div class="nav">
+                <div class="web_name">
+                    <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo" alt="">
+                </div>
+                <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
             </div>
         
-            <div>
-                <button style="margin: 5px 5px 0;" class="sugar-button" @click="updateActive">切换界面:{{active}}</button>
+            <div class="article_body">
+                <div class="title">
+                    {{state.title}}
+                </div>
+                <div class="content" s-html="state.content" ref="htmlRef">
+                </div>
             </div>
         
-            <div s-if="active === 0">
-                <p class="label">计算属性</p>
-        
-                <p class="label">{{title}}</p>
-        
-                <p class="label">外部状态值：{{store.num}}</p>
-        
-                <p class="label">s-for</p>
-        
-                <button class="sugar-button" style="margin: 5px 5px 0;" s-for="item in state.list" :key="item.d"
-                        @click="update(item,state.num)">
-                    {{item.d}}{{title}}
-                </button>
-        
-                <button style="margin: 5px 5px 0;" class="sugar-button" @click="pushNode">新增</button>
-        
-                <!--测试注释-->
-        
-                <p class="label">s-model</p>
-        
-                <sugar-button s-for="(item,index) in state.list" :dataKey="state.num" @click="pushNode(state.num)"
-                              s-if="index%2===0" :key="'sugar_btn_' + item.d" :instance="button">
-                    <span #default>
-                        <span>测试</span>
-                        <span>{{item.d + state.num}}</span>
-                    </span>
-                </sugar-button>
-        
-                <input s-model="state.num" class="sugar-input" style="margin: 5px 5px 0;"/>
-        
-                <sugar-dialog :model="showDialog" @close="closeDialog">
-                    <div style="width: 200px;height: 200px;background-color: #fff;border-radius: 5px;">
-        
+            <div class="article_join">
+                <div class="item" s-for="(item,index) in list" :style="index === (list.length - 1) ? 'border:0' : ''">
+                    <div class="image_box">
+                        <img :src="item.cover" @click="showImage(item)"/>
                     </div>
-                </sugar-dialog>
-        
-                <p class="label">s-if</p>
-        
-                <div s-if="show">{{show}}</div>
-        
-                <p class="label">显示DiaLog</p>
-        
-                <sugar-button @click="showDialogFun">
-                    {{showDialog}}
-                </sugar-button>
+                    <div class="label_box">
+                        {{item.title}}
+                    </div>
+                </div>
             </div>
         
-            <div s-if="active === 1">
+            <sugar-dialog :model="active" @close="close" :instance="htmlRef">
+                <div class="menu_fixed_box">
         
-            </div>
+                </div>
+            </sugar-dialog>
+        
+            <sugar-dialog :model="showImageActive" @close="closeImage">
+                <img :src="popImage" style="width: 100%;height: auto"/>
+            </sugar-dialog>
         
         </div>
 
 
         <script>
-        
-        
+
+
             const {
                 makeSugar,
-                reactive,
-                reckon,
                 onMounted,
                 ref,
-                createEffect,
                 instance,
-                sugarUI
+                sugarUI,
+                useState,
+                useEffect
             } = SUGAR;
-        
-            const store = reactive({
-                num: 0
-            });
         
             var sugar = makeSugar({
                 bulk() {
         
-                    const state = reactive({
-                        num: 0,
-                        list: [{d: 1}, {d: 2}, {d: 3}, {d: 4}],
-                        classText: 'font-size:17px',
-                        fontSize: 15,
-                        choose: 1,
-                        selectList: [{
-                            label: '选项一',
-                            value: 1
-                        }, {
-                            label: '选项二',
-                            value: 2
-                        }]
+                    const [state, setState] = useState({
+                        name: 0,
+                        title: '狗狗因為太害怕人類，被安排于兩天后安樂死，幸好她出現了..',
+                        content: `<p>自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業<span id="vft" data-wordc="231"></span></p><p style="font-weight: 600; color: #CC6633;font-size:15px !important ">
+                        版權所有，禁止轉載。 違者必究法律責任。
+                    </p>`
                     });
         
-                    const active = ref(0);
+                    const [list, setList] = useState([]);
         
-                    const button = instance(null);
+                    const [active, setActive] = useState(false);
         
-                    const show = ref(false);
+                    const htmlRef = instance(null);
         
-                    const showDialog = ref(false);
+                    const [showImageActive, setShowImageActive] = useState(false);
         
-                    function closeDialog() {
-                        showDialog.value = false;
+                    const [popImage, setPopImage] = useState('');
+        
+                    function close() {
+                        setActive(false);
                     }
         
-                    function pushNode(num) {
-                        show.value = !show.value;
-                        state.num += 1;
-                        state.list.push({
-                            d: state.list.length + 1
-                        });
+                    function open() {
+                        setActive(true);
                     }
         
-                    const title = reckon(() => {
-                        return state.num + 2;
-                    });
+                    function closeImage() {
+                        setShowImageActive(false);
+                    }
         
-                    const styleText = reckon(() => {
-                        return `font-size:${state.fontSize}px`;
-                    });
+                    function showImage(item) {
+                        setPopImage(item.cover);
+                        setShowImageActive(true);
+                    }
         
                     onMounted(() => {
-                        // state.num += 1;
+                        setList([{
+                            title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
+                            cover: '//cdn.supertime01.com/thumb.ashx?path=%2fdpxs%2f20240520%2f2DA622C0761Ew800h1200.Jpeg&width=150&height=200'
+                        }, {
+                            title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
+                            cover: '//cdn.sweetastes.com/thumb.ashx?path=%2fdpxs%2f20221007%2f6F15A9339A07w300h400.Jpeg&width=150&height=200'
+                        }]);
                     });
         
-                    function update(item, num) {
-                        state.num += 1;
-                    }
-        
-                    function changeNum(e) {
-                        state.num = e.target.value;
-                    }
-        
-                    function changeChoose(e) {
-                        state.choose = e;
-                    }
-        
-                    function updateActive() {
-                        active.value = active.value === 1 ? 0 : 1;
-                    }
-        
-                    function showDialogFun() {
-                        showDialog.value = true;
-                    }
-        
-                    const testRef = ref('testRef');
+                    useEffect(() => {
+                        console.log('检测到了', active.value);
+                    }, [active]);
         
                     return {
                         state,
-                        update,
-                        title,
-                        styleText,
-                        changeNum,
-                        changeChoose,
-                        testRef,
-                        pushNode,
                         active,
-                        updateActive,
-                        store,
-                        button,
-                        showDialog,
-                        show,
-                        closeDialog,
-                        showDialogFun
-        
+                        list,
+                        close,
+                        open,
+                        htmlRef,
+                        showImageActive,
+                        closeImage,
+                        popImage,
+                        showImage
                     };
                 }
             });

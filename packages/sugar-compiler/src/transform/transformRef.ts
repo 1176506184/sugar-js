@@ -18,4 +18,8 @@ export function transformRef (context, toDisPlay) {
   if (context.type === NodeTypes.INTERPOLATION) {
     context.content.content = toDisPlay(context.content.content);
   }
+
+  if (context.htmlStatment) {
+    context.htmlStatment.value.content = toDisPlay(context.htmlStatment.value.content);
+  }
 }

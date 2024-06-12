@@ -24,7 +24,7 @@ function makeSugar (options: Core) {
     vm._vnode = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
     mounted(vm, data);
     nextTick(() => {
-      mountHandleList[appId]?.forEach((item) => {
+      mountHandleList[appId]?.forEach((item: any) => {
         item.fun();
         item.used = true;
       });

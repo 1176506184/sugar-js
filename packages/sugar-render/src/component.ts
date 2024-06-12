@@ -126,7 +126,7 @@ export function componentRender () {
   function update (vm) {
     uiEffect(() => {
       uiUpdate(vm);
-    }, vm.appId);
+    });
   }
 
   function uiUpdate (vm) {
