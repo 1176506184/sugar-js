@@ -1,6 +1,6 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "提供简单的响应式UI能力",
   "devDependencies": {
     "@babel/core": "^7.20.12",
