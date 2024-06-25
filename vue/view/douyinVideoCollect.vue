@@ -114,7 +114,7 @@ async function EventListener(Message) {
       });
       for (let i = 0; i < chunkedArray.length; i++) {
         allSendMap.value[i].state = '上传中'
-        const {data, msg} = await apiFetch(callBackUrl.value, {
+        const {msg} = await apiFetch(callBackUrl.value, {
           aweme_list: chunkedArray[i].map(r => {
             return {
               author: {
