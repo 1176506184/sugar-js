@@ -11,6 +11,7 @@
     <el-form label-position="top" style="height: auto;padding: 20px;">
       <el-form-item>
         <el-cascader
+            filterable
             placeholder="请选择分类"
             style="width: 100%"
             v-model="type"
@@ -33,6 +34,19 @@
           </el-button>
         </div>
       </el-form-item>
+      <el-form-item>
+        <el-table :data="allSendMap">
+          <el-table-column type="index" label="序号" width="100">
+
+          </el-table-column>
+          <el-table-column label="数据量" width="150" prop="count">
+
+          </el-table-column>
+          <el-table-column label="状态" prop="state">
+
+          </el-table-column>
+        </el-table>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -47,6 +61,7 @@ const active_id = ref("")
 const route = useRoute()
 const loading = ref(false)
 const collectType = ref('first')
+const allSendMap = ref([])
 const callBackUrl = computed(() => {
   return collectType.value === 'first' ? 'http://101.201.222.226/Author/AddDy' : 'http://101.201.222.226/Resource/RefreshDy'
 })
@@ -88,6 +103,43 @@ async function EventListener(Message) {
         }
     );
 
+    if (collectType.value !== 'first') {
+      console.log(Message.data)
+      const chunkedArray = chunkArray(Message.data, 100);
+      allSendMap.value = chunkedArray.map((item) => {
+        return {
+          count: item.length,
+          state: '等待中'
+        }
+      });
+      for (let i = 0; i < chunkedArray.length; i++) {
+        allSendMap.value[i].state = '上传中'
+        const {data, msg} = await apiFetch(callBackUrl.value, {
+          aweme_list: chunkedArray[i].map(r => {
+            return {
+              author: {
+                sec_uid: r.author.sec_uid,
+                uid: r.author.uid,
+                nickname: r.author.nickname,
+                avatar_thumb: r.author.avatar_thumb
+              },
+              aweme_type: r.aweme_type,
+              aweme_id: r.aweme_id,
+              desc: r.desc,
+              video: r.video,
+              statistics: r.statistics
+            }
+          }),
+          tag_id: type.value?.slice(-1)[0],
+          operator_id: localStorage.getItem('ddid'),
+          status_code: 0
+        });
+        allSendMap.value[i].state = msg
+      }
+      loading.value = false;
+      return
+    }
+
     const {data, msg} = await apiFetch(callBackUrl.value, {
       aweme_list: Message.data.map(r => {
         return {
@@ -115,6 +167,15 @@ async function EventListener(Message) {
     loading.value = false;
   }
 }
+
+function chunkArray(arr, size) {
+  let result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
 
 function buildTree(FlatData, ParentId = null) {
   return FlatData
