@@ -180,7 +180,13 @@
             </p>`
             });
 
-            const [list, setList] = useState([]);
+            const [list, setList] = useState([{
+                title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
+                cover: '//cdn.supertime01.com/thumb.ashx?path=%2fdpxs%2f20240520%2f2DA622C0761Ew800h1200.Jpeg&width=150&height=200'
+            }, {
+                title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
+                cover: '//cdn.sweetastes.com/thumb.ashx?path=%2fdpxs%2f20221007%2f6F15A9339A07w300h400.Jpeg&width=150&height=200'
+            }]);
 
             const [active, setActive] = useState(false);
 
@@ -201,7 +207,7 @@
                 setActive(true);
                 setTimeout(()=>{
                     setTop(0);
-                },300)
+                },100)
             }
 
             function closeImage() {
@@ -214,17 +220,11 @@
             }
 
             onMounted(() => {
-                setList([{
-                    title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
-                    cover: '//cdn.supertime01.com/thumb.ashx?path=%2fdpxs%2f20240520%2f2DA622C0761Ew800h1200.Jpeg&width=150&height=200'
-                }, {
-                    title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
-                    cover: '//cdn.sweetastes.com/thumb.ashx?path=%2fdpxs%2f20221007%2f6F15A9339A07w300h400.Jpeg&width=150&height=200'
-                }]);
+
             });
 
             useEffect(() => {
-                console.log('检测到了', active.value);
+
             }, [active]);
 
             return {

@@ -27,7 +27,8 @@ export function sugarRender () {
 
   function update (vm) {
     uiEffect(() => {
-      const vnode = render.call(vm);
+      console.log(render);
+      const vnode = render.call(VmDataRefPassive(vm));
       bindAttrAndEvent(vm, vnode);
       patch(vm, vnode);
       vm._vnode = vnode;
@@ -38,6 +39,25 @@ export function sugarRender () {
     update,
     mounted
   };
+}
+
+export function VmDataRefPassive (vm) {
+  const refObj = {};
+  Object.keys(vm).forEach((key) => {
+    if (vm[key]?.sugarReactiveDataType && vm[key].sugarReactiveDataType === 'Ref') {
+      console.log(vm[key]);
+      refObj[key] = vm[key];
+      Object.defineProperty(vm, key, {
+        get () {
+          return refObj[key].value;
+        },
+        set (val) {
+          refObj[key].value = val;
+        }
+      });
+    }
+  });
+  return vm;
 }
 
 export function bindT (vm, data) {

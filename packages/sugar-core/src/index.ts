@@ -17,11 +17,12 @@ function makeSugar (options: Core) {
     appId,
     components: [],
     sugar: {},
-    slot: options.slot
+    slot: options.slot,
+    _fiber: null
   };
 
   function mount (el) {
-    vm._vnode = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
+    vm._vnode = vm._fiber = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
     mounted(vm, data);
     nextTick(() => {
       mountHandleList[appId]?.forEach((item: any) => {
