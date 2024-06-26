@@ -392,7 +392,7 @@ function parseComment (context: any) {
   const contentStart = context.source[1] === '?' ? 1 : 2;
   let content: string;
 
-  const closeIndex = context.source.indexOf('>');
+  const closeIndex = context.source.indexOf('-->') + 2;
   if (closeIndex === -1) {
     content = context.source.slice(contentStart);
     advanceBy(context, context.source.length);

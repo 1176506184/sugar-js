@@ -46,6 +46,9 @@ const dialog = {
           show.value = false;
         }, 300);
       }
+    }, {
+      deep: true,
+      immediate: true
     });
 
     function close () {

@@ -25,9 +25,8 @@ export function sugarRender () {
     };
   }
 
-  function update (vm) {
+  function update (vm: any) {
     uiEffect(() => {
-      console.log(render);
       const vnode = render.call(VmDataRefPassive(vm));
       bindAttrAndEvent(vm, vnode);
       patch(vm, vnode);
@@ -41,18 +40,21 @@ export function sugarRender () {
   };
 }
 
-export function VmDataRefPassive (vm) {
+export function VmDataRefPassive (vm: any) {
   const refObj = {};
   Object.keys(vm).forEach((key) => {
     if (vm[key]?.sugarReactiveDataType && vm[key].sugarReactiveDataType === 'Ref') {
-      console.log(vm[key]);
       refObj[key] = vm[key];
       Object.defineProperty(vm, key, {
         get () {
           return refObj[key].value;
         },
         set (val) {
-          refObj[key].value = val;
+          if (refObj[key].sugarRefDataType === 'useState') {
+            console.log('useState can not set value in render');
+          } else {
+            refObj[key].value = val;
+          }
         }
       });
     }

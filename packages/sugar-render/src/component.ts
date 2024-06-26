@@ -3,7 +3,7 @@ import { mountHandleList, updateActiveId } from '@sugar/sugar-hook';
 import { createEffect, ref, uiEffect } from '@sugar/sugar-reactive';
 import { bindAttrAndEvent, bindT, VmDataRefPassive } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
-import patchEx from './patch';
+import patch from './patch';
 import { addComponentCache, getComponentCache } from './componentCache';
 
 export function bulkComponent (instance) {
@@ -118,23 +118,19 @@ export function componentRender () {
     bindT(vm, data);
     update(vm);
     vm.forceUpdate = function () {
-      uiUpdate(vm);
+      update(vm);
     };
     return vm.forceUpdate;
   }
 
   function update (vm) {
     uiEffect(() => {
-      uiUpdate(vm);
+      const vnode = render.call(VmDataRefPassive(vm));
+      bindAttrAndEvent(vm, vnode);
+      assembling(vnode, vm.slot);
+      patch(vm, vnode);
+      vm._vnode = vnode;
     });
-  }
-
-  function uiUpdate (vm) {
-    const vnode = render.call(VmDataRefPassive(vm));
-    bindAttrAndEvent(vm, vnode);
-    assembling(vnode, vm.slot);
-    patchEx(vm, vnode);
-    vm._vnode = vnode;
   }
 
   function assembling (_n, slot) {

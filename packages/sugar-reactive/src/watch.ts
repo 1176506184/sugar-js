@@ -1,7 +1,13 @@
 import { createEffect } from './effect/createEffect';
 import { deepClone, deepEqual } from '@sugar/sugar-shared';
 
-export function watch (source: any, cb: Function, options = { deep: false }) {
+export function watch (source: any, cb: Function, options = {
+  deep: false,
+  immediate: false
+}) {
+  if (options.immediate) {
+    cb(source.value);
+  }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let getter = null;
   let cache = null;

@@ -199,8 +199,6 @@ export default function patch (vm, newVnode) {
       }
     }
 
-    // 循环结束
-    // ①如果循环结束，新节点还有剩余直接添加
     if (oldPreIndex > oldAftIndex) {
       refElm = isUndef(newCh[newAftIndex + 1]) ? null : newCh[newAftIndex + 1].elm;
       for (; newPreIndex <= newAftIndex; newPreIndex++) {
@@ -211,7 +209,7 @@ export default function patch (vm, newVnode) {
         }
       }
     }
-    // ②如果循环结束，旧节点还有剩余直接删除
+
     if (newPreIndex > newAftIndex) {
       for (let i = oldPreIndex; i <= oldAftIndex; i++) {
         if (oldCh[i]?.elm) {
