@@ -243,8 +243,8 @@ function parseVideo(data) {
 
                 if (key === 'hasMore') {
                     hasMore = d[key];
-                    if (!hasMore) {
-                        div.innerTextdiv.innerText = `采集已结束，当前已采集${videoDataList.length}条数据，请回到插件等待数据上传完成`
+                    if (!hasMore && div) {
+                        div.innerText = `采集已结束，当前已采集${videoDataList.length}条数据，请回到插件等待数据上传完成`
                     }
                 }
 
