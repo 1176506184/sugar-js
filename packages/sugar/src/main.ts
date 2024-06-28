@@ -4,23 +4,25 @@ import { sugarUI } from './sugarUI';
 import { useState, useEffect } from '@sugar/sugar-hook';
 import { createSSRApp } from '@sugar/sugar-next';
 
-(function (global: any) {
-  global.SUGAR = {
-    createEffect,
-    onMounted,
-    reactive,
-    makeSugar,
-    reckon,
-    ref,
-    instance,
-    watch,
-    sugarUI,
-    useState,
-    useEffect,
-    nextTick,
-    createSSRApp
-  };
-})(window);
+if (typeof window !== 'undefined') {
+  (function (global: any) {
+    global.SUGAR = {
+      createEffect,
+      onMounted,
+      reactive,
+      makeSugar,
+      reckon,
+      ref,
+      instance,
+      watch,
+      sugarUI,
+      useState,
+      useEffect,
+      nextTick,
+      createSSRApp
+    };
+  })(window);
+}
 
 export {
   makeSugar,

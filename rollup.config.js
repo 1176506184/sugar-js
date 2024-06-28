@@ -20,6 +20,11 @@ export default {
     name: 'Sugar',
     format: 'es',
     sourceMap: true
+  }, {
+    file: isDev ? 'dist/sugar.cjs' : 'dist/sugar.cjs',
+    name: 'Sugar',
+    format: 'cjs',
+    sourceMap: true
   }],
   plugins: [
     babel({
