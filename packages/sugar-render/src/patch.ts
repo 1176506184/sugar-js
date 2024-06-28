@@ -4,7 +4,6 @@ import { bulkComponent } from './component';
 
 export default function patch (vm, newVnode) {
   let oldVnode = vm._vnode;
-  console.log(oldVnode);
   if (!oldVnode.elm) {
     oldVnode = emptyNodeAt(oldVnode);
   }
