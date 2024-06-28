@@ -6,11 +6,14 @@ import { escape2Html } from '@sugar/sugar-shared';
 export function sugarRender () {
   let render = null;
 
-  function mounted (vm, data) {
+  function mounted<T> (vm: any, data: T) {
     const serializer = new XMLSerializer();
     const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
-    const { code } = sugarCompiler(htmlCode, data);
+    const { code } = sugarCompiler(htmlCode);
     render = code;
+    if (vm.ssr) {
+      render = vm.ssrRender;
+    }
     bindT(vm, data);
     Object.values(data).forEach((item: any) => {
       if (typeof item === 'object' && item.sugarRefDataType === 'useState') {
@@ -27,10 +30,11 @@ export function sugarRender () {
 
   function update (vm: any) {
     uiEffect(() => {
-      const vnode = render.call(VmDataRefPassive(vm));
-      bindAttrAndEvent(vm, vnode);
-      patch(vm, vnode);
-      vm._vnode = vnode;
+      const vmFiber: any = VmDataRefPassive(vm);
+      const vnode = render.call(vmFiber);
+      bindAttrAndEvent(vmFiber, vnode);
+      patch(vmFiber, vnode);
+      vmFiber._vnode = vnode;
     });
   }
 
@@ -44,22 +48,30 @@ export function VmDataRefPassive (vm: any) {
   const refObj = {};
   Object.keys(vm).forEach((key) => {
     if (vm[key]?.sugarReactiveDataType && vm[key].sugarReactiveDataType === 'Ref') {
-      refObj[key] = vm[key];
-      Object.defineProperty(vm, key, {
+      Object.defineProperty(refObj, key, {
         get () {
-          return refObj[key].value;
+          return vm[key].value;
         },
         set (val) {
           if (refObj[key].sugarRefDataType === 'useState') {
             console.log('useState can not set value in render');
           } else {
-            refObj[key].value = val;
+            vm[key].value = val;
           }
+        }
+      });
+    } else {
+      Object.defineProperty(refObj, key, {
+        get () {
+          return vm[key];
+        },
+        set (val) {
+          vm[key] = val;
         }
       });
     }
   });
-  return vm;
+  return refObj;
 }
 
 export function bindT (vm, data) {

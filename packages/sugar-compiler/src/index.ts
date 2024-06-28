@@ -1,8 +1,8 @@
 import { baseCompile } from './compile';
 
-export function sugarCompiler (template, data) {
+export function sugarCompiler (template) {
   function compile (template = '') {
-    const { code, root } = baseCompile(template, data);
+    const { code, root } = baseCompile(template);
     return {
       code: createFunction(code),
       root

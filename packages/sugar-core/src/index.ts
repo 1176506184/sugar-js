@@ -3,6 +3,7 @@ import { onMounted, mountHandleList, updateActiveId } from '@sugar/sugar-hook';
 import { sugarRender } from '@sugar/sugar-render';
 import { guid } from './utils/guid';
 import { nextTick } from '@sugar/sugar-reactive';
+import { vnodeBindHtml } from '@sugar/sugar-next';
 
 function makeSugar (options: Core) {
   const appId = guid();
@@ -18,11 +19,17 @@ function makeSugar (options: Core) {
     components: [],
     sugar: {},
     slot: options.slot,
-    _fiber: null
+    _fiber: null,
+    ssr: options.ssr,
+    ssrRender: options.ssrRender
   };
 
   function mount (el) {
     vm._vnode = vm._fiber = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
+    if (vm.ssr) {
+      vm._vnode = options.ssrVNode;
+      vnodeBindHtml(vm._vnode, vm.$el);
+    }
     mounted(vm, data);
     nextTick(() => {
       mountHandleList[appId]?.forEach((item: any) => {

@@ -111,7 +111,7 @@ export function componentRender () {
     const {
       code,
       root
-    } = sugarCompiler(htmlCode, data);
+    } = sugarCompiler(htmlCode);
     vm.$el = document.createElement(root.tag);
     vm._vnode = vm.$el;
     render = code;

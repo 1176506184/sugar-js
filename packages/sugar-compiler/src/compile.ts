@@ -8,7 +8,7 @@ import { sHtml } from './transform/sHtml';
 import { transformEvent } from './transform/transformEvent';
 import { Namespaces, parse } from './parse';
 
-export function baseCompile (template: string, data = {}) {
+export function baseCompile (template: string) {
   const ast = toAst(template);
   transform(ast, {
     sIf,

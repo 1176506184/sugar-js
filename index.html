@@ -141,13 +141,13 @@
         </div>
     </div>
 
-<!--    <sugar-dialog :model="active" @close="close">-->
-<!--        <div class="menu_fixed_box" :style="'top:' + top + 'vh'">-->
-<!--            <div s-for="(item,index) in cateList">-->
-<!--                {{item}}-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </sugar-dialog>-->
+    <sugar-dialog :model="active" @close="close">
+        <div class="menu_fixed_box" :style="'top:' + top + 'vh'">
+            <div s-for="(item,index) in cateList">
+                {{item}}
+            </div>
+        </div>
+    </sugar-dialog>
 
     <div s-if="showImageActive">
         <sugar-dialog :model="showImageActive" @close="closeImage" :instance="htmlRef">
@@ -170,7 +170,8 @@
         sugarUI,
         useState,
         useEffect,
-        nextTick
+        nextTick,
+        createSSRApp
     } = SUGAR;
 
     var sugar = makeSugar({
@@ -253,6 +254,32 @@
     sugar.install(sugarUI);
 
     sugar.mount('#app');
+
+    createSSRApp({
+        render: `<div>
+                    <div @click="change" :style="'font-size:' + state.fontSize + 'px'">{{state.name}}</div>
+                    <div s-for="(item,index) in state.list">{{index}}</div>
+                 </div>`,
+        bulk: () => {
+            const [state, setState] = useState({
+                name: '张三',
+                list: [{}, {}],
+                fontSize: 14
+            });
+
+            function change(){
+                setState({
+                    ...state,
+                    fontSize: state.fontSize + 1
+                })
+            }
+
+            return {
+                state,
+                change
+            };
+        }
+    });
 
 
 </script>

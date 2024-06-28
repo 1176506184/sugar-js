@@ -2,6 +2,7 @@ import { makeSugar, onMounted } from '@sugar/sugar-core';
 import { createEffect, reactive, reckon, ref, instance, watch, nextTick } from '@sugar/sugar-reactive';
 import { sugarUI } from './sugarUI';
 import { useState, useEffect } from '@sugar/sugar-hook';
+import { createSSRApp } from '@sugar/sugar-next';
 
 (function (global: any) {
   global.SUGAR = {
@@ -16,7 +17,8 @@ import { useState, useEffect } from '@sugar/sugar-hook';
     sugarUI,
     useState,
     useEffect,
-    nextTick
+    nextTick,
+    createSSRApp
   };
 })(window);
 
@@ -32,5 +34,6 @@ export {
   sugarUI,
   useState,
   useEffect,
-  nextTick
+  nextTick,
+  createSSRApp
 };
