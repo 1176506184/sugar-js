@@ -126,13 +126,4 @@
 
     root.mount('#ssr-root');
 
-    (function t(n) {
-        Object.keys(n.ssrBulk).forEach(t => {
-            Object.keys(n.ssrBulk[t]).forEach(e => {
-                document.querySelector(`[data-ssr-id="${t}"]`).addEventListener(e, () => {
-                    n.window.root[n.ssrBulk[t][e].value]();
-                });
-            });
-        });
-    })(global);
 </script>
