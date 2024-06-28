@@ -5,7 +5,8 @@ import { vnode2html } from './vnode2html';
 import { vnodeBindHtml } from './vnodeBindHtml';
 
 export function createSSRApp (options = {
-  sugarJsSrc: '',
+  head: '',
+  sugarJsSrc: '/dist/sugar.js',
   render: '',
   bulk: () => {
     return {};
@@ -26,31 +27,21 @@ export function createSSRApp (options = {
   const { code } = sugarCompiler(options.render);
   const VNode = code.call(VmDataRefPassive(vm));
   const {
-    html,
-    ssrBulk
+    html
   } = vnode2html(VNode);
 
-  const ssrBulkFunction = function (global: any) {
-    Object.keys(global.ssrBulk).forEach((item) => {
-      Object.keys(global.ssrBulk[item]).forEach((s) => {
-        document.querySelector(`[data-ssr-id="${item}"]`).addEventListener(s, () => {
-          global.window.root[global.ssrBulk[item][s].value]();
-        });
-      });
-    });
-  };
-
-  return createHtml(html, options.bulk.toString(), ssrBulkFunction.toString(), JSON.stringify(ssrBulk), code.toString(), JSON.stringify(VNode));
+  return createHtml(html, options.bulk.toString(), code.toString(), JSON.stringify(VNode), options.sugarJsSrc, options.head);
 }
 
-function createHtml (html: string, bulk: string, event: string, initBulk: string, render: string, initVNode: string) {
+function createHtml (html: string, bulk: string, render: string, initVNode: string, sugarJsSrc: string, head: string) {
   return `<html lang="">
             <head>
+                ${head}
                 <title></title>
                 <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
             </head>
-            <script src="/dist/sugar.js"></script>
+            <script src="${sugarJsSrc}"></script>
             <body>
                 <div id="ssr-root">
                     ${html}
@@ -70,11 +61,6 @@ function createHtml (html: string, bulk: string, event: string, initBulk: string
                 createSSRApp
             } = SUGAR;
             
-            const global = {
-              window,
-              ssrBulk:${initBulk}
-            };
-            
             var root = makeSugar({
                 bulk:${bulk},
                 ssr:true,
@@ -83,9 +69,7 @@ function createHtml (html: string, bulk: string, event: string, initBulk: string
             });
             
             root.mount('#ssr-root');
-            
-            
-            (${event})(global);
+                     
           </script>`;
 }
 
