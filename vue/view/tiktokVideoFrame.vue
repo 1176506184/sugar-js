@@ -36,7 +36,8 @@
                     {{ row.title }}
                   </template>
                 </el-table-column>
-                <el-table-column label="播放量" prop="playCount" sortable :sort-orders="['descending','ascending',null]">
+                <el-table-column label="播放量" prop="playCount" sortable
+                                 :sort-orders="['descending','ascending',null]">
                 </el-table-column>
                 <el-table-column label="时长" prop="duration" sortable :sort-orders="['descending','ascending',null]">
                 </el-table-column>
@@ -271,13 +272,12 @@ const form = reactive({
 
 
 function filterList() {
-
   data.value = AllData.value.filter((item) => {
     return item.title.toLowerCase().indexOf(title.value.toLowerCase()) > -1
-        && (size.value.split(',').includes(`${item.width}×${item.height}`) || !size.value)
+        && (size.value.split(',').filter(s => s[0] !== '!').includes(`${item.width}×${item.height}`) || !size.value || !size.value.split(',').filter(s => s[0] !== '!').length)
+        && (!(size.value.split(',').filter(s => s[0] === '!').includes(`!${item.width}×${item.height}`)) || !size.value || !size.value.split(',').filter(s => s[0] === '!').length)
         && (!timeNum.value || filterTime(item.duration))
   })
-
 }
 
 function filterTime(num) {
