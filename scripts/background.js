@@ -1,4 +1,5 @@
 let toutiaoPending = "lock";
+const Map302 = new Map();
 
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'loadScript') {
@@ -12,6 +13,9 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         console.log(Message.data)
     } else if (Message.Message === 'web') {
         console.log(Message.data)
+    } else if (Message.Message === 'kuaishouUrl') {
+        console.log(Message)
+        sendResponse(Map302.get(Message.url));
     }
 })
 
@@ -40,6 +44,17 @@ chrome.contextMenus.create({
     "contexts": ["page", "selection"],
     type: 'normal'
 });
+
+// 监听重定向事件
+chrome.webRequest.onBeforeRedirect.addListener(
+    function (details) {
+        // details 包含了重定向前的 URL (details.requestId) 和重定向后的 URL (details.redirectUrl)
+        console.log("原始 URL: " + details.url);
+        console.log("重定向到: " + details.redirectUrl);
+        Map302.set(details.redirectUrl, details.url);
+    },
+    {urls: ["<all_urls>"]} // 监听所有 URL
+);
 
 
 // 他的点击事件

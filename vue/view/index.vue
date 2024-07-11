@@ -186,7 +186,8 @@
               <el-button @click="collectYoutubeNew" type="primary">采集视频 / SHORTS并自动分发 / Truvid</el-button>
               <el-button @click="collectYoutubeNewPW" type="primary">采集视频 / SHORTS并TOOL源视频排文</el-button>
 
-              <el-button @click="collectYoutubeVideoCommunitySchedulingFramePW" type="primary">批量源素材社团排程</el-button>
+              <el-button @click="collectYoutubeVideoCommunitySchedulingFramePW" type="primary">批量源素材社团排程
+              </el-button>
 
               <br/>
 
@@ -200,7 +201,8 @@
               <el-button @click="collectTiktok" type="primary">采集视频</el-button>
               <el-button @click="collectTiktokVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
 
-              <el-button @click="collectTiktokVideoCommunitySchedulingFrame" type="primary">批量源素材社团排程</el-button>
+              <el-button @click="collectTiktokVideoCommunitySchedulingFrame" type="primary">批量源素材社团排程
+              </el-button>
 
               <!--              <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">-->
               <!--                更新视频-->
@@ -276,6 +278,23 @@
             >视频自动化采集
             </el-button>
           </el-collapse-item>
+          <el-collapse-item title="快手" name="21">
+            <el-cascader
+                filterable
+                placeholder="请选择分类"
+                v-model="kuaishouTagid"
+                :options="category"
+                :props="props"
+                style="margin-right: 10px;"
+            />
+            <el-button
+                :loading="kuaishouLoading"
+                @click="collectKuaishou"
+                type="primary"
+                :disabled="type !== 'kuaishou'"
+            >初始化博主
+            </el-button>
+          </el-collapse-item>
         </el-collapse>
       </div>
 
@@ -302,7 +321,7 @@ import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(1)
-const owner = ref(0)
+const owner = ref(1)
 
 function changeOpen() {
   chrome.storage.local.set({
@@ -425,6 +444,9 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "weishi") {
       activeNames.value.push("20");
       store.commit("changeType", "weishi");
+    } else if (Message.type === "kuaishou") {
+      activeNames.value.push("21");
+      store.commit("changeType", "kuaishou");
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
@@ -586,6 +608,32 @@ const eventBus = async function (Message, sender, sendResponse) {
     dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
       ElMessage('上传成功一条');
     })
+  } else if (Message.Message === "kuaishouData" && Message.type === "kuaishou") {
+    console.log(Message.data)
+
+    chrome.runtime.sendMessage({
+      Message: 'kuaishouUrl',
+      url: Message.data.url
+    }).then(r => {
+      console.log(r);
+
+      xhrHttp("http://101.201.222.226/Author/AddKs", {
+            userId: Message.data.userid.toString(),
+            userEid: Message.data.eid.toString(),
+            userName: Message.data.userName.toString(),
+            shorUrl: r,
+            operatorId: localStorage.getItem('ddid'),
+            tagId: kuaishouTagid.value?.slice(-1)[0]
+          }
+          , 'post', 'application/json').then((res) => {
+        kuaishouLoading.value = false;
+        ElMessage.info(res.msg)
+      })
+
+    })
+    // dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
+    //   ElMessage('上传成功一条');
+    // })
   }
 };
 // if (!window.eventBus) {
@@ -1741,6 +1789,49 @@ async function douyin_truvid() {
   }, (tab) => {
 
   })
+}
+
+const kuaishouLoading = ref(false)
+const kuaishouTagid = ref(0)
+const category = ref([])
+const props = {
+  expandTrigger: 'hover',
+  value: 'tag_id',
+  label: 'tag_name'
+}
+
+onMounted(async () => {
+  const {data} = await xhrHttp('http://101.201.222.226/author/authortaglist', {}, 'post');
+  category.value = buildTree(data, 0)
+})
+
+async function collectKuaishou() {
+  kuaishouLoading.value = true;
+  let pageId = await getActiveId();
+  if (pageId !== false) {
+    chrome.tabs.sendMessage(
+        pageId,
+        {
+          Message: "getData"
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            ElMessage.warning({
+              message: '插件已重新加载，请刷新页面'
+            })
+          }
+        }
+    );
+  }
+}
+
+function buildTree(FlatData, ParentId = null) {
+  return FlatData
+      .filter(item => item.parent_id === ParentId)
+      .map(item => ({
+        ...item,
+        children: buildTree(FlatData, item.tag_id)
+      }));
 }
 
 </script>
