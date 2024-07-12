@@ -6,10 +6,17 @@ window.addEventListener('message', function (res) {
 
     if (res.data.Message === 'ajax') {
         if (res.data.url && (res.data.url.indexOf("rest/wd/feed/profile") !== -1)) {
-            console.log(`博主EID：` + res.data.data.feeds[0].userEid);
-            eid = res.data.data.feeds[0].userEid;
-            userid = res.data.data.feeds[0].userId;
-            userName = res.data.data.feeds[0].userName;
+
+            if (res.data.data.feeds[0].user) {
+                eid = res.data.data.feeds[0].userEid;
+                userid = res.data.data.feeds[0].user.user_id;
+                userName = res.data.data.feeds[0].user.user_name;
+            } else {
+                eid = res.data.data.feeds[0].userEid;
+                userid = res.data.data.feeds[0].userId;
+                userName = res.data.data.feeds[0].userName;
+            }
+            console.log(eid, userid, userName);
         }
     }
 })
