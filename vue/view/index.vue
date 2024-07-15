@@ -321,7 +321,7 @@ import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(1)
-const owner = ref(1)
+const owner = ref(0)
 
 function changeOpen() {
   chrome.storage.local.set({
@@ -388,7 +388,7 @@ function logout() {
 
 const loading = ref(false);
 const canTiktokFrame = computed(() => {
-  return localStorage.getItem('name') !== '唐非凡'
+  return localStorage.getItem('name') !== '唐非凡' && localStorage.getItem('name') !== '韩冰' && localStorage.getItem('name') !== '李明'
 })
 
 const canUseBtn = reactive({
