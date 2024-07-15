@@ -176,6 +176,8 @@
               <el-button type="primary" @click="collectFBVideo">采集博主视频</el-button>
 
               <el-button type="warning" @click="collectFBHistory">自动采集历史</el-button>
+
+              <el-button type="primary" @click="collectFBToToolPlatform">自动采集图文帖至Tool脚本素材库</el-button>
             </div>
           </el-collapse-item>
 
@@ -1756,6 +1758,17 @@ async function collectFBHistory() {
   let activeId = await getActiveId();
   chrome.tabs.create({
     url: '/html/out.html#/FBCollectHistory?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
+}
+
+// FB采集图文至Tool平台脚本素材库
+async function collectFBToToolPlatform() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/FBCollectToToolPlatform?activeId=' + activeId,
     active: true
   }, (tab) => {
 
