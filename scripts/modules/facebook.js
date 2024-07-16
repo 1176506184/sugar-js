@@ -960,8 +960,12 @@ async function collectHistory(collecttype) {
                         tag = title;
                     }
                 }
-
-                var postTime = timeOk(dateMax.toString());
+                // 发文时间
+                try {
+                    var postTime = timeOk(dateMax.toString());
+                }catch(error) {
+                    var postTime = "";
+                }
                 let returnmsg = ''
                 let materialRemark = ''
 
