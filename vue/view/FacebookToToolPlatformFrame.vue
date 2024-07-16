@@ -170,9 +170,10 @@ async function dealFbHistory(Message) {
       var tempObject = {
         Title: Message.data?.Title,
         ContentPath: JSON.stringify(Message.data?.ContentPath),
-        Comment: JSON.stringify(commentObj),
+        Comment: valComment.value? JSON.stringify(commentObj): '',
         Type: 1, // 固定1，图文追评
         CreateUserId: localStorage.getItem("ddid"),
+        IsTw: isToFanti.value? 1 : 0,
       }
       cacheList.push(tempObject);
 
@@ -180,17 +181,18 @@ async function dealFbHistory(Message) {
 
       if (cacheList.length >= 3) {
         try {
+          let copyList = JSON.parse(JSON.stringify(cacheList));
+          // 先计数，后清空
+          cacheList = [];
           // 发送至Tool平台
-          xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', cacheList, 'post', 'application/json').then((res) => {
+          xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', copyList, 'post', 'application/json').then((res) => {
             let rData = JSON.parse(res);
             if (rData.r) {
               // successPostNum.value += count;
-              collectNum.value += cacheList.length;
+              collectNum.value += copyList.length;
             } else {
               // failNum.value += recount;
             }
-            // 先计数，后清空
-            cacheList = [];
           });
         } catch (e) {
           console.log(e.msg);
@@ -199,24 +201,35 @@ async function dealFbHistory(Message) {
 
       if (collectNum.value >= max_collect.value) {
         // UpdatedBlogger(Message.data.publish_time).then();
+        console.log("最大采集数-", max_collect.value)
+        console.log("现已采集数-", collectNum.value)
         pauseCollect().then();
       }
     } else {
       try {
-        let tempData = cacheList;
-        // 发送至Tool平台
-        xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', tempData, 'post', 'application/json').then((res) => {
-          let rData = JSON.parse(res);
-          if (rData.r) {
-            // successPostNum.value += count;
-            collectNum.value += cacheList.length;
-          } else {
-            // failNum.value += recount;
-          }
-          cacheList = [];
-        });
+        let copyList = JSON.parse(JSON.stringify(cacheList));
+        // 先计数，后清空
+        cacheList = [];
+        if(copyList && copyList.length > 0) {
+          // 发送至Tool平台
+          xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', copyList, 'post', 'application/json').then((res) => {
+            let rData = JSON.parse(res);
+            if (rData.r) {
+              // successPostNum.value += count;
+              collectNum.value += copyList.length;
+            } else {
+              // failNum.value += recount;
+            }
+          });
+        }
       } catch (e) {
         console.log(e.msg);
+      }
+      if (collectNum.value >= max_collect.value) {
+        // UpdatedBlogger(Message.data.publish_time).then();
+        console.log("最大采集数-", max_collect.value)
+        console.log("现已采集数-", collectNum.value)
+        pauseCollect().then();
       }
     }
   } else if (Message.Message === 'error') {

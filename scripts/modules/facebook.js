@@ -636,7 +636,7 @@ function startCollectImageToTool(data) {
 
     if (state === 0) {
         state = 1;
-        openImage = false;
+        openImage = true;
         finishTime = data.finishTime * 60;
         max_collect = data.max_collect;
         collectHistory(2).then();
