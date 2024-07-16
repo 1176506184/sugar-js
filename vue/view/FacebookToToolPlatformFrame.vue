@@ -211,7 +211,7 @@ async function dealFbHistory(Message) {
         let copyList = JSON.parse(JSON.stringify(cacheList));
         // 先计数，后清空
         cacheList = [];
-        if(copyList && copyList.length > 0) {
+        if(copyList && copyList.length > 0 && status.value === 1 && (collectNum.value < max_collect.value)) {
           // 发送至Tool平台
           xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', copyList, 'post', 'application/json').then((res) => {
             let rData = JSON.parse(res);
