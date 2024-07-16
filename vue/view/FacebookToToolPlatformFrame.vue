@@ -234,6 +234,8 @@ async function dealFbHistory(Message) {
     }
   } else if (Message.Message === 'error') {
     // UpdatedBloggerError().then();
+    console.log("已到最大等待时间-", finishTime.value*60)
+    pauseCollect().then();
   }
 }
 

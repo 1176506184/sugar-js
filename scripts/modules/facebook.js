@@ -538,7 +538,6 @@ function t2t(timestamp) {
 /*
 * 获取历史帖子
 * */
-
 function waitCondition(check_func, max_sec, msg) {
     msg = msg ? `(${msg})` : '';
     console.log(msg + " 条件检测 【开始】 最多等待" + max_sec + " 秒");
@@ -583,8 +582,10 @@ setInterval(() => {
     if (state === 1) {
         if (data_map.length === data_last_length) {
             no_art_time += 1;
+            console.log('no art, 计时器', no_art_time);
             if (no_art_time > finishTime && !noticed) {
                 noticed = true;
+                console.log('no art, 超时了');
                 chrome.runtime.sendMessage({
                     Message: 'error',
                     type: 'facebook',
