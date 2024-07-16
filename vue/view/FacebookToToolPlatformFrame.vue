@@ -198,6 +198,9 @@ async function dealFbHistory(Message) {
         } catch (e) {
           console.log(e.msg);
         }
+      }else {
+        // 没了，且不够3个
+        await theLastPortSend(cacheList);
       }
 
       if (collectNum.value >= max_collect.value) {
@@ -211,6 +214,7 @@ async function dealFbHistory(Message) {
         let copyList = JSON.parse(JSON.stringify(cacheList));
         // 先计数，后清空
         cacheList = [];
+        console.log('找最后一个', collectNum.value, max_collect.value);
         if(copyList && copyList.length > 0 && status.value === 1 && (collectNum.value < max_collect.value)) {
           // 发送至Tool平台
           xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', copyList, 'post', 'application/json').then((res) => {
@@ -238,6 +242,30 @@ async function dealFbHistory(Message) {
     console.log("已到最大等待时间-", finishTime.value*60)
     pauseCollect().then();
   }
+}
+
+// 最后一批数据，不足3个发送
+async function theLastPortSend(cacheList) {
+  try {
+    let copyList = JSON.parse(JSON.stringify(cacheList));
+    // 先计数，后清空
+    cacheList = [];
+    console.log('找最后一个', collectNum.value, max_collect.value);
+    if(copyList && copyList.length > 0 && status.value === 1 && (collectNum.value < max_collect.value)) {
+      // 发送至Tool平台
+      xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', copyList, 'post', 'application/json').then((res) => {
+        let rData = JSON.parse(res);
+        if (rData.r) {
+          // successPostNum.value += count;
+          collectNum.value += copyList.length;
+        } else {
+          // failNum.value += recount;
+        }
+      });
+    }
+  } catch (e) {
+    console.log(e.msg);
+  }  
 }
 
 onMounted(async () => {
