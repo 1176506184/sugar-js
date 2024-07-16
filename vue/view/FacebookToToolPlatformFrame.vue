@@ -167,10 +167,11 @@ async function dealFbHistory(Message) {
       var commentObj = [{
         "comment": encodeURIComponent(valComment.value),
       }]
+      var kongArr = []
       var tempObject = {
         Title: Message.data?.Title,
         ContentPath: JSON.stringify(Message.data?.ContentPath),
-        Comment: valComment.value? JSON.stringify(commentObj): '',
+        Comment: valComment.value? JSON.stringify(commentObj): JSON.stringify(kongArr),
         Type: 1, // 固定1，图文追评
         CreateUserId: localStorage.getItem("ddid"),
         IsTw: isToFanti.value? 1 : 0,
