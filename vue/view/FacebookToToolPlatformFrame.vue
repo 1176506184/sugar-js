@@ -20,25 +20,36 @@
       <div v-if="isHaveBlogger || 1">
         <el-row gutter="10">
           <el-col :span="10">
-            <el-form-item label="采集数量上限">
+            <el-form-item label="采集数量上限（默认30）">
               <el-input v-model="max_collect"></el-input>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row gutter="10">
           <el-col :span="10">
-            <el-form-item label="下拉无数据后多少时间自动结束（分钟）">
+            <el-form-item label="下拉无数据后多少时间自动结束（单位：分钟）">
               <el-input v-model="finishTime"></el-input>
             </el-form-item>
           </el-col>
-
-          <el-col :span="4">
-            <el-form-item label="是否展开图片">
-              <el-select v-model="openImage">
+        </el-row>
+        <el-row gutter="10">
+          <el-col :span="10">
+            <el-form-item label="帖子文案是否转繁体">
+              <el-select v-model="isToFanti">
                 <el-option :value="true" label="是">是</el-option>
                 <el-option :value="false" label="否">否</el-option>
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row gutter="10">
+          <el-col :span="24">
+            <el-form-item label="脚本素材库追评内容">
+              <el-input v-model="valComment" type="textarea" :rows="5" resize="none"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
         <div style="margin: 30px 0;">
           <div style="font-size: 16px" :class="status === 0 ? 'redText' : 'greenText'">
             <span>当前采集状态</span>：<span>{{ status === 0 ? '停止采集' : '采集中' }}</span>
@@ -79,7 +90,7 @@ const author = ref("")
 const authorLink = ref("")
 const blogger_id = ref("")
 const collect_count = ref("")
-const max_collect = ref(1000)
+const max_collect = ref(30)
 const finishTime = ref(10)
 const status = ref(0)
 const collectNum = ref(0)
@@ -88,33 +99,27 @@ const createTime = ref("")
 const successPostNum = ref(0)
 const waitNextTimeNum = ref(0)
 const failNum = ref(0);
-const openImage = ref(true);
-const langList = ref([
-  {lang: 0, name: '繁体'},
-  {lang: 1, name: '英文'},
-  {lang: 2, name: '葡语'},
-  {lang: 3, name: '日语'}
-])
+// 转繁体
+const isToFanti = ref(true);
+// 评论追评内容
+const valComment = ref("");
+
 const user = ref({
   userid: '',
   username: ''
 })
 
-const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
-const form = reactive({
-  lang: 0
-})
 
 async function startCollect() {
   status.value = 1;
   chrome.tabs.sendMessage(
       parseInt(route.query.activeId),
       {
-        Message: "startCollectHistory",
+        Message: "startCollectImageToTool",
         max_collect: max_collect.value,
         finishTime: finishTime.value,
         frameId: route.query.activeId,
-        openImage: openImage.value
+        isToFanti: isToFanti.value
       },
       function (response) {
         if (response?.state !== 200) {
@@ -135,7 +140,7 @@ async function pauseCollect() {
   chrome.tabs.sendMessage(
       parseInt(route.query.activeId),
       {
-        Message: "pauseCollectHistory",
+        Message: "pauseCollectImageToTool",
         frameId: route.query.activeId
       },
       function (response) {
@@ -151,82 +156,78 @@ async function pauseCollect() {
 let cacheList = [];
 
 async function dealFbHistory(Message) {
-  if (Message.Message === 'history' && Message.frameId.toString() === route.query.activeId.toString()) {
+  if (Message.Message === 'imageToTool' && Message.frameId.toString() === route.query.activeId.toString()) {
+    // 反显博主名称、博主链接
     author.value = Message.author.replace(/\s/g, '');
     authorLink.value = Message.authorLink.replace(/\s/g, '');
-    // 查询库里有没有该博主
-    const loadingTask = ElLoading.service({
-      lock: true,
-      text: '正在查询该博主信息',
-      background: 'rgba(0, 0, 0, 0.6)',
-    })
-    let d = await hHttp(`/BloggerNew/getBloggerNewByNameUrl`, {
-      url: authorLink.value,
-      name: author.value
-    })
-    loadingTask.close();
-    if (d.state) {
-      let resData = d.data
-      console.log(resData.id);
-      blogger_id.value = resData.id
-      collect_count.value = resData.capture_count ? resData.capture_count : '0'
 
-      createUserName.value = resData.create_name;
-      createTime.value = resData.create_time.split('T')[0];
-    }
-  } else if (Message.Message === 'history_data' && Message.frameId.toString() === route.query.activeId.toString()) {
+  } else if (Message.Message === 'imageToTool_data' && Message.frameId.toString() === route.query.activeId.toString()) {
     console.log(Message.data)
     if (collectNum.value < max_collect.value) {
-      cacheList.push({
-        blogger_id: blogger_id.value,
-        ...Message.data
-      })
+      var commentObj = [{
+        "comment": encodeURIComponent(valComment.value),
+      }]
+      var tempObject = {
+        Title: Message.data?.Title,
+        ContentPath: JSON.stringify(Message.data?.ContentPath),
+        Comment: JSON.stringify(commentObj),
+        Type: 1, // 固定1，图文追评
+        CreateUserId: localStorage.getItem("ddid"),
+      }
+      cacheList.push(tempObject);
 
-      if (cacheList.length >= 5) {
+      console.log(cacheList);
+
+      if (cacheList.length >= 3) {
         try {
-          let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', cacheList);
-          cacheList = [];
-          if (state && count > 0) {
-            successPostNum.value += count;
-            collectNum.value += count;
-          } else {
-            failNum.value += recount;
-          }
+          // 发送至Tool平台
+          xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', cacheList, 'post', 'application/json').then((res) => {
+            let rData = JSON.parse(res);
+            if (rData.r) {
+              // successPostNum.value += count;
+              collectNum.value += cacheList.length;
+            } else {
+              // failNum.value += recount;
+            }
+            // 先计数，后清空
+            cacheList = [];
+          });
         } catch (e) {
-
+          console.log(e.msg);
         }
       }
 
       if (collectNum.value >= max_collect.value) {
-        UpdatedBlogger(Message.data.publish_time).then();
+        // UpdatedBlogger(Message.data.publish_time).then();
         pauseCollect().then();
       }
     } else {
       try {
         let tempData = cacheList;
-        cacheList = [];
-        let {state, count, recount} = await hHttp('/BloggerCaptureHistoryNew/AddArticle', tempData);
-        if (state && count > 0) {
-          successPostNum.value += count;
-          collectNum.value += count;
-          failNum.value += recount;
-        } else {
-          failNum.value += recount;
-        }
+        // 发送至Tool平台
+        xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', tempData, 'post', 'application/json').then((res) => {
+          let rData = JSON.parse(res);
+          if (rData.r) {
+            // successPostNum.value += count;
+            collectNum.value += cacheList.length;
+          } else {
+            // failNum.value += recount;
+          }
+          cacheList = [];
+        });
       } catch (e) {
-
+        console.log(e.msg);
       }
     }
   } else if (Message.Message === 'error') {
-    UpdatedBloggerError().then();
+    // UpdatedBloggerError().then();
   }
 }
 
 onMounted(async () => {
   // 调用接口，校验ddid
-  let ddid = localStorage.getItem("ddid")
-
-  const loadingTask = ElLoading.service({
+  let ddid = localStorage.getItem("ddid");
+  /* const loadingTask = ElLoading.service({
     lock: true,
     text: '正在查询用户信息',
     background: 'rgba(0, 0, 0, 0.6)',
@@ -244,8 +245,7 @@ onMounted(async () => {
     })
     return;
   }
-
-  loadingTask.close();
+  loadingTask.close(); */
 
   chrome.runtime.onMessage.addListener(dealFbHistory);
 
@@ -254,7 +254,7 @@ onMounted(async () => {
       chrome.tabs.sendMessage(
           parseInt(route.query.activeId),
           {
-            Message: "history",
+            Message: "imageToTool",
             frameId: route.query.activeId
           },
           function (response) {
@@ -272,7 +272,7 @@ onMounted(async () => {
 
 
 function close() {
-  chrome.runtime.onMessage.removeListener(dealFbHistory)
+  chrome.runtime.onMessage.removeListener(dealFbHistory);
   window.close();
 }
 
