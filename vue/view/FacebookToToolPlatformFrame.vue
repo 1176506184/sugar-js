@@ -163,7 +163,7 @@ async function dealFbHistory(Message) {
 
   } else if (Message.Message === 'imageToTool_data' && Message.frameId.toString() === route.query.activeId.toString()) {
     console.log(Message.data)
-    if (collectNum.value < max_collect.value) {
+    if (parseInt(collectNum.value) < parseInt(max_collect.value)) {
       var commentObj = [{
         "comment": encodeURIComponent(valComment.value),
       }]
@@ -207,7 +207,7 @@ async function dealFbHistory(Message) {
         pauseCollect().then();
       }
     } else {
-      if (collectNum.value = max_collect.value) {
+      if (collectNum.value == max_collect.value) {
         // UpdatedBlogger(Message.data.publish_time).then();
         pauseCollect().then();
       }
