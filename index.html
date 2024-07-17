@@ -160,18 +160,16 @@
 </body>
 
 <script>
-
-
     const {
         makeSugar,
         onMounted,
-        ref,
         instance,
         sugarUI,
         useState,
         useEffect,
         nextTick,
-        createSSRApp
+        createSSRApp,
+        watch
     } = SUGAR;
 
     var sugar = makeSugar({
@@ -190,6 +188,9 @@
             const [list, setList] = useState([{
                 title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
                 cover: '//cdn.supertime01.com/thumb.ashx?path=%2fdpxs%2f20240520%2f2DA622C0761Ew800h1200.Jpeg&width=150&height=200'
+            }, {
+                title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
+                cover: '//cdn.sweetastes.com/thumb.ashx?path=%2fdpxs%2f20221007%2f6F15A9339A07w300h400.Jpeg&width=150&height=200'
             }, {
                 title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
                 cover: '//cdn.sweetastes.com/thumb.ashx?path=%2fdpxs%2f20221007%2f6F15A9339A07w300h400.Jpeg&width=150&height=200'
@@ -214,7 +215,7 @@
                 setActive(true);
                 setTimeout(() => {
                     setTop(0);
-                }, 100);
+                }, 200);
             }
 
             function closeImage() {
@@ -232,7 +233,7 @@
 
             useEffect(() => {
 
-            }, [active]);
+            }, [showImageActive]);
 
             return {
                 state,
@@ -254,32 +255,6 @@
     sugar.install(sugarUI);
 
     sugar.mount('#app');
-
-    createSSRApp({
-        render: `<div>
-                    <div @click="change" :style="'font-size:' + state.fontSize + 'px'">{{state.name}}</div>
-                    <div s-for="(item,index) in state.list">{{index}}</div>
-                 </div>`,
-        bulk: () => {
-            const [state, setState] = useState({
-                name: '张三',
-                list: [{}, {}],
-                fontSize: 14
-            });
-
-            function change(){
-                setState({
-                    ...state,
-                    fontSize: state.fontSize + 1
-                })
-            }
-
-            return {
-                state,
-                change
-            };
-        }
-    });
 
 
 </script>

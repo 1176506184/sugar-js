@@ -1,5 +1,4 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
-import { uiEffect } from '@sugar/sugar-reactive';
 import patch from './patch';
 import { escape2Html } from '@sugar/sugar-shared';
 
@@ -14,6 +13,10 @@ export function sugarRender () {
     if (vm.ssr) {
       render = vm.ssrRender;
     }
+    pushUiEffect(vm, data);
+  }
+
+  function pushUiEffect (vm, data) {
     bindT(vm, data);
     Object.values(data).forEach((item: any) => {
       if (typeof item === 'object' && item.sugarRefDataType === 'useState') {
@@ -22,20 +25,18 @@ export function sugarRender () {
         });
       }
     });
-    update(vm);
     vm.forceUpdate = function () {
       update(vm);
     };
+    update(vm);
   }
 
   function update (vm: any) {
-    uiEffect(() => {
-      const vmFiber: any = VmDataRefPassive(vm);
-      const vnode = render.call(vmFiber);
-      bindAttrAndEvent(vmFiber, vnode);
-      patch(vmFiber, vnode);
-      vmFiber._vnode = vnode;
-    });
+    const vmFiber: any = VmDataRefPassive(vm);
+    const vnode = render.call(vmFiber);
+    bindAttrAndEvent(vmFiber, vnode);
+    patch(vmFiber, vnode);
+    vmFiber._vnode = vnode;
   }
 
   return {

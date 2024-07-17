@@ -1,16 +1,11 @@
 import { deepClone, guid } from '@sugar/sugar-shared';
-import { mountHandleList, updateActiveId } from '@sugar/sugar-hook';
-import { createEffect, ref, uiEffect } from '@sugar/sugar-reactive';
+import { mountHandleList, updateActiveId, useState } from '@sugar/sugar-hook';
 import { bindAttrAndEvent, bindT, VmDataRefPassive } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patch from './patch';
 import { addComponentCache, getComponentCache } from './componentCache';
 
-export function bulkComponent (instance) {
-  const {
-    _vnode,
-    parentComponent
-  } = instance;
+export function bulkComponent (_vnode: any, parentComponent: any) {
   const {
     data: {
       attrs,
@@ -29,7 +24,9 @@ export function bulkComponent (instance) {
     if (propName === 'instance') {
       parentInstance = attrs[propName];
     } else {
-      props[propName] = ref(attrs[propName]);
+      const [tempGet, tempSet] = useState(attrs[propName]);
+      props[propName] = tempGet;
+      props[propName + '_sugar_setState'] = tempSet;
     }
   });
   Object.keys(on).forEach((propName) => {
@@ -117,20 +114,28 @@ export function componentRender () {
     render = code;
     bindT(vm, data);
     update(vm);
+
+    Object.values(data).forEach((item: any) => {
+      if (typeof item === 'object' && item.sugarRefDataType === 'useState') {
+        item.initDep(() => {
+          update(vm);
+        });
+      }
+    });
+
     vm.forceUpdate = function () {
       update(vm);
     };
+    update(vm);
     return vm.forceUpdate;
   }
 
   function update (vm) {
-    uiEffect(() => {
-      const vnode = render.call(VmDataRefPassive(vm));
-      bindAttrAndEvent(vm, vnode);
-      assembling(vnode, vm.slot);
-      patch(vm, vnode);
-      vm._vnode = vnode;
-    });
+    const vnode = render.call(VmDataRefPassive(vm));
+    bindAttrAndEvent(vm, vnode);
+    assembling(vnode, vm.slot);
+    patch(vm, vnode);
+    vm._vnode = vnode;
   }
 
   function assembling (_n, slot) {

@@ -1,4 +1,4 @@
-export function useEffect (fun, deps = []) {
+export function useEffect (fun, deps = [], run = false) {
   if (typeof fun === 'object') {
     console.log(fun.render());
   } else {
@@ -7,5 +7,8 @@ export function useEffect (fun, deps = []) {
         dep.initDep(fun);
       }
     });
+  }
+  if (run) {
+    fun();
   }
 }

@@ -19,13 +19,12 @@ function makeSugar (options: Core) {
     components: [],
     sugar: {},
     slot: options.slot,
-    _fiber: null,
     ssr: options.ssr,
     ssrRender: options.ssrRender
   };
 
   function mount (el) {
-    vm._vnode = vm._fiber = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
+    vm._vnode = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
     if (vm.ssr) {
       vm._vnode = options.ssrVNode;
       vnodeBindHtml(vm._vnode, vm.$el);

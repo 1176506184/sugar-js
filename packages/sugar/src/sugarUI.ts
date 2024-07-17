@@ -1,4 +1,4 @@
-import { nextTick, reckon, ref, watch } from '@sugar/sugar-reactive';
+import { useEffect, useState } from '@sugar/sugar-hook';
 
 const button = {
   name: 'sugar-button',
@@ -7,10 +7,10 @@ const button = {
                     <slot name="label"></slot>
                  </button>`,
   bulk (ctx) {
-    const text: any = ref(0);
+    const [text, setText]: any = useState(0);
 
     function click () {
-      text.value += 1;
+      setText(text.value + 1);
       ctx.click();
     }
 
@@ -32,28 +32,27 @@ const dialog = {
         </div>
 </div>`,
   bulk (ctx) {
-    const show: any = ref(false);
-    const opacity: any = ref(0);
-    watch(ctx.model, (value) => {
-      if (value) {
-        show.value = true;
+    const [show, setShow]: any = useState(false);
+    const [opacity, setOpacity]: any = useState(0);
+
+    useEffect(() => {
+      if (ctx.model.value) {
+        setShow(true);
         setTimeout(() => {
-          opacity.value = 1;
+          setOpacity(1);
         }, 50);
       } else {
-        opacity.value = 0;
+        setOpacity(0);
         setTimeout(() => {
-          show.value = false;
+          setShow(false);
         }, 300);
       }
-    }, {
-      deep: true,
-      immediate: true
-    });
+    }, [ctx.model], true);
 
     function close () {
       ctx.close();
     }
+
     return {
       show,
       close,

@@ -56,7 +56,8 @@ export default function patch (vm, newVnode) {
           }
         }
       } else if (isComponent(vnode, vm.components)) {
-        const app = mountComponent(vnode, vm.components[vnode.tag]);
+        console.log(vnode);
+        const app = bulkComponent(vnode, vm.components[vnode.tag]);
         vnode.elm = app.vm.$el;
         vnode._sugar = app;
         domNode = vnode.elm;
@@ -230,14 +231,6 @@ export default function patch (vm, newVnode) {
   }
 }
 
-export function mountComponent (vnode, parentComponent) {
-  const instance = {
-    _vnode: vnode,
-    parentComponent
-  };
-  return bulkComponent(instance);
-}
-
 export function updateComponent (newVnode: any, oldVnode: any) {
   Object.keys(oldVnode._sugar.vm.props).forEach(prop => {
     const {
@@ -245,7 +238,7 @@ export function updateComponent (newVnode: any, oldVnode: any) {
       on
     } = newVnode.data;
     if (Object.keys(attrs).includes(prop)) {
-      oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
+      oldVnode._sugar.vm.props[prop + '_sugar_setState'](newVnode.data.attrs[prop]);
     } else if (Object.keys(on).includes(prop)) {
       if (newVnode.data.on[prop].parameters) {
         oldVnode._sugar.vm.props[prop] = function () {
