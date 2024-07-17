@@ -198,9 +198,6 @@ async function dealFbHistory(Message) {
         } catch (e) {
           console.log(e.msg);
         }
-      }else {
-        // 没了，且不够3个
-        await theLastPortSend(cacheList);
       }
 
       if (collectNum.value >= max_collect.value) {
@@ -210,6 +207,10 @@ async function dealFbHistory(Message) {
         pauseCollect().then();
       }
     } else {
+      if (collectNum.value = max_collect.value) {
+        // UpdatedBlogger(Message.data.publish_time).then();
+        pauseCollect().then();
+      }
       try {
         let copyList = JSON.parse(JSON.stringify(cacheList));
         // 先计数，后清空
@@ -240,6 +241,10 @@ async function dealFbHistory(Message) {
   } else if (Message.Message === 'error') {
     // UpdatedBloggerError().then();
     console.log("已到最大等待时间-", finishTime.value*60)
+    
+    // 没了，且不够3个
+    await theLastPortSend(cacheList);
+    // 暂停采集
     pauseCollect().then();
   }
 }
