@@ -282,6 +282,17 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({state: 200});
         pauseCollectHistory(Message);
     }
+    else if (Message.Message === 'imageToTool') {
+        // 图文追评到Tool平台
+        sendResponse({ state: 200 });
+        dealHistoryData(Message).then();
+    } else if (Message.Message === 'startCollectImageToTool') {
+        sendResponse({ state: 200 });
+        startCollectImageToTool(Message);
+    } else if (Message.Message === 'pauseCollectImageToTool') {
+        sendResponse({ state: 200 });
+        pauseCollectImageToTool(Message);
+    }
 })
 
 function sendData() {
@@ -527,7 +538,6 @@ function t2t(timestamp) {
 /*
 * 获取历史帖子
 * */
-
 function waitCondition(check_func, max_sec, msg) {
     msg = msg ? `(${msg})` : '';
     console.log(msg + " 条件检测 【开始】 最多等待" + max_sec + " 秒");
@@ -572,8 +582,10 @@ setInterval(() => {
     if (state === 1) {
         if (data_map.length === data_last_length) {
             no_art_time += 1;
+            console.log('no art, 计时器', no_art_time);
             if (no_art_time > finishTime && !noticed) {
                 noticed = true;
+                console.log('no art, 超时了');
                 chrome.runtime.sendMessage({
                     Message: 'error',
                     type: 'facebook',
@@ -607,9 +619,31 @@ function startCollectHistory(data) {
         openImage = data.openImage;
         finishTime = data.finishTime * 60
         max_collect = data.max_collect
-        collectHistory().then();
+        collectHistory(1).then();
     }
 }
+
+function startCollectImageToTool(data) {
+
+    if (frameId !== data.frameId && frameId !== "") {
+        return
+    }
+
+    /* if (!isInBody) {
+        isInBody = true;
+        document.body.appendChild(div);
+        div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
+    } */
+
+    if (state === 0) {
+        state = 1;
+        openImage = true;
+        finishTime = data.finishTime * 60;
+        max_collect = data.max_collect;
+        collectHistory(2).then();
+    }
+}
+
 
 function pauseCollectHistory(data) {
     if (frameId !== data.frameId && frameId !== "") {
@@ -618,7 +652,14 @@ function pauseCollectHistory(data) {
     state = 0;
 }
 
-async function collectHistory() {
+function pauseCollectImageToTool(data) {
+    if (frameId !== data.frameId && frameId !== "") {
+        return
+    }
+    state = 0;
+}
+
+async function collectHistory(collecttype) {
     if (state === 1) {
 
         try {
@@ -753,9 +794,12 @@ async function collectHistory() {
                         posturl = 'https://www.facebook.com' + posturl;
                     }
                 }
+                try {
+                    if (!posturl || posturl === '#') {
+                        posturl = needCollect.querySelector(dealClass('x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1sur9pj xkrqix3 xo1l8bm')).href;
+                    }
+                }catch(err) {
 
-                if (!posturl || posturl === '#') {
-                    posturl = needCollect.querySelector(dealClass('x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1sur9pj xkrqix3 xo1l8bm')).href;
                 }
 
                 FireEvent(dateMin, 'pointerover');
@@ -871,6 +915,19 @@ async function collectHistory() {
                 for (let i = 0; i < imgs.length; i++) {
                     imgurl += imgs[i] + ';';
                 }
+                // 图文追评到Tool的数据
+                console.log("开始处理图文追评到Tool的数据， PageType：" + PageType);
+
+                let imgArray = [];
+                for (let i = 0; i < imgs.length; i++) {
+                    // 图片最多采集6张
+                    if(i < 6) {
+                        let pic = {
+                            'pic': imgs[i],
+                        }
+                        imgArray.push(pic);
+                    }
+                }
 
                 let articleurl = ''
 
@@ -903,41 +960,83 @@ async function collectHistory() {
                         tag = title;
                     }
                 }
-
-                var postTime = timeOk(dateMax.toString());
+                // 发文时间
+                try {
+                    var postTime = timeOk(dateMax.toString());
+                }catch(error) {
+                    var postTime = "";
+                }
                 let returnmsg = ''
                 let materialRemark = ''
 
-                try {
-                    let data = {
-                        article_type: PageType,
-                        title: encodeURI(tag),
-                        source_urls: PageType === 2 ? imgurl : video_url,
-                        post_url: posturl,
-                        article_url: articleurl,
-                        move_total: totalmove,
-                        likes: good,
-                        shares: share,
-                        comments: comment,
-                        return_msg: returnmsg,
-                        remark: materialRemark,
-                        publish_time: postTime
-                    };
-                    console.log(data);
-                    data_map.push(data);
-                    div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
-                    chrome.runtime.sendMessage({
-                        Message: 'history_data',
-                        frameId: frameId,
-                        type: 'facebook',
-                        data: data
-                    }).then(r => {
+                if (collecttype == 2) {
+                    console.log("开始采集Tool脚本素材库！！！")
+                    // 现采图文追评到Tool
+                    try {
+                        if (PageType === 2) {
+                            let data = {
+                                Type: PageType,
+                                Title: encodeURI(tag),
+                                ContentPath: imgArray,
+                                /* post_url: posturl,
+                                article_url: articleurl,
+                                move_total: totalmove,
+                                likes: good,
+                                shares: share,
+                                comments: comment,
+                                return_msg: returnmsg,
+                                remark: materialRemark,
+                                publish_time: postTime */
+                            };
+                            console.log(data);
+                            data_map.push(data);
+                            div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
+                            chrome.runtime.sendMessage({
+                                Message: 'imageToTool_data',
+                                frameId: frameId,
+                                type: 'facebook',
+                                data: data
+                            }).then(r => {
 
-                    })
+                            })
+                        }
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }else {
+                    // 原采历史方法
+                    try {
+                        let data = {
+                            article_type: PageType,
+                            title: encodeURI(tag),
+                            source_urls: PageType === 2 ? imgurl : video_url,
+                            post_url: posturl,
+                            article_url: articleurl,
+                            move_total: totalmove,
+                            likes: good,
+                            shares: share,
+                            comments: comment,
+                            return_msg: returnmsg,
+                            remark: materialRemark,
+                            publish_time: postTime
+                        };
+                        console.log(data);
+                        data_map.push(data);
+                        div.innerText = `当前已采集${data_map.length}条数据，最大采集数量${max_collect}`;
+                        chrome.runtime.sendMessage({
+                            Message: 'history_data',
+                            frameId: frameId,
+                            type: 'facebook',
+                            data: data
+                        }).then(r => {
 
-                } catch (e) {
-                    console.log(e);
+                        })
+
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
+                
 
                 if (document.querySelectorAll('[aria-posinset]').length > 3) {
                     needCollect.remove();
@@ -946,7 +1045,7 @@ async function collectHistory() {
                 historyCollectIndex += 1;
 
                 if (state === 1) {
-                    collectHistory().then();
+                    collectHistory(collecttype).then();
                 }
 
             } else {
@@ -956,14 +1055,14 @@ async function collectHistory() {
                 historyCollectIndex += 1;
 
                 if (state === 1) {
-                    collectHistory().then();
+                    collectHistory(collecttype).then();
                 }
             }
         } catch (e) {
             console.log(e);
             if (state === 1) {
                 historyCollectIndex += 1;
-                collectHistory().then();
+                collectHistory(collecttype).then();
             }
         }
     }
@@ -971,7 +1070,6 @@ async function collectHistory() {
 
 // FB采历史
 async function dealHistoryData(data) {
-
 
     if (frameId === "") {
         frameId = data.frameId;
@@ -981,6 +1079,17 @@ async function dealHistoryData(data) {
 
     chrome.runtime.sendMessage({
         Message: 'history',
+        frameId: frameId,
+        type: 'facebook',
+        data: '',
+        author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,
+        authorLink: location.href.includes('profile.php') ? location.href.split('&')[0] : (location.origin + (location.pathname[location.pathname.length - 1] === '/' ? location.pathname.slice(0, -1) : location.pathname)),
+    }).then(r => {
+
+    })
+
+    chrome.runtime.sendMessage({
+        Message: 'imageToTool',
         frameId: frameId,
         type: 'facebook',
         data: '',
