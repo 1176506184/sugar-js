@@ -190,7 +190,7 @@ async function dealFbHistory(Message) {
             let rData = JSON.parse(res);
             if (rData.r) {
               // successPostNum.value += count;
-              collectNum.value += copyList.length;
+              collectNum.value = parseInt(collectNum.value) + copyList.length;
             } else {
               // failNum.value += recount;
             }
@@ -222,7 +222,9 @@ async function dealFbHistory(Message) {
             let rData = JSON.parse(res);
             if (rData.r) {
               // successPostNum.value += count;
-              collectNum.value += copyList.length;
+              // console.log(collectNum.value);
+              // console.log(parseInt(collectNum.value));
+              collectNum.value = parseInt(collectNum.value) + copyList.length;
             } else {
               // failNum.value += recount;
             }
@@ -262,7 +264,7 @@ async function theLastPortSend(cacheList) {
         let rData = JSON.parse(res);
         if (rData.r) {
           // successPostNum.value += count;
-          collectNum.value += copyList.length;
+          collectNum.value = parseInt(collectNum.value) + copyList.length;
         } else {
           // failNum.value += recount;
         }
