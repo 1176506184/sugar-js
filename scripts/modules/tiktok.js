@@ -316,5 +316,56 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({
             state: 200
         });
+    } else if (Message.Message === 'video_init') {
+        sendResponse({
+            state: 200
+        });
+        videoInit().then()
     }
 })
+
+
+async function videoInit() {
+    try {
+        let data = document.querySelector('#SIGI_STATE')?.innerHTML
+        if (data) {
+            data = JSON.parse(data).ItemModule;
+            videoDataList.push(...Object.values(data).map((d) => {
+                return d
+            }));
+        }
+    } catch (e) {
+
+    }
+
+    // div = document.createElement('div');
+    // div.style = 'border:1px solid #cdcdcd;position:fixed;top:10px;right:10px;background:#fff;z-index:99999999999;border-radius:5px;display:flex;justify-content:center;align-items:center;padding:10px'
+    // document.body.append(div)
+    // div.innerText = '开始中'
+
+    chrome.runtime.sendMessage({
+        Message: 'tiktokFrame',
+        data: {
+            itemList: removeDuplicatesById(videoDataList.map((item) => {
+                return {
+                    authorId: item.author.id,
+                    stats: item.stats,
+                    video: {
+                        duration: item.video.duration,
+                        cover: item.video.cover,
+                        downloadAddr: item.video.downloadAddr
+                    },
+                    desc: item.desc,
+                    id: item.id,
+                    author: item.author
+                }
+            }))
+        },
+        author: document.querySelector('h1[data-e2e="user-title"]')?.innerText,
+        homepage: location.href
+    }).then(() => {
+
+    })
+
+
+}

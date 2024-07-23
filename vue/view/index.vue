@@ -1351,19 +1351,13 @@ async function collectTiktokFrame() {
 }
 
 async function collectTiktokFrameSingle() {
-  let pageId = await getId("TiktokFrameSingle");
-  if (pageId !== false) {
-    await chrome.tabs.update(pageId, {
-      active: true
-    })
-  } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TiktokFrameSingle',
-      active: true
-    }, (tab) => {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/TiktokFrameSingle?activeId=' + activeId,
+    active: true
+  }, (tab) => {
 
-    })
-  }
+  })
 }
 
 async function collectDouyinFrame() {

@@ -4,15 +4,25 @@
     <div class="layout_top"
          style="height: 35px;display: flex;align-items: center;justify-content: flex-start;position: relative">
       <span style="font-size: 15px;font-weight: bold;margin-right: 5px">当前博主</span>
-      <el-input v-model="author" style="display: inline-flex;flex:1;width: 500px">
+      <el-input v-model="author" style="display: inline-flex;flex:1;width: 500px" readonly>
         <template #append>
-          <el-button @click="getNextCollect">
+          <el-button @click="getNextCollect" :loading="loading">
             采集
           </el-button>
         </template>
       </el-input>
     </div>
     <el-form label-position="top" style="height: auto;padding: 20px;">
+      <el-form-item>
+        <el-cascader
+            filterable
+            placeholder="请选择分类"
+            style="width: 100%"
+            v-model="type"
+            :options="category"
+            :props="props"
+        />
+      </el-form-item>
     </el-form>
 
   </div>
@@ -26,82 +36,99 @@ import {useRoute} from "vue-router";
 import {xhrHttp} from "../utils/request";
 import {DIR, getNowDate, guid} from "../utils/utils";
 
+const route = useRoute()
 const data = ref({})
-const author = ref("")
-const lastGetAuthor = ref("");
 let pageObj = {}
+const active_id = ref("")
+const loading = ref(false)
+
+const type = ref(null)
+const author = ref('')
+const category = ref([])
+const props = {
+  expandTrigger: 'hover',
+  value: 'tag_id',
+  label: 'tag_name'
+}
+
 
 async function getNextCollect() {
 
-  let timeStamp = (new Date()).getTime();
-  let data = await xhrHttp('http://121.199.14.173:8080/tictok/GetMirrorTaskTest?v=' + timeStamp + '&author_id=7051853387402576902', {}, 'post');
-  if (data['errorCode'] === -1) {
-    ElMessage.error("获取任务失败")
+  if ((type.value?.length === 0 || !type.value)) {
+    ElMessage.error("请选择分类")
+    return
   }
-
-  author.value = data.homepage;
-  lastGetAuthor.value = data.homepage;
-  pageObj = data;
-
-  chrome.tabs.query(
-      {},
-      async function (tabs) {
-        for (let i = tabs.length - 1; i >= 0; i--) {
-          let tab = tabs[i];
-          if (!tab.url.includes('out.html#/TiktokFrame') && tab.url.includes('tiktok')) {
-            let result = await sendTask(tab, data);
-            if (result === 1) break;
-          }
+  loading.value = true;
+  chrome.tabs.sendMessage(
+      parseInt(route.query.activeId),
+      {
+        Message: "video_init"
+      },
+      function (response) {
+        if (response?.state !== 200) {
+          ElMessage.warning({
+            message: '未获取到内容，请重试'
+          })
         }
+
+        chrome.tabs.update(parseInt(active_id.value), {
+          active: true
+        })
+
       }
   );
 
 }
 
-function sendTask(tab, data) {
-  return new Promise((r, j) => {
-    chrome.tabs.sendMessage(
-        tab.id,
-        {
-          Message: "video_frame",
-          nextHref: data.homepage
-        },
-        function (response) {
-          console.log(response)
-          if (response?.state === 200 && !response.isCollected) {
-            r(1)
-          } else {
-            r(-1)
-          }
+async function getId(hash) {
+  return new Promise((r) => {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab['url']?.includes(`chrome-extension://jkobepngkjafdjkkdkebjohjclihidnj/html/out.html#/${hash}`)) {
+          r(tab.id)
         }
-    );
+      })
+      r(false)
+    })
   })
 }
 
-function dealYoutubeVideo(Message) {
+
+async function dealYoutubeVideo(Message) {
   if (Message.Message === 'tiktokFrame') {
+    let pageId = await getId("TiktokFrameSingle");
+    await chrome.tabs.update(parseInt(pageId), {
+      active: true
+    })
     data.value = Message.data;
     try {
-      let callBackUrl = 'http://121.199.14.173:8080/tictok/CallBack';
-      xhrHttp(callBackUrl, {
-        ...data.value,
-        itemList: data.value.itemList?.map((item) => {
-          let authorId = item.authorId;
-          if (!authorId && item.author) {
-            authorId = item.author.id
-          }
-          return {
-            ...item,
-            authorId
-          }
-        }),
-        page_id: pageObj.page_id,
-        author_id: pageObj.author_id,
-        homepage: pageObj.homepage,
-        log_id: pageObj.log_id,
-        statusCode: 0
-      }, 'post', 'application/json').then(() => {
+      let callBackUrl = 'http://101.201.222.226/tictok/addtictok';
+      let authorId = '';
+      const dataUp = data.value.itemList?.map((item) => {
+        authorId = item.authorId;
+        if (!authorId && item.author) {
+          authorId = item.author.id
+        }
+        return {
+          ...item,
+          authorId
+        }
+      });
 
+      author.value = authorId
+
+      xhrHttp(callBackUrl, {
+        itemList: dataUp,
+        author_id: authorId,
+        homepage: Message.homepage,
+        tag_id: type.value?.slice(-1)[0],
+        operator_id: localStorage.getItem('ddid'),
+        statusCode: 0
+      }, 'post', 'application/json').then((res) => {
+        loading.value = false;
+        ElMessage.info({
+          message: res.msg
+        })
       })
     } catch (e) {
       console.log(e)
@@ -109,9 +136,21 @@ function dealYoutubeVideo(Message) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   chrome.runtime.onMessage.addListener(dealYoutubeVideo);
+  const {data} = await xhrHttp('http://101.201.222.226/author/authortaglist', {}, 'post');
+  category.value = buildTree(data, 0);
+  active_id.value = route.query.activeId
 })
+
+function buildTree(FlatData, ParentId = null) {
+  return FlatData
+      .filter(item => item.parent_id === ParentId)
+      .map(item => ({
+        ...item,
+        children: buildTree(FlatData, item.tag_id)
+      }));
+}
 
 </script>
 
