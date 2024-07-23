@@ -209,13 +209,15 @@
               <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">
                 更新视频
               </el-button>
-              <el-button @click="collectTiktokFrameSingle" type="primary">
+              <br/>
+              <el-button @click="collectTiktokFrameSingle" type="primary" style="margin-top: 5px;">
                 更新视频（单个博主）
               </el-button>
               <!--              <el-button @click="collectTiktokFrameScroll" type="primary" :disabled="canTiktokFrame">-->
               <!--                更新历史-->
               <!--              </el-button>-->
-              <el-button @click="collectTiktokCollectHistoryVideo" type="primary" :disabled="canTiktokFrame">
+              <el-button @click="collectTiktokCollectHistoryVideo" type="primary" :disabled="canTiktokFrame"
+                         style="margin-top: 5px;">
                 更新历史（人工）
               </el-button>
             </div>
@@ -265,6 +267,9 @@
             <div>
               <el-button @click="collectTiktokCollectHistoryVideo" type="primary">
                 更新历史（人工）
+              </el-button>
+              <el-button @click="collectTiktokFrameSingle" type="primary">
+                初始化博主
               </el-button>
             </div>
           </el-collapse-item>
@@ -326,7 +331,7 @@ import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(1)
-const owner = ref(0)
+const owner = ref(1)
 
 function changeOpen() {
   chrome.storage.local.set({

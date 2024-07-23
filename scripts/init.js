@@ -193,6 +193,13 @@ if (location.origin.indexOf("douyin") !== -1) {
     }).then(() => {
         console.log("注入快手完成")
     })
+} else if (location.href.includes('zhihu.com')) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'zhihu.js'
+    }).then(() => {
+        console.log("注入知乎完成")
+    })
 } else if (location.href) {
     chrome.runtime.sendMessage({
         Message: "loadScript",

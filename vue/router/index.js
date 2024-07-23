@@ -15,6 +15,7 @@ import TTCollectHistory from "../view/twitterHistoryFrame.vue";
 import InsCollectHistory from "../view/insHistoryFrame.vue";
 import douyinVideo from "../view/douyinVideo.vue";
 import TiktokFrame from "../view/tiktokFrame.vue";
+import TiktokFrameSingle from "../view/TiktokFrameSingle.vue";
 import TiktokVideoFrame from "../view/tiktokVideoFrame.vue";
 import TiktokVideoCommunitySchedulingFrame from "../view/tiktokVideoCommunitySchedulingFrame.vue";
 import ToutiaoCommunitySchedulingFrame from "../view/ToutiaoCommunitySchedulingFrame.vue";
@@ -163,6 +164,13 @@ const routes = [
         name: 'TiktokFrame',
         path: '/TiktokFrame',
         component: TiktokFrame,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    },
+    {
+        name: 'TiktokFrameSingle',
+        path: '/TiktokFrameSingle',
+        component: TiktokFrameSingle,
         props: route => ({query: route.query.q}),
         meta: {}
     },

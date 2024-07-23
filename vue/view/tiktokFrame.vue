@@ -126,7 +126,7 @@ async function getNextCollect(u) {
       if (DIR === 'dist') {
         data = await xhrHttp('http://101.201.222.226/tictok/GetCollectionLogForJob?v=' + timeStamp, {}, 'post');
       } else {
-        data = await xhrHttp('http://121.199.14.173:8080/tictok/GetMirrorTask?v=' + timeStamp, {}, 'post');
+        data = await xhrHttp('http://121.199.14.173:8080/tictok/GetMirror7Day?v=' + timeStamp, {}, 'post');
       }
 
     }
