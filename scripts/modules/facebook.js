@@ -972,10 +972,10 @@ async function collectHistory(collecttype) {
 
                 if (collecttype == 2) {
                     console.log("开始采集Tool脚本素材库！！！")
-                    console.log(good, filterNum)
+                    console.log(parseInt(good), parseInt(filterNum))
                     // 现采图文追评到Tool
                     try {
-                        if (PageType === 2 && good >= filterNum) {
+                        if (PageType === 2 && (parseInt(good) >= parseInt(filterNum))) {
                             let data = {
                                 Type: PageType,
                                 Title: encodeURI(tag),
