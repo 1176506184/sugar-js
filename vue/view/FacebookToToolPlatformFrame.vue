@@ -34,6 +34,13 @@
         </el-row>
         <el-row gutter="10">
           <el-col :span="10">
+            <el-form-item label="贴文点赞数量最小值">
+              <el-input v-model="filterNum"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row gutter="10">
+          <el-col :span="10">
             <el-form-item label="帖子文案是否转繁体">
               <el-select v-model="isToFanti">
                 <el-option :value="true" label="是">是</el-option>
@@ -49,13 +56,13 @@
             </el-form-item>
           </el-col>
         </el-row>
-        
+
         <div style="margin: 30px 0;">
           <div style="font-size: 16px" :class="status === 0 ? 'redText' : 'greenText'">
             <span>当前采集状态</span>：<span>{{ status === 0 ? '停止采集' : '采集中' }}</span>
             <span style="margin-left: 25px;margin-right: 5px;">{{ "|" }}</span>
             <span
-              style="margin-left: 20px">已采集：{{ collectNum }}</span>
+                style="margin-left: 20px">已采集：{{ collectNum }}</span>
             <!-- <span
                 style="margin-left: 20px">重复帖子：{{ failNum }}</span> -->
           </div>
@@ -99,6 +106,7 @@ const createTime = ref("")
 const successPostNum = ref(0)
 const waitNextTimeNum = ref(0)
 const failNum = ref(0);
+const filterNum = ref(100)
 // 转繁体
 const isToFanti = ref(true);
 // 评论追评内容
@@ -119,7 +127,8 @@ async function startCollect() {
         max_collect: max_collect.value,
         finishTime: finishTime.value,
         frameId: route.query.activeId,
-        isToFanti: isToFanti.value
+        isToFanti: isToFanti.value,
+        filterNum: filterNum.value
       },
       function (response) {
         if (response?.state !== 200) {
@@ -171,10 +180,10 @@ async function dealFbHistory(Message) {
       var tempObject = {
         Title: Message.data?.Title,
         ContentPath: JSON.stringify(Message.data?.ContentPath),
-        Comment: valComment.value? JSON.stringify(commentObj): JSON.stringify(kongArr),
+        Comment: valComment.value ? JSON.stringify(commentObj) : JSON.stringify(kongArr),
         Type: 1, // 固定1，图文追评
         CreateUserId: localStorage.getItem("ddid"),
-        IsTw: isToFanti.value? 1 : 0,
+        IsTw: isToFanti.value ? 1 : 0,
       }
       cacheList.push(tempObject);
 
@@ -216,7 +225,7 @@ async function dealFbHistory(Message) {
         // 先计数，后清空
         cacheList = [];
         console.log('找最后一个', collectNum.value, max_collect.value);
-        if(copyList && copyList.length > 0 && status.value === 1 && (collectNum.value < max_collect.value)) {
+        if (copyList && copyList.length > 0 && status.value === 1 && (collectNum.value < max_collect.value)) {
           // 发送至Tool平台
           xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', copyList, 'post', 'application/json').then((res) => {
             let rData = JSON.parse(res);
@@ -242,8 +251,8 @@ async function dealFbHistory(Message) {
     }
   } else if (Message.Message === 'error') {
     // UpdatedBloggerError().then();
-    console.log("已到最大等待时间-", finishTime.value*60)
-    
+    console.log("已到最大等待时间-", finishTime.value * 60)
+
     // 没了，且不够3个
     await theLastPortSend(cacheList);
     // 暂停采集
@@ -258,7 +267,7 @@ async function theLastPortSend(cacheList) {
     // 先计数，后清空
     cacheList = [];
     console.log('找最后一个', collectNum.value, max_collect.value);
-    if(copyList && copyList.length > 0 && status.value === 1 && (collectNum.value < max_collect.value)) {
+    if (copyList && copyList.length > 0 && status.value === 1 && (collectNum.value < max_collect.value)) {
       // 发送至Tool平台
       xhrHttp('http://tool.anyelse.com/open/saveXhFeedBatch', copyList, 'post', 'application/json').then((res) => {
         let rData = JSON.parse(res);
@@ -272,7 +281,7 @@ async function theLastPortSend(cacheList) {
     }
   } catch (e) {
     console.log(e.msg);
-  }  
+  }
 }
 
 onMounted(async () => {
@@ -376,9 +385,11 @@ async function UpdatedBloggerError() {
   text-align: left !important;
   cursor: pointer;
 }
+
 :deep(.redText) {
   color: red;
 }
+
 :deep(.greenText) {
   color: green;
 }

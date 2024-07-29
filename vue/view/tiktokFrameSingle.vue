@@ -84,7 +84,7 @@ async function getId(hash) {
   return new Promise((r) => {
     chrome.tabs.query({}, (tabs) => {
       tabs.forEach(tab => {
-        if (tab['url']?.includes(`chrome-extension://jkobepngkjafdjkkdkebjohjclihidnj/html/out.html#/${hash}`)) {
+        if (tab['url']?.includes(`/html/out.html#/${hash}`)) {
           r(tab.id)
         }
       })

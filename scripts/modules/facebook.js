@@ -281,16 +281,15 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'pauseCollectHistory') {
         sendResponse({state: 200});
         pauseCollectHistory(Message);
-    }
-    else if (Message.Message === 'imageToTool') {
+    } else if (Message.Message === 'imageToTool') {
         // 图文追评到Tool平台
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         dealHistoryData(Message).then();
     } else if (Message.Message === 'startCollectImageToTool') {
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         startCollectImageToTool(Message);
     } else if (Message.Message === 'pauseCollectImageToTool') {
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         pauseCollectImageToTool(Message);
     }
 })
@@ -576,6 +575,7 @@ div.style = 'border:1px solid #cdcdcd;position:fixed;top:10px;left:10px;backgrou
 let isInBody = false;
 let frameId = '';
 let openImage = true;
+let filterNum = 100;
 
 setInterval(() => {
 
@@ -640,6 +640,7 @@ function startCollectImageToTool(data) {
         openImage = true;
         finishTime = data.finishTime * 60;
         max_collect = data.max_collect;
+        filterNum = data.filterNum;
         collectHistory(2).then();
     }
 }
@@ -798,7 +799,7 @@ async function collectHistory(collecttype) {
                     if (!posturl || posturl === '#') {
                         posturl = needCollect.querySelector(dealClass('x1i10hfl xjbqb8w x1ejq31n xd10rxx x1sy0etr x17r0tee x972fbf xcfux6l x1qhh985 xm0m39n x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1sur9pj xkrqix3 xo1l8bm')).href;
                     }
-                }catch(err) {
+                } catch (err) {
 
                 }
 
@@ -921,7 +922,7 @@ async function collectHistory(collecttype) {
                 let imgArray = [];
                 for (let i = 0; i < imgs.length; i++) {
                     // 图片最多采集6张
-                    if(i < 6) {
+                    if (i < 6) {
                         let pic = {
                             'pic': imgs[i],
                         }
@@ -963,7 +964,7 @@ async function collectHistory(collecttype) {
                 // 发文时间
                 try {
                     var postTime = timeOk(dateMax.toString());
-                }catch(error) {
+                } catch (error) {
                     var postTime = "";
                 }
                 let returnmsg = ''
@@ -971,9 +972,10 @@ async function collectHistory(collecttype) {
 
                 if (collecttype == 2) {
                     console.log("开始采集Tool脚本素材库！！！")
+                    console.log(good, filterNum)
                     // 现采图文追评到Tool
                     try {
-                        if (PageType === 2) {
+                        if (PageType === 2 && good >= filterNum) {
                             let data = {
                                 Type: PageType,
                                 Title: encodeURI(tag),
@@ -1003,7 +1005,7 @@ async function collectHistory(collecttype) {
                     } catch (e) {
                         console.log(e);
                     }
-                }else {
+                } else {
                     // 原采历史方法
                     try {
                         let data = {
@@ -1036,7 +1038,7 @@ async function collectHistory(collecttype) {
                         console.log(e);
                     }
                 }
-                
+
 
                 if (document.querySelectorAll('[aria-posinset]').length > 3) {
                     needCollect.remove();
