@@ -5,8 +5,10 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         sendResponse({state: 200});
     } else if (Message.Message === 'GetAnswer') {
         collectNum = Message.num;
-        await getAnswer();
         sendResponse({state: 200});
+        setTimeout(() => {
+            getAnswer();
+        }, 1000)
     } else if (Message.Message === 'checkType') {
         chrome.runtime.sendMessage({
             Message: 'initBtn',

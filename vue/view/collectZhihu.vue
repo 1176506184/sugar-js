@@ -41,13 +41,13 @@
       <el-form-item>
         <div class="dialog-footer"
              style="position: fixed;bottom: 0;text-align: right;background: #fff;width: 1198px;box-sizing: border-box;padding: 10px;z-index:20;border-top: 1px solid #ececec;">
-          <el-select v-if="state === 0" placeholder="分类" v-model="cate"
-                     style="display: inline-block;width: 150px;margin-right: 12px;">
-            <el-option v-for="item in cateList" :value="item" :label="item">{{ item }}</el-option>
-          </el-select>
           <el-select v-if="state === 0" placeholder="域名" v-model="site"
                      style="display: inline-block;width: 200px;margin-right: 12px;">
             <el-option v-for="item in siteList" :value="item" :label="item">{{ item }}</el-option>
+          </el-select>
+          <el-select v-if="state === 0" placeholder="分类" v-model="cate"
+                     style="display: inline-block;width: 150px;margin-right: 12px;">
+            <el-option v-for="item in cateList" :value="item" :label="item">{{ item }}</el-option>
           </el-select>
           <el-button type="primary" @click="getQuestion" v-if="state === 0">
             上传问题
@@ -99,7 +99,7 @@ const detail = ref("")
 const loading = ref(false);
 const text = ref("提交回答");
 const successNum = ref(0)
-const collectNum = ref(50)
+const collectNum = ref(100)
 
 function keepOnlyPTags(html) {
   // 正则表达式匹配除了<p>标签外的所有HTML标签
@@ -259,14 +259,13 @@ async function submitAnswer() {
   loading.value = true;
   const groups = splitIntoGroups(multipleSelection.value, 5);
   for (const group of groups) {
-    await Promise.all(group.map(item => uploadItem(item)));
-    successNum.value += 5;
+    let res = await Promise.all(group.map(item => uploadItem(item)));
+    res = res.map(item => JSON.parse(item)).filter(item => item.state === true);
+    successNum.value += res.length;
+    loading.value = false;
     text.value = "提交中 " + successNum.value + "/" + multipleSelection.value.length;
   }
-  text.value = "提交完成"
-  ElMessage.success("上传成功");
-  window.open("http://twtest.anyelse.com/qa/answer?qid=" + qid.value)
-  state.value = 3;
+  text.value = "提交完成 " + successNum.value + "/" + multipleSelection.value.length;
 }
 
 function close() {
