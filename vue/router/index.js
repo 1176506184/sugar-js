@@ -42,6 +42,7 @@ import WeishiHistory from '../view/weishiHistory.vue'
 import InsVideo from '../view/insVideo.vue'
 import DouyinFrameScroll from '../view/douyinFrameScroll.vue'
 import DouyinVideoCollect from '../view/douyinVideoCollect.vue'
+import CollectZhihu from '../view/collectZhihu.vue'
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -136,7 +137,7 @@ const routes = [
         name: 'FBCollectToToolPlatform',
         path: '/FBCollectToToolPlatform',
         component: FBCollectToToolPlatform,
-        props: route => ({ query: route.query.q }),
+        props: route => ({query: route.query.q}),
         meta: {}
     },
     {
@@ -334,6 +335,12 @@ const routes = [
         name: 'DouyinVideoCollect',
         path: '/DouyinVideoCollect',
         component: DouyinVideoCollect,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'CollectZhihu',
+        path: '/CollectZhihu',
+        component: CollectZhihu,
         props: route => ({query: route.query.q}),
         meta: {}
     }

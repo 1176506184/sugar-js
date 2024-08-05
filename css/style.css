@@ -158,7 +158,8 @@ input {
 
 @media (min-width: 1000px) {
     body {
-        height: 100vh !important;width: 1200px;
+        height: 100vh !important;
+        width: 1200px !important;
     }
 
     .layout_top {
@@ -176,7 +177,6 @@ input {
     }
 
 }
-
 
 
 .book {

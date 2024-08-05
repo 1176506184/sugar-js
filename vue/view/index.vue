@@ -39,7 +39,8 @@
 
       <div id="login_container" v-if="state.isLogin === false"></div>
       <div id="menu" v-if="state.isLogin">
-        <el-collapse v-if="owner === 0" v-model="activeNames" @change="handleChange" style="border-top: 0">
+        <el-collapse v-if="owner === 0" v-model="activeNames" @change="handleChange"
+                     style="border-top: 0;padding-bottom: 50px">
           <el-collapse-item title="抖音视频" name="1">
             <div>
               <!--              <el-button-->
@@ -255,6 +256,16 @@
             </div>
           </el-collapse-item>
 
+          <el-collapse-item title="知乎采集" name="25">
+            <div style="display: flex">
+              <el-button
+                  type="primary"
+                  @click="collectZhihu"
+              >开始采集
+              </el-button>
+            </div>
+          </el-collapse-item>
+
           <!--        <p>脸书社团</p>-->
           <!--        <div>-->
           <!--          <el-button @click="facebook_member" type="primary" :disabled="type!=='facebook'">手动采集</el-button>-->
@@ -349,9 +360,17 @@ const handleChange = (val) => {
 
 function absoluteCollapse() {
   nextTick(() => {
-    const targetPanel = document.querySelector(`.el-collapse-item.is-active`);
-    if (targetPanel) {
-      targetPanel.scrollIntoView({behavior: 'smooth'});
+    try {
+      const targetPanel = document.querySelector(`.el-collapse-item.is-active`);
+      const offset = 50; // 偏移量
+      const topPosition = targetPanel.offsetTop + offset;
+      if (targetPanel) {
+        document.querySelector('#layout_viewer').scrollTo({
+          top: topPosition
+        });
+      }
+    } catch (e) {
+
     }
   })
 }
@@ -457,6 +476,9 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "kuaishou") {
       activeNames.value.push("21");
       store.commit("changeType", "kuaishou");
+    } else if (Message.type === "zhihu") {
+      activeNames.value.push("25");
+      store.commit("changeType", "zhihu");
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
@@ -1267,6 +1289,15 @@ async function pinterestHistoryFrame() {
   }
 }
 
+async function collectZhihu() {
+  let activeId = await getActiveId();
+  chrome.tabs.create({
+    url: '/html/out.html#/collectZhihu?activeId=' + activeId,
+    active: true
+  }, (tab) => {
+
+  })
+}
 
 // 西瓜视频博主源视频排程
 async function ixiguaVideoFrame() {
