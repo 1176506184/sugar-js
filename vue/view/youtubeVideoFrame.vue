@@ -370,6 +370,7 @@ function dealYoutubeVideo(Message) {
           titleTemp = d.title?.runs[0].text
         }
       } catch (e) {
+        titleTemp = d.title
         console.log('未知字符串');
       }
       return {
