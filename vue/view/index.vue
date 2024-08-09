@@ -642,7 +642,6 @@ const eventBus = async function (Message, sender, sendResponse) {
     })
   } else if (Message.Message === "kuaishouData" && Message.type === "kuaishou") {
     console.log(Message.data)
-
     chrome.runtime.sendMessage({
       Message: 'kuaishouUrl',
       url: Message.data.url

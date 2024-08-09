@@ -36,10 +36,12 @@
                     <el-input v-model="row.title"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="播放量" prop="viewCount" sortable :sort-orders="['descending','ascending',null]">
+                <el-table-column label="播放量" prop="viewCount" sortable
+                                 :sort-orders="['descending','ascending',null]">
                 </el-table-column>
 
-                <el-table-column label="播放时长" prop="lengthText" sortable :sort-orders="['descending','ascending',null]">
+                <el-table-column label="播放时长" prop="lengthText" sortable
+                                 :sort-orders="['descending','ascending',null]">
                   <template #default="{ row }">
                     {{ row?.lengthText?.simpleText }}
                   </template>
@@ -387,15 +389,19 @@ function dealYoutubeVideo(Message) {
 
     return
   } else if (Message.Message === 'youtubeVideo') {
+    console.log(Message.data)
     data.value = Message.data.map((d) => {
       let titleTemp = "";
       try {
         if (d.headline?.simpleText) {
           titleTemp = d.headline?.simpleText
-        } else {
+        } else if (d.title?.runs[0]?.text) {
           titleTemp = d.title?.runs[0].text
+        } else {
+          titleTemp = d.title
         }
       } catch (e) {
+        titleTemp = d.title
         console.log('未知字符串');
       }
       return {

@@ -133,14 +133,32 @@ function parseVideo(data) {
         if (typeof d === 'object') {
 
             Object.keys(d).forEach((key) => {
-                if (key === 'videoRenderer' || key === 'reelItemRenderer') {
+                if (key === 'videoRenderer' || key === 'reelItemRenderer' || key === 'shortsLockupViewModel') {
 
-                    if (!videoIds.includes(d[key]?.videoId)) {
+                    if (!d[key]?.videoId) {
+                        work(d[key]);
+                    }
+
+                    if (key === 'shortsLockupViewModel' && !videoIds.includes(d[key].onTap.innertubeCommand.reelWatchEndpoint.videoId)) {
+                        videoData.push({
+                            title: d[key].overlayMetadata.primaryText.content,
+                            videoId: d[key].onTap.innertubeCommand.reelWatchEndpoint.videoId,
+                            viewCountText: {
+                                simpleText: d[key].overlayMetadata.secondaryText.content
+                            },
+                            publishedTimeText: {
+                                simpleText: ''
+                            }
+                        })
+                    }
+
+                    if (!videoIds.includes(d[key]?.videoId) && d[key]?.videoId) {
                         videoIds.push(d[key]?.videoId)
                         d[key].author = document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText ? document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText : document.querySelector('h1.dynamic-text-view-model-wiz__h1').textContent
                         videoData.push(d[key]);
                         youtubeData.push(d[key])
                     }
+
 
                 } else {
                     work(d[key]);

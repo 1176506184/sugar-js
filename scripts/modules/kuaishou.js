@@ -21,7 +21,20 @@ window.addEventListener('message', function (res) {
     }
 })
 
+
 function getData() {
+    var script = Array.from(document.querySelectorAll('script')).filter(item => item.innerHTML.includes('window.INIT_STATE'))[0]
+    if (script) {
+        const value = JSON.parse(script.innerHTML.replace('window.INIT_STATE = ', ''));
+        Object.values(value).forEach(item => {
+            if (item.feeds) {
+                eid = item.feeds[0].userEid;
+                userid = item.feeds[0].userId;
+                userName = item.feeds[0].userName;
+            }
+        })
+    }
+
     chrome.runtime.sendMessage({
         Message: 'kuaishouData',
         type: 'kuaishou',
