@@ -107,6 +107,15 @@ window.addEventListener('message', function (res) {
                     // console.log(data);
                     let Data = data;
                     var json_num = data.user.result.timeline_v2.timeline.instructions.length - 2;
+
+                    console.log('转换前', json_num);
+                    for (let temp = 0; temp < data.user.result.timeline_v2.timeline.instructions.length; temp++) {
+                        if (data.user.result.timeline_v2.timeline.instructions[temp].type == "TimelineAddEntries") {
+                            json_num = temp;
+                        }
+                    }
+                    console.log('转换后', json_num);
+                    
                     // 开始采集
                     await CacheMertial(Data, json_num);
                 }
@@ -828,7 +837,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             clearInterval(timeout);
         } */
     } else if (Message.Message === 'community_image') {
-        console.log('推特排程');
+        console.log('推特图文排程');
 
         // 社团图文排程
         getTwitterImageUrl();
@@ -837,9 +846,9 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             state: 200
         });
     } else if (Message.Message === 'community_video') {
-        console.log('推特排程');
+        console.log('推特视频排程');
 
-        // 社团图文排程
+        // 社团视频排程
         getTwitterVideoUrl();
 
         sendResponse({
