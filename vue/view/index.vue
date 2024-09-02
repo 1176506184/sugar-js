@@ -364,7 +364,7 @@ function absoluteCollapse() {
       const targetPanel = document.querySelector(`.el-collapse-item.is-active`);
       const offset = 50; // 偏移量
       const topPosition = targetPanel.offsetTop + offset;
-      if (targetPanel) {
+      if (targetPanel && topPosition > 400) {
         document.querySelector('#layout_viewer').scrollTo({
           top: topPosition
         });

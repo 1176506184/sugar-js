@@ -105,10 +105,13 @@ window.addEventListener('message', function (res) {
             try {
                 async function handleData(data) {
                     // console.log(data);
-                    let Data = data;
-                    var json_num = data.user.result.timeline_v2.timeline.instructions.length - 2;
-                    // 开始采集
-                    await CacheMertial(Data, json_num);
+                    for (let i = 0; i < data.user.result.timeline_v2.timeline.instructions.length; i++) {
+                        if (data.user.result.timeline_v2.timeline.instructions[i].type === 'TimelineAddEntries') {
+                            // 开始采集
+                            await CacheMertial(data, i);
+                        }
+                    }
+
                 }
 
                 // 取视频博主名字
