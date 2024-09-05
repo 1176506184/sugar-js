@@ -29,6 +29,7 @@ async function injectedScript(path) {
     const scriptNode = document.createElement('script');
     scriptNode.setAttribute('type', 'text/javascript');
     scriptNode.async = true;
+    scriptNode.crossOrigin = 'anonymous'
     scriptNode.setAttribute('data-eden-async-asset', 'true')
     scriptNode.setAttribute('src', chrome.runtime.getURL(path));
     document.documentElement.appendChild(scriptNode);
@@ -46,7 +47,6 @@ chrome.storage.local.get('open', (res) => {
             injectedScript('scripts/xhr/xhr.js').then(r => {
 
             })
-
             chrome.runtime.sendMessage({
                 Message: "loadScript",
                 script: 'jquery.js'

@@ -6,7 +6,7 @@ window.addEventListener('message', function (res) {
 
     if (res.data.Message === 'ajax') {
         if (res.data.url && (res.data.url.indexOf("rest/wd/feed/profile") !== -1)) {
-
+            console.log(res.data.data);
             if (res.data.data.feeds[0].user) {
                 eid = res.data.data.feeds[0].userEid;
                 userid = res.data.data.feeds[0].user.user_id;

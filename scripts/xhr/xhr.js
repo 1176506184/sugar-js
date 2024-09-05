@@ -248,6 +248,19 @@ if (location.href.indexOf('x.com') !== -1 || location.href.indexOf('instagram') 
         } else {
             window.XMLHttpRequest = ajax_tools_space.myXHR;
         }
+        if (location.href.includes('kuaishou')) {
+
+            // Object.defineProperty(window, 'XMLHttpRequest', {
+            //     get: ajax_tools_space.myXHR
+            // })
+            //
+            // Object.defineProperty(window, 'fetch', {
+            //     get: ajax_tools_space.myFetch
+            // })
+
+
+        }
+
         console.log("注入XHR 完成")
     } else {
         console.log("不注入")
