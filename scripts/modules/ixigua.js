@@ -1,3 +1,4 @@
+
 window.addEventListener('message', function (res) {
     if (res.data.Message === 'ajax') {
         // ixigua采集历史数据
@@ -56,6 +57,21 @@ var first_page_data = {};
 var toFenxiList = [];
 // 刷新时是否处理过第一屏
 var Flag = false;
+
+let timer = setInterval(() => {
+    let html = document.querySelector('#SSR_HYDRATED_DATA')?.innerHTML.replace(`window.getSSRHydratedData = function () {
+            var data = `, '').replace(`;
+            
+            return data;
+        }`, '').replaceAll('undefined', 'null');
+
+    if (html) {
+        html = JSON.parse(html)
+        first_page_data = html;
+        console.log(html)
+        clearInterval(timer)
+    }
+}, 100)
 
 async function CacheMertial(Data, type) {
     // type == 1 第一屏数据
@@ -309,10 +325,9 @@ async function dealHistoryData(data) {
         return
     }
 
-    // first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
-    // // console.log(first_page_data);
+    // console.log(first_page_data);
     // // 处理第一屏的数据
-    // CacheMertial(first_page_data, '1');
+    CacheMertial(first_page_data, '1');
 
     // 去除链接多余参数
     let locationUrl = location.href;
@@ -413,10 +428,9 @@ var videoData = []
 // 获取排程视频数据
 function getVideo(type) {
     // // console.log("开始返回数据")
-    // first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
     // // 源视频排程
     // // 处理第一屏的数据
-    // CacheMertial(first_page_data, '1');
+    CacheMertial(first_page_data, '1');
     // 加2秒延时，等待第一屏处理结束
     setTimeout(function () {
         if (type === 'ixigua') {

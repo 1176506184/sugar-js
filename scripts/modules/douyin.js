@@ -445,6 +445,12 @@ async function wait(s) {
 async function scrollBottom() {
     // await startGetPageTask();
     window.scrollTo(0, document.documentElement.scrollHeight)
+    try {
+        window.scrollTo(0, document.documentElement.scrollHeight)
+        document.querySelector('.route-scroll-container').scrollTop = (document.querySelector('.route-scroll-container').scrollHeight)
+    } catch (e) {
+
+    }
 }
 
 
