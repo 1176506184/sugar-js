@@ -68,10 +68,10 @@ async function CacheMertial(Data, type) {
             var num = videoList.videos.length;
             toFenxiList = videoList.videos;
             console.log('第一屏，视频帖子数' + num);
-        }else {
+        } else {
             return;
         }
-    }else {
+    } else {
         console.log('西瓜视频：', Data);
         // 拦截接口数据
         let videoList1 = Data.data;
@@ -82,7 +82,7 @@ async function CacheMertial(Data, type) {
         // coverUrl = data.videoList[0].video_detail_info.detail_video_large_image.url
         // duration = data.videoList[0].video_duration
     }
-    
+
 
     for (var i = 0; i < num; i++) {
         var notes = "";
@@ -100,7 +100,7 @@ async function CacheMertial(Data, type) {
         var article_type = 3;
         var coverUrl = '';
         var duration = '';
-        
+
         // 导语标题
         notes = toFenxiList[i].title;
         // 互动
@@ -113,7 +113,7 @@ async function CacheMertial(Data, type) {
             duration = +toFenxiList[i].duration;
             views = toFenxiList[i].playNum;
         } else {
-            views = toFenxiList[i].video_detail_info?.video_watch_count; 
+            views = toFenxiList[i].video_detail_info?.video_watch_count;
             // 封面地址
             coverUrl = toFenxiList[i].video_detail_info.detail_video_large_image.url;
             // 播放时长
@@ -162,7 +162,7 @@ async function CacheMertial(Data, type) {
 
             // 视频地址
             post_url = 'https://www.ixigua.com/' + toFenxiList[i].groupId;
-        }else {
+        } else {
             // 视频地址
             source_urls = 'https://www.ixigua.com/' + toFenxiList[i].group_id + ';';
 
@@ -313,10 +313,10 @@ async function dealHistoryData(data) {
     // // console.log(first_page_data);
     // // 处理第一屏的数据
     // CacheMertial(first_page_data, '1');
-    
+
     // 去除链接多余参数
     let locationUrl = location.href;
-    if (locationUrl.indexOf('?')>0) {
+    if (locationUrl.indexOf('?') > 0) {
         locationUrl = locationUrl.split('?')[0];
     }
     chrome.runtime.sendMessage({
@@ -324,7 +324,7 @@ async function dealHistoryData(data) {
         type: 'ixigua',
         frameId: frameId,
         data: '',
-        author: first_page_data.AuthorDetailInfo?.name,
+        author: document.querySelector('.user__name').innerText,
         authorLink: locationUrl[locationUrl.length - 1] === '/' ? locationUrl.slice(0, -1) : locationUrl
     }).then(r => {
     });
@@ -337,10 +337,9 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     if (Message.Message === 'video') {
         console.log("获取任务");
         getVideo("ixigua");
-        sendResponse({ state: 200 });
-    }
-    else if (Message.Message === 'xhr') {
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
+    } else if (Message.Message === 'xhr') {
+        sendResponse({state: 200});
     } else if (Message.Message === 'checkType') {
         chrome.runtime.sendMessage({
             Message: 'initBtn',
@@ -348,13 +347,13 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         }).then(r => {
 
         })
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
     } else if (Message.Message === 'getPending') {
         sendResponse({
             state: 200
         });
     } else if (Message.Message === 'history') {
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         console.log('进入history');
 
         dealHistoryData(Message).then();
@@ -363,16 +362,16 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         finishTime_count = 0;
 
     } else if (Message.Message === 'sendBloggerid' && frameId == Message.frameId) {
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         console.log('数据库ID:', Message.Data.id);
         blogger_id_send = Message?.Data?.id;
 
     } else if (Message.Message === 'startCollectHistory' && frameId == Message.frameId) {
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         startCollectHistoryData(Message.Data).then();
 
     } else if (Message.Message === 'stopCollectHistory' && frameId == Message.frameId) {
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         // 关闭采集
         CollectFlag = false;
         if (CJtimer) {
@@ -410,6 +409,7 @@ function scrollBottom() {
 
 // 排程发送数据（接口）
 var videoData = []
+
 // 获取排程视频数据
 function getVideo(type) {
     // // console.log("开始返回数据")
@@ -418,7 +418,7 @@ function getVideo(type) {
     // // 处理第一屏的数据
     // CacheMertial(first_page_data, '1');
     // 加2秒延时，等待第一屏处理结束
-    setTimeout(function() {
+    setTimeout(function () {
         if (type === 'ixigua') {
             videoData = []
             // console.log(PostDataArray);
@@ -430,7 +430,7 @@ function getVideo(type) {
                     href: PostDataArray[i].post_url,
                     duration: PostDataArray[i].duration,
                     cover: PostDataArray[i].cover,
-                    author: first_page_data.AuthorDetailInfo?.name
+                    author: document.querySelector('.user__name').innerText
                 }
                 videoData.push(TempObj);
             }
@@ -439,7 +439,7 @@ function getVideo(type) {
             chrome.runtime.sendMessage({
                 Message: 'ixiguaVideo',
                 data: videoData,
-                author: first_page_data.AuthorDetailInfo?.name
+                author: document.querySelector('.user__name').innerText
             }).then()
         }
     }, 2000)
