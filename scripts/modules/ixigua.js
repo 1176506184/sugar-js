@@ -309,10 +309,10 @@ async function dealHistoryData(data) {
         return
     }
 
-    first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
-    // console.log(first_page_data);
-    // 处理第一屏的数据
-    CacheMertial(first_page_data, '1');
+    // first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
+    // // console.log(first_page_data);
+    // // 处理第一屏的数据
+    // CacheMertial(first_page_data, '1');
     
     // 去除链接多余参数
     let locationUrl = location.href;
@@ -412,11 +412,11 @@ function scrollBottom() {
 var videoData = []
 // 获取排程视频数据
 function getVideo(type) {
-    // console.log("开始返回数据")
-    first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
-    // 源视频排程
-    // 处理第一屏的数据
-    CacheMertial(first_page_data, '1');
+    // // console.log("开始返回数据")
+    // first_page_data = JSON.parse(window.SSR_HYDRATED_DATA.innerText.replace('window._SSR_HYDRATED_DATA=', '').replaceAll(undefined, '""').replaceAll(null, '""'));
+    // // 源视频排程
+    // // 处理第一屏的数据
+    // CacheMertial(first_page_data, '1');
     // 加2秒延时，等待第一屏处理结束
     setTimeout(function() {
         if (type === 'ixigua') {
