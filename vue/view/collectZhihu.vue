@@ -26,6 +26,11 @@
                    style="max-height: 100px;overflow-x:hidden;overflow-y: auto"></div>
             </template>
           </el-table-column>
+          <el-table-column label="点赞数" width="80" sortable prop="voteupCount">
+            <template #default="{row}">
+              {{ row.voteupCount }}
+            </template>
+          </el-table-column>
           <el-table-column width="150">
             <template #default="{row}">
               <el-button type="primary" @click="openDetail(row.content)" size="small">
@@ -167,7 +172,17 @@ async function dealZhihu(Message) {
     question.value = Message.data;
   } else if (Message.Message === 'finish') {
     console.log(Message.data)
-    answerList.value = Message.data;
+    answerList.value = Message.data.map((r) => {
+      if (r.voteup_count) {
+        r.voteupCount = r.voteup_count;
+      }
+
+      if(!r.voteupCount && !r.voteup_count){
+        r.voteupCount = 0;
+      }
+
+      return r;
+    });
     finish();
   }
 }
