@@ -249,7 +249,8 @@ async function uploadItem(item) {
     qid: qid.value,
     content: moveWatermarkSrcToSrc(item.content),
     refurl: "https://www.zhihu.com/question/" + question.value.id + "/" + item.id,
-    dduserid: localStorage.getItem("ddid")
+    dduserid: localStorage.getItem("ddid"),
+    like: item.voteupCount
   }, 'POST');
 }
 
