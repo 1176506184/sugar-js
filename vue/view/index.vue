@@ -315,6 +315,10 @@
                 :disabled="type !== 'kuaishou'"
             >初始化博主
             </el-button>
+            <div style="margin-left: 40px">
+              {{ kuaishouBloggerId }}
+            </div>
+
           </el-collapse-item>
         </el-collapse>
       </div>
@@ -342,7 +346,7 @@ import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(1)
-const owner = ref(0)
+const owner = ref(1)
 
 function changeOpen() {
   chrome.storage.local.set({
@@ -647,7 +651,7 @@ const eventBus = async function (Message, sender, sendResponse) {
       url: Message.data.url
     }).then(r => {
       console.log(r);
-
+      kuaishouBloggerId.value = Message.data.userid.toString()
       xhrHttp("http://101.201.222.226/Author/AddKs", {
             userId: Message.data.userid.toString(),
             userEid: Message.data.eid.toString(),
@@ -1853,6 +1857,7 @@ async function douyin_truvid() {
 }
 
 const kuaishouLoading = ref(false)
+const kuaishouBloggerId = ref('')
 const kuaishouTagid = ref(0)
 const category = ref([])
 const props = {

@@ -138,7 +138,6 @@ function parseVideo(data) {
                     if (!d[key]?.videoId) {
                         work(d[key]);
                     }
-
                     if (key === 'shortsLockupViewModel' && !videoIds.includes(d[key].onTap.innertubeCommand.reelWatchEndpoint.videoId)) {
                         videoData.push({
                             title: d[key].overlayMetadata.primaryText.content,
