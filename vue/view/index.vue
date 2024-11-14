@@ -8,31 +8,18 @@
 
       <span style="font-size: 18px; font-weight: bold">通用采集工具</span>
 
-      <el-button
-        id="username"
-        class="linear"
-        style="font-size: 14px; float: right"
-        @click="logout"
-      >
+      <el-button id="username" class="linear" style="font-size: 14px; float: right" @click="logout">
         {{ state.loginText }}
       </el-button>
 
-      <el-select
-        placeholder="是否开启"
-        style="width: 160px; float: right; margin-right: 15px"
-        v-model="open"
-        @change="changeOpen"
-      >
+      <el-select placeholder="是否开启" style="width: 160px; float: right; margin-right: 15px" v-model="open"
+        @change="changeOpen">
         <el-option :value="1" label="插件状态：开启"></el-option>
         <el-option :value="0" label="插件状态：关闭"></el-option>
       </el-select>
 
-      <el-select
-        style="width: 110px; float: right; margin-right: 15px; display: none"
-        placeholder="请选择系统"
-        v-model="state.system"
-        @change="tipReload"
-      >
+      <el-select style="width: 110px; float: right; margin-right: 15px; display: none" placeholder="请选择系统"
+        v-model="state.system" @change="tipReload">
         <el-option :value="1" label="小号系统"></el-option>
         <el-option :value="2" label="数据系统"></el-option>
       </el-select>
@@ -43,12 +30,8 @@
     <div class="layout_viewer" id="layout_viewer">
       <div id="login_container" v-if="state.isLogin === false"></div>
       <div id="menu" v-if="state.isLogin">
-        <el-collapse
-          v-if="owner === 0"
-          v-model="activeNames"
-          @change="handleChange"
-          style="border-top: 0; padding-bottom: 50px"
-        >
+        <el-collapse v-if="owner === 0" v-model="activeNames" @change="handleChange"
+          style="border-top: 0; padding-bottom: 50px">
           <el-collapse-item title="抖音视频" name="1">
             <div>
               <!--              <el-button-->
@@ -66,39 +49,20 @@
               <!--              </el-button-->
               <!--              >-->
 
-              <el-button
-                @click="Copy_douyin"
-                type="primary"
-                :disabled="type !== 'douyin'"
-                >视频采集
+              <el-button @click="Copy_douyin" type="primary" :disabled="type !== 'douyin'">视频采集
               </el-button>
 
-              <el-button
-                @click="collectDouyinVideoCommunitySchedulingFrame"
-                type="primary"
-                :disabled="type !== 'douyin'"
-                >批量源素材社团排程
+              <el-button @click="collectDouyinVideoCommunitySchedulingFrame" type="primary"
+                :disabled="type !== 'douyin'">批量源素材社团排程
               </el-button>
 
-              <el-button
-                @click="douyin_history"
-                type="primary"
-                :disabled="type !== 'douyin'"
-                >历史采集
+              <el-button @click="douyin_history" type="primary" :disabled="type !== 'douyin'">历史采集
               </el-button>
 
-              <el-button
-                @click="douyin_truvid"
-                type="primary"
-                :disabled="type !== 'douyin'"
-                >生成视频文章-Truvid并发布
+              <el-button @click="douyin_truvid" type="primary" :disabled="type !== 'douyin'">生成视频文章-Truvid并发布
               </el-button>
 
-              <el-button
-                @click="collectDouyinFrame"
-                type="primary"
-                :disabled="canTiktokFrame"
-              >
+              <el-button @click="collectDouyinFrame" type="primary" :disabled="canTiktokFrame">
                 自动采最新
               </el-button>
             </div>
@@ -113,111 +77,58 @@
               <!--              >小号素材库-->
               <!--              </el-button>-->
 
-              <el-button
-                @click="collectTwitterImageCommunitySchedulingFrame"
-                type="primary"
-                >社团排程（图片）</el-button
-              >
-              <el-button
-                @click="collectTwitterVideoCommunitySchedulingFrame"
-                type="primary"
-                >社团排程（视频）</el-button
-              >
+              <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">社团排程（图片）</el-button>
+              <el-button @click="collectTwitterVideoCommunitySchedulingFrame" type="primary">社团排程（视频）</el-button>
               <el-button @click="collectTwitterPW" type="primary">
                 采集视频并TOOL源视频排文
               </el-button>
-              <el-button
-                type="warning"
-                @click="collectTTHistory"
-                style="margin-top: 0px"
-                >自动采集历史
+              <el-button type="warning" @click="collectTTHistory" style="margin-top: 0px">自动采集历史
               </el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="头条博主" name="3">
             <div style="display: flex">
-              <el-input
-                placeholder="最大采集文章数"
-                style="width: 140px; margin-right: 15px"
-                :disabled="type !== 'toutiao'"
-                v-model="toutiaoMax"
-              ></el-input>
-              <el-button
-                type="primary"
-                @click="collectToutiao"
-                :disabled="type !== 'toutiao'"
-                v-if="toutiaoPending !== 'start'"
-                >开始采集
+              <el-input placeholder="最大采集文章数" style="width: 140px; margin-right: 15px" :disabled="type !== 'toutiao'"
+                v-model="toutiaoMax"></el-input>
+              <el-button type="primary" @click="collectToutiao" :disabled="type !== 'toutiao'"
+                v-if="toutiaoPending !== 'start'">开始采集
               </el-button>
-              <el-button type="danger" @click="stopCollectToutiao" v-else
-                >停止采集
+              <el-button type="danger" @click="stopCollectToutiao" v-else>停止采集
               </el-button>
-              <el-button type="warning" @click="collectToutiaoVHistory"
-                >微头条采集</el-button
-              >
+              <el-button type="warning" @click="collectToutiaoVHistory">微头条采集</el-button>
 
-              <el-button type="warning" @click="collectToutiaoHistory"
-                >头条采集</el-button
-              >
+              <el-button type="warning" @click="collectToutiaoHistory">头条采集</el-button>
 
-              <el-button
-                @click="collectToutiaoCommunitySchedulingFrame"
-                type="primary"
-                >微头条-社团排程</el-button
-              >
+              <el-button @click="collectToutiaoCommunitySchedulingFrame" type="primary">微头条-社团排程</el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="搜狐博主" name="4">
             <div style="display: flex">
-              <el-input
-                placeholder="最大采集文章数"
-                style="width: 140px; margin-right: 15px"
-                v-model="sohuMax"
-              ></el-input>
-              <el-button
-                type="primary"
-                @click="collectSohu"
-                :disabled="type !== 'sohu'"
-                v-if="sohuPending !== 'start'"
-                >开始采集
+              <el-input placeholder="最大采集文章数" style="width: 140px; margin-right: 15px" v-model="sohuMax"></el-input>
+              <el-button type="primary" @click="collectSohu" :disabled="type !== 'sohu'"
+                v-if="sohuPending !== 'start'">开始采集
               </el-button>
-              <el-button type="danger" @click="stopCollectSohu" v-else
-                >停止采集
+              <el-button type="danger" @click="stopCollectSohu" v-else>停止采集
               </el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="Facebook博主" name="5">
             <div style="display: flex">
-              <el-input
-                placeholder="最大采集文章数"
-                style="width: 140px; margin-right: 15px"
-                v-model="fbMax"
-              ></el-input>
-              <el-button
-                type="primary"
-                @click="collectFacebook"
-                :disabled="type !== 'facebook'"
-                v-if="fbPending !== 'start'"
-                >开始采集
+              <el-input placeholder="最大采集文章数" style="width: 140px; margin-right: 15px" v-model="fbMax"></el-input>
+              <el-button type="primary" @click="collectFacebook" :disabled="type !== 'facebook'"
+                v-if="fbPending !== 'start'">开始采集
               </el-button>
-              <el-button type="danger" @click="stopCollectFacebook" v-else
-                >停止采集
+              <el-button type="danger" @click="stopCollectFacebook" v-else>停止采集
               </el-button>
 
-              <el-button type="primary" @click="collectFBVideo"
-                >采集博主视频</el-button
-              >
+              <el-button type="primary" @click="collectFBVideo">采集博主视频</el-button>
 
-              <el-button type="warning" @click="collectFBHistory"
-                >自动采集历史</el-button
-              >
+              <el-button type="warning" @click="collectFBHistory">自动采集历史</el-button>
 
-              <el-button type="primary" @click="collectFBToToolPlatform"
-                >自动采集图文帖至Tool脚本素材库</el-button
-              >
+              <el-button type="primary" @click="collectFBToToolPlatform">自动采集图文帖至Tool脚本素材库</el-button>
             </div>
           </el-collapse-item>
 
@@ -225,69 +136,38 @@
             <div>
               <!--              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>-->
               <!--              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>-->
-              <el-button @click="collectYoutubeNew" type="primary"
-                >采集视频 / SHORTS并自动分发 / Truvid</el-button
-              >
-              <el-button @click="collectYoutubeNewPW" type="primary"
-                >采集视频 / SHORTS并TOOL源视频排文</el-button
-              >
+              <el-button @click="collectYoutubeNew" type="primary">采集视频 / SHORTS并自动分发 / Truvid</el-button>
+              <el-button @click="collectYoutubeNewPW" type="primary">采集视频 / SHORTS并TOOL源视频排文</el-button>
 
-              <el-button
-                @click="collectYoutubeVideoCommunitySchedulingFramePW"
-                type="primary"
-                >批量源素材社团排程
+              <el-button @click="collectYoutubeVideoCommunitySchedulingFramePW" type="primary">批量源素材社团排程
               </el-button>
 
               <br />
 
-              <el-button
-                @click="collectYoutubeHistory"
-                type="primary"
-                style="margin-top: 5px"
-                >采集历史</el-button
-              >
+              <el-button @click="collectYoutubeHistory" type="primary" style="margin-top: 5px">采集历史</el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="TikTok" name="7">
             <div>
-              <el-button @click="collectTiktok" type="primary"
-                >采集视频</el-button
-              >
-              <el-button @click="collectTiktokVideoFrame" type="primary"
-                >采集视频并TOOL源视频排文</el-button
-              >
+              <el-button @click="collectTiktok" type="primary">采集视频</el-button>
+              <el-button @click="collectTiktokVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
 
-              <el-button
-                @click="collectTiktokVideoCommunitySchedulingFrame"
-                type="primary"
-                >批量源素材社团排程
+              <el-button @click="collectTiktokVideoCommunitySchedulingFrame" type="primary">批量源素材社团排程
               </el-button>
 
-              <el-button
-                @click="collectTiktokFrame"
-                type="primary"
-                :disabled="canTiktokFrame"
-              >
+              <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">
                 更新视频
               </el-button>
               <br />
-              <el-button
-                @click="collectTiktokFrameSingle"
-                type="primary"
-                style="margin-top: 5px"
-              >
+              <el-button @click="collectTiktokFrameSingle" type="primary" style="margin-top: 5px">
                 更新视频（单个博主）
               </el-button>
               <!--              <el-button @click="collectTiktokFrameScroll" type="primary" :disabled="canTiktokFrame">-->
               <!--                更新历史-->
               <!--              </el-button>-->
-              <el-button
-                @click="collectTiktokCollectHistoryVideo"
-                type="primary"
-                :disabled="canTiktokFrame"
-                style="margin-top: 5px"
-              >
+              <el-button @click="collectTiktokCollectHistoryVideo" type="primary" :disabled="canTiktokFrame"
+                style="margin-top: 5px">
                 更新历史（人工）
               </el-button>
             </div>
@@ -296,59 +176,38 @@
           <el-collapse-item title="综合采集" name="8">
             <div>
               <el-button @click="collectWeb" type="primary">网站采集</el-button>
-              <el-button @click="collectWebFrame" type="primary"
-                >网站采集（新）</el-button
-              >
-              <el-button @click="collectNovel" type="primary"
-                >小说采集</el-button
-              >
-              <el-button @click="collectNovelSync" type="primary"
-                >小说采集（加延迟防检测）</el-button
-              >
-              <el-button @click="imageCreate" type="primary"
-                >小说图标生成</el-button
-              >
+              <el-button @click="collectWebFrame" type="primary">网站采集（新）</el-button>
+              <el-button @click="collectNovel" type="primary">小说采集</el-button>
+              <el-button @click="collectNovelSync" type="primary">小说采集（加延迟防检测）</el-button>
+              <el-button @click="imageCreate" type="primary">小说图标生成</el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="Ins博主" name="9">
             <div>
-              <el-button type="primary" @click="SortIns"
-                >一键自动排序</el-button
-              >
-              <el-button type="warning" @click="collectInsHistory"
-                >自动采集历史</el-button
-              >
+              <el-button type="primary" @click="SortIns">一键自动排序</el-button>
+              <el-button type="warning" @click="collectInsHistory">自动采集历史</el-button>
               <!--              <el-button type="primary" @click="collectInsVideo">采集视频/TOOL源视频排文</el-button>-->
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="Pinterest博主" name="10">
             <div>
-              <el-button @click="pinterestHistoryFrame" type="warning"
-                >自动采集历史</el-button
-              >
+              <el-button @click="pinterestHistoryFrame" type="warning">自动采集历史</el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="西瓜视频" name="11">
             <div>
-              <el-button @click="ixiguaVideoFrame" type="primary"
-                >采集视频并TOOL源视频排文</el-button
-              >
-              <el-button @click="ixiguaHistoryFrame" type="warning"
-                >自动采集历史</el-button
-              >
-              <el-button @click="ixiguaVideoArticle" type="primary"
-                >生成视频文章-Truvid并发布</el-button
-              >
+              <el-button @click="ixiguaVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
+              <el-button @click="ixiguaHistoryFrame" type="warning">自动采集历史</el-button>
+              <el-button @click="ixiguaVideoArticle" type="primary">生成视频文章-Truvid并发布</el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="知乎采集" name="25">
             <div style="display: flex">
-              <el-button type="primary" @click="collectZhihu"
-                >开始采集
+              <el-button type="primary" @click="collectZhihu">开始采集
               </el-button>
             </div>
           </el-collapse-item>
@@ -360,18 +219,10 @@
           <!--        </div>-->
           <!--        <div class="border"></div>-->
         </el-collapse>
-        <el-collapse
-          v-if="owner === 1"
-          v-model="activeNames"
-          @change="handleChange"
-          style="border-top: 0"
-        >
+        <el-collapse v-if="owner === 1" v-model="activeNames" @change="handleChange" style="border-top: 0">
           <el-collapse-item title="TikTok" name="7">
             <div>
-              <el-button
-                @click="collectTiktokCollectHistoryVideo"
-                type="primary"
-              >
+              <el-button @click="collectTiktokCollectHistoryVideo" type="primary">
                 更新历史（人工）
               </el-button>
               <el-button @click="collectTiktokFrameSingle" type="primary">
@@ -387,28 +238,14 @@
             </div>
           </el-collapse-item>
           <el-collapse-item title="抖音视频" name="1">
-            <el-button
-              @click="collectDouyin"
-              type="primary"
-              :disabled="type !== 'douyin'"
-              >视频自动化采集
+            <el-button @click="collectDouyin" type="primary" :disabled="type !== 'douyin'">视频自动化采集
             </el-button>
           </el-collapse-item>
           <el-collapse-item title="快手" name="21">
-            <el-cascader
-              filterable
-              placeholder="请选择分类"
-              v-model="kuaishouTagid"
-              :options="category"
-              :props="props"
-              style="margin-right: 10px"
-            />
-            <el-button
-              :loading="kuaishouLoading"
-              @click="collectKuaishou"
-              type="primary"
-              :disabled="type !== 'kuaishou'"
-              >初始化博主
+            <el-cascader filterable placeholder="请选择分类" v-model="kuaishouTagid" :options="category" :props="props"
+              style="margin-right: 10px" />
+            <el-button :loading="kuaishouLoading" @click="collectKuaishou" type="primary"
+              :disabled="type !== 'kuaishou'">初始化博主
             </el-button>
             <div style="margin-left: 40px">
               {{ kuaishouBloggerId }}
@@ -417,51 +254,33 @@
 
           <el-collapse-item title="小红书" name="22">
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-input
-                v-model="XhsBloggerId"
-                placeholder="博主ID"
-                style="width: 200px"
-              >
-              </el-input>
-
-              <el-input
-                v-model="XhsBloggerName"
-                placeholder="博主名称"
-                style="width: 200px; margin-left: 20px"
-              >
-              </el-input>
-
-              <el-button
-                @click="fetchBloggerInfo"
-                type="primary"
-                style="width: 200px; margin-left: 20px"
-              >
-                {{ XhsBloggerId_search }}
-              </el-button>
-            </div>
-
-            <div style="margin-left: 0px; margin-top: 10px">
-              <el-cascader
-                filterable
-                placeholder="请选择分类"
-                v-model="xiaohongshuTagid"
-                :options="category"
-                :props="props"
-                style="margin-right: 10px"
-              />
+              <el-cascader filterable placeholder="请选择分类" v-model="xiaohongshuTagid" :options="category" :props="props"
+                style="margin-right: 10px" />
 
               <el-button @click="xiaohongshu_collect" type="primary">
                 {{ XhsBloggerId_search_start }}
               </el-button>
 
-              <el-input
-                v-model="Xhserror"
-                placeholder="错误报警"
-                style="width: 200px; margin-left: 20px"
-              >
+              <el-input v-model="Xhserror" placeholder="错误报警" style="width: 200px; margin-left: 20px">
               </el-input>
             </div>
+            <div style="margin-left: 0px; margin-top: 10px">
+              <el-input v-model="XhsBloggerId" placeholder="博主ID" style="width: 200px">
+              </el-input>
+
+              <el-input v-model="XhsBloggerName" placeholder="博主名称" style="width: 200px; margin-left: 20px">
+              </el-input>
+
+              <!-- <el-button
+                @click="fetchBloggerInfo"
+                type="primary"
+                style="width: 200px; margin-left: 20px"
+              >
+                {{ XhsBloggerId_search }}
+              </el-button> -->
+            </div>
           </el-collapse-item>
+
         </el-collapse>
       </div>
     </div>
@@ -494,7 +313,7 @@ import store from "../store/store.js";
 import { computed } from "vue";
 import { http, xhrHttp, sHttp, dHttp } from "../utils/request";
 import { ElMessage, ElMessageBox } from "element-plus";
-import Color from "element-plus/es/components/color-picker/src/utils/color";
+
 
 const open = ref(1);
 const owner = ref(1);
@@ -504,7 +323,7 @@ function changeOpen() {
     {
       open: open.value,
     },
-    () => {}
+    () => { }
   );
 }
 
@@ -524,7 +343,7 @@ function absoluteCollapse() {
           top: topPosition,
         });
       }
-    } catch (e) {}
+    } catch (e) { }
   });
 }
 
@@ -565,7 +384,7 @@ function logout() {
         localStorage.clear();
         location.reload();
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 }
 
@@ -637,96 +456,62 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "xiaohongshu") {
       activeNames.value.push("22");
       store.commit("changeType", "xiaohongshu");
+      await collect_xhs_blogger();
     } else if (Message.type === "zhihu") {
       activeNames.value.push("25");
       store.commit("changeType", "zhihu");
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
-    } else if (Message.Message === "video") {
-      loading.value = true;
-      data.video = Message.url;
-      let realData = Message.data;
-      let domData = Message.domData;
-      let godComment = Message.godComment;
-      let curl = ``;
-      godComment.forEach((god, index) => {
-        if (index < 3) {
-          curl += `&c${index + 1}=${god.text}`;
-        }
-      });
+    }
+    absoluteCollapse();
+  } else if (Message.Message === "video") {
+    loading.value = true;
+    data.video = Message.url;
+    let realData = Message.data;
+    let domData = Message.domData;
+    let godComment = Message.godComment;
+    let curl = ``;
+    godComment.forEach((god, index) => {
+      if (index < 3) {
+        curl += `&c${index + 1}=${god.text}`;
+      }
+    });
 
-      if (Object.keys(realData).length > 0) {
-        checkMP4(realData.video.play_addr?.url_list[0]);
-        let url = encodeURI(realData.video.play_addr?.url_list[0]);
-        if (data.videoPushType === 2) {
-          window.open(
-            `http://twtest.anyelse.com/user/postvideo?title=${
-              realData.preview_title
-                ? escape(realData.preview_title)
-                : escape(realData.desc)
-            }&cover=${escape(realData.pic)}&videourl=${escape(
-              realData.reUrl
-            )}&decodurl==${url}&author=${escape(
-              realData.author.nickname
-            )}${curl}`
-          );
-          return;
-        }
-        try {
-          http("Video/SaveVideo", {
-            platform: 1,
-            title: realData.preview_title
-              ? realData.preview_title
-              : realData.desc,
-            resource_link: realData.reUrl,
-            resource_url: (function () {
-              return realData.video.play_addr?.url_list[0];
-            })(),
-            times: realData.video.duration / 1000,
-            play_count: realData.statistics.play_count,
-            like_count: realData.statistics.digg_count,
-            share_count: realData.statistics.share_count,
-            collect_count: realData.statistics.collect_count,
-            comment_count: realData.statistics.comment_count,
-            publish_time: parseDate(realData.create_time),
-            author_name: realData.author.nickname,
-            author_url: `https://douyin.com/user/${realData.author.sec_uid}?vid=${realData.group_id}`,
-            author_id: realData.group_id,
-            pic: realData.pic,
-          }).then((res) => {
-            router.push({
-              name: "TrumpetVideo",
-              query: {
-                id: res.newid,
-                resource_type: 1,
-              },
-            });
-          });
-        } catch (e) {}
-      } else {
-        checkMP4(domData.video);
-
-        if (data.videoPushType === 2) {
-          window.open(
-            `http://twtest.anyelse.com/user/postvideo?title=${escape(
-              domData.title
-            )}&cover=${escape(domData.pic)}&videourl=${escape(
-              domData.url
-            )}&decodurl=${escape(domData.video)}&author=${escape(
-              domData.author
-            )}${curl}`
-          );
-          return;
-        }
-
+    if (Object.keys(realData).length > 0) {
+      checkMP4(realData.video.play_addr?.url_list[0]);
+      let url = encodeURI(realData.video.play_addr?.url_list[0]);
+      if (data.videoPushType === 2) {
+        window.open(
+          `http://twtest.anyelse.com/user/postvideo?title=${realData.preview_title
+            ? escape(realData.preview_title)
+            : escape(realData.desc)
+          }&cover=${escape(realData.pic)}&videourl=${escape(
+            realData.reUrl
+          )}&decodurl==${url}&author=${escape(realData.author.nickname)}${curl}`
+        );
+        return;
+      }
+      try {
         http("Video/SaveVideo", {
           platform: 1,
-          resource_url: domData.video,
-          author_url: domData.author_url,
-          title: domData.title,
-          author_name: domData.author,
-          resource_link: domData.url,
-          pic: domData.pic,
+          title: realData.preview_title
+            ? realData.preview_title
+            : realData.desc,
+          resource_link: realData.reUrl,
+          resource_url: (function () {
+            return realData.video.play_addr?.url_list[0];
+          })(),
+          times: realData.video.duration / 1000,
+          play_count: realData.statistics.play_count,
+          like_count: realData.statistics.digg_count,
+          share_count: realData.statistics.share_count,
+          collect_count: realData.statistics.collect_count,
+          comment_count: realData.statistics.comment_count,
+          publish_time: parseDate(realData.create_time),
+          author_name: realData.author.nickname,
+          author_url: `https://douyin.com/user/${realData.author.sec_uid}?vid=${realData.group_id}`,
+          author_id: realData.group_id,
+          pic: realData.pic,
         }).then((res) => {
           router.push({
             name: "TrumpetVideo",
@@ -736,111 +521,144 @@ const eventBus = async function (Message, sender, sendResponse) {
             },
           });
         });
+      } catch (e) { }
+    } else {
+      checkMP4(domData.video);
+
+      if (data.videoPushType === 2) {
+        window.open(
+          `http://twtest.anyelse.com/user/postvideo?title=${escape(
+            domData.title
+          )}&cover=${escape(domData.pic)}&videourl=${escape(
+            domData.url
+          )}&decodurl=${escape(domData.video)}&author=${escape(
+            domData.author
+          )}${curl}`
+        );
+        return;
       }
 
-      loading.value = false;
-    } else if (Message.Message === "image") {
-      loading.value = true;
-      let data = Message.data;
-      let group_guid = guid();
-      data = data.map((d) => {
-        return {
-          resource_url: d.entities?.media
-            ?.map((e) => {
-              return e.media_url_https;
-            })
-            .join("|||"),
-          platform: 4,
-          like_count: d.favorite_count,
-          share_count: d.retweet_count,
-          comment_count: d.reply_count,
-          publish_time: d.created_at,
-          author_name: d.author_name,
-          author_url: d.author_url,
-          title: d.full_text,
-          resource_link: `${d.resource_link}`,
-          group_guid: group_guid,
-          real_id: `${d.id_str}`,
-        };
-      });
-      http("ImageCollect/SaveImageCollectList", {
-        list: data,
+      http("Video/SaveVideo", {
+        platform: 1,
+        resource_url: domData.video,
+        author_url: domData.author_url,
+        title: domData.title,
+        author_name: domData.author,
+        resource_link: domData.url,
+        pic: domData.pic,
       }).then((res) => {
-        loading.value = false;
         router.push({
-          name: "TwitterImage",
+          name: "TrumpetVideo",
           query: {
-            guid: group_guid,
-            resource_type: 2,
+            id: res.newid,
+            resource_type: 1,
           },
         });
       });
-    } else if (Message.Message === "group") {
-      // console.log(Message.data)
-    } else if (Message.Message === "stop" && Message.type === "toutiao") {
-      toutiaoPending.value = "lock";
-    } else if (Message.Message === "sendData" && Message.type === "toutiao") {
-      console.log(Message.data);
-      dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(
-        () => {
-          ElMessage("上传成功一条");
-        }
-      );
-    } else if (Message.Message === "stop" && Message.type === "sohu") {
-      sohuPending.value = "lock";
-    } else if (Message.Message === "sendData" && Message.type === "sohu") {
-      try {
-        let res = await dHttp(
-          "CaptureSpecial/SaveOrUpdate",
-          JSON.stringify(Message.data)
-        );
-        console.log(res);
-      } catch (err) {
-        console.log(err);
-      }
-    } else if (Message.Message === "stop" && Message.type === "facebook") {
-      fbPending.value = "lock";
-    } else if (Message.Message === "sendData" && Message.type === "facebook") {
-      console.log(JSON.stringify(Message.data));
-      dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(
-        () => {
-          ElMessage("上传成功一条");
-        }
-      );
-    } else if (
-      Message.Message === "kuaishouData" &&
-      Message.type === "kuaishou"
-    ) {
-      console.log(Message.data);
-      chrome.runtime
-        .sendMessage({
-          Message: "kuaishouUrl",
-          url: Message.data.url,
-        })
-        .then((r) => {
-          console.log(r);
-          kuaishouBloggerId.value = Message.data.userid.toString();
-          xhrHttp(
-            "http://101.201.222.226/Author/AddKs",
-            {
-              userId: Message.data.userid.toString(),
-              userEid: Message.data.eid.toString(),
-              userName: Message.data.userName.toString(),
-              shorUrl: r,
-              operatorId: localStorage.getItem("ddid"),
-              tagId: kuaishouTagid.value?.slice(-1)[0],
-            },
-            "post",
-            "application/json"
-          ).then((res) => {
-            kuaishouLoading.value = false;
-            ElMessage.info(res.msg);
-          });
-        });
-      // dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
-      //   ElMessage('上传成功一条');
-      // })
     }
+
+    loading.value = false;
+  } else if (Message.Message === "image") {
+    loading.value = true;
+    let data = Message.data;
+    let group_guid = guid();
+    data = data.map((d) => {
+      return {
+        resource_url: d.entities?.media
+          ?.map((e) => {
+            return e.media_url_https;
+          })
+          .join("|||"),
+        platform: 4,
+        like_count: d.favorite_count,
+        share_count: d.retweet_count,
+        comment_count: d.reply_count,
+        publish_time: d.created_at,
+        author_name: d.author_name,
+        author_url: d.author_url,
+        title: d.full_text,
+        resource_link: `${d.resource_link}`,
+        group_guid: group_guid,
+        real_id: `${d.id_str}`,
+      };
+    });
+    http("ImageCollect/SaveImageCollectList", {
+      list: data,
+    }).then((res) => {
+      loading.value = false;
+      router.push({
+        name: "TwitterImage",
+        query: {
+          guid: group_guid,
+          resource_type: 2,
+        },
+      });
+    });
+  } else if (Message.Message === "group") {
+    // console.log(Message.data)
+  } else if (Message.Message === "stop" && Message.type === "toutiao") {
+    toutiaoPending.value = "lock";
+  } else if (Message.Message === "sendData" && Message.type === "toutiao") {
+    console.log(Message.data);
+    dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(
+      () => {
+        ElMessage("上传成功一条");
+      }
+    );
+  } else if (Message.Message === "stop" && Message.type === "sohu") {
+    sohuPending.value = "lock";
+  } else if (Message.Message === "sendData" && Message.type === "sohu") {
+    try {
+      let res = await dHttp(
+        "CaptureSpecial/SaveOrUpdate",
+        JSON.stringify(Message.data)
+      );
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
+  } else if (Message.Message === "stop" && Message.type === "facebook") {
+    fbPending.value = "lock";
+  } else if (Message.Message === "sendData" && Message.type === "facebook") {
+    console.log(JSON.stringify(Message.data));
+    dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(
+      () => {
+        ElMessage("上传成功一条");
+      }
+    );
+  } else if (
+    Message.Message === "kuaishouData" &&
+    Message.type === "kuaishou"
+  ) {
+    console.log(Message.data);
+    chrome.runtime
+      .sendMessage({
+        Message: "kuaishouUrl",
+        url: Message.data.url,
+      })
+      .then((r) => {
+        console.log(r);
+        kuaishouBloggerId.value = Message.data.userid.toString();
+        xhrHttp(
+          "http://101.201.222.226/Author/AddKs",
+          {
+            userId: Message.data.userid.toString(),
+            userEid: Message.data.eid.toString(),
+            userName: Message.data.userName.toString(),
+            shorUrl: r,
+            operatorId: localStorage.getItem("ddid"),
+            tagId: kuaishouTagid.value?.slice(-1)[0],
+          },
+          "post",
+          "application/json"
+        ).then((res) => {
+          kuaishouLoading.value = false;
+          ElMessage.info(res.msg);
+        });
+      });
+    // dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
+    //   ElMessage('上传成功一条');
+    // })
   } else if (
     Message.Message === "xiaohongshuData" &&
     Message.type === "xiaohongshu"
@@ -946,17 +764,17 @@ function getPending() {
               try {
                 toutiaoPending.value = response.pending;
                 toutiaoMax.value = response.toutiaoMax;
-              } catch (e) {}
+              } catch (e) { }
 
               try {
                 sohuPending.value = response.pending;
                 sohuMax.value = response.sohuMax;
-              } catch (e) {}
+              } catch (e) { }
 
               try {
                 fbPending.value = response.pending;
                 fbMax.value = response.fbMax;
-              } catch (e) {}
+              } catch (e) { }
             }
           }
         }
@@ -965,12 +783,12 @@ function getPending() {
   );
 }
 
-onActivated(() => {});
+onActivated(() => { });
 
 function checkMP4(url) {
   try {
-    xhrHttp(url).then((res) => {});
-  } catch (e) {}
+    xhrHttp(url).then((res) => { });
+  } catch (e) { }
 }
 
 function getVersion() {
@@ -1411,7 +1229,7 @@ async function collectFBVideo() {
         url: "/html/out.html#/FBCollect?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1456,7 +1274,7 @@ async function collectInsHistory() {
         url: "/html/out.html#/InsHistory?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1468,7 +1286,7 @@ async function collectInsVideo() {
       url: "/html/out.html#/InsVideo?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -1490,7 +1308,7 @@ async function pinterestHistoryFrame() {
         url: "/html/out.html#/pinterestHistoryFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1502,7 +1320,7 @@ async function collectZhihu() {
       url: "/html/out.html#/collectZhihu?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -1522,7 +1340,7 @@ async function ixiguaVideoFrame() {
         url: "/html/out.html#/ixiguaVideoFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1543,7 +1361,7 @@ async function ixiguaHistoryFrame() {
         url: "/html/out.html#/ixiguaHistoryFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1564,7 +1382,7 @@ async function ixiguaVideoArticle() {
         url: "/html/out.html#/ixiguaVideoArticle?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1581,7 +1399,7 @@ async function collectTiktokFrame() {
         url: "/html/out.html#/TiktokFrame",
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1593,7 +1411,7 @@ async function collectTiktokFrameSingle() {
       url: "/html/out.html#/TiktokFrameSingle?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -1609,7 +1427,7 @@ async function collectDouyinFrame() {
         url: "/html/out.html#/DouyinFrameScroll",
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1626,7 +1444,7 @@ async function collectTiktokFrameScroll() {
         url: "/html/out.html#/TiktokFrameScroll",
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1638,7 +1456,7 @@ async function collectTiktokCollectHistoryVideo() {
       url: "/html/out.html#/TiktokCollectHistoryVideo?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -1649,7 +1467,7 @@ async function collectWeishiHistory() {
       url: "/html/out.html#/WeishiHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -1660,7 +1478,7 @@ async function collectDouyin() {
       url: "/html/out.html#/DouyinVideoCollect?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -1678,7 +1496,7 @@ async function collectTiktokVideoFrame() {
         url: "/html/out.html#/TiktokVideoFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1700,7 +1518,7 @@ async function collectTiktokVideoCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1722,7 +1540,7 @@ async function collectToutiaoCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1744,7 +1562,7 @@ async function collectYoutubeVideoCommunitySchedulingFramePW() {
           activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1766,7 +1584,7 @@ async function collectTwitterImageCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 } // TwitterImage社团批量排程(视频)
@@ -1786,7 +1604,7 @@ async function collectTwitterVideoCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1805,7 +1623,7 @@ async function collectTwitterPW() {
         url: "/html/out.html#/TwitterVideoPW?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1827,7 +1645,7 @@ async function collectDouyinVideoCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1846,7 +1664,7 @@ async function collectNovel() {
         url: "/html/out.html#/Novel?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1885,7 +1703,7 @@ async function collectNovelSync() {
         url: "/html/out.html#/Novel?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1904,7 +1722,7 @@ async function collectYoutubeNew() {
         url: "/html/out.html#/YoutubeVideoFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1923,7 +1741,7 @@ async function collectYoutubeNewPW() {
         url: "/html/out.html#/YoutubeVideoFramePW?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -1942,7 +1760,7 @@ async function collectWebFrame() {
         url: "/html/out.html#/WebCollectFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => {}
+      (tab) => { }
     );
   }
 }
@@ -2003,7 +1821,7 @@ async function collectTTHistory() {
       url: "/html/out.html#/TTCollectHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -2015,7 +1833,7 @@ async function collectYoutubeHistory() {
       url: "/html/out.html#/YoutubeHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -2026,7 +1844,7 @@ async function collectToutiaoHistory() {
       url: "/html/out.html#/ToutiaoHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -2037,7 +1855,7 @@ async function collectToutiaoVHistory() {
       url: "/html/out.html#/ToutiaoVHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -2049,7 +1867,7 @@ async function collectFBHistory() {
       url: "/html/out.html#/FBCollectHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -2061,7 +1879,7 @@ async function collectFBToToolPlatform() {
       url: "/html/out.html#/FBCollectToToolPlatform?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -2071,7 +1889,7 @@ function imageCreate() {
       url: "/html/out.html#/imageCreate",
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -2082,7 +1900,7 @@ async function douyin_history() {
       url: "/html/out.html#/DouyinHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -2092,7 +1910,7 @@ const XhsBloggerId = ref("");
 /**账号名称*/
 const XhsBloggerName = ref("");
 /**搜索按钮*/
-const XhsBloggerId_search = ref("提取博主ID和名称");
+//const XhsBloggerId_search = ref("提取博主ID和名称");
 
 /**开始采集*/
 const XhsBloggerId_search_start = ref("开始采集");
@@ -2104,15 +1922,15 @@ const category = ref([]);
 const Xhserror = ref("");
 
 // 定义按钮点击事件，发送消息获取博主信息
-async function fetchBloggerInfo() {
-  XhsBloggerId_search.value = "进行中"; // 设置按钮文字为“进行中”
+// async function fetchBloggerInfo() {
+//   XhsBloggerId_search.value = "进行中"; // 设置按钮文字为“进行中”
 
-  console.log("点击按钮");
+//   console.log("点击按钮");
 
-  await collect_xhs_blogger();
+//   await collect_xhs_blogger();
 
-  XhsBloggerId_search.value = "查询完毕"; // 设置按钮文字为“进行中”
-}
+//   XhsBloggerId_search.value = "查询完毕"; // 设置按钮文字为“进行中”
+// }
 /**获取博主*/
 async function collect_xhs_blogger() {
   let pageId = await getActiveId();
@@ -2135,6 +1953,8 @@ async function collect_xhs_blogger() {
 
 /**采集小红书博主主页历史帖子*/
 async function xiaohongshu_collect() {
+  await collect_xhs_blogger();
+
   XhsBloggerId_search_start.value = "正在验证";
   if (XHS_data != "") {
     xhrHttp(
@@ -2216,7 +2036,7 @@ async function douyin_truvid() {
       url: "/html/out.html#/DouyinTruvid?activeId=" + activeId,
       active: true,
     },
-    (tab) => {}
+    (tab) => { }
   );
 }
 
@@ -2267,5 +2087,4 @@ function buildTree(FlatData, ParentId = null) {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

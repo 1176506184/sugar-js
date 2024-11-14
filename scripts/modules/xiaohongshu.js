@@ -22,7 +22,7 @@ window.addEventListener('message', function (res) {
 })
 
 
-function getData() {
+function xhs_getData() {
     var userName = document.querySelectorAll('[class="user-name"]')[0].innerText;
     var userid = location.href.split('https://www.xiaohongshu.com/user/profile/')[1].split('?')[0];
     var cover = document.querySelectorAll('[class="user-info"] [class="avatar-wrapper"] img')[0].src;
@@ -48,13 +48,13 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
 
     if (Message.Message === 'getData') {
         sendResponse({ state: 200 });
-        getData();
+        xhs_getData();
     } else if (Message.Message === 'checkType') {
 
         // let data=
 
         chrome.runtime.sendMessage({
-            Message: 'initBtnData',
+            Message: 'initBtn',
             type: 'xiaohongshu',
             // data: data,
         }).then(r => {
@@ -108,23 +108,29 @@ async function XHS_Collect_article_list() {
                 /**本帖 */
                 let art = art_list[i];
 
-                if (article_list.length == 0) {
-                    article_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1], url: art.querySelectorAll('[class="cover ld mask"]')[0].href });
-                } else {
-                    /**帖子已收录 */
-                    let if_have = false;
+                if (art.querySelectorAll('[href*="explore"]')[0].href.split('explore/').length != 1) {
 
-                    article_list.forEach(obj => {
 
-                        if (art.querySelectorAll('[href*="explore"]')[0].href.indexOf(obj.vid) != -1) {
-                            if_have = true;
-                        }
-
-                    });
-                    if (!if_have) {
+                    if (article_list.length == 0) {
                         article_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1], url: art.querySelectorAll('[class="cover ld mask"]')[0].href });
+                    } else {
+                        /**帖子已收录 */
+                        let if_have = false;
+
+                        article_list.forEach(obj => {
+
+                            if (art.querySelectorAll('[href*="explore"]')[0].href.indexOf(obj.vid) != -1) {
+                                if_have = true;
+                            }
+
+                        });
+                        if (!if_have) {
+                            article_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1], url: art.querySelectorAll('[class="cover ld mask"]')[0].href });
+                        }
                     }
+
                 }
+
 
             } catch { }
 
