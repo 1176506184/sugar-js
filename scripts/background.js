@@ -4,7 +4,7 @@ const Map302 = new Map();
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     if (Message.Message === 'loadScript') {
         await chrome.scripting.executeScript({
-            target: {tabId: sender.tab.id},
+            target: { tabId: sender.tab.id },
             files: ['scripts/modules/' + Message.script],
             injectImmediately: true,
         });
@@ -16,6 +16,9 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'kuaishouUrl') {
         console.log(Message)
         sendResponse(Map302.get(Message.url));
+    } else if (Message.Message === 'xiaohongshuUrl') {
+        console.log(Message)
+        // sendResponse(Map302.get(Message.url));
     }
 })
 
@@ -53,7 +56,7 @@ chrome.webRequest.onBeforeRedirect.addListener(
         console.log("重定向到: " + details.redirectUrl);
         Map302.set(details.redirectUrl, details.url);
     },
-    {urls: ["<all_urls>"]} // 监听所有 URL
+    { urls: ["<all_urls>"] } // 监听所有 URL
 );
 
 

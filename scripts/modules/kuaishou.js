@@ -45,7 +45,7 @@ function getData() {
             userName
         }
     }).then(r => {
-
+        console.log('数据已传递到插件界面');
     })
 }
 

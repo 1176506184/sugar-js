@@ -38,11 +38,24 @@ async function injectedScript(path) {
 
 chrome.storage.local.get('open', (res) => {
     if (res.open !== 0) {
-        if (location.href.indexOf('x.com') !== -1 || location.href.indexOf('instagram') !== -1 || location.href.indexOf('douyin') !== -1 || location.href.indexOf('twitter') !== -1 || location.href.indexOf('toutiao') !== -1 || location.href.indexOf('sohu') !== -1 || location.href.indexOf('youtube') !== -1
-            || location.href.indexOf('facebook') !== -1 || location.href.indexOf('youtube') !== -1 ||
-            location.href.indexOf('tiktok') !== -1 || location.href.indexOf('ce.xinli001.com') !== -1
-            || location.href.indexOf('beta.console.truvid.com') !== -1 || location.href.indexOf('pinterest') !== -1
-            || location.href.indexOf('ixigua') !== -1 || location.href.indexOf('isee.weishi.qq.com') !== -1 || location.href.indexOf('kuaishou.com') !== -1 || location.href.indexOf('zhihu.com') !== -1) {
+        if (location.href.indexOf('x.com') !== -1
+            || location.href.indexOf('instagram') !== -1
+            || location.href.indexOf('douyin') !== -1
+            || location.href.indexOf('twitter') !== -1
+            || location.href.indexOf('toutiao') !== -1
+            || location.href.indexOf('sohu') !== -1
+            || location.href.indexOf('youtube') !== -1
+            || location.href.indexOf('facebook') !== -1
+            || location.href.indexOf('youtube') !== -1
+            || location.href.indexOf('tiktok') !== -1
+            || location.href.indexOf('ce.xinli001.com') !== -1
+            || location.href.indexOf('beta.console.truvid.com') !== -1
+            || location.href.indexOf('pinterest') !== -1
+            || location.href.indexOf('ixigua') !== -1
+            || location.href.indexOf('isee.weishi.qq.com') !== -1
+            || location.href.indexOf('kuaishou.com') !== -1
+            || location.href.indexOf('zhihu.com') !== -1
+            || location.href.indexOf('xiaohongshu.com/') !== -1) {
 
             injectedScript('scripts/xhr/xhr.js').then(r => {
 
@@ -67,10 +80,10 @@ chrome.storage.local.get('open', (res) => {
 
 
 var G = {};
-var cacheData = {init: true};
-chrome.storage.local.set({iframeVisible: true});
+var cacheData = { init: true };
+chrome.storage.local.set({ iframeVisible: true });
 G.scriptList = new Map();
-G.scriptList.set("facebook.js", {refresh: true, allFrames: true, world: "MAIN", name: "facebook"});
+G.scriptList.set("facebook.js", { refresh: true, allFrames: true, world: "MAIN", name: "facebook" });
 const webList = ['https://movieweb.com', 'https://collider.com', 'https://fandomwire.com',
     'https://www.tvinsider.com', 'https://www.foxnews.com', 'https://screenrant.com', 'https://nypost.com',
     'https://www.cbr.com', 'https://tasteofcountry.com', 'https://people.com', 'https://outsider.com', 'https://www.outsider.com',
@@ -200,6 +213,13 @@ if (location.origin.indexOf("douyin") !== -1) {
     }).then(() => {
         console.log("注入知乎完成")
     })
+} else if (location.href.indexOf('www.xiaohongshu.com/') != -1) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'xiaohongshu.js'
+    }).then(() => {
+        console.log("xiaohongshu")
+    })
 } else if (location.href) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
@@ -210,6 +230,6 @@ if (location.origin.indexOf("douyin") !== -1) {
 }
 
 
-chrome.storage.local.set({iframeVisible: true});
+chrome.storage.local.set({ iframeVisible: true });
 
 

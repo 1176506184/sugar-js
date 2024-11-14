@@ -8,39 +8,47 @@
 
       <span style="font-size: 18px; font-weight: bold">通用采集工具</span>
 
-
       <el-button
-          id="username"
-          class="linear"
-          style="font-size: 14px; float:right"
-          @click="logout"
+        id="username"
+        class="linear"
+        style="font-size: 14px; float: right"
+        @click="logout"
       >
         {{ state.loginText }}
       </el-button>
 
-      <el-select placeholder="是否开启" style="width: 160px;float: right;margin-right: 15px;" v-model="open"
-                 @change="changeOpen">
+      <el-select
+        placeholder="是否开启"
+        style="width: 160px; float: right; margin-right: 15px"
+        v-model="open"
+        @change="changeOpen"
+      >
         <el-option :value="1" label="插件状态：开启"></el-option>
         <el-option :value="0" label="插件状态：关闭"></el-option>
       </el-select>
 
-      <el-select style="width: 110px;float: right;margin-right: 15px;display: none" placeholder="请选择系统"
-                 v-model="state.system"
-                 @change="tipReload">
+      <el-select
+        style="width: 110px; float: right; margin-right: 15px; display: none"
+        placeholder="请选择系统"
+        v-model="state.system"
+        @change="tipReload"
+      >
         <el-option :value="1" label="小号系统"></el-option>
         <el-option :value="2" label="数据系统"></el-option>
       </el-select>
-
     </div>
     <!--    <div class="title_viewer">-->
     <!--        <div id="username"></div>-->
     <!--    </div>-->
     <div class="layout_viewer" id="layout_viewer">
-
       <div id="login_container" v-if="state.isLogin === false"></div>
       <div id="menu" v-if="state.isLogin">
-        <el-collapse v-if="owner === 0" v-model="activeNames" @change="handleChange"
-                     style="border-top: 0;padding-bottom: 50px">
+        <el-collapse
+          v-if="owner === 0"
+          v-model="activeNames"
+          @change="handleChange"
+          style="border-top: 0; padding-bottom: 50px"
+        >
           <el-collapse-item title="抖音视频" name="1">
             <div>
               <!--              <el-button-->
@@ -59,34 +67,40 @@
               <!--              >-->
 
               <el-button
-                  @click="Copy_douyin"
-                  type="primary"
-                  :disabled="type !== 'douyin'"
-              >视频采集
-              </el-button>
-
-              <el-button @click="collectDouyinVideoCommunitySchedulingFrame" type="primary"
-                         :disabled="type !== 'douyin'">批量源素材社团排程
+                @click="Copy_douyin"
+                type="primary"
+                :disabled="type !== 'douyin'"
+                >视频采集
               </el-button>
 
               <el-button
-                  @click="douyin_history"
-                  type="primary"
-                  :disabled="type !== 'douyin'"
-              >历史采集
+                @click="collectDouyinVideoCommunitySchedulingFrame"
+                type="primary"
+                :disabled="type !== 'douyin'"
+                >批量源素材社团排程
               </el-button>
 
               <el-button
-                  @click="douyin_truvid"
-                  type="primary"
-                  :disabled="type !== 'douyin'"
-              >生成视频文章-Truvid并发布
+                @click="douyin_history"
+                type="primary"
+                :disabled="type !== 'douyin'"
+                >历史采集
               </el-button>
 
-              <el-button @click="collectDouyinFrame" type="primary" :disabled="canTiktokFrame">
+              <el-button
+                @click="douyin_truvid"
+                type="primary"
+                :disabled="type !== 'douyin'"
+                >生成视频文章-Truvid并发布
+              </el-button>
+
+              <el-button
+                @click="collectDouyinFrame"
+                type="primary"
+                :disabled="canTiktokFrame"
+              >
                 自动采最新
               </el-button>
-
             </div>
           </el-collapse-item>
 
@@ -99,12 +113,24 @@
               <!--              >小号素材库-->
               <!--              </el-button>-->
 
-              <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">社团排程（图片）</el-button>
-              <el-button @click="collectTwitterVideoCommunitySchedulingFrame" type="primary">社团排程（视频）</el-button>
+              <el-button
+                @click="collectTwitterImageCommunitySchedulingFrame"
+                type="primary"
+                >社团排程（图片）</el-button
+              >
+              <el-button
+                @click="collectTwitterVideoCommunitySchedulingFrame"
+                type="primary"
+                >社团排程（视频）</el-button
+              >
               <el-button @click="collectTwitterPW" type="primary">
                 采集视频并TOOL源视频排文
               </el-button>
-              <el-button type="warning" @click="collectTTHistory" style="margin-top: 0px;">自动采集历史
+              <el-button
+                type="warning"
+                @click="collectTTHistory"
+                style="margin-top: 0px"
+                >自动采集历史
               </el-button>
             </div>
           </el-collapse-item>
@@ -112,47 +138,53 @@
           <el-collapse-item title="头条博主" name="3">
             <div style="display: flex">
               <el-input
-                  placeholder="最大采集文章数"
-                  style="width: 140px; margin-right: 15px"
-                  :disabled="type !== 'toutiao'"
-                  v-model="toutiaoMax"
+                placeholder="最大采集文章数"
+                style="width: 140px; margin-right: 15px"
+                :disabled="type !== 'toutiao'"
+                v-model="toutiaoMax"
               ></el-input>
               <el-button
-                  type="primary"
-                  @click="collectToutiao"
-                  :disabled="type !== 'toutiao'"
-                  v-if="toutiaoPending !== 'start'"
-              >开始采集
-              </el-button
-              >
+                type="primary"
+                @click="collectToutiao"
+                :disabled="type !== 'toutiao'"
+                v-if="toutiaoPending !== 'start'"
+                >开始采集
+              </el-button>
               <el-button type="danger" @click="stopCollectToutiao" v-else
-              >停止采集
-              </el-button
+                >停止采集
+              </el-button>
+              <el-button type="warning" @click="collectToutiaoVHistory"
+                >微头条采集</el-button
               >
-              <el-button type="warning" @click="collectToutiaoVHistory">微头条采集</el-button>
 
-              <el-button type="warning" @click="collectToutiaoHistory">头条采集</el-button>
+              <el-button type="warning" @click="collectToutiaoHistory"
+                >头条采集</el-button
+              >
 
-              <el-button @click="collectToutiaoCommunitySchedulingFrame" type="primary">微头条-社团排程</el-button>
+              <el-button
+                @click="collectToutiaoCommunitySchedulingFrame"
+                type="primary"
+                >微头条-社团排程</el-button
+              >
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="搜狐博主" name="4">
             <div style="display: flex">
               <el-input
-                  placeholder="最大采集文章数"
-                  style="width: 140px; margin-right: 15px"
-                  v-model="sohuMax"
+                placeholder="最大采集文章数"
+                style="width: 140px; margin-right: 15px"
+                v-model="sohuMax"
               ></el-input>
               <el-button
-                  type="primary"
-                  @click="collectSohu"
-                  :disabled="type !== 'sohu'"
-                  v-if="sohuPending !== 'start'"
-              >开始采集
+                type="primary"
+                @click="collectSohu"
+                :disabled="type !== 'sohu'"
+                v-if="sohuPending !== 'start'"
+                >开始采集
               </el-button>
               <el-button type="danger" @click="stopCollectSohu" v-else
-              >停止采集
+                >停止采集
               </el-button>
             </div>
           </el-collapse-item>
@@ -160,25 +192,32 @@
           <el-collapse-item title="Facebook博主" name="5">
             <div style="display: flex">
               <el-input
-                  placeholder="最大采集文章数"
-                  style="width: 140px; margin-right: 15px"
-                  v-model="fbMax"
+                placeholder="最大采集文章数"
+                style="width: 140px; margin-right: 15px"
+                v-model="fbMax"
               ></el-input>
               <el-button
-                  type="primary"
-                  @click="collectFacebook"
-                  :disabled="type !== 'facebook'"
-                  v-if="fbPending !== 'start'"
-              >开始采集
+                type="primary"
+                @click="collectFacebook"
+                :disabled="type !== 'facebook'"
+                v-if="fbPending !== 'start'"
+                >开始采集
               </el-button>
-              <el-button type="danger" @click="stopCollectFacebook" v-else>停止采集
+              <el-button type="danger" @click="stopCollectFacebook" v-else
+                >停止采集
               </el-button>
 
-              <el-button type="primary" @click="collectFBVideo">采集博主视频</el-button>
+              <el-button type="primary" @click="collectFBVideo"
+                >采集博主视频</el-button
+              >
 
-              <el-button type="warning" @click="collectFBHistory">自动采集历史</el-button>
+              <el-button type="warning" @click="collectFBHistory"
+                >自动采集历史</el-button
+              >
 
-              <el-button type="primary" @click="collectFBToToolPlatform">自动采集图文帖至Tool脚本素材库</el-button>
+              <el-button type="primary" @click="collectFBToToolPlatform"
+                >自动采集图文帖至Tool脚本素材库</el-button
+              >
             </div>
           </el-collapse-item>
 
@@ -186,39 +225,69 @@
             <div>
               <!--              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>-->
               <!--              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>-->
-              <el-button @click="collectYoutubeNew" type="primary">采集视频 / SHORTS并自动分发 / Truvid</el-button>
-              <el-button @click="collectYoutubeNewPW" type="primary">采集视频 / SHORTS并TOOL源视频排文</el-button>
+              <el-button @click="collectYoutubeNew" type="primary"
+                >采集视频 / SHORTS并自动分发 / Truvid</el-button
+              >
+              <el-button @click="collectYoutubeNewPW" type="primary"
+                >采集视频 / SHORTS并TOOL源视频排文</el-button
+              >
 
-              <el-button @click="collectYoutubeVideoCommunitySchedulingFramePW" type="primary">批量源素材社团排程
+              <el-button
+                @click="collectYoutubeVideoCommunitySchedulingFramePW"
+                type="primary"
+                >批量源素材社团排程
               </el-button>
 
-              <br/>
+              <br />
 
-              <el-button @click="collectYoutubeHistory" type="primary" style="margin-top: 5px">采集历史</el-button>
+              <el-button
+                @click="collectYoutubeHistory"
+                type="primary"
+                style="margin-top: 5px"
+                >采集历史</el-button
+              >
             </div>
           </el-collapse-item>
 
-
           <el-collapse-item title="TikTok" name="7">
             <div>
-              <el-button @click="collectTiktok" type="primary">采集视频</el-button>
-              <el-button @click="collectTiktokVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
+              <el-button @click="collectTiktok" type="primary"
+                >采集视频</el-button
+              >
+              <el-button @click="collectTiktokVideoFrame" type="primary"
+                >采集视频并TOOL源视频排文</el-button
+              >
 
-              <el-button @click="collectTiktokVideoCommunitySchedulingFrame" type="primary">批量源素材社团排程
+              <el-button
+                @click="collectTiktokVideoCommunitySchedulingFrame"
+                type="primary"
+                >批量源素材社团排程
               </el-button>
 
-              <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">
+              <el-button
+                @click="collectTiktokFrame"
+                type="primary"
+                :disabled="canTiktokFrame"
+              >
                 更新视频
               </el-button>
-              <br/>
-              <el-button @click="collectTiktokFrameSingle" type="primary" style="margin-top: 5px;">
+              <br />
+              <el-button
+                @click="collectTiktokFrameSingle"
+                type="primary"
+                style="margin-top: 5px"
+              >
                 更新视频（单个博主）
               </el-button>
               <!--              <el-button @click="collectTiktokFrameScroll" type="primary" :disabled="canTiktokFrame">-->
               <!--                更新历史-->
               <!--              </el-button>-->
-              <el-button @click="collectTiktokCollectHistoryVideo" type="primary" :disabled="canTiktokFrame"
-                         style="margin-top: 5px;">
+              <el-button
+                @click="collectTiktokCollectHistoryVideo"
+                type="primary"
+                :disabled="canTiktokFrame"
+                style="margin-top: 5px"
+              >
                 更新历史（人工）
               </el-button>
             </div>
@@ -227,41 +296,59 @@
           <el-collapse-item title="综合采集" name="8">
             <div>
               <el-button @click="collectWeb" type="primary">网站采集</el-button>
-              <el-button @click="collectWebFrame" type="primary">网站采集（新）</el-button>
-              <el-button @click="collectNovel" type="primary">小说采集</el-button>
-              <el-button @click="collectNovelSync" type="primary">小说采集（加延迟防检测）</el-button>
-              <el-button @click="imageCreate" type="primary">小说图标生成</el-button>
+              <el-button @click="collectWebFrame" type="primary"
+                >网站采集（新）</el-button
+              >
+              <el-button @click="collectNovel" type="primary"
+                >小说采集</el-button
+              >
+              <el-button @click="collectNovelSync" type="primary"
+                >小说采集（加延迟防检测）</el-button
+              >
+              <el-button @click="imageCreate" type="primary"
+                >小说图标生成</el-button
+              >
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="Ins博主" name="9">
             <div>
-              <el-button type="primary" @click="SortIns">一键自动排序</el-button>
-              <el-button type="warning" @click="collectInsHistory">自动采集历史</el-button>
+              <el-button type="primary" @click="SortIns"
+                >一键自动排序</el-button
+              >
+              <el-button type="warning" @click="collectInsHistory"
+                >自动采集历史</el-button
+              >
               <!--              <el-button type="primary" @click="collectInsVideo">采集视频/TOOL源视频排文</el-button>-->
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="Pinterest博主" name="10">
             <div>
-              <el-button @click="pinterestHistoryFrame" type="warning">自动采集历史</el-button>
+              <el-button @click="pinterestHistoryFrame" type="warning"
+                >自动采集历史</el-button
+              >
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="西瓜视频" name="11">
             <div>
-              <el-button @click="ixiguaVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
-              <el-button @click="ixiguaHistoryFrame" type="warning">自动采集历史</el-button>
-              <el-button @click="ixiguaVideoArticle" type="primary">生成视频文章-Truvid并发布</el-button>
+              <el-button @click="ixiguaVideoFrame" type="primary"
+                >采集视频并TOOL源视频排文</el-button
+              >
+              <el-button @click="ixiguaHistoryFrame" type="warning"
+                >自动采集历史</el-button
+              >
+              <el-button @click="ixiguaVideoArticle" type="primary"
+                >生成视频文章-Truvid并发布</el-button
+              >
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="知乎采集" name="25">
             <div style="display: flex">
-              <el-button
-                  type="primary"
-                  @click="collectZhihu"
-              >开始采集
+              <el-button type="primary" @click="collectZhihu"
+                >开始采集
               </el-button>
             </div>
           </el-collapse-item>
@@ -273,10 +360,18 @@
           <!--        </div>-->
           <!--        <div class="border"></div>-->
         </el-collapse>
-        <el-collapse v-if="owner === 1" v-model="activeNames" @change="handleChange" style="border-top: 0">
+        <el-collapse
+          v-if="owner === 1"
+          v-model="activeNames"
+          @change="handleChange"
+          style="border-top: 0"
+        >
           <el-collapse-item title="TikTok" name="7">
             <div>
-              <el-button @click="collectTiktokCollectHistoryVideo" type="primary">
+              <el-button
+                @click="collectTiktokCollectHistoryVideo"
+                type="primary"
+              >
                 更新历史（人工）
               </el-button>
               <el-button @click="collectTiktokFrameSingle" type="primary">
@@ -293,74 +388,130 @@
           </el-collapse-item>
           <el-collapse-item title="抖音视频" name="1">
             <el-button
-                @click="collectDouyin"
-                type="primary"
-                :disabled="type !== 'douyin'"
-            >视频自动化采集
+              @click="collectDouyin"
+              type="primary"
+              :disabled="type !== 'douyin'"
+              >视频自动化采集
             </el-button>
           </el-collapse-item>
           <el-collapse-item title="快手" name="21">
             <el-cascader
-                filterable
-                placeholder="请选择分类"
-                v-model="kuaishouTagid"
-                :options="category"
-                :props="props"
-                style="margin-right: 10px;"
+              filterable
+              placeholder="请选择分类"
+              v-model="kuaishouTagid"
+              :options="category"
+              :props="props"
+              style="margin-right: 10px"
             />
             <el-button
-                :loading="kuaishouLoading"
-                @click="collectKuaishou"
-                type="primary"
-                :disabled="type !== 'kuaishou'"
-            >初始化博主
+              :loading="kuaishouLoading"
+              @click="collectKuaishou"
+              type="primary"
+              :disabled="type !== 'kuaishou'"
+              >初始化博主
             </el-button>
             <div style="margin-left: 40px">
               {{ kuaishouBloggerId }}
             </div>
+          </el-collapse-item>
 
+          <el-collapse-item title="小红书" name="22">
+            <div style="margin-left: 0px; margin-top: 10px">
+              <el-input
+                v-model="XhsBloggerId"
+                placeholder="博主ID"
+                style="width: 200px"
+              >
+              </el-input>
+
+              <el-input
+                v-model="XhsBloggerName"
+                placeholder="博主名称"
+                style="width: 200px; margin-left: 20px"
+              >
+              </el-input>
+
+              <el-button
+                @click="fetchBloggerInfo"
+                type="primary"
+                style="width: 200px; margin-left: 20px"
+              >
+                {{ XhsBloggerId_search }}
+              </el-button>
+            </div>
+
+            <div style="margin-left: 0px; margin-top: 10px">
+              <el-cascader
+                filterable
+                placeholder="请选择分类"
+                v-model="xiaohongshuTagid"
+                :options="category"
+                :props="props"
+                style="margin-right: 10px"
+              />
+
+              <el-button @click="xiaohongshu_collect" type="primary">
+                {{ XhsBloggerId_search_start }}
+              </el-button>
+
+              <el-input
+                v-model="Xhserror"
+                placeholder="错误报警"
+                style="width: 200px; margin-left: 20px"
+              >
+              </el-input>
+            </div>
           </el-collapse-item>
         </el-collapse>
       </div>
-
     </div>
-    <div id="version" style="display: flex;align-items: center">
-      <p id="v_p" style="cursor: pointer">{{ state.version }} （如遇视频无法播放的情况请先关闭插件并刷新页面）</p>
+    <div id="version" style="display: flex; align-items: center">
+      <p id="v_p" style="cursor: pointer">
+        {{ state.version }} （如遇视频无法播放的情况请先关闭插件并刷新页面）
+      </p>
     </div>
   </div>
 </template>
 
 <script setup>
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 import version from "../../version";
 
 const router = useRouter();
-import {guid, handleCopyValue} from "../utils/utils";
+import { guid, handleCopyValue } from "../utils/utils";
 
 const dingTalkAppId = "dingoac12xjewgmuqs2sea";
-import {nextTick, onActivated, onMounted, reactive, ref, watchEffect} from "vue";
-import {parseDate} from "../../utils/formatDate";
+import {
+  nextTick,
+  onActivated,
+  onMounted,
+  reactive,
+  ref,
+  watchEffect,
+} from "vue";
+import { parseDate } from "../../utils/formatDate";
 import store from "../store/store.js";
-import {computed} from "vue";
-import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
-import {ElMessage, ElMessageBox} from "element-plus";
+import { computed } from "vue";
+import { http, xhrHttp, sHttp, dHttp } from "../utils/request";
+import { ElMessage, ElMessageBox } from "element-plus";
+import Color from "element-plus/es/components/color-picker/src/utils/color";
 
-const open = ref(1)
-const owner = ref(1)
+const open = ref(1);
+const owner = ref(1);
 
 function changeOpen() {
-  chrome.storage.local.set({
-    open: open.value
-  }, () => {
-
-  })
-
+  chrome.storage.local.set(
+    {
+      open: open.value,
+    },
+    () => {}
+  );
 }
 
-const activeNames = ref([])
+const activeNames = ref([]);
 const handleChange = (val) => {
-  console.log(val)
-}
+  console.log(val);
+};
 
 function absoluteCollapse() {
   nextTick(() => {
@@ -369,14 +520,12 @@ function absoluteCollapse() {
       const offset = 50; // 偏移量
       const topPosition = targetPanel.offsetTop + offset;
       if (targetPanel && topPosition > 400) {
-        document.querySelector('#layout_viewer').scrollTo({
-          top: topPosition
+        document.querySelector("#layout_viewer").scrollTo({
+          top: topPosition,
         });
       }
-    } catch (e) {
-
-    }
-  })
+    } catch (e) {}
+  });
 }
 
 let data = {
@@ -396,33 +545,38 @@ let state = reactive({
   isLogin: false,
   loginText: "钉钉未登录",
   version,
-  system: 1
+  system: 1,
 });
+
+/**小红书数据*/
+let XHS_data = "";
+
+/**小红书帖子列表*/
+let XHS_list = "";
 
 function logout() {
   if (state.isLogin) {
-    ElMessageBox.confirm(
-        '是否退出登录？',
-        {
-          confirmButtonText: '确实',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-    )
-        .then(() => {
-          localStorage.clear();
-          location.reload();
-        })
-        .catch(() => {
-
-        })
+    ElMessageBox.confirm("是否退出登录？", {
+      confirmButtonText: "确实",
+      cancelButtonText: "取消",
+      type: "warning",
+    })
+      .then(() => {
+        localStorage.clear();
+        location.reload();
+      })
+      .catch(() => {});
   }
 }
 
 const loading = ref(false);
 const canTiktokFrame = computed(() => {
-  return localStorage.getItem('name') !== '唐非凡' && localStorage.getItem('name') !== '韩冰' && localStorage.getItem('name') !== '李明'
-})
+  return (
+    localStorage.getItem("name") !== "唐非凡" &&
+    localStorage.getItem("name") !== "韩冰" &&
+    localStorage.getItem("name") !== "李明"
+  );
+});
 
 const canUseBtn = reactive({
   trumpetVideo: true,
@@ -442,16 +596,16 @@ const eventBus = async function (Message, sender, sendResponse) {
     sendResponse("ok");
   } else if (Message.Message === "initBtn") {
     if (Message.type === "douyin") {
-      activeNames.value.push('1')
+      activeNames.value.push("1");
       store.commit("changeType", "douyin");
     } else if (Message.type === "twitter") {
-      activeNames.value.push('2')
+      activeNames.value.push("2");
       store.commit("changeType", "twitter");
     } else if (Message.type === "facebook") {
-      activeNames.value.push('5')
+      activeNames.value.push("5");
       store.commit("changeType", "facebook");
     } else if (Message.type === "toutiao") {
-      activeNames.value.push('3')
+      activeNames.value.push("3");
       store.commit("changeType", "toutiao");
     } else if (Message.type === "sohu") {
       activeNames.value.push("4");
@@ -480,62 +634,99 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "kuaishou") {
       activeNames.value.push("21");
       store.commit("changeType", "kuaishou");
+    } else if (Message.type === "xiaohongshu") {
+      activeNames.value.push("22");
+      store.commit("changeType", "xiaohongshu");
     } else if (Message.type === "zhihu") {
       activeNames.value.push("25");
       store.commit("changeType", "zhihu");
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
-    }
-    absoluteCollapse()
-  } else if (Message.Message === "video") {
-    loading.value = true;
-    data.video = Message.url;
-    let realData = Message.data;
-    let domData = Message.domData;
-    let godComment = Message.godComment;
-    let curl = ``;
-    godComment.forEach((god, index) => {
-      if (index < 3) {
-        curl += `&c${index + 1}=${god.text}`;
-      }
-    });
+    } else if (Message.Message === "video") {
+      loading.value = true;
+      data.video = Message.url;
+      let realData = Message.data;
+      let domData = Message.domData;
+      let godComment = Message.godComment;
+      let curl = ``;
+      godComment.forEach((god, index) => {
+        if (index < 3) {
+          curl += `&c${index + 1}=${god.text}`;
+        }
+      });
 
-    if (Object.keys(realData).length > 0) {
-      checkMP4(realData.video.play_addr?.url_list[0]);
-      let url = encodeURI(realData.video.play_addr?.url_list[0]);
-      if (data.videoPushType === 2) {
-        window.open(
+      if (Object.keys(realData).length > 0) {
+        checkMP4(realData.video.play_addr?.url_list[0]);
+        let url = encodeURI(realData.video.play_addr?.url_list[0]);
+        if (data.videoPushType === 2) {
+          window.open(
             `http://twtest.anyelse.com/user/postvideo?title=${
-                realData.preview_title
-                    ? escape(realData.preview_title)
-                    : escape(realData.desc)
+              realData.preview_title
+                ? escape(realData.preview_title)
+                : escape(realData.desc)
             }&cover=${escape(realData.pic)}&videourl=${escape(
-                realData.reUrl
-            )}&decodurl==${url}&author=${escape(realData.author.nickname)}${curl}`
-        );
-        return;
-      }
-      try {
-        http("Video/SaveVideo", {
-          platform: 1,
-          title: realData.preview_title
+              realData.reUrl
+            )}&decodurl==${url}&author=${escape(
+              realData.author.nickname
+            )}${curl}`
+          );
+          return;
+        }
+        try {
+          http("Video/SaveVideo", {
+            platform: 1,
+            title: realData.preview_title
               ? realData.preview_title
               : realData.desc,
-          resource_link: realData.reUrl,
-          resource_url: (function () {
-            return realData.video.play_addr?.url_list[0];
-          })(),
-          times: realData.video.duration / 1000,
-          play_count: realData.statistics.play_count,
-          like_count: realData.statistics.digg_count,
-          share_count: realData.statistics.share_count,
-          collect_count: realData.statistics.collect_count,
-          comment_count: realData.statistics.comment_count,
-          publish_time: parseDate(realData.create_time),
-          author_name: realData.author.nickname,
-          author_url: `https://douyin.com/user/${realData.author.sec_uid}?vid=${realData.group_id}`,
-          author_id: realData.group_id,
-          pic: realData.pic,
+            resource_link: realData.reUrl,
+            resource_url: (function () {
+              return realData.video.play_addr?.url_list[0];
+            })(),
+            times: realData.video.duration / 1000,
+            play_count: realData.statistics.play_count,
+            like_count: realData.statistics.digg_count,
+            share_count: realData.statistics.share_count,
+            collect_count: realData.statistics.collect_count,
+            comment_count: realData.statistics.comment_count,
+            publish_time: parseDate(realData.create_time),
+            author_name: realData.author.nickname,
+            author_url: `https://douyin.com/user/${realData.author.sec_uid}?vid=${realData.group_id}`,
+            author_id: realData.group_id,
+            pic: realData.pic,
+          }).then((res) => {
+            router.push({
+              name: "TrumpetVideo",
+              query: {
+                id: res.newid,
+                resource_type: 1,
+              },
+            });
+          });
+        } catch (e) {}
+      } else {
+        checkMP4(domData.video);
+
+        if (data.videoPushType === 2) {
+          window.open(
+            `http://twtest.anyelse.com/user/postvideo?title=${escape(
+              domData.title
+            )}&cover=${escape(domData.pic)}&videourl=${escape(
+              domData.url
+            )}&decodurl=${escape(domData.video)}&author=${escape(
+              domData.author
+            )}${curl}`
+          );
+          return;
+        }
+
+        http("Video/SaveVideo", {
+          platform: 1,
+          resource_url: domData.video,
+          author_url: domData.author_url,
+          title: domData.title,
+          author_name: domData.author,
+          resource_link: domData.url,
+          pic: domData.pic,
         }).then((res) => {
           router.push({
             name: "TrumpetVideo",
@@ -545,130 +736,151 @@ const eventBus = async function (Message, sender, sendResponse) {
             },
           });
         });
-      } catch (e) {
-      }
-    } else {
-      checkMP4(domData.video);
-
-      if (data.videoPushType === 2) {
-        window.open(
-            `http://twtest.anyelse.com/user/postvideo?title=${escape(
-                domData.title
-            )}&cover=${escape(domData.pic)}&videourl=${escape(
-                domData.url
-            )}&decodurl=${escape(domData.video)}&author=${escape(
-                domData.author
-            )}${curl}`
-        );
-        return;
       }
 
-      http("Video/SaveVideo", {
-        platform: 1,
-        resource_url: domData.video,
-        author_url: domData.author_url,
-        title: domData.title,
-        author_name: domData.author,
-        resource_link: domData.url,
-        pic: domData.pic,
-      }).then((res) => {
-        router.push({
-          name: "TrumpetVideo",
-          query: {
-            id: res.newid,
-            resource_type: 1,
-          },
-        });
-      });
-    }
-
-    loading.value = false;
-  } else if (Message.Message === "image") {
-    loading.value = true;
-    let data = Message.data;
-    let group_guid = guid();
-    data = data.map((d) => {
-      return {
-        resource_url: d.entities?.media
+      loading.value = false;
+    } else if (Message.Message === "image") {
+      loading.value = true;
+      let data = Message.data;
+      let group_guid = guid();
+      data = data.map((d) => {
+        return {
+          resource_url: d.entities?.media
             ?.map((e) => {
               return e.media_url_https;
             })
             .join("|||"),
-        platform: 4,
-        like_count: d.favorite_count,
-        share_count: d.retweet_count,
-        comment_count: d.reply_count,
-        publish_time: d.created_at,
-        author_name: d.author_name,
-        author_url: d.author_url,
-        title: d.full_text,
-        resource_link: `${d.resource_link}`,
-        group_guid: group_guid,
-        real_id: `${d.id_str}`,
-      };
-    });
-    http("ImageCollect/SaveImageCollectList", {
-      list: data,
-    }).then((res) => {
-      loading.value = false;
-      router.push({
-        name: "TwitterImage",
-        query: {
-          guid: group_guid,
-          resource_type: 2,
-        },
+          platform: 4,
+          like_count: d.favorite_count,
+          share_count: d.retweet_count,
+          comment_count: d.reply_count,
+          publish_time: d.created_at,
+          author_name: d.author_name,
+          author_url: d.author_url,
+          title: d.full_text,
+          resource_link: `${d.resource_link}`,
+          group_guid: group_guid,
+          real_id: `${d.id_str}`,
+        };
       });
-    });
-  } else if (Message.Message === "group") {
-    // console.log(Message.data)
-  } else if (Message.Message === "stop" && Message.type === "toutiao") {
-    toutiaoPending.value = "lock";
-  } else if (Message.Message === "sendData" && Message.type === "toutiao") {
-    console.log(Message.data);
-    dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
-      ElMessage('上传成功一条');
-    })
-  } else if (Message.Message === "stop" && Message.type === "sohu") {
-    sohuPending.value = "lock";
-  } else if (Message.Message === "sendData" && Message.type === "sohu") {
-    try {
-      let res = await dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data))
-      console.log(res)
-    } catch (err) {
-      console.log(err)
+      http("ImageCollect/SaveImageCollectList", {
+        list: data,
+      }).then((res) => {
+        loading.value = false;
+        router.push({
+          name: "TwitterImage",
+          query: {
+            guid: group_guid,
+            resource_type: 2,
+          },
+        });
+      });
+    } else if (Message.Message === "group") {
+      // console.log(Message.data)
+    } else if (Message.Message === "stop" && Message.type === "toutiao") {
+      toutiaoPending.value = "lock";
+    } else if (Message.Message === "sendData" && Message.type === "toutiao") {
+      console.log(Message.data);
+      dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(
+        () => {
+          ElMessage("上传成功一条");
+        }
+      );
+    } else if (Message.Message === "stop" && Message.type === "sohu") {
+      sohuPending.value = "lock";
+    } else if (Message.Message === "sendData" && Message.type === "sohu") {
+      try {
+        let res = await dHttp(
+          "CaptureSpecial/SaveOrUpdate",
+          JSON.stringify(Message.data)
+        );
+        console.log(res);
+      } catch (err) {
+        console.log(err);
+      }
+    } else if (Message.Message === "stop" && Message.type === "facebook") {
+      fbPending.value = "lock";
+    } else if (Message.Message === "sendData" && Message.type === "facebook") {
+      console.log(JSON.stringify(Message.data));
+      dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(
+        () => {
+          ElMessage("上传成功一条");
+        }
+      );
+    } else if (
+      Message.Message === "kuaishouData" &&
+      Message.type === "kuaishou"
+    ) {
+      console.log(Message.data);
+      chrome.runtime
+        .sendMessage({
+          Message: "kuaishouUrl",
+          url: Message.data.url,
+        })
+        .then((r) => {
+          console.log(r);
+          kuaishouBloggerId.value = Message.data.userid.toString();
+          xhrHttp(
+            "http://101.201.222.226/Author/AddKs",
+            {
+              userId: Message.data.userid.toString(),
+              userEid: Message.data.eid.toString(),
+              userName: Message.data.userName.toString(),
+              shorUrl: r,
+              operatorId: localStorage.getItem("ddid"),
+              tagId: kuaishouTagid.value?.slice(-1)[0],
+            },
+            "post",
+            "application/json"
+          ).then((res) => {
+            kuaishouLoading.value = false;
+            ElMessage.info(res.msg);
+          });
+        });
+      // dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
+      //   ElMessage('上传成功一条');
+      // })
     }
-  } else if (Message.Message === "stop" && Message.type === "facebook") {
-    fbPending.value = "lock";
-  } else if (Message.Message === "sendData" && Message.type === "facebook") {
-    console.log(JSON.stringify(Message.data))
-    dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
-      ElMessage('上传成功一条');
-    })
-  } else if (Message.Message === "kuaishouData" && Message.type === "kuaishou") {
-    console.log(Message.data)
-    chrome.runtime.sendMessage({
-      Message: 'kuaishouUrl',
-      url: Message.data.url
-    }).then(r => {
-      console.log(r);
-      kuaishouBloggerId.value = Message.data.userid.toString()
-      xhrHttp("http://101.201.222.226/Author/AddKs", {
-            userId: Message.data.userid.toString(),
-            userEid: Message.data.eid.toString(),
-            userName: Message.data.userName.toString(),
-            shorUrl: r,
-            operatorId: localStorage.getItem('ddid'),
-            tagId: kuaishouTagid.value?.slice(-1)[0]
-          }
-          , 'post', 'application/json').then((res) => {
-        kuaishouLoading.value = false;
-        ElMessage.info(res.msg)
-      })
+  } else if (
+    Message.Message === "xiaohongshuData" &&
+    Message.type === "xiaohongshu"
+  ) {
+    console.log(Message.Message);
 
-    })
-    // dHttp("CaptureSpecial/SaveOrUpdate", JSON.stringify(Message.data)).then(() => {
-    //   ElMessage('上传成功一条');
-    // })
+    chrome.runtime
+      .sendMessage({
+        Message: "xiaohongshuUrl",
+        url: Message.data.url,
+      })
+      .then((r) => {
+        console.log(r);
+        XhsBloggerId.value = Message.data.userid.toString();
+        XhsBloggerName.value = Message.data.userName.toString();
+        XHS_data = Message.data;
+      });
+  } else if (
+    Message.Message === "xiaohongshuData" &&
+    Message.type === "article_list"
+  ) {
+    if (Message.data.author_id != "false") {
+      console.log(Message.Message);
+
+      chrome.runtime
+        .sendMessage({
+          Message: "xiaohongshuUrl",
+          url: Message.data.url,
+        })
+        .then(async (r) => {
+          console.log(r);
+          //   XhsBloggerId.value = Message.data.userid.toString();
+          //  XhsBloggerName.value = Message.data.userName.toString();
+          XHS_list = Message.data;
+
+          await XHS_callback(XHS_list);
+        });
+    } else {
+      Xhserror.value = Message.data.msg;
+    }
   }
 };
 // if (!window.eventBus) {
@@ -677,29 +889,27 @@ const eventBus = async function (Message, sender, sendResponse) {
 // window.eventBus = eventBus;
 
 onMounted(() => {
-
-
-  chrome.storage.local.get('open', (res) => {
+  chrome.storage.local.get("open", (res) => {
     if (typeof res.open === "number") {
-      open.value = res.open
+      open.value = res.open;
     }
-  })
+  });
 
-
-  state.system = isNaN(parseInt(localStorage.getItem("system"))) ? 1 : parseInt(localStorage.getItem("system"))
+  state.system = isNaN(parseInt(localStorage.getItem("system")))
+    ? 1
+    : parseInt(localStorage.getItem("system"));
 
   watchEffect(() => {
-    console.log(state.system)
+    console.log(state.system);
     localStorage.setItem("system", state.system);
     if (state.system === 1) {
-      reUrl.value = 'http://107.150.124.12/'
+      reUrl.value = "http://107.150.124.12/";
     } else {
-      reUrl.value = 'http://test.44finefood.com/'
+      reUrl.value = "http://test.44finefood.com/";
     }
-  })
+  });
 
-
-  if (!localStorage.getItem("tk") || !localStorage.getItem('ddid')) {
+  if (!localStorage.getItem("tk") || !localStorage.getItem("ddid")) {
     nextTick(() => {
       setTimeout(() => {
         initDingLogin();
@@ -718,72 +928,65 @@ onMounted(() => {
 
 function getPending() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "getPending",
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              } else {
-                if (response.pending) {
-                  try {
-                    toutiaoPending.value = response.pending;
-                    toutiaoMax.value = response.toutiaoMax;
-                  } catch (e) {
-                  }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "getPending",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            if (response.pending) {
+              try {
+                toutiaoPending.value = response.pending;
+                toutiaoMax.value = response.toutiaoMax;
+              } catch (e) {}
 
-                  try {
-                    sohuPending.value = response.pending;
-                    sohuMax.value = response.sohuMax;
-                  } catch (e) {
-                  }
+              try {
+                sohuPending.value = response.pending;
+                sohuMax.value = response.sohuMax;
+              } catch (e) {}
 
-                  try {
-                    fbPending.value = response.pending;
-                    fbMax.value = response.fbMax;
-                  } catch (e) {
-                  }
-                }
-              }
+              try {
+                fbPending.value = response.pending;
+                fbMax.value = response.fbMax;
+              } catch (e) {}
             }
-        );
-      }
+          }
+        }
+      );
+    }
   );
 }
 
-onActivated(() => {
-});
+onActivated(() => {});
 
 function checkMP4(url) {
   try {
-    xhrHttp(url).then((res) => {
-    });
-  } catch (e) {
-  }
+    xhrHttp(url).then((res) => {});
+  } catch (e) {}
 }
 
 function getVersion() {
   if (owner.value === 1) {
-    return
+    return;
   }
   http("/home/GetVersion", {}).then((res) => {
     console.log(res.version_code);
     if (res.version_code > state.version && res.src) {
       ElMessageBox.confirm(res.remark, {
-        title: '发现新版本',
-        confirmButtonText: '立即下载',
-        cancelButtonText: '稍后下载'
-      })
-          .then(() => {
-            window.open(res.src);
-          })
+        title: "发现新版本",
+        confirmButtonText: "立即下载",
+        cancelButtonText: "稍后下载",
+      }).then(() => {
+        window.open(res.src);
+      });
       state.version = "点击下载最新版本";
       document.querySelector("#v_p").addEventListener("click", () => {
         window.open(res.src);
@@ -799,7 +1002,7 @@ function initDingLogin() {
   let base = origin + "/login";
   let redirectUrl = encodeURIComponent(base + "?type=dingding");
   let goto = encodeURIComponent(
-      `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${dingTalkAppId}&response_type=code&scope=snsapi_login&state=${reUrl.value}&redirect_uri=http://ddlogin.anyelse.com/logincallback.ashx`
+    `https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=${dingTalkAppId}&response_type=code&scope=snsapi_login&state=${reUrl.value}&redirect_uri=http://ddlogin.anyelse.com/logincallback.ashx`
   );
   DDLogin({
     id: "login_container", // 这里需要你在自己的页面定义一个HTML标签并设置id，例如<div id="login_container"></div>或<span id="login_container"></span>
@@ -814,8 +1017,8 @@ function initDingLogin() {
       // 判断是否来自ddLogin扫码事件。
       let loginTmpCode = event.data; // 拿到loginTmpCode后就可以在这里构造跳转链接进行跳转了
       let redirectURL = new URL(
-          "/connect/oauth2/sns_authorize",
-          "https://oapi.dingtalk.com"
+        "/connect/oauth2/sns_authorize",
+        "https://oapi.dingtalk.com"
       );
       redirectURL.searchParams.set("appid", dingTalkAppId);
       redirectURL.searchParams.set("response_type", "code");
@@ -835,7 +1038,7 @@ function initDingLogin() {
             localStorage.setItem("name", data.Data.username);
             localStorage.setItem("uid", data.Data.id);
             localStorage.setItem("tk", data.Data.token);
-            localStorage.setItem("ddid", data.Data.dduserid)
+            localStorage.setItem("ddid", data.Data.dduserid);
             state.isLogin = true;
             state.loginText = `已登录：${localStorage.getItem("name")}`;
           } else {
@@ -843,8 +1046,8 @@ function initDingLogin() {
           }
         },
         error: function () {
-          alert("登录失败，网络无连接")
-        }
+          alert("登录失败，网络无连接");
+        },
       });
     }
   };
@@ -856,46 +1059,46 @@ function initDingLogin() {
 function trumpet_video() {
   data.videoPushType = 1;
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "video",
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "video",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          }
+        }
+      );
+    }
   );
 }
 
 function trumpet_video_hx() {
   data.videoPushType = 2;
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "video",
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "video",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          }
+        }
+      );
+    }
   );
 }
 
@@ -906,70 +1109,69 @@ function Copy_douyin() {
   });
 }
 
-
 function twitter_trumpet() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "image",
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "image",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          }
+        }
+      );
+    }
   );
 }
 
 function facebook_member() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "Group",
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "Group",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          }
+        }
+      );
+    }
   );
 }
 
 function facebook_member_scroll() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "GroupScroll",
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "GroupScroll",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          }
+        }
+      );
+    }
   );
 }
 
@@ -986,23 +1188,23 @@ function openBtn(BtnKey) {
 
 function checkType() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "checkType",
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "checkType",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          }
+        }
+      );
+    }
   );
 }
 
@@ -1011,51 +1213,51 @@ const toutiaoPending = ref("lock");
 
 function collectToutiao() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "article",
-              toutiaoMax: toutiaoMax.value,
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              } else {
-                toutiaoPending.value = "start";
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "article",
+          toutiaoMax: toutiaoMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            toutiaoPending.value = "start";
+          }
+        }
+      );
+    }
   );
 }
 
 function stopCollectToutiao() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "stop",
-              toutiaoMax: toutiaoMax.value,
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              } else {
-                toutiaoPending.value = "stop";
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "stop",
+          toutiaoMax: toutiaoMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            toutiaoPending.value = "stop";
+          }
+        }
+      );
+    }
   );
 }
 
@@ -1064,51 +1266,51 @@ const sohuPending = ref("lock");
 
 function collectSohu() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "article",
-              sohuMax: sohuMax.value,
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              } else {
-                sohuPending.value = "start";
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "article",
+          sohuMax: sohuMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            sohuPending.value = "start";
+          }
+        }
+      );
+    }
   );
 }
 
 function stopCollectSohu() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "stop",
-              sohuMax: sohuMax.value,
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              } else {
-                sohuPending.value = "stop";
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "stop",
+          sohuMax: sohuMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            sohuPending.value = "stop";
+          }
+        }
+      );
+    }
   );
 }
 
@@ -1117,51 +1319,51 @@ const fbPending = ref("lock");
 
 function collectFacebook() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "article",
-              fbMax: fbMax.value,
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              } else {
-                fbPending.value = "start";
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "article",
+          fbMax: fbMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            fbPending.value = "start";
+          }
+        }
+      );
+    }
   );
 }
 
 function stopCollectFacebook() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "stop",
-              fbMax: fbMax.value,
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              } else {
-                fbPending.value = "stop";
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "stop",
+          fbMax: fbMax.value,
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          } else {
+            fbPending.value = "stop";
+          }
+        }
+      );
+    }
   );
 }
 
@@ -1196,49 +1398,48 @@ function collectWeb() {
 }
 
 async function collectFBVideo() {
-
   let activeId = await getActiveId();
   let pageId = await getId("FBCollect");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
+      active: true,
+    });
+    await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/FBCollect?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/FBCollect?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
 async function SortIns() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "sort"
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              }
-            }
-        );
-      }
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "sort",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          }
+        }
+      );
+    }
   );
 }
 
 // Ins博主采集历史
 async function collectInsHistory() {
-
   let activeId = await getActiveId();
   let pageId = await getId("InsCollectHistory");
 
@@ -1246,167 +1447,170 @@ async function collectInsHistory() {
 
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/InsHistory?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/InsHistory?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
 async function collectInsVideo() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/InsVideo?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/InsVideo?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 // pinterest博主采集历史
 async function pinterestHistoryFrame() {
-
   let activeId = await getActiveId();
   let pageId = await getId("pinterestHistoryFrame");
 
-// console.log(activeId, pageId)
+  // console.log(activeId, pageId)
 
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/pinterestHistoryFrame?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/pinterestHistoryFrame?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
 async function collectZhihu() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/collectZhihu?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/collectZhihu?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 // 西瓜视频博主源视频排程
 async function ixiguaVideoFrame() {
-
   let activeId = await getActiveId();
   let pageId = await getId("ixiguaVideoFrame");
 
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/ixiguaVideoFrame?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/ixiguaVideoFrame?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
-
 // 西瓜视频博主自动采集历史
 async function ixiguaHistoryFrame() {
-
   let activeId = await getActiveId();
   let pageId = await getId("ixiguaHistoryFrame");
 
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/ixiguaHistoryFrame?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/ixiguaHistoryFrame?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
-
 // 西瓜视频生成视频文章-Truvid发布
 async function ixiguaVideoArticle() {
-
   let activeId = await getActiveId();
   let pageId = await getId("ixiguaVideoArticle");
 
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/ixiguaVideoArticle?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/ixiguaVideoArticle?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
-
 
 async function collectTiktokFrame() {
   let pageId = await getId("TiktokFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TiktokFrame',
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/TiktokFrame",
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
 async function collectTiktokFrameSingle() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/TiktokFrameSingle?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/TiktokFrameSingle?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 async function collectDouyinFrame() {
   let pageId = await getId("TiktokFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/DouyinFrameScroll',
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/DouyinFrameScroll",
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
@@ -1414,46 +1618,50 @@ async function collectTiktokFrameScroll() {
   let pageId = await getId("TiktokFrameScroll");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TiktokFrameScroll',
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/TiktokFrameScroll",
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
 async function collectTiktokCollectHistoryVideo() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/TiktokCollectHistoryVideo?activeId=' + activeId,
-    active: true,
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/TiktokCollectHistoryVideo?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 async function collectWeishiHistory() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/WeishiHistory?activeId=' + activeId,
-    active: true,
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/WeishiHistory?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 async function collectDouyin() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/DouyinVideoCollect?activeId=' + activeId,
-    active: true,
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/DouyinVideoCollect?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 async function collectTiktokVideoFrame() {
@@ -1461,16 +1669,17 @@ async function collectTiktokVideoFrame() {
   let pageId = await getId("TiktokVideoFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
+      active: true,
+    });
+    await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TiktokVideoFrame?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/TiktokVideoFrame?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
@@ -1480,16 +1689,19 @@ async function collectTiktokVideoCommunitySchedulingFrame() {
   let pageId = await getId("TiktokVideoCommunitySchedulingFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TiktokVideoCommunitySchedulingFrame?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url:
+          "/html/out.html#/TiktokVideoCommunitySchedulingFrame?activeId=" +
+          activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
@@ -1499,16 +1711,19 @@ async function collectToutiaoCommunitySchedulingFrame() {
   let pageId = await getId("ToutiaoCommunitySchedulingFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/ToutiaoCommunitySchedulingFrame?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url:
+          "/html/out.html#/ToutiaoCommunitySchedulingFrame?activeId=" +
+          activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
@@ -1518,19 +1733,21 @@ async function collectYoutubeVideoCommunitySchedulingFramePW() {
   let pageId = await getId("YoutubeVideoCommunitySchedulingFramePW");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/YoutubeVideoCommunitySchedulingFramePW?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url:
+          "/html/out.html#/YoutubeVideoCommunitySchedulingFramePW?activeId=" +
+          activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
-
 
 // TwitterImage社团批量排程(图片)
 async function collectTwitterImageCommunitySchedulingFrame() {
@@ -1538,33 +1755,39 @@ async function collectTwitterImageCommunitySchedulingFrame() {
   let pageId = await getId("TwitterImageCommunitySchedulingFram");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TwitterImageCommunitySchedulingFram?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url:
+          "/html/out.html#/TwitterImageCommunitySchedulingFram?activeId=" +
+          activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
-}// TwitterImage社团批量排程(视频)
+} // TwitterImage社团批量排程(视频)
 async function collectTwitterVideoCommunitySchedulingFrame() {
   let activeId = await getActiveId();
   let pageId = await getId("TwitterVideoCommunitySchedulingFram");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TwitterVideoCommunitySchedulingFram?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url:
+          "/html/out.html#/TwitterVideoCommunitySchedulingFram?activeId=" +
+          activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
@@ -1573,19 +1796,19 @@ async function collectTwitterPW() {
   let pageId = await getId("TwitterVideoPW");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/TwitterVideoPW?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/TwitterVideoPW?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
-
 
 // DouyinVideo社团批量排程
 async function collectDouyinVideoCommunitySchedulingFrame() {
@@ -1593,93 +1816,97 @@ async function collectDouyinVideoCommunitySchedulingFrame() {
   let pageId = await getId("DouyinVideoCommunitySchedulingFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
+      active: true,
+    });
     await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/DouyinVideoCommunitySchedulingFrame?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url:
+          "/html/out.html#/DouyinVideoCommunitySchedulingFrame?activeId=" +
+          activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
-
 
 async function collectNovel() {
   let activeId = await getActiveId();
   let pageId = await getId("Novel");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
+      active: true,
+    });
+    await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/Novel?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/Novel?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
 async function collectNovelSync() {
   chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      function (tabs) {
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {
-              Message: "asyncWaitNum"
-            },
-            function (response) {
-              if (response?.state !== 200) {
-                alert("插件已重新加载，请刷新页面");
-              }
-            }
-        );
-      });
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        {
+          Message: "asyncWaitNum",
+        },
+        function (response) {
+          if (response?.state !== 200) {
+            alert("插件已重新加载，请刷新页面");
+          }
+        }
+      );
+    }
+  );
 
   let activeId = await getActiveId();
   let pageId = await getId("Novel");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
+      active: true,
+    });
+    await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/Novel?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/Novel?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
 async function collectYoutubeNew() {
-
   let activeId = await getActiveId();
   let pageId = await getId("YoutubeVideoFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
+      active: true,
+    });
+    await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/YoutubeVideoFrame?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/YoutubeVideoFrame?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
-
 }
 
 async function collectYoutubeNewPW() {
@@ -1687,16 +1914,17 @@ async function collectYoutubeNewPW() {
   let pageId = await getId("YoutubeVideoFramePW");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
+      active: true,
+    });
+    await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/YoutubeVideoFramePW?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/YoutubeVideoFramePW?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
@@ -1705,201 +1933,338 @@ async function collectWebFrame() {
   let pageId = await getId("WebCollectFrame");
   if (pageId !== false) {
     await chrome.tabs.update(pageId, {
-      active: true
-    })
-    await updateActiveId(pageId, activeId)
+      active: true,
+    });
+    await updateActiveId(pageId, activeId);
   } else {
-    chrome.tabs.create({
-      url: '/html/out.html#/WebCollectFrame?activeId=' + activeId,
-      active: true
-    }, (tab) => {
-
-    })
+    chrome.tabs.create(
+      {
+        url: "/html/out.html#/WebCollectFrame?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {}
+    );
   }
 }
 
 async function updateActiveId(page_id, active_id) {
   chrome.tabs.sendMessage(
-      page_id,
-      {
-        Message: "updateActiveId",
-        data: active_id
-      },
-      function (response) {
-        if (response?.state !== 200) {
-          ElMessage.warning({
-            message: '插件已重新加载，请刷新页面'
-          })
-        }
+    page_id,
+    {
+      Message: "updateActiveId",
+      data: active_id,
+    },
+    function (response) {
+      if (response?.state !== 200) {
+        ElMessage.warning({
+          message: "插件已重新加载，请刷新页面",
+        });
       }
+    }
   );
 }
 
 async function getActiveId() {
   return new Promise((r) => {
-    chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    }, (tabs) => {
-      r(tabs[0].id)
-    })
-  })
+    chrome.tabs.query(
+      {
+        active: true,
+        currentWindow: true,
+      },
+      (tabs) => {
+        r(tabs[0].id);
+      }
+    );
+  });
 }
 
 async function getId(hash) {
   return new Promise((r) => {
     chrome.tabs.query({}, (tabs) => {
-      tabs.forEach(tab => {
-        if (tab['url']?.includes(`chrome-extension://jkobepngkjafdjkkdkebjohjclihidnj/html/out.html#/${hash}`)) {
-          r(tab.id)
+      tabs.forEach((tab) => {
+        if (
+          tab["url"]?.includes(
+            `chrome-extension://jkobepngkjafdjkkdkebjohjclihidnj/html/out.html#/${hash}`
+          )
+        ) {
+          r(tab.id);
         }
-      })
-      r(false)
-    })
-  })
+      });
+      r(false);
+    });
+  });
 }
-
 
 // 推特博主采集历史
 async function collectTTHistory() {
-
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/TTCollectHistory?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/TTCollectHistory?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 // 推特博主采集历史
 async function collectYoutubeHistory() {
-
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/YoutubeHistory?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/YoutubeHistory?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 async function collectToutiaoHistory() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/ToutiaoHistory?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/ToutiaoHistory?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 async function collectToutiaoVHistory() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/ToutiaoVHistory?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/ToutiaoVHistory?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
-
 
 // FB博主采集历史
 async function collectFBHistory() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/FBCollectHistory?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/FBCollectHistory?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 // FB采集图文至Tool平台脚本素材库
 async function collectFBToToolPlatform() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/FBCollectToToolPlatform?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/FBCollectToToolPlatform?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 function imageCreate() {
-  chrome.tabs.create({
-    url: '/html/out.html#/imageCreate',
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/imageCreate",
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
 async function douyin_history() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/DouyinHistory?activeId=' + activeId,
-    active: true
-  }, (tab) => {
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/DouyinHistory?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
+}
 
-  })
+// 定义响应式数据
+/**账号id*/
+const XhsBloggerId = ref("");
+/**账号名称*/
+const XhsBloggerName = ref("");
+/**搜索按钮*/
+const XhsBloggerId_search = ref("提取博主ID和名称");
+
+/**开始采集*/
+const XhsBloggerId_search_start = ref("开始采集");
+/**小红书二级分类*/
+const xiaohongshuTagid = ref(0);
+
+const category = ref([]);
+/**错误报警*/
+const Xhserror = ref("");
+
+// 定义按钮点击事件，发送消息获取博主信息
+async function fetchBloggerInfo() {
+  XhsBloggerId_search.value = "进行中"; // 设置按钮文字为“进行中”
+
+  console.log("点击按钮");
+
+  await collect_xhs_blogger();
+
+  XhsBloggerId_search.value = "查询完毕"; // 设置按钮文字为“进行中”
+}
+/**获取博主*/
+async function collect_xhs_blogger() {
+  let pageId = await getActiveId();
+  if (pageId !== false) {
+    chrome.tabs.sendMessage(
+      pageId,
+      {
+        Message: "getData",
+      },
+      function (response) {
+        if (response?.state !== 200) {
+          ElMessage.warning({
+            message: "插件已重新加载，请刷新页面",
+          });
+        }
+      }
+    );
+  }
+}
+
+/**采集小红书博主主页历史帖子*/
+async function xiaohongshu_collect() {
+  XhsBloggerId_search_start.value = "正在验证";
+  if (XHS_data != "") {
+    xhrHttp(
+      "http://101.201.222.226/xhs/ExistAuthor",
+      {
+        authorId: XHS_data.userid.toString(),
+        cover: XHS_data.cover.toString(),
+        authorName: XHS_data.userName.toString(),
+        operatorId: localStorage.getItem("ddid"),
+        tagId: xiaohongshuTagid.value?.slice(-1)[0],
+      },
+      "post",
+      "application/json"
+    ).then(async (res) => {
+      if (res.error_code != 0) {
+        ElMessage.info(res.msg);
+        XhsBloggerId_search_start.value = "该博主已存在";
+        Xhserror.value = res.msg;
+      } else {
+        ElMessage.info(res.msg);
+        XhsBloggerId_search_start.value = "正在采集ing..";
+        let pageId = await getActiveId();
+        if (pageId !== false) {
+          chrome.tabs.sendMessage(
+            pageId,
+            {
+              Message: "collect",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                ElMessage.warning({
+                  message: "插件已重新加载，请刷新页面",
+                });
+              }
+            }
+          );
+        }
+
+        //   XhsBloggerId_search_start.value = "采集完毕";
+      }
+    });
+  } else {
+    ElMessage.info("请先采集博主信息");
+  }
+}
+
+/**帖子数据回传*/
+async function XHS_callback(XHS_list) {
+  if (XHS_list.article_list.length != 0) {
+    xhrHttp(
+      "http://101.201.222.226/xhs/InsertDetailPage",
+      XHS_list,
+      "post",
+      "application/json"
+    ).then((res) => {
+      if (res.error_code != 0) {
+        ElMessage.info(res.msg);
+        Xhserror.value = res.msg;
+      } else {
+        ElMessage.info(res.msg);
+        Xhserror.value =
+          "采集完成回传：" + XHS_list.article_list.length + " 条帖子";
+      }
+      //ElMessage.info(res.msg);
+    });
+  } else {
+    ElMessage.info("采集数据为空");
+    Xhserror.value = "采集数据为空";
+  }
+
+  XhsBloggerId_search_start.value = "采集完成";
+  //XhsBloggerId_search_start.style=Color.Color.gree
 }
 
 async function douyin_truvid() {
   let activeId = await getActiveId();
-  chrome.tabs.create({
-    url: '/html/out.html#/DouyinTruvid?activeId=' + activeId,
-    active: true
-  }, (tab) => {
-
-  })
+  chrome.tabs.create(
+    {
+      url: "/html/out.html#/DouyinTruvid?activeId=" + activeId,
+      active: true,
+    },
+    (tab) => {}
+  );
 }
 
-const kuaishouLoading = ref(false)
-const kuaishouBloggerId = ref('')
-const kuaishouTagid = ref(0)
-const category = ref([])
+const kuaishouLoading = ref(false);
+const kuaishouBloggerId = ref("");
+const kuaishouTagid = ref(0);
+
 const props = {
-  expandTrigger: 'hover',
-  value: 'tag_id',
-  label: 'tag_name'
-}
+  expandTrigger: "hover",
+  value: "tag_id",
+  label: "tag_name",
+};
 
 onMounted(async () => {
-  const {data} = await xhrHttp('http://101.201.222.226/author/authortaglist', {}, 'post');
-  category.value = buildTree(data, 0)
-})
+  const { data } = await xhrHttp(
+    "http://101.201.222.226/author/authortaglist",
+    {},
+    "post"
+  );
+  category.value = buildTree(data, 0);
+});
 
 async function collectKuaishou() {
   kuaishouLoading.value = true;
   let pageId = await getActiveId();
   if (pageId !== false) {
     chrome.tabs.sendMessage(
-        pageId,
-        {
-          Message: "getData"
-        },
-        function (response) {
-          if (response?.state !== 200) {
-            ElMessage.warning({
-              message: '插件已重新加载，请刷新页面'
-            })
-          }
+      pageId,
+      {
+        Message: "getData",
+      },
+      function (response) {
+        if (response?.state !== 200) {
+          ElMessage.warning({
+            message: "插件已重新加载，请刷新页面",
+          });
         }
+      }
     );
   }
 }
 
 function buildTree(FlatData, ParentId = null) {
-  return FlatData
-      .filter(item => item.parent_id === ParentId)
-      .map(item => ({
-        ...item,
-        children: buildTree(FlatData, item.tag_id)
-      }));
+  return FlatData.filter((item) => item.parent_id === ParentId).map((item) => ({
+    ...item,
+    children: buildTree(FlatData, item.tag_id),
+  }));
 }
-
 </script>
 
 <style scoped>
