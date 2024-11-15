@@ -257,15 +257,15 @@
               <el-cascader filterable placeholder="请选择分类" v-model="xiaohongshuTagid" :options="category" :props="props"
                 style="margin-right: 10px" />
 
-              <el-button @click="xiaohongshu_collect" type="primary">
+              <el-button :disabled="xiaohongshuLoading" @click="xiaohongshu_collect" type="primary">
                 {{ XhsBloggerId_search_start }}
               </el-button>
 
-              <el-input v-model="Xhserror" placeholder="错误报警" style="width: 200px; margin-left: 20px">
+              <el-input v-model="Xhserror" placeholder="错误报警" style="width: 350px; margin-left: 20px">
               </el-input>
             </div>
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-input v-model="XhsBloggerId" placeholder="博主ID" style="width: 200px">
+              <el-input v-model="XhsBloggerId" placeholder="博主ID" style="width: 240px">
               </el-input>
 
               <el-input v-model="XhsBloggerName" placeholder="博主名称" style="width: 200px; margin-left: 20px">
@@ -280,7 +280,6 @@
               </el-button> -->
             </div>
           </el-collapse-item>
-
         </el-collapse>
       </div>
     </div>
@@ -313,7 +312,6 @@ import store from "../store/store.js";
 import { computed } from "vue";
 import { http, xhrHttp, sHttp, dHttp } from "../utils/request";
 import { ElMessage, ElMessageBox } from "element-plus";
-
 
 const open = ref(1);
 const owner = ref(1);
@@ -372,6 +370,9 @@ let XHS_data = "";
 
 /**小红书帖子列表*/
 let XHS_list = "";
+
+/**小红书按钮点击*/
+const xiaohongshuLoading = ref(false);
 
 function logout() {
   if (state.isLogin) {
@@ -675,6 +676,10 @@ const eventBus = async function (Message, sender, sendResponse) {
         XhsBloggerId.value = Message.data.userid.toString();
         XhsBloggerName.value = Message.data.userName.toString();
         XHS_data = Message.data;
+        if (XHS_data.msg != "") {
+          XhsBloggerId_search_start.value = XHS_data.msg;
+          xiaohongshuLoading.value = true;
+        }
       });
   } else if (
     Message.Message === "xiaohongshuData" &&
@@ -697,6 +702,7 @@ const eventBus = async function (Message, sender, sendResponse) {
           await XHS_callback(XHS_list);
         });
     } else {
+      XhsBloggerId_search_start.value = "请先处理错误再进行采集";
       Xhserror.value = Message.data.msg;
     }
   }
@@ -2016,7 +2022,10 @@ async function XHS_callback(XHS_list) {
       } else {
         ElMessage.info(res.msg);
         Xhserror.value =
-          "采集完成回传：" + XHS_list.article_list.length + " 条帖子";
+          res.msg +
+          " 回传：" +
+          XHS_list.article_list.length +
+          " 条，请等待解析数据";
       }
       //ElMessage.info(res.msg);
     });

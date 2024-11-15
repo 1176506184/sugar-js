@@ -6,7 +6,7 @@ const url = location.href;
 window.addEventListener('message', function (res) {
 
     if (res.data.Message === 'ajax') {
-        if (res.data.url && (res.data.url.indexOf("https://www.xiaohongshu.com/user/profile") !== -1)) {
+        if (res.data.url && (res.data.url.indexOf("https://www.xiaohongshu.com/") !== -1)) {
             console.log(res.data.data);
             if (res.data.data.feeds[0].user) {
                 userid = res.data.data.user_id;
@@ -23,10 +23,27 @@ window.addEventListener('message', function (res) {
 
 
 function xhs_getData() {
-    var userName = document.querySelectorAll('[class="user-name"]')[0].innerText;
-    var userid = location.href.split('https://www.xiaohongshu.com/user/profile/')[1].split('?')[0];
-    var cover = document.querySelectorAll('[class="user-info"] [class="avatar-wrapper"] img')[0].src;
 
+    var userName = ''
+    var userid = ''
+    var cover = ''
+    let msg = ''
+
+    try {
+        userName = document.querySelectorAll('[class="user-name"]')[0].innerText;
+        userid = location.href.split('https://www.xiaohongshu.com/user/profile/')[1].split('?')[0];
+        cover = document.querySelectorAll('[class="user-info"] [class="avatar-wrapper"] img')[0].src;
+    } catch (error) {
+
+    }
+
+
+
+    if (location.href.indexOf('/user/profile') == -1) {
+        msg = '未在博主主页'
+    } else if (document.querySelectorAll('[class="user side-bar-component"] [href*="/user/profile/"]').length == 0) {
+        msg = '请先登录'
+    }
 
     console.log('博主名字：' + userName + "  ID: " + userid);
 
@@ -37,7 +54,8 @@ function xhs_getData() {
         data: {
             userid,
             userName,
-            cover
+            cover,
+            msg
         }
     }).then(r => {
 
@@ -74,7 +92,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         if (document.querySelectorAll('[class="user side-bar-component"] [href*="/user/profile/"]').length != 0) {
             await XHS_Collect_article_list();
         } else {
-            await CallBackData('账号未登录', -1);
+            await CallBackData('账号未登录', -1, 'article_list');
         }
 
 
@@ -108,7 +126,7 @@ async function XHS_Collect_article_list() {
                 /**本帖 */
                 let art = art_list[i];
 
-                if (art.querySelectorAll('[href*="explore"]')[0].href.split('explore/').length != 1) {
+                if (art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1].length != 0) {
 
 
                     if (article_list.length == 0) {
@@ -160,7 +178,7 @@ async function XHS_Collect_article_list() {
         }
     }
 
-    await CallBackData(article_list, 0);
+    await CallBackData(article_list, 0, 'article_list');
 
 
 }
@@ -182,7 +200,7 @@ async function wait(s1, t) {  // 变量，波动范围
 }
 
 /**回传任务信息 */
-async function CallBackData(callback_data, state) {
+async function CallBackData(callback_data, state, type) {
 
     if (state == 0) {
         // 定义要发送的数据
@@ -201,7 +219,7 @@ async function CallBackData(callback_data, state) {
 
     chrome.runtime.sendMessage({
         Message: 'xiaohongshuData',
-        type: 'article_list',
+        type: type,
         data: data
     }).then(r => {
 
