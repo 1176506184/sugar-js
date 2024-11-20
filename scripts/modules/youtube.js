@@ -158,7 +158,6 @@ function parseVideo(data) {
                         youtubeData.push(d[key])
                     }
 
-
                 } else {
                     work(d[key]);
                 }
