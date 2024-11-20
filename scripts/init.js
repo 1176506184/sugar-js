@@ -229,7 +229,14 @@ if (location.origin.indexOf("douyin") !== -1) {
     })
 }
 
-
+if (location.href.indexOf('www.pinterest.com') != -1) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'Pinterest_yxk.js'
+    }).then(() => {
+        console.log("Pinterest")
+    })
+}
 chrome.storage.local.set({ iframeVisible: true });
 
 

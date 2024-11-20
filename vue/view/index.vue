@@ -8,18 +8,31 @@
 
       <span style="font-size: 18px; font-weight: bold">通用采集工具</span>
 
-      <el-button id="username" class="linear" style="font-size: 14px; float: right" @click="logout">
+      <el-button
+        id="username"
+        class="linear"
+        style="font-size: 14px; float: right"
+        @click="logout"
+      >
         {{ state.loginText }}
       </el-button>
 
-      <el-select placeholder="是否开启" style="width: 160px; float: right; margin-right: 15px" v-model="open"
-        @change="changeOpen">
+      <el-select
+        placeholder="是否开启"
+        style="width: 160px; float: right; margin-right: 15px"
+        v-model="open"
+        @change="changeOpen"
+      >
         <el-option :value="1" label="插件状态：开启"></el-option>
         <el-option :value="0" label="插件状态：关闭"></el-option>
       </el-select>
 
-      <el-select style="width: 110px; float: right; margin-right: 15px; display: none" placeholder="请选择系统"
-        v-model="state.system" @change="tipReload">
+      <el-select
+        style="width: 110px; float: right; margin-right: 15px; display: none"
+        placeholder="请选择系统"
+        v-model="state.system"
+        @change="tipReload"
+      >
         <el-option :value="1" label="小号系统"></el-option>
         <el-option :value="2" label="数据系统"></el-option>
       </el-select>
@@ -30,8 +43,12 @@
     <div class="layout_viewer" id="layout_viewer">
       <div id="login_container" v-if="state.isLogin === false"></div>
       <div id="menu" v-if="state.isLogin">
-        <el-collapse v-if="owner === 0" v-model="activeNames" @change="handleChange"
-          style="border-top: 0; padding-bottom: 50px">
+        <el-collapse
+          v-if="owner === 0"
+          v-model="activeNames"
+          @change="handleChange"
+          style="border-top: 0; padding-bottom: 50px"
+        >
           <el-collapse-item title="抖音视频" name="1">
             <div>
               <!--              <el-button-->
@@ -49,20 +66,39 @@
               <!--              </el-button-->
               <!--              >-->
 
-              <el-button @click="Copy_douyin" type="primary" :disabled="type !== 'douyin'">视频采集
+              <el-button
+                @click="Copy_douyin"
+                type="primary"
+                :disabled="type !== 'douyin'"
+                >视频采集
               </el-button>
 
-              <el-button @click="collectDouyinVideoCommunitySchedulingFrame" type="primary"
-                :disabled="type !== 'douyin'">批量源素材社团排程
+              <el-button
+                @click="collectDouyinVideoCommunitySchedulingFrame"
+                type="primary"
+                :disabled="type !== 'douyin'"
+                >批量源素材社团排程
               </el-button>
 
-              <el-button @click="douyin_history" type="primary" :disabled="type !== 'douyin'">历史采集
+              <el-button
+                @click="douyin_history"
+                type="primary"
+                :disabled="type !== 'douyin'"
+                >历史采集
               </el-button>
 
-              <el-button @click="douyin_truvid" type="primary" :disabled="type !== 'douyin'">生成视频文章-Truvid并发布
+              <el-button
+                @click="douyin_truvid"
+                type="primary"
+                :disabled="type !== 'douyin'"
+                >生成视频文章-Truvid并发布
               </el-button>
 
-              <el-button @click="collectDouyinFrame" type="primary" :disabled="canTiktokFrame">
+              <el-button
+                @click="collectDouyinFrame"
+                type="primary"
+                :disabled="canTiktokFrame"
+              >
                 自动采最新
               </el-button>
             </div>
@@ -77,58 +113,111 @@
               <!--              >小号素材库-->
               <!--              </el-button>-->
 
-              <el-button @click="collectTwitterImageCommunitySchedulingFrame" type="primary">社团排程（图片）</el-button>
-              <el-button @click="collectTwitterVideoCommunitySchedulingFrame" type="primary">社团排程（视频）</el-button>
+              <el-button
+                @click="collectTwitterImageCommunitySchedulingFrame"
+                type="primary"
+                >社团排程（图片）</el-button
+              >
+              <el-button
+                @click="collectTwitterVideoCommunitySchedulingFrame"
+                type="primary"
+                >社团排程（视频）</el-button
+              >
               <el-button @click="collectTwitterPW" type="primary">
                 采集视频并TOOL源视频排文
               </el-button>
-              <el-button type="warning" @click="collectTTHistory" style="margin-top: 0px">自动采集历史
+              <el-button
+                type="warning"
+                @click="collectTTHistory"
+                style="margin-top: 0px"
+                >自动采集历史
               </el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="头条博主" name="3">
             <div style="display: flex">
-              <el-input placeholder="最大采集文章数" style="width: 140px; margin-right: 15px" :disabled="type !== 'toutiao'"
-                v-model="toutiaoMax"></el-input>
-              <el-button type="primary" @click="collectToutiao" :disabled="type !== 'toutiao'"
-                v-if="toutiaoPending !== 'start'">开始采集
+              <el-input
+                placeholder="最大采集文章数"
+                style="width: 140px; margin-right: 15px"
+                :disabled="type !== 'toutiao'"
+                v-model="toutiaoMax"
+              ></el-input>
+              <el-button
+                type="primary"
+                @click="collectToutiao"
+                :disabled="type !== 'toutiao'"
+                v-if="toutiaoPending !== 'start'"
+                >开始采集
               </el-button>
-              <el-button type="danger" @click="stopCollectToutiao" v-else>停止采集
+              <el-button type="danger" @click="stopCollectToutiao" v-else
+                >停止采集
               </el-button>
-              <el-button type="warning" @click="collectToutiaoVHistory">微头条采集</el-button>
+              <el-button type="warning" @click="collectToutiaoVHistory"
+                >微头条采集</el-button
+              >
 
-              <el-button type="warning" @click="collectToutiaoHistory">头条采集</el-button>
+              <el-button type="warning" @click="collectToutiaoHistory"
+                >头条采集</el-button
+              >
 
-              <el-button @click="collectToutiaoCommunitySchedulingFrame" type="primary">微头条-社团排程</el-button>
+              <el-button
+                @click="collectToutiaoCommunitySchedulingFrame"
+                type="primary"
+                >微头条-社团排程</el-button
+              >
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="搜狐博主" name="4">
             <div style="display: flex">
-              <el-input placeholder="最大采集文章数" style="width: 140px; margin-right: 15px" v-model="sohuMax"></el-input>
-              <el-button type="primary" @click="collectSohu" :disabled="type !== 'sohu'"
-                v-if="sohuPending !== 'start'">开始采集
+              <el-input
+                placeholder="最大采集文章数"
+                style="width: 140px; margin-right: 15px"
+                v-model="sohuMax"
+              ></el-input>
+              <el-button
+                type="primary"
+                @click="collectSohu"
+                :disabled="type !== 'sohu'"
+                v-if="sohuPending !== 'start'"
+                >开始采集
               </el-button>
-              <el-button type="danger" @click="stopCollectSohu" v-else>停止采集
+              <el-button type="danger" @click="stopCollectSohu" v-else
+                >停止采集
               </el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="Facebook博主" name="5">
             <div style="display: flex">
-              <el-input placeholder="最大采集文章数" style="width: 140px; margin-right: 15px" v-model="fbMax"></el-input>
-              <el-button type="primary" @click="collectFacebook" :disabled="type !== 'facebook'"
-                v-if="fbPending !== 'start'">开始采集
+              <el-input
+                placeholder="最大采集文章数"
+                style="width: 140px; margin-right: 15px"
+                v-model="fbMax"
+              ></el-input>
+              <el-button
+                type="primary"
+                @click="collectFacebook"
+                :disabled="type !== 'facebook'"
+                v-if="fbPending !== 'start'"
+                >开始采集
               </el-button>
-              <el-button type="danger" @click="stopCollectFacebook" v-else>停止采集
+              <el-button type="danger" @click="stopCollectFacebook" v-else
+                >停止采集
               </el-button>
 
-              <el-button type="primary" @click="collectFBVideo">采集博主视频</el-button>
+              <el-button type="primary" @click="collectFBVideo"
+                >采集博主视频</el-button
+              >
 
-              <el-button type="warning" @click="collectFBHistory">自动采集历史</el-button>
+              <el-button type="warning" @click="collectFBHistory"
+                >自动采集历史</el-button
+              >
 
-              <el-button type="primary" @click="collectFBToToolPlatform">自动采集图文帖至Tool脚本素材库</el-button>
+              <el-button type="primary" @click="collectFBToToolPlatform"
+                >自动采集图文帖至Tool脚本素材库</el-button
+              >
             </div>
           </el-collapse-item>
 
@@ -136,38 +225,69 @@
             <div>
               <!--              <el-button @click="collectYoutube" type="primary">采集视频并自动分发</el-button>-->
               <!--              <el-button @click="collectShorts" type="primary">采集SHORTS视频并自动分发</el-button>-->
-              <el-button @click="collectYoutubeNew" type="primary">采集视频 / SHORTS并自动分发 / Truvid</el-button>
-              <el-button @click="collectYoutubeNewPW" type="primary">采集视频 / SHORTS并TOOL源视频排文</el-button>
+              <el-button @click="collectYoutubeNew" type="primary"
+                >采集视频 / SHORTS并自动分发 / Truvid</el-button
+              >
+              <el-button @click="collectYoutubeNewPW" type="primary"
+                >采集视频 / SHORTS并TOOL源视频排文</el-button
+              >
 
-              <el-button @click="collectYoutubeVideoCommunitySchedulingFramePW" type="primary">批量源素材社团排程
+              <el-button
+                @click="collectYoutubeVideoCommunitySchedulingFramePW"
+                type="primary"
+                >批量源素材社团排程
               </el-button>
 
               <br />
 
-              <el-button @click="collectYoutubeHistory" type="primary" style="margin-top: 5px">采集历史</el-button>
+              <el-button
+                @click="collectYoutubeHistory"
+                type="primary"
+                style="margin-top: 5px"
+                >采集历史</el-button
+              >
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="TikTok" name="7">
             <div>
-              <el-button @click="collectTiktok" type="primary">采集视频</el-button>
-              <el-button @click="collectTiktokVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
+              <el-button @click="collectTiktok" type="primary"
+                >采集视频</el-button
+              >
+              <el-button @click="collectTiktokVideoFrame" type="primary"
+                >采集视频并TOOL源视频排文</el-button
+              >
 
-              <el-button @click="collectTiktokVideoCommunitySchedulingFrame" type="primary">批量源素材社团排程
+              <el-button
+                @click="collectTiktokVideoCommunitySchedulingFrame"
+                type="primary"
+                >批量源素材社团排程
               </el-button>
 
-              <el-button @click="collectTiktokFrame" type="primary" :disabled="canTiktokFrame">
+              <el-button
+                @click="collectTiktokFrame"
+                type="primary"
+                :disabled="canTiktokFrame"
+              >
                 更新视频
               </el-button>
               <br />
-              <el-button @click="collectTiktokFrameSingle" type="primary" style="margin-top: 5px">
+              <el-button
+                @click="collectTiktokFrameSingle"
+                type="primary"
+                style="margin-top: 5px"
+              >
                 更新视频（单个博主）
               </el-button>
               <!--              <el-button @click="collectTiktokFrameScroll" type="primary" :disabled="canTiktokFrame">-->
               <!--                更新历史-->
               <!--              </el-button>-->
-              <el-button @click="collectTiktokCollectHistoryVideo" type="primary" :disabled="canTiktokFrame"
-                style="margin-top: 5px">
+              <el-button
+                @click="collectTiktokCollectHistoryVideo"
+                type="primary"
+                :disabled="canTiktokFrame"
+                style="margin-top: 5px"
+              >
                 更新历史（人工）
               </el-button>
             </div>
@@ -176,38 +296,59 @@
           <el-collapse-item title="综合采集" name="8">
             <div>
               <el-button @click="collectWeb" type="primary">网站采集</el-button>
-              <el-button @click="collectWebFrame" type="primary">网站采集（新）</el-button>
-              <el-button @click="collectNovel" type="primary">小说采集</el-button>
-              <el-button @click="collectNovelSync" type="primary">小说采集（加延迟防检测）</el-button>
-              <el-button @click="imageCreate" type="primary">小说图标生成</el-button>
+              <el-button @click="collectWebFrame" type="primary"
+                >网站采集（新）</el-button
+              >
+              <el-button @click="collectNovel" type="primary"
+                >小说采集</el-button
+              >
+              <el-button @click="collectNovelSync" type="primary"
+                >小说采集（加延迟防检测）</el-button
+              >
+              <el-button @click="imageCreate" type="primary"
+                >小说图标生成</el-button
+              >
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="Ins博主" name="9">
             <div>
-              <el-button type="primary" @click="SortIns">一键自动排序</el-button>
-              <el-button type="warning" @click="collectInsHistory">自动采集历史</el-button>
+              <el-button type="primary" @click="SortIns"
+                >一键自动排序</el-button
+              >
+              <el-button type="warning" @click="collectInsHistory"
+                >自动采集历史</el-button
+              >
               <!--              <el-button type="primary" @click="collectInsVideo">采集视频/TOOL源视频排文</el-button>-->
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="Pinterest博主" name="10">
             <div>
-              <el-button @click="pinterestHistoryFrame" type="warning">自动采集历史</el-button>
+              <el-button @click="pinterestHistoryFrame" type="warning"
+                >自动采集历史</el-button
+              >
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="西瓜视频" name="11">
             <div>
-              <el-button @click="ixiguaVideoFrame" type="primary">采集视频并TOOL源视频排文</el-button>
-              <el-button @click="ixiguaHistoryFrame" type="warning">自动采集历史</el-button>
-              <el-button @click="ixiguaVideoArticle" type="primary">生成视频文章-Truvid并发布</el-button>
+              <el-button @click="ixiguaVideoFrame" type="primary"
+                >采集视频并TOOL源视频排文</el-button
+              >
+              <el-button @click="ixiguaHistoryFrame" type="warning"
+                >自动采集历史</el-button
+              >
+              <el-button @click="ixiguaVideoArticle" type="primary"
+                >生成视频文章-Truvid并发布</el-button
+              >
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="知乎采集" name="25">
             <div style="display: flex">
-              <el-button type="primary" @click="collectZhihu">开始采集
+              <el-button type="primary" @click="collectZhihu"
+                >开始采集
               </el-button>
             </div>
           </el-collapse-item>
@@ -219,10 +360,18 @@
           <!--        </div>-->
           <!--        <div class="border"></div>-->
         </el-collapse>
-        <el-collapse v-if="owner === 1" v-model="activeNames" @change="handleChange" style="border-top: 0">
+        <el-collapse
+          v-if="owner === 1"
+          v-model="activeNames"
+          @change="handleChange"
+          style="border-top: 0"
+        >
           <el-collapse-item title="TikTok" name="7">
             <div>
-              <el-button @click="collectTiktokCollectHistoryVideo" type="primary">
+              <el-button
+                @click="collectTiktokCollectHistoryVideo"
+                type="primary"
+              >
                 更新历史（人工）
               </el-button>
               <el-button @click="collectTiktokFrameSingle" type="primary">
@@ -238,14 +387,28 @@
             </div>
           </el-collapse-item>
           <el-collapse-item title="抖音视频" name="1">
-            <el-button @click="collectDouyin" type="primary" :disabled="type !== 'douyin'">视频自动化采集
+            <el-button
+              @click="collectDouyin"
+              type="primary"
+              :disabled="type !== 'douyin'"
+              >视频自动化采集
             </el-button>
           </el-collapse-item>
           <el-collapse-item title="快手" name="21">
-            <el-cascader filterable placeholder="请选择分类" v-model="kuaishouTagid" :options="category" :props="props"
-              style="margin-right: 10px" />
-            <el-button :loading="kuaishouLoading" @click="collectKuaishou" type="primary"
-              :disabled="type !== 'kuaishou'">初始化博主
+            <el-cascader
+              filterable
+              placeholder="请选择分类"
+              v-model="kuaishouTagid"
+              :options="category"
+              :props="props"
+              style="margin-right: 10px"
+            />
+            <el-button
+              :loading="kuaishouLoading"
+              @click="collectKuaishou"
+              type="primary"
+              :disabled="type !== 'kuaishou'"
+              >初始化博主
             </el-button>
             <div style="margin-left: 40px">
               {{ kuaishouBloggerId }}
@@ -254,30 +417,87 @@
 
           <el-collapse-item title="小红书" name="22">
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-cascader filterable placeholder="请选择分类" v-model="xiaohongshuTagid" :options="category" :props="props"
-                style="margin-right: 10px" />
+              <el-cascader
+                filterable
+                placeholder="请选择分类"
+                v-model="xiaohongshuTagid"
+                :options="category"
+                :props="props"
+                style="margin-right: 10px"
+              />
 
-              <el-button :disabled="xiaohongshuLoading" @click="xiaohongshu_collect" type="primary">
+              <el-button
+                :disabled="xiaohongshuLoading"
+                @click="xiaohongshu_collect"
+                type="primary"
+              >
                 {{ XhsBloggerId_search_start }}
               </el-button>
 
-              <el-input v-model="Xhserror" placeholder="错误报警" style="width: 350px; margin-left: 20px">
+              <el-input
+                v-model="Xhserror"
+                placeholder="错误报警"
+                style="width: 350px; margin-left: 20px"
+              >
               </el-input>
             </div>
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-input v-model="XhsBloggerId" placeholder="博主ID" style="width: 240px">
+              <el-input
+                v-model="XhsBloggerId"
+                placeholder="博主ID"
+                style="width: 240px"
+              >
               </el-input>
 
-              <el-input v-model="XhsBloggerName" placeholder="博主名称" style="width: 200px; margin-left: 20px">
-              </el-input>
-
-              <!-- <el-button
-                @click="fetchBloggerInfo"
-                type="primary"
+              <el-input
+                v-model="XhsBloggerName"
+                placeholder="博主名称"
                 style="width: 200px; margin-left: 20px"
               >
-                {{ XhsBloggerId_search }}
-              </el-button> -->
+              </el-input>
+            </div>
+          </el-collapse-item>
+
+          <el-collapse-item title="Pinterest" name="23">
+            <div style="margin-left: 0px; margin-top: 10px">
+              <el-cascader
+                filterable
+                placeholder="请选择分类"
+                v-model="PinterestTagid"
+                :options="category"
+                :props="props"
+                style="margin-right: 10px"
+              />
+
+              <el-button
+                :disabled="PinterestLoading"
+                @click="Pinterest_collect"
+                type="primary"
+              >
+                {{ PinterestBloggerId_search_start }}
+              </el-button>
+
+              <el-input
+                v-model="Pinteresterror"
+                placeholder="错误报警"
+                style="width: 350px; margin-left: 20px"
+              >
+              </el-input>
+            </div>
+            <div style="margin-left: 0px; margin-top: 10px">
+              <el-input
+                v-model="PinterestBloggerId"
+                placeholder="博主ID"
+                style="width: 240px"
+              >
+              </el-input>
+
+              <el-input
+                v-model="PinterestBloggerName"
+                placeholder="博主名称"
+                style="width: 200px; margin-left: 20px"
+              >
+              </el-input>
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -321,7 +541,7 @@ function changeOpen() {
     {
       open: open.value,
     },
-    () => { }
+    () => {}
   );
 }
 
@@ -341,7 +561,7 @@ function absoluteCollapse() {
           top: topPosition,
         });
       }
-    } catch (e) { }
+    } catch (e) {}
   });
 }
 
@@ -367,12 +587,16 @@ let state = reactive({
 
 /**小红书数据*/
 let XHS_data = "";
-
+/**Pinterest数据*/
+let Pinterest_data = "";
 /**小红书帖子列表*/
 let XHS_list = "";
-
+/**Pinterest帖子列表*/
+let Pinterest_list = "";
 /**小红书按钮点击*/
 const xiaohongshuLoading = ref(false);
+/**Pinterest按钮点击*/
+const PinterestLoading = ref(false);
 
 function logout() {
   if (state.isLogin) {
@@ -385,7 +609,7 @@ function logout() {
         localStorage.clear();
         location.reload();
       })
-      .catch(() => { });
+      .catch(() => {});
   }
 }
 
@@ -458,6 +682,10 @@ const eventBus = async function (Message, sender, sendResponse) {
       activeNames.value.push("22");
       store.commit("changeType", "xiaohongshu");
       await collect_xhs_blogger();
+    } else if (Message.type === "Pinterest") {
+      activeNames.value.push("23");
+      store.commit("changeType", "Pinterest");
+      await collect_pinterest_blogger();
     } else if (Message.type === "zhihu") {
       activeNames.value.push("25");
       store.commit("changeType", "zhihu");
@@ -483,9 +711,10 @@ const eventBus = async function (Message, sender, sendResponse) {
       let url = encodeURI(realData.video.play_addr?.url_list[0]);
       if (data.videoPushType === 2) {
         window.open(
-          `http://twtest.anyelse.com/user/postvideo?title=${realData.preview_title
-            ? escape(realData.preview_title)
-            : escape(realData.desc)
+          `http://twtest.anyelse.com/user/postvideo?title=${
+            realData.preview_title
+              ? escape(realData.preview_title)
+              : escape(realData.desc)
           }&cover=${escape(realData.pic)}&videourl=${escape(
             realData.reUrl
           )}&decodurl==${url}&author=${escape(realData.author.nickname)}${curl}`
@@ -522,7 +751,7 @@ const eventBus = async function (Message, sender, sendResponse) {
             },
           });
         });
-      } catch (e) { }
+      } catch (e) {}
     } else {
       checkMP4(domData.video);
 
@@ -705,6 +934,51 @@ const eventBus = async function (Message, sender, sendResponse) {
       XhsBloggerId_search_start.value = "请先处理错误再进行采集";
       Xhserror.value = Message.data.msg;
     }
+  } else if (
+    Message.Message === "PinterestData" &&
+    Message.type === "Pinterest"
+  ) {
+    console.log(Message.Message);
+
+    chrome.runtime
+      .sendMessage({
+        Message: "PinterestUrl",
+        url: Message.data.url,
+      })
+      .then((r) => {
+        console.log(r);
+        PinterestBloggerId.value = Message.data.userid.toString();
+        PinterestBloggerName.value = Message.data.userName.toString();
+        Pinterest_data = Message.data;
+        if (Pinterest_data.msg != "") {
+          PinterestBloggerId_search_start.value = Pinterest_data.msg;
+          PinterestLoading.value = true;
+        }
+      });
+  } else if (
+    Message.Message === "PinterestData" &&
+    Message.type === "article_list"
+  ) {
+    if (Message.data.author_id != "false") {
+      console.log(Message.Message);
+
+      chrome.runtime
+        .sendMessage({
+          Message: "PinterestUrl",
+          url: Message.data.url,
+        })
+        .then(async (r) => {
+          console.log(r);
+          //   XhsBloggerId.value = Message.data.userid.toString();
+          //  XhsBloggerName.value = Message.data.userName.toString();
+          Pinterest_list = Message.data;
+
+          await Pinterest_callback(Pinterest_list);
+        });
+    } else {
+      PinterestBloggerId_search_start.value = "请先处理错误再进行采集";
+      Pinteresterror.value = Message.data.msg;
+    }
   }
 };
 // if (!window.eventBus) {
@@ -770,17 +1044,17 @@ function getPending() {
               try {
                 toutiaoPending.value = response.pending;
                 toutiaoMax.value = response.toutiaoMax;
-              } catch (e) { }
+              } catch (e) {}
 
               try {
                 sohuPending.value = response.pending;
                 sohuMax.value = response.sohuMax;
-              } catch (e) { }
+              } catch (e) {}
 
               try {
                 fbPending.value = response.pending;
                 fbMax.value = response.fbMax;
-              } catch (e) { }
+              } catch (e) {}
             }
           }
         }
@@ -789,12 +1063,12 @@ function getPending() {
   );
 }
 
-onActivated(() => { });
+onActivated(() => {});
 
 function checkMP4(url) {
   try {
-    xhrHttp(url).then((res) => { });
-  } catch (e) { }
+    xhrHttp(url).then((res) => {});
+  } catch (e) {}
 }
 
 function getVersion() {
@@ -1235,7 +1509,7 @@ async function collectFBVideo() {
         url: "/html/out.html#/FBCollect?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1280,7 +1554,7 @@ async function collectInsHistory() {
         url: "/html/out.html#/InsHistory?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1292,7 +1566,7 @@ async function collectInsVideo() {
       url: "/html/out.html#/InsVideo?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1314,7 +1588,7 @@ async function pinterestHistoryFrame() {
         url: "/html/out.html#/pinterestHistoryFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1326,7 +1600,7 @@ async function collectZhihu() {
       url: "/html/out.html#/collectZhihu?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1346,7 +1620,7 @@ async function ixiguaVideoFrame() {
         url: "/html/out.html#/ixiguaVideoFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1367,7 +1641,7 @@ async function ixiguaHistoryFrame() {
         url: "/html/out.html#/ixiguaHistoryFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1388,7 +1662,7 @@ async function ixiguaVideoArticle() {
         url: "/html/out.html#/ixiguaVideoArticle?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1405,7 +1679,7 @@ async function collectTiktokFrame() {
         url: "/html/out.html#/TiktokFrame",
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1417,7 +1691,7 @@ async function collectTiktokFrameSingle() {
       url: "/html/out.html#/TiktokFrameSingle?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1433,7 +1707,7 @@ async function collectDouyinFrame() {
         url: "/html/out.html#/DouyinFrameScroll",
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1450,7 +1724,7 @@ async function collectTiktokFrameScroll() {
         url: "/html/out.html#/TiktokFrameScroll",
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1462,7 +1736,7 @@ async function collectTiktokCollectHistoryVideo() {
       url: "/html/out.html#/TiktokCollectHistoryVideo?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1473,7 +1747,7 @@ async function collectWeishiHistory() {
       url: "/html/out.html#/WeishiHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1484,7 +1758,7 @@ async function collectDouyin() {
       url: "/html/out.html#/DouyinVideoCollect?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1502,7 +1776,7 @@ async function collectTiktokVideoFrame() {
         url: "/html/out.html#/TiktokVideoFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1524,7 +1798,7 @@ async function collectTiktokVideoCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1546,7 +1820,7 @@ async function collectToutiaoCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1568,7 +1842,7 @@ async function collectYoutubeVideoCommunitySchedulingFramePW() {
           activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1590,7 +1864,7 @@ async function collectTwitterImageCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 } // TwitterImage社团批量排程(视频)
@@ -1610,7 +1884,7 @@ async function collectTwitterVideoCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1629,7 +1903,7 @@ async function collectTwitterPW() {
         url: "/html/out.html#/TwitterVideoPW?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1651,7 +1925,7 @@ async function collectDouyinVideoCommunitySchedulingFrame() {
           activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1670,7 +1944,7 @@ async function collectNovel() {
         url: "/html/out.html#/Novel?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1709,7 +1983,7 @@ async function collectNovelSync() {
         url: "/html/out.html#/Novel?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1728,7 +2002,7 @@ async function collectYoutubeNew() {
         url: "/html/out.html#/YoutubeVideoFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1747,7 +2021,7 @@ async function collectYoutubeNewPW() {
         url: "/html/out.html#/YoutubeVideoFramePW?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1766,7 +2040,7 @@ async function collectWebFrame() {
         url: "/html/out.html#/WebCollectFrame?activeId=" + activeId,
         active: true,
       },
-      (tab) => { }
+      (tab) => {}
     );
   }
 }
@@ -1827,7 +2101,7 @@ async function collectTTHistory() {
       url: "/html/out.html#/TTCollectHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1839,7 +2113,7 @@ async function collectYoutubeHistory() {
       url: "/html/out.html#/YoutubeHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1850,7 +2124,7 @@ async function collectToutiaoHistory() {
       url: "/html/out.html#/ToutiaoHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1861,7 +2135,7 @@ async function collectToutiaoVHistory() {
       url: "/html/out.html#/ToutiaoVHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1873,7 +2147,7 @@ async function collectFBHistory() {
       url: "/html/out.html#/FBCollectHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1885,7 +2159,7 @@ async function collectFBToToolPlatform() {
       url: "/html/out.html#/FBCollectToToolPlatform?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1895,7 +2169,7 @@ function imageCreate() {
       url: "/html/out.html#/imageCreate",
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -1906,7 +2180,7 @@ async function douyin_history() {
       url: "/html/out.html#/DouyinHistory?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
@@ -2038,6 +2312,124 @@ async function XHS_callback(XHS_list) {
   //XhsBloggerId_search_start.style=Color.Color.gree
 }
 
+// 定义响应式数据
+/**账号id*/
+const PinterestBloggerId = ref("");
+/**账号名称*/
+const PinterestBloggerName = ref("");
+/**搜索按钮*/
+//const XhsBloggerId_search = ref("提取博主ID和名称");
+
+/**开始采集*/
+const PinterestBloggerId_search_start = ref("开始采集");
+/**小红书二级分类*/
+const PinterestTagid = ref(0);
+
+//const category = ref([]);
+/**错误报警*/
+const Pinteresterror = ref("");
+
+/**获取博主*/
+async function collect_pinterest_blogger() {
+  let pageId = await getActiveId();
+  if (pageId !== false) {
+    chrome.tabs.sendMessage(
+      pageId,
+      {
+        Message: "getData",
+      },
+      function (response) {
+        if (response?.state !== 200) {
+          ElMessage.warning({
+            message: "插件已重新加载，请刷新页面",
+          });
+        }
+      }
+    );
+  }
+}
+
+/**采集小红书博主主页历史帖子*/
+async function Pinterest_collect() {
+  await collect_pinterest_blogger();
+
+  PinterestBloggerId_search_start.value = "正在验证";
+  if (Pinterest_data != "") {
+    xhrHttp(
+      "http://101.201.222.226/pin/ExistAuthor",
+      {
+        authorId: Pinterest_data.userid.toString(),
+        cover: Pinterest_data.cover.toString(),
+        authorName: Pinterest_data.userName.toString(),
+        operatorId: localStorage.getItem("ddid"),
+        tagId: PinterestTagid.value?.slice(-1)[0],
+      },
+      "post",
+      "application/json"
+    ).then(async (res) => {
+      if (res.error_code != 0) {
+        ElMessage.info(res.msg);
+        PinterestBloggerId_search_start.value = "该博主已存在";
+        Pinteresterror.value = res.msg;
+      } else {
+        ElMessage.info(res.msg);
+        PinterestBloggerId_search_start.value = "正在采集ing..";
+        let pageId = await getActiveId();
+        if (pageId !== false) {
+          chrome.tabs.sendMessage(
+            pageId,
+            {
+              Message: "collect",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                ElMessage.warning({
+                  message: "插件已重新加载，请刷新页面",
+                });
+              }
+            }
+          );
+        }
+
+        //   XhsBloggerId_search_start.value = "采集完毕";
+      }
+    });
+  } else {
+    ElMessage.info("请先采集博主信息");
+  }
+}
+
+/**帖子数据回传*/
+async function Pinterest_callback(Pinterest_list) {
+  if (Pinterest_list.article_list.length != 0) {
+    xhrHttp(
+      "http://101.201.222.226/pin/InsertDetailPage",
+      Pinterest_list,
+      "post",
+      "application/json"
+    ).then((res) => {
+      if (res.error_code != 0) {
+        ElMessage.info(res.msg);
+        Pinteresterror.value = res.msg;
+      } else {
+        ElMessage.info(res.msg);
+        Pinteresterror.value =
+          res.msg +
+          " 回传：" +
+          Pinterest_list.article_list.length +
+          " 条，请等待解析数据";
+      }
+      //ElMessage.info(res.msg);
+    });
+  } else {
+    ElMessage.info("采集数据为空");
+    Pinteresterror.value = "采集数据为空";
+  }
+
+  PinterestBloggerId_search_start.value = "采集完成";
+  //XhsBloggerId_search_start.style=Color.Color.gree
+}
+
 async function douyin_truvid() {
   let activeId = await getActiveId();
   chrome.tabs.create(
@@ -2045,7 +2437,7 @@ async function douyin_truvid() {
       url: "/html/out.html#/DouyinTruvid?activeId=" + activeId,
       active: true,
     },
-    (tab) => { }
+    (tab) => {}
   );
 }
 
