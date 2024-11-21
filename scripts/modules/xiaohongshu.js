@@ -88,8 +88,8 @@ async function startGetHistory() {
     let list = Array.from(document.querySelectorAll('#userPostedFeeds section')).map(item => {
         return {
             title: item.querySelector('.title').textContent,
-            article_url: item.querySelector('a').href,
-            post_url: item.querySelector('a').href,
+            article_url: item.querySelector('a.cover').href,
+            post_url: item.querySelector('a.cover').href,
             likes: dealNum(item.querySelector('.count').textContent)
         }
     });
