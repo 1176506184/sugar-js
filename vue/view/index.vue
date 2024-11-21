@@ -378,50 +378,28 @@
 
 
           <el-collapse-item title="小红书" name="22">
-            <div style="margin-left: 0px; margin-top: 10px">
-              <el-cascader
-                  filterable
-                  placeholder="请选择分类"
-                  v-model="xiaohongshuTagid"
-                  :options="category"
-                  :props="props"
-                  style="margin-right: 10px"
-              />
+            <div style="display: flex">
+              <el-select v-if="!redBookState.haveBlogger" v-model="redBookState.lang" placeholder=""
+                         style="width: 100px;margin-right: 10px">
+                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>
+              </el-select>
 
-              <el-button
-                  :disabled="xiaohongshuLoading"
-                  @click="xiaohongshu_collect"
-                  type="primary"
-              >
-                {{ XhsBloggerId_search_start }}
+              <el-button v-if="!redBookState.haveBlogger" type="primary" @click="createBloggerRedBook">添加博主
               </el-button>
 
-              <el-input
-                  v-model="Xhserror"
-                  placeholder="错误报警"
-                  style="width: 350px; margin-left: 20px"
+              <el-button
+                  v-else
+                  :loading="redBookState.loading"
+                  @click="redBookGetHistory"
+                  type="primary"
               >
-              </el-input>
-            </div>
-            <div style="margin-left: 0px; margin-top: 10px">
-              <el-input
-                  v-model="XhsBloggerId"
-                  placeholder="博主ID"
-                  style="width: 240px"
-              >
-              </el-input>
-
-              <el-input
-                  v-model="XhsBloggerName"
-                  placeholder="博主名称"
-                  style="width: 200px; margin-left: 20px"
-              >
-              </el-input>
+                {{ redBookState.text }}
+              </el-button>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="lemon8app" name="30">
-            <div style="margin-left: 0px; margin-top: 10px">
+            <div style="display: flex">
 
               <el-select v-if="!lemon8appState.haveBlogger" v-model="lemon8appState.lang" placeholder=""
                          style="width: 100px;margin-right: 10px">
@@ -499,11 +477,12 @@
 
           <el-collapse-item title="小红书" name="22">
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-cascader filterable placeholder="请选择分类" v-model="xiaohongshuTagid" :options="category" :props="props"
-                style="margin-right: 10px" />
+              <el-cascader filterable placeholder="请选择分类" v-model="xiaohongshuTagid" :options="category"
+                           :props="props"
+                           style="margin-right: 10px"/>
 
               <el-button :disabled="!xiaohongshuTagid || xiaohongshuLoading" @click="xiaohongshu_collect"
-                type="primary">
+                         type="primary">
 
                 {{ XhsBloggerId_search_start }}
               </el-button>
@@ -522,8 +501,9 @@
 
           <el-collapse-item title="Pinterest" name="23">
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-cascader filterable placeholder="请选择分类" v-model="PinterestTagid" :options="category" :props="props"
-                style="margin-right: 10px" />
+              <el-cascader filterable placeholder="请选择分类" v-model="PinterestTagid" :options="category"
+                           :props="props"
+                           style="margin-right: 10px"/>
 
               <el-button :disabled="!PinterestTagid || PinterestLoading" @click="Pinterest_collect" type="primary">
                 {{ PinterestBloggerId_search_start }}
@@ -724,6 +704,25 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "xiaohongshu") {
       activeNames.value.push("22");
       store.commit("changeType", "xiaohongshu");
+      chrome.tabs.query(
+          {
+            active: true,
+            currentWindow: true,
+          },
+          function (tabs) {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                  Message: "getBlogger",
+                },
+                function (response) {
+                  if (response?.state !== 200) {
+                    alert("插件已重新加载，请刷新页面");
+                  }
+                }
+            );
+          }
+      );
       await collect_xhs_blogger();
     } else if (Message.type === "Pinterest") {
       activeNames.value.push("23");
@@ -762,7 +761,7 @@ const eventBus = async function (Message, sender, sendResponse) {
 
     let data = Message.data;
 
-    uploadLemonData(data)
+    uploadLemonData(data).then()
 
   } else if (Message.Message === 'StopLemon8app') {
 
@@ -771,6 +770,19 @@ const eventBus = async function (Message, sender, sendResponse) {
 
   } else if (Message.Message === 'lemon8appBlogger') {
     await getUserInfoWithLemon(Message)
+  } else if (Message.Message === 'redBookData') {
+
+    let data = Message.data;
+
+    uploadRedBookData(data).then()
+
+  } else if (Message.Message === 'StopRedBook') {
+
+    redBookState.text = '采集结束'
+    redBookState.loading = false;
+
+  } else if (Message.Message === 'redBookBlogger') {
+    await getUserInfoWithRedBook(Message)
   } else if (Message.Message === "video") {
     loading.value = true;
     data.video = Message.url;
@@ -2324,6 +2336,18 @@ const lemon8appState = reactive({
   length: 0
 })
 
+const redBookState = reactive({
+  loading: false,
+  text: '开始采集',
+  status: 0,
+  haveBlogger: false,
+  lang: 0,
+  name: '',
+  url: '',
+  blogger_id: 0,
+  length: 0
+})
+
 async function getUserInfoWithTool() {
   // 调用接口，校验ddid
   let ddid = localStorage.getItem("ddid")
@@ -2376,6 +2400,31 @@ async function getUserInfoWithLemon(Message) {
   }
 }
 
+async function getUserInfoWithRedBook(Message) {
+  console.log(Message)
+  redBookState.name = Message.author.replace(/\s/g, '');
+  redBookState.url = Message.authorLink.replace(/\s/g, '');
+  // 查询库里有没有该博主
+  const loadingTask = ElLoading.service({
+    lock: true,
+    text: '正在查询该博主信息',
+    background: 'rgba(0, 0, 0, 0.6)',
+  })
+
+  let d = await hHttp(`/BloggerNew/getBloggerNewByNameUrl`, {
+    url: redBookState.url,
+    name: redBookState.name
+  })
+
+  loadingTask.close();
+
+  if (d.state) {
+    redBookState.haveBlogger = true;
+    let resData = d.data;
+    redBookState.blogger_id = resData.id;
+  }
+}
+
 async function createBloggerLemon() {
   let user = await getUserInfoWithTool()
   let res = await hHttp(`/BloggerNew/Add`, {
@@ -2398,6 +2447,28 @@ async function createBloggerLemon() {
   }
 }
 
+async function createBloggerRedBook() {
+  let user = await getUserInfoWithTool()
+  let res = await hHttp(`/BloggerNew/Add`, {
+    platform: 8,
+    lang: redBookState.lang,
+    name: redBookState.name,
+    blogger_url: redBookState.url,
+    create_id: user.userid,
+    create_name: user.username
+  })
+  if (res.state === true) {
+    if (res.data) {
+      redBookState.blogger_id = res.data
+    }
+    redBookState.haveBlogger = true
+    ElMessage({
+      type: 'success',
+      message: '创建成功'
+    })
+  }
+}
+
 async function uploadLemonData(data) {
   data = JSON.parse(data).map(r => {
     return {
@@ -2410,6 +2481,45 @@ async function uploadLemonData(data) {
   if (res.state === true) {
     lemon8appState.text = `已采集${lemon8appState.length}条`
   }
+}
+
+async function uploadRedBookData(data) {
+  data = JSON.parse(data).map(r => {
+    return {
+      ...r,
+      blogger_id: redBookState.blogger_id
+    }
+  })
+  redBookState.length += data.length
+  let res = await hHttp("/BloggerCaptureHistoryNew/AddArticle", data);
+  if (res.state === true) {
+    redBookState.text = `已采集${redBookState.length}条`
+  }
+}
+
+async function redBookGetHistory() {
+  redBookState.length = 0;
+  redBookState.text = '已采集0条'
+  redBookState.loading = true;
+  chrome.tabs.query(
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "getDataRedBook",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
+      }
+  );
 }
 
 async function lemon8appGetHistory() {
@@ -2550,17 +2660,17 @@ async function XHS_callback(XHS_list) {
         ElMessage.info(res.msg);
         Xhserror.value =
 
-          res.msg +
-          " 本次回传：" +
-          XHS_list.article_list.length +
-          " 条，共回传：" +
-          XHS_list.num +
-          " 条";
+            res.msg +
+            " 本次回传：" +
+            XHS_list.article_list.length +
+            " 条，共回传：" +
+            XHS_list.num +
+            " 条";
 
         res.msg +
-          " 回传：" +
-          XHS_list.article_list.length +
-          " 条，请等待解析数据";
+        " 回传：" +
+        XHS_list.article_list.length +
+        " 条，请等待解析数据";
 
       }
       //ElMessage.info(res.msg);
@@ -2676,22 +2786,22 @@ async function Pinterest_callback(Pinterest_list) {
       if (res.error_code != 0) {
         ElMessage.info(res.msg);
         Pinteresterror.value =
-          "查询到：" + Pinterest_list.num + " 条帖子 " + res.msg;
+            "查询到：" + Pinterest_list.num + " 条帖子 " + res.msg;
       } else {
         ElMessage.info(res.msg);
         Pinteresterror.value =
 
-          res.msg +
-          " 本次回传：" +
-          Pinterest_list.article_list.length +
-          " 条，共回传：" +
-          Pinterest_list.num +
-          " 条";
+            res.msg +
+            " 本次回传：" +
+            Pinterest_list.article_list.length +
+            " 条，共回传：" +
+            Pinterest_list.num +
+            " 条";
 
         res.msg +
-          " 回传：" +
-          Pinterest_list.article_list.length +
-          " 条，请等待解析数据";
+        " 回传：" +
+        Pinterest_list.article_list.length +
+        " 条，请等待解析数据";
 
       }
       //ElMessage.info(res.msg);

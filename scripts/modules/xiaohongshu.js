@@ -1,4 +1,3 @@
-
 let eid = '';
 let userid = ''
 let userName = '';
@@ -22,6 +21,16 @@ window.addEventListener('message', function (res) {
 })
 
 
+function getBlogger() {
+    chrome.runtime.sendMessage({
+        Message: 'redBookBlogger',
+        author: document.querySelector('.user-name').textContent,
+        authorLink: location.href
+    }).then(r => {
+
+    })
+}
+
 function xhs_getData() {
 
     var userName = ''
@@ -36,7 +45,6 @@ function xhs_getData() {
     } catch (error) {
 
     }
-
 
 
     if (location.href.indexOf('/user/profile') == -1) {
@@ -62,14 +70,59 @@ function xhs_getData() {
     })
 }
 
+let last_length = 0
+
+async function addMore() {
+    window.scrollTo(0, document.body.scrollHeight)
+    await wait(10);
+    let length = document.querySelector('#userPostedFeeds section').length
+    if (length === last_length) {
+        return false;
+    } else {
+        last_length = length;
+        return true;
+    }
+}
+
+async function startGetHistory() {
+    let list = Array.from(document.querySelectorAll('#userPostedFeeds section')).map(item => {
+        return {
+            title: item.querySelector('.title').textContent,
+            article_url: item.querySelector('a').href,
+            post_url: item.querySelector('a').href,
+            likes: dealNum(item.querySelector('.count').textContent)
+        }
+    });
+    list = list.filter(item => !(history.find(h => h.article_url === item.article_url)));
+    history.push(...list);
+
+
+    chrome.runtime.sendMessage({
+        Message: 'redBookData',
+        data: JSON.stringify(list)
+    }).then(r => {
+
+    })
+
+    let haveMore = await addMore();
+    if (haveMore) {
+        await startGetHistory();
+    } else {
+        chrome.runtime.sendMessage({
+            Message: 'StopRedBook',
+            type: 'redBook',
+        }).then(r => {
+
+        })
+    }
+}
+
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
 
     if (Message.Message === 'getData') {
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         xhs_getData();
     } else if (Message.Message === 'checkType') {
-
-        // let data=
 
         chrome.runtime.sendMessage({
             Message: 'initBtn',
@@ -78,7 +131,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         }).then(r => {
 
         })
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
 
 
     } else if (Message.Message === 'getPending') {
@@ -86,9 +139,17 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             state: 200
         });
 
+    } else if (Message.Message === 'getBlogger') {
+        getBlogger();
+        sendResponse({
+            state: 200
+        });
+    } else if (Message.Message === 'getDataRedBook') {
+        sendResponse({state: 200});
+        startGetHistory().then();
     } else if (Message.Message === 'collect') {
 
-        sendResponse({ state: 200 });
+        sendResponse({state: 200});
         if (document.querySelectorAll('[class="user side-bar-component"] [href*="/user/profile/"]').length != 0) {
             await XHS_Collect_article_list();
         } else {
@@ -99,7 +160,6 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     }
 
 });
-
 
 
 /**采集主函数 */
@@ -132,8 +192,11 @@ async function XHS_Collect_article_list() {
 
 
                     if (article_list.length == 0) {
-                        article_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1], url: art.querySelectorAll('[class="cover ld mask"]')[0].href });
-                        data_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1] });
+                        article_list.push({
+                            vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1],
+                            url: art.querySelectorAll('[class="cover ld mask"]')[0].href
+                        });
+                        data_list.push({vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1]});
                         article_num++
                     } else {
                         /**帖子已收录 */
@@ -147,14 +210,18 @@ async function XHS_Collect_article_list() {
 
                         });
                         if (!if_have) {
-                            article_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1], url: art.querySelectorAll('[class="cover ld mask"]')[0].href });
-                            data_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1] });
+                            article_list.push({
+                                vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1],
+                                url: art.querySelectorAll('[class="cover ld mask"]')[0].href
+                            });
+                            data_list.push({vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1]});
                             article_num++
                         }
                     }
                 }
 
-            } catch { }
+            } catch {
+            }
 
             if (article_list.length == 200) {
                 await CallBackData(article_list, article_num, 0, 'article_list', 'continue');
@@ -196,8 +263,6 @@ async function XHS_Collect_article_list() {
 
 
 }
-
-
 
 
 /** 等待 */
@@ -243,4 +308,29 @@ async function CallBackData(callback_data, article_num, state, type, order) {
 
     })
 }
+
+function dealNum(num) {
+
+    let result = num.replace(/\D/g, '');
+
+    if (num === "" || num == null) {
+        return 0;
+    } else {
+
+        result = num.replace(/[^\d.]/ig, "");
+
+        if (num.toString().includes('万')) {
+            result = result * 10000;
+        }
+
+        if (num.toString().includes('K')) {
+            result = result * 1000;
+        }
+
+        return parseInt(result);
+    }
+}
+
+
+let history = []
 
