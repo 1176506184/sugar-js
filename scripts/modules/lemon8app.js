@@ -12,7 +12,7 @@ async function addMore() {
 function getBlogger() {
     chrome.runtime.sendMessage({
         Message: 'lemon8appBlogger',
-        author: document.querySelector('.navbar_title span').textContent,
+        author: document.querySelector('.user-desc-base-name').textContent,
         authorLink: location.origin + location.pathname
     }).then(r => {
 
