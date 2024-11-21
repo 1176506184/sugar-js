@@ -302,8 +302,8 @@
                 style="margin-right: 10px" />
 
               <el-button :disabled="!xiaohongshuTagid || xiaohongshuLoading" @click="xiaohongshu_collect"
-                type="primary">>>>>>> c1f550130f066e7953e00f168c371fa8286e65c6
-                >
+                type="primary">
+                
                 {{ XhsBloggerId_search_start }}
               </el-button>
 
