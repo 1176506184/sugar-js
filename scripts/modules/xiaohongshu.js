@@ -90,7 +90,8 @@ async function startGetHistory() {
             title: item.querySelector('.title').textContent,
             article_url: item.querySelector('a.cover').href,
             post_url: item.querySelector('a.cover').href,
-            likes: dealNum(item.querySelector('.count').textContent)
+            likes: dealNum(item.querySelector('.count').textContent),
+            article_type: item.querySelector('.play-icon') ? 3 : 2
         }
     });
     list = list.filter(item => !(history.find(h => h.article_url === item.article_url)));
