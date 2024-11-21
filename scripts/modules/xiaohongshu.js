@@ -108,6 +108,8 @@ async function XHS_Collect_article_list() {
     let article_num = 0;
     /**采集列表 */
     let article_list = [];
+    /**缓存列表 */
+    let data_list = [];
 
     await wait(2.5, '准备开始采集帖子')
 
@@ -131,11 +133,13 @@ async function XHS_Collect_article_list() {
 
                     if (article_list.length == 0) {
                         article_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1], url: art.querySelectorAll('[class="cover ld mask"]')[0].href });
+                        data_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1] });
+                        article_num++
                     } else {
                         /**帖子已收录 */
                         let if_have = false;
 
-                        article_list.forEach(obj => {
+                        data_list.forEach(obj => {
 
                             if (art.querySelectorAll('[href*="explore"]')[0].href.indexOf(obj.vid) != -1) {
                                 if_have = true;
@@ -144,13 +148,23 @@ async function XHS_Collect_article_list() {
                         });
                         if (!if_have) {
                             article_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1], url: art.querySelectorAll('[class="cover ld mask"]')[0].href });
+                            data_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1] });
+                            article_num++
                         }
                     }
-
                 }
 
-
             } catch { }
+
+            if (article_list.length == 200) {
+                await CallBackData(article_list, article_num, 0, 'article_list', 'continue');
+                article_list = [];
+            } else if (article_num >= 1000) {
+
+                await CallBackData(article_list, article_num, 0, 'article_list', 'over');
+                return;
+            }
+
 
         }
 
@@ -178,7 +192,7 @@ async function XHS_Collect_article_list() {
         }
     }
 
-    await CallBackData(article_list, 0, 'article_list');
+    await CallBackData(article_list, article_num, 0, 'article_list', 'over');
 
 
 }
@@ -200,19 +214,23 @@ async function wait(s1, t) {  // 变量，波动范围
 }
 
 /**回传任务信息 */
-async function CallBackData(callback_data, state, type) {
+async function CallBackData(callback_data, article_num, state, type, order) {
 
     if (state == 0) {
         // 定义要发送的数据
         var data = {
             author_id: location.href.split('/profile/')[1].split('?')[0],
-            article_list: callback_data
+            article_list: callback_data,
+            num: article_num,
+            order: order
         };
     } else {
         var data = {
             author_id: 'false',
             article_list: [],
-            msg: callback_data
+            msg: callback_data,
+            num: article_num,
+            order: order
         };
     }
 

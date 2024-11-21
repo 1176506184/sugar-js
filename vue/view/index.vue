@@ -427,7 +427,7 @@
               />
 
               <el-button
-                :disabled="xiaohongshuLoading"
+                :disabled="!xiaohongshuTagid || xiaohongshuLoading"
                 @click="xiaohongshu_collect"
                 type="primary"
               >
@@ -470,7 +470,7 @@
               />
 
               <el-button
-                :disabled="PinterestLoading"
+                :disabled="!PinterestTagid || PinterestLoading"
                 @click="Pinterest_collect"
                 type="primary"
               >
@@ -533,8 +533,8 @@ import { computed } from "vue";
 import { http, xhrHttp, sHttp, dHttp } from "../utils/request";
 import { ElMessage, ElMessageBox } from "element-plus";
 
-const open = ref(1);
-const owner = ref(0);
+const open = ref(0);
+const owner = ref(1);
 
 function changeOpen() {
   chrome.storage.local.set(
@@ -597,6 +597,7 @@ let Pinterest_list = "";
 const xiaohongshuLoading = ref(false);
 /**Pinterest按钮点击*/
 const PinterestLoading = ref(false);
+/**分类选择事件*/
 
 function logout() {
   if (state.isLogin) {
@@ -2292,14 +2293,16 @@ async function XHS_callback(XHS_list) {
     ).then((res) => {
       if (res.error_code != 0) {
         ElMessage.info(res.msg);
-        Xhserror.value = res.msg;
+        Xhserror.value = "查询到：" + XHS_list.num + " 条帖子 " + res.msg;
       } else {
         ElMessage.info(res.msg);
         Xhserror.value =
           res.msg +
-          " 回传：" +
+          " 本次回传：" +
           XHS_list.article_list.length +
-          " 条，请等待解析数据";
+          " 条，共回传：" +
+          XHS_list.num +
+          " 条";
       }
       //ElMessage.info(res.msg);
     });
@@ -2307,8 +2310,11 @@ async function XHS_callback(XHS_list) {
     ElMessage.info("采集数据为空");
     Xhserror.value = "采集数据为空";
   }
+  
+  if (XHS_list.order == "over") {
+    XhsBloggerId_search_start.value = "采集完成";
+  }
 
-  XhsBloggerId_search_start.value = "采集完成";
   //XhsBloggerId_search_start.style=Color.Color.gree
 }
 
@@ -2410,14 +2416,17 @@ async function Pinterest_callback(Pinterest_list) {
     ).then((res) => {
       if (res.error_code != 0) {
         ElMessage.info(res.msg);
-        Pinteresterror.value = res.msg;
+        Pinteresterror.value =
+          "查询到：" + Pinterest_list.num + " 条帖子 " + res.msg;
       } else {
         ElMessage.info(res.msg);
         Pinteresterror.value =
           res.msg +
-          " 回传：" +
+          " 本次回传：" +
           Pinterest_list.article_list.length +
-          " 条，请等待解析数据";
+          " 条，共回传：" +
+          Pinterest_list.num +
+          " 条";
       }
       //ElMessage.info(res.msg);
     });
@@ -2426,7 +2435,10 @@ async function Pinterest_callback(Pinterest_list) {
     Pinteresterror.value = "采集数据为空";
   }
 
-  PinterestBloggerId_search_start.value = "采集完成";
+  if (Pinterest_list.order == "over") {
+    PinterestBloggerId_search_start.value = "采集完成";
+  }
+
   //XhsBloggerId_search_start.style=Color.Color.gree
 }
 
