@@ -80,10 +80,10 @@ chrome.storage.local.get('open', (res) => {
 
 
 var G = {};
-var cacheData = { init: true };
-chrome.storage.local.set({ iframeVisible: true });
+var cacheData = {init: true};
+chrome.storage.local.set({iframeVisible: true});
 G.scriptList = new Map();
-G.scriptList.set("facebook.js", { refresh: true, allFrames: true, world: "MAIN", name: "facebook" });
+G.scriptList.set("facebook.js", {refresh: true, allFrames: true, world: "MAIN", name: "facebook"});
 const webList = ['https://movieweb.com', 'https://collider.com', 'https://fandomwire.com',
     'https://www.tvinsider.com', 'https://www.foxnews.com', 'https://screenrant.com', 'https://nypost.com',
     'https://www.cbr.com', 'https://tasteofcountry.com', 'https://people.com', 'https://outsider.com', 'https://www.outsider.com',
@@ -220,6 +220,13 @@ if (location.origin.indexOf("douyin") !== -1) {
     }).then(() => {
         console.log("xiaohongshu")
     })
+} else if (location.href.indexOf('www.lemon8-app.com') != -1) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'lemon8app.js'
+    }).then(() => {
+        console.log("lemon8app")
+    })
 } else if (location.href) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
@@ -237,6 +244,6 @@ if (location.href.indexOf('www.pinterest.com') != -1) {
         console.log("Pinterest")
     })
 }
-chrome.storage.local.set({ iframeVisible: true });
+chrome.storage.local.set({iframeVisible: true});
 
 
