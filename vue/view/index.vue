@@ -419,12 +419,28 @@
               </el-input>
             </div>
           </el-collapse-item>
-          <!--        <p>脸书社团</p>-->
-          <!--        <div>-->
-          <!--          <el-button @click="facebook_member" type="primary" :disabled="type!=='facebook'">手动采集</el-button>-->
-          <!--          <el-button @click="facebook_member_scroll" type="primary" :disabled="type!=='facebook'">自动采集</el-button>-->
-          <!--        </div>-->
-          <!--        <div class="border"></div>-->
+
+          <el-collapse-item title="lemon8app" name="30">
+            <div style="margin-left: 0px; margin-top: 10px">
+
+              <el-select v-if="!lemon8appState.haveBlogger" v-model="lemon8appState.lang" placeholder=""
+                         style="width: 100px;margin-right: 10px">
+                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>
+              </el-select>
+
+              <el-button v-if="!lemon8appState.haveBlogger" type="primary" @click="createBloggerLemon">添加博主
+              </el-button>
+
+              <el-button
+                  v-else
+                  :loading="lemon8appState.loading"
+                  @click="lemon8appGetHistory"
+                  type="primary"
+              >
+                {{ lemon8appState.text }}
+              </el-button>
+            </div>
+          </el-collapse-item>
         </el-collapse>
         <el-collapse
             v-if="owner === 1"
@@ -596,8 +612,8 @@ import {
 import {parseDate} from "../../utils/formatDate";
 import store from "../store/store.js";
 import {computed} from "vue";
-import {http, xhrHttp, sHttp, dHttp} from "../utils/request";
-import {ElMessage, ElMessageBox} from "element-plus";
+import {http, xhrHttp, sHttp, dHttp, hHttp} from "../utils/request";
+import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(1);
 const owner = ref(0);
@@ -758,10 +774,45 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "zhihu") {
       activeNames.value.push("25");
       store.commit("changeType", "zhihu");
+    } else if (Message.type === "lemon8app") {
+      activeNames.value.push("30");
+      store.commit("changeType", "lemon8app");
+      chrome.tabs.query(
+          {
+            active: true,
+            currentWindow: true,
+          },
+          function (tabs) {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                  Message: "getBlogger",
+                },
+                function (response) {
+                  if (response?.state !== 200) {
+                    alert("插件已重新加载，请刷新页面");
+                  }
+                }
+            );
+          }
+      );
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }
     absoluteCollapse();
+  } else if (Message.Message === 'lemon8appData') {
+
+    let data = Message.data;
+
+    uploadLemonData(data)
+
+  } else if (Message.Message === 'StopLemon8app') {
+
+    lemon8appState.text = '采集结束'
+    lemon8appState.loading = false;
+
+  } else if (Message.Message === 'lemon8appBlogger') {
+    await getUserInfoWithLemon(Message)
   } else if (Message.Message === "video") {
     loading.value = true;
     data.video = Message.url;
@@ -2292,6 +2343,138 @@ async function douyin_history() {
         active: true,
       },
       (tab) => {
+      }
+  );
+}
+
+const langList = ref([
+  {lang: 0, name: '繁体'},
+  {lang: 1, name: '英文'},
+  {lang: 2, name: '葡语'},
+  {lang: 3, name: '日语'}
+])
+
+const lemon8appState = reactive({
+  loading: false,
+  text: '开始采集',
+  status: 0,
+  haveBlogger: false,
+  lang: 0,
+  name: '',
+  url: '',
+  blogger_id: 0,
+  length: 0
+})
+
+async function getUserInfoWithTool() {
+  // 调用接口，校验ddid
+  let ddid = localStorage.getItem("ddid")
+
+  const loadingTask = ElLoading.service({
+    lock: true,
+    text: '正在查询用户信息',
+    background: 'rgba(0, 0, 0, 0.6)',
+  })
+
+  let res = await hHttp(`/BloggerNew/getUserByDdid`, {
+    ddid: ddid
+  })
+  loadingTask.close();
+  if (res.data && res.data.id) {
+    return {
+      userid: res.data.id,
+      username: res.data.name
+    }
+  } else {
+    ElMessage.warning({
+      message: '请到数据采集平台进行登录授权'
+    })
+    return false;
+  }
+}
+
+async function getUserInfoWithLemon(Message) {
+  console.log(Message)
+  lemon8appState.name = Message.author.replace(/\s/g, '');
+  lemon8appState.url = Message.authorLink.replace(/\s/g, '');
+  // 查询库里有没有该博主
+  const loadingTask = ElLoading.service({
+    lock: true,
+    text: '正在查询该博主信息',
+    background: 'rgba(0, 0, 0, 0.6)',
+  })
+
+  let d = await hHttp(`/BloggerNew/getBloggerNewByNameUrl`, {
+    url: lemon8appState.url,
+    name: lemon8appState.name
+  })
+
+  loadingTask.close();
+
+  if (d.state) {
+    lemon8appState.haveBlogger = true;
+    let resData = d.data;
+    lemon8appState.blogger_id = resData.id;
+  }
+}
+
+async function createBloggerLemon() {
+  let user = await getUserInfoWithTool()
+  let res = await hHttp(`/BloggerNew/Add`, {
+    platform: 9,
+    lang: lemon8appState.lang,
+    name: lemon8appState.name,
+    blogger_url: lemon8appState.url,
+    create_id: user.userid,
+    create_name: user.username
+  })
+  if (res.state === true) {
+    if (res.data) {
+      lemon8appState.blogger_id = res.data
+    }
+    lemon8appState.haveBlogger = true
+    ElMessage({
+      type: 'success',
+      message: '创建成功'
+    })
+  }
+}
+
+async function uploadLemonData(data) {
+  data = JSON.parse(data).map(r => {
+    return {
+      ...r,
+      blogger_id: lemon8appState.blogger_id
+    }
+  })
+  lemon8appState.length += data.length
+  let res = await hHttp("/BloggerCaptureHistoryNew/AddArticle", data);
+  if (res.state === true) {
+    lemon8appState.text = `已采集${lemon8appState.length}条`
+  }
+}
+
+async function lemon8appGetHistory() {
+  lemon8appState.length = 0;
+  lemon8appState.text = '已采集0条'
+  lemon8appState.loading = true;
+  chrome.tabs.query(
+      {
+        active: true,
+        currentWindow: true,
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              Message: "getData",
+            },
+            function (response) {
+              if (response?.state !== 200) {
+                alert("插件已重新加载，请刷新页面");
+              }
+            }
+        );
       }
   );
 }
