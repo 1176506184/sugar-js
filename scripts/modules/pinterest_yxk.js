@@ -31,8 +31,8 @@ function Pinterest_getData() {
 
     try {
         userName = document.querySelectorAll('[data-test-id="profile-name"]')[0].innerText;
-        userid = document.querySelectorAll('[class="JlN zDA IZT tBJ dyH iFc j1A swG"]')[0].innerText;
-        let str = `[alt="` + userid + `"]`;
+        userid = location.href.split('https://www.pinterest.com/')[1].split('/')[0];
+        let str = `[alt="` + userid + `"],[alt="用户头像"]`;
         cover = document.querySelectorAll(str)[0].src;
     } catch (error) {
 
