@@ -499,86 +499,44 @@
 
           <el-collapse-item title="小红书" name="22">
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-cascader
-                  filterable
-                  placeholder="请选择分类"
-                  v-model="xiaohongshuTagid"
-                  :options="category"
-                  :props="props"
-                  style="margin-right: 10px"
-              />
+              <el-cascader filterable placeholder="请选择分类" v-model="xiaohongshuTagid" :options="category" :props="props"
+                style="margin-right: 10px" />
 
-              <el-button
-                  :disabled="xiaohongshuLoading"
-                  @click="xiaohongshu_collect"
-                  type="primary"
-              >
+              <el-button :disabled="!xiaohongshuTagid || xiaohongshuLoading" @click="xiaohongshu_collect"
+                type="primary">
+
                 {{ XhsBloggerId_search_start }}
               </el-button>
 
-              <el-input
-                  v-model="Xhserror"
-                  placeholder="错误报警"
-                  style="width: 350px; margin-left: 20px"
-              >
+              <el-input v-model="Xhserror" placeholder="错误报警" style="width: 350px; margin-left: 20px">
               </el-input>
             </div>
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-input
-                  v-model="XhsBloggerId"
-                  placeholder="博主ID"
-                  style="width: 240px"
-              >
+              <el-input v-model="XhsBloggerId" placeholder="博主ID" style="width: 240px">
               </el-input>
 
-              <el-input
-                  v-model="XhsBloggerName"
-                  placeholder="博主名称"
-                  style="width: 200px; margin-left: 20px"
-              >
+              <el-input v-model="XhsBloggerName" placeholder="博主名称" style="width: 200px; margin-left: 20px">
               </el-input>
             </div>
           </el-collapse-item>
 
           <el-collapse-item title="Pinterest" name="23">
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-cascader
-                  filterable
-                  placeholder="请选择分类"
-                  v-model="PinterestTagid"
-                  :options="category"
-                  :props="props"
-                  style="margin-right: 10px"
-              />
+              <el-cascader filterable placeholder="请选择分类" v-model="PinterestTagid" :options="category" :props="props"
+                style="margin-right: 10px" />
 
-              <el-button
-                  :disabled="PinterestLoading"
-                  @click="Pinterest_collect"
-                  type="primary"
-              >
+              <el-button :disabled="!PinterestTagid || PinterestLoading" @click="Pinterest_collect" type="primary">
                 {{ PinterestBloggerId_search_start }}
               </el-button>
 
-              <el-input
-                  v-model="Pinteresterror"
-                  placeholder="错误报警"
-                  style="width: 350px; margin-left: 20px"
-              >
+              <el-input v-model="Pinteresterror" placeholder="错误报警" style="width: 350px; margin-left: 20px">
               </el-input>
             </div>
             <div style="margin-left: 0px; margin-top: 10px">
-              <el-input
-                  v-model="PinterestBloggerId"
-                  placeholder="博主ID"
-                  style="width: 240px"
-              >
+              <el-input v-model="PinterestBloggerId" placeholder="博主ID" style="width: 240px">
               </el-input>
 
-              <el-input
-                  v-model="PinterestBloggerName"
-                  placeholder="博主名称"
-                  style="width: 200px; margin-left: 20px"
-              >
+              <el-input v-model="PinterestBloggerName" placeholder="博主名称" style="width: 200px; margin-left: 20px">
               </el-input>
             </div>
           </el-collapse-item>
@@ -2587,14 +2545,23 @@ async function XHS_callback(XHS_list) {
     ).then((res) => {
       if (res.error_code != 0) {
         ElMessage.info(res.msg);
-        Xhserror.value = res.msg;
+        Xhserror.value = "查询到：" + XHS_list.num + " 条帖子 " + res.msg;
       } else {
         ElMessage.info(res.msg);
         Xhserror.value =
-            res.msg +
-            " 回传：" +
-            XHS_list.article_list.length +
-            " 条，请等待解析数据";
+
+          res.msg +
+          " 本次回传：" +
+          XHS_list.article_list.length +
+          " 条，共回传：" +
+          XHS_list.num +
+          " 条";
+
+        res.msg +
+          " 回传：" +
+          XHS_list.article_list.length +
+          " 条，请等待解析数据";
+
       }
       //ElMessage.info(res.msg);
     });
@@ -2603,7 +2570,10 @@ async function XHS_callback(XHS_list) {
     Xhserror.value = "采集数据为空";
   }
 
-  XhsBloggerId_search_start.value = "采集完成";
+  if (XHS_list.order == "over") {
+    XhsBloggerId_search_start.value = "采集完成";
+  }
+
   //XhsBloggerId_search_start.style=Color.Color.gree
 }
 
@@ -2705,14 +2675,24 @@ async function Pinterest_callback(Pinterest_list) {
     ).then((res) => {
       if (res.error_code != 0) {
         ElMessage.info(res.msg);
-        Pinteresterror.value = res.msg;
+        Pinteresterror.value =
+          "查询到：" + Pinterest_list.num + " 条帖子 " + res.msg;
       } else {
         ElMessage.info(res.msg);
         Pinteresterror.value =
-            res.msg +
-            " 回传：" +
-            Pinterest_list.article_list.length +
-            " 条，请等待解析数据";
+
+          res.msg +
+          " 本次回传：" +
+          Pinterest_list.article_list.length +
+          " 条，共回传：" +
+          Pinterest_list.num +
+          " 条";
+
+        res.msg +
+          " 回传：" +
+          Pinterest_list.article_list.length +
+          " 条，请等待解析数据";
+
       }
       //ElMessage.info(res.msg);
     });
@@ -2721,7 +2701,10 @@ async function Pinterest_callback(Pinterest_list) {
     Pinteresterror.value = "采集数据为空";
   }
 
-  PinterestBloggerId_search_start.value = "采集完成";
+  if (Pinterest_list.order == "over") {
+    PinterestBloggerId_search_start.value = "采集完成";
+  }
+
   //XhsBloggerId_search_start.style=Color.Color.gree
 }
 
