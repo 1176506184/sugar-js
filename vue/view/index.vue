@@ -1175,14 +1175,7 @@ function getVersion() {
   http("/home/GetVersion", {}).then((res) => {
     console.log(res.version_code);
     if (res.version_code > state.version && res.src) {
-      ElMessageBox.confirm(res.remark, {
-        title: "发现新版本",
-        confirmButtonText: "立即下载",
-        cancelButtonText: "稍后下载",
-      }).then(() => {
-        window.open(res.src);
-      });
-      state.version = "点击下载最新版本";
+      state.version = `当前版本${state.version},点击下载最新版本${res.version_code}`;
       document.querySelector("#v_p").addEventListener("click", () => {
         window.open(res.src);
       });
