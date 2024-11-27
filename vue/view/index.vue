@@ -397,6 +397,9 @@
               >
                 {{ redBookState.text }}
               </el-button>
+
+              <el-button type="primary" @click="collect_xiaohongshu">采集历史（新）</el-button>
+
             </div>
           </el-collapse-item>
 
@@ -2821,6 +2824,18 @@ async function Pinterest_callback(Pinterest_list) {
 }
 
 async function douyin_truvid() {
+  let activeId = await getActiveId();
+  chrome.tabs.create(
+      {
+        url: "/html/out.html#/DouyinTruvid?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {
+      }
+  );
+}
+
+async function collect_xiaohongshu() {
   let activeId = await getActiveId();
   chrome.tabs.create(
       {

@@ -100,6 +100,45 @@ async function scrollBottom() {
 function getVideo(type) {
     console.log("开始返回数据")
     console.log(videoData)
+
+    if (videoData.length === 0) {
+
+        videoData.push(...Array.from(document.querySelectorAll('ytd-rich-item-renderer')).map((item) => {
+            let href = item.querySelector('a#thumbnail')?.href;
+            if (!href) {
+                href = item.querySelector('a.ShortsLockupViewModelHostEndpoint.reel-item-endpoint ').href
+            }
+            let id = '';
+            if (href.includes('/watch')) {
+                id = href.split('?').pop().split('=').pop()
+            } else {
+                id = href.split('/').pop()
+            }
+
+            let title = item.querySelector('#video-title')?.textContent;
+            if (!title) {
+                title = item.querySelector('.yt-core-attributed-string.yt-core-attributed-string--white-space-pre-wrap').textContent
+            }
+
+            let playCount = item.querySelector('.inline-metadata-item.style-scope.ytd-video-meta-block')?.textContent;
+
+            if (!playCount) {
+                playCount = item.querySelector('.ShortsLockupViewModelHostMetadataSubhead.ShortsLockupViewModelHostOutsideMetadataSubhead .yt-core-attributed-string.yt-core-attributed-string--white-space-pre-wrap').textContent
+            }
+
+            return {
+                title: title,
+                videoId: id,
+                viewCountText: {
+                    simpleText: playCount
+                },
+                publishedTimeText: {
+                    simpleText: ''
+                }
+            }
+        }))
+    }
+
     if (type === 'frame') {
         chrome.runtime.sendMessage({
             Message: 'youtubeVideo',

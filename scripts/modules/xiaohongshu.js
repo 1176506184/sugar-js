@@ -2,20 +2,50 @@ let eid = '';
 let userid = ''
 let userName = '';
 const url = location.href;
+let hasMore = true
+let history = []
+
+setTimeout(() => {
+    document.querySelectorAll('script').forEach((r) => {
+        if (r.innerHTML.includes('window.__INITIAL_STATE__=')) {
+            let json = r.innerHTML.replace('window.__INITIAL_STATE__=', '')
+            json = json.replaceAll('undefined', '1')
+            let preData = JSON.parse(json);
+
+            let feed = preData.user.notes[0];
+            console.log(feed)
+            history.push(...feed.map((item) => {
+                return {
+                    title: item.noteCard.displayTitle,
+                    article_url: location.origin + location.pathname + '/' + item.noteCard.noteId + '?xsec_token=' + item.noteCard.xsecToken,
+                    post_url: location.origin + location.pathname + '/' + item.noteCard.noteId + '?xsec_token=' + item.noteCard.xsecToken,
+                    likes: item.noteCard.interactInfo.likedCount,
+                    article_type: item.noteCard.type === 'normal' ? 2 : 3
+                }
+            }))
+            hasMore = preData.user.noteQueries[0].hasMore
+            console.log(hasMore)
+        }
+    })
+}, 300)
+
 window.addEventListener('message', function (res) {
 
     if (res.data.Message === 'ajax') {
-        if (res.data.url && (res.data.url.indexOf("https://www.xiaohongshu.com/") !== -1)) {
-            console.log(res.data.data);
-            if (res.data.data.feeds[0].user) {
-                userid = res.data.data.user_id;
-                userName = res.data.data.user_name;
-            } else {
 
-                userid = res.data.data.userId;
-                userName = res.data.data.userName;
-            }
-            console.log(userid, userName);
+        if (res.data.url.includes("/api/sns/web/v1/user_posted")) {
+            let data = res.data.data
+            let list = JSON.parse(data).data.notes
+            history.push(...list.map((item) => {
+                return {
+                    title: item.display_title,
+                    article_url: location.origin + location.pathname + '/' + item.note_id + '?xsec_token=' + item.xsec_token,
+                    post_url: location.origin + location.pathname + '/' + item.note_id + '?xsec_token=' + item.xsec_token,
+                    likes: item.interact_info.liked_count,
+                    article_type: item.type === 'normal' ? 2 : 3
+                }
+            }))
+            hasMore = JSON.parse(data).data.has_more
         }
     }
 })
@@ -70,50 +100,35 @@ function xhs_getData() {
     })
 }
 
-let last_length = 0
-let next_num = 0;
 
 async function addMore() {
     window.scrollTo(0, document.body.scrollHeight)
     await wait(10);
-    let length = document.querySelector('#userPostedFeeds section').length
-    if (length === last_length && next_num === 2) {
-        return false;
-    } else {
-        if (length === last_length) {
-            next_num += 1;
-        }
-        last_length = length;
-        return true;
-    }
+    return hasMore
 }
 
 async function startGetHistory() {
-
-    let list = Array.from(document.querySelectorAll('#userPostedFeeds section')).map(item => {
-        return {
-            title: item.querySelector('.title').textContent,
-            article_url: item.querySelector('a.cover').href,
-            post_url: item.querySelector('a.cover').href,
-            likes: dealNum(item.querySelector('.count').textContent),
-            article_type: item.querySelector('.play-icon') ? 3 : 2
-        }
-    });
-    list = list.filter(item => !(history.find(h => h.article_url === item.article_url)));
-    history.push(...list);
-
-
     chrome.runtime.sendMessage({
         Message: 'redBookData',
-        data: JSON.stringify(list)
+        data: JSON.stringify(history)
     }).then(r => {
 
     })
+
+    history = []
 
     let haveMore = await addMore();
     if (haveMore) {
         await startGetHistory();
     } else {
+
+        chrome.runtime.sendMessage({
+            Message: 'redBookData',
+            data: JSON.stringify(history)
+        }).then(r => {
+
+        })
+
         chrome.runtime.sendMessage({
             Message: 'StopRedBook',
             type: 'redBook',
@@ -352,7 +367,4 @@ function dealNum(num) {
         return parseInt(result);
     }
 }
-
-
-let history = []
 
