@@ -384,7 +384,9 @@
                 <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>
               </el-select>
 
-              <el-button v-if="!redBookState.haveBlogger" type="primary" @click="createBloggerRedBook">添加博主
+              <el-button v-if="!redBookState.haveBlogger" type="primary" @click="createBloggerRedBook">{{
+                  redBookState.add_btn_text
+                }}
               </el-button>
 
               <el-button
@@ -779,6 +781,12 @@ const eventBus = async function (Message, sender, sendResponse) {
   } else if (Message.Message === 'StopRedBook') {
 
     redBookState.text = '采集结束'
+    redBookState.loading = false;
+
+  } else if (Message.Message === 'CantRedBook') {
+
+    redBookState.add_btn_text = '小红书尚未登录/未在博主主页'
+    redBookState.text = '小红书尚未登录/未在博主主页'
     redBookState.loading = false;
 
   } else if (Message.Message === 'redBookBlogger') {
@@ -2338,7 +2346,8 @@ const redBookState = reactive({
   name: '',
   url: '',
   blogger_id: 0,
-  length: 0
+  length: 0,
+  add_btn_text: '添加博主'
 })
 
 async function getUserInfoWithTool() {
@@ -2421,7 +2430,7 @@ async function getUserInfoWithRedBook(Message) {
 async function createBloggerLemon() {
   let user = await getUserInfoWithTool()
   let res = await hHttp(`/BloggerNew/Add`, {
-    platform: 9,
+    platform: 101,
     lang: lemon8appState.lang,
     name: lemon8appState.name,
     blogger_url: lemon8appState.url,
@@ -2443,7 +2452,7 @@ async function createBloggerLemon() {
 async function createBloggerRedBook() {
   let user = await getUserInfoWithTool()
   let res = await hHttp(`/BloggerNew/Add`, {
-    platform: 8,
+    platform: 100,
     lang: redBookState.lang,
     name: redBookState.name,
     blogger_url: redBookState.url,

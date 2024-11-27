@@ -99,6 +99,7 @@ async function scrollBottom() {
 
 function getVideo(type) {
     console.log("开始返回数据")
+    console.log(videoData)
     if (type === 'frame') {
         chrome.runtime.sendMessage({
             Message: 'youtubeVideo',
@@ -149,6 +150,8 @@ function parseVideo(data) {
                                 simpleText: ''
                             }
                         })
+
+                        console.log(videoData)
                     }
 
                     if (!videoIds.includes(d[key]?.videoId) && d[key]?.videoId) {
@@ -156,6 +159,7 @@ function parseVideo(data) {
                         d[key].author = document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText ? document.querySelector('div#channel-container .style-scope.ytd-channel-name')?.innerText : document.querySelector('h1.dynamic-text-view-model-wiz__h1').textContent
                         videoData.push(d[key]);
                         youtubeData.push(d[key])
+                        console.log(videoData)
                     }
 
                 } else {

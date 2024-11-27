@@ -41,7 +41,7 @@ async function startGetHistory() {
             article_url: item.href,
             post_url: item.href,
             likes: dealNum(item.querySelector('.article_card_like').textContent),
-            article_type: 2
+            article_type: item.querySelector('.video-badge') ? 3 : 2
         }
     });
     list = list.filter(item => !(history.find(h => h.article_url === item.article_url)));

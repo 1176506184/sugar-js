@@ -503,9 +503,9 @@ async function collectHistory() {
                         article_url_map.push(item.article_url);
                         let videoURL = item.article_url + ';';
                         let data = {
-                            article_type: 3,
+                            article_type: item.media_type === 2 ? 2 : 3,
                             source_urls: videoURL,
-                            title: item.preview_title,
+                            title: item.preview_title ? item.preview_title : item.desc,
                             article_url: item.article_url,
                             post_url: item.article_url,
                             move_total: item.statistics.digg_count + item.statistics.comment_count + item.statistics.share_count,

@@ -24,7 +24,7 @@ window.addEventListener('message', function (res) {
 function getBlogger() {
     chrome.runtime.sendMessage({
         Message: 'redBookBlogger',
-        author: document.querySelector('.user-name').textContent,
+        author: document.querySelector('.user-name')?.textContent,
         authorLink: location.href
     }).then(r => {
 
@@ -71,20 +71,25 @@ function xhs_getData() {
 }
 
 let last_length = 0
+let next_num = 0;
 
 async function addMore() {
     window.scrollTo(0, document.body.scrollHeight)
     await wait(10);
     let length = document.querySelector('#userPostedFeeds section').length
-    if (length === last_length) {
+    if (length === last_length && next_num === 2) {
         return false;
     } else {
+        if (length === last_length) {
+            next_num += 1;
+        }
         last_length = length;
         return true;
     }
 }
 
 async function startGetHistory() {
+
     let list = Array.from(document.querySelectorAll('#userPostedFeeds section')).map(item => {
         return {
             title: item.querySelector('.title').textContent,
@@ -133,6 +138,22 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
 
         })
         sendResponse({state: 200});
+
+        if (location.href.indexOf('/user/profile') === -1) {
+            chrome.runtime.sendMessage({
+                Message: 'CantRedBook',
+                type: 'redBook',
+            }).then(r => {
+
+            })
+        } else if (document.querySelectorAll('[class="user side-bar-component"] [href*="/user/profile/"]').length === 0) {
+            chrome.runtime.sendMessage({
+                Message: 'CantRedBook',
+                type: 'redBook',
+            }).then(r => {
+
+            })
+        }
 
 
     } else if (Message.Message === 'getPending') {
