@@ -136,7 +136,8 @@ async function startGetHistory() {
     historyNum += history.length
     chrome.runtime.sendMessage({
         Message: 'redBookData',
-        data: JSON.stringify(history)
+        data: JSON.stringify(history),
+        toolId: toolId
     }).then(r => {
 
     })
@@ -147,6 +148,7 @@ async function startGetHistory() {
         chrome.runtime.sendMessage({
             Message: 'StopRedBook',
             type: 'redBook',
+            toolId: toolId
         }).then(r => {
 
         })
@@ -207,9 +209,17 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             max = Message.max_collect;
             console.log(max)
         }
-        toolId = Message.toolId;
+
+        if (!toolId) {
+            toolId = Message.toolId;
+        } else {
+            return
+        }
         startGetHistory().then();
     } else if (Message.Message === 'pauseCollectHistory') {
+        if (parseInt(Message.toolId) !== parseInt(toolId)) {
+            return
+        }
         sendResponse({state: 200});
         max = 0;
     } else if (Message.Message === 'collect') {

@@ -237,6 +237,9 @@ async function createBlogger() {
 
 
 async function getUserInfoWithRedBook(Message) {
+  if (!!state.author) {
+    return
+  }
   console.log(Message)
   state.author = Message.author.replace(/\s/g, '');
   state.authorLink = Message.authorLink.replace(/\s/g, '');
@@ -318,6 +321,11 @@ async function eventBus(Message) {
 
   } else if (Message.Message === 'redBookData') {
 
+    let tmpToolId = Message.toolId
+    if (parseInt(tmpToolId) !== parseInt(toolId)) {
+      return
+    }
+
     let resData = Message.data;
 
     let uniqueData = new Set();
@@ -378,7 +386,8 @@ async function pauseCollect() {
       parseInt(route.query.activeId),
       {
         Message: "pauseCollectHistory",
-        frameId: route.query.activeId
+        frameId: route.query.activeId,
+        toolId: toolId
       },
       function (response) {
         if (response?.state !== 200) {
@@ -471,7 +480,8 @@ async function save() {
   let data = selectData.value.map(r => {
     return {
       ...r,
-      blogger_id: state.blogger_id
+      blogger_id: state.blogger_id,
+      move_total: r.likes
     }
   })
   let res = await hHttp("/BloggerCaptureHistoryNew/AddArticle", data);
