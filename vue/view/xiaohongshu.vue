@@ -319,22 +319,24 @@ async function eventBus(Message) {
   } else if (Message.Message === 'redBookData') {
 
     let resData = Message.data;
+
     let uniqueData = new Set();
 
+    data.value.push(...JSON.parse(resData))
+
 // 将数据转换为字符串并存储在 Set 中去重
-    JSON.parse(resData).forEach(r => {
+    data.value.forEach(r => {
       const key = JSON.stringify(r);
       uniqueData.add(key);
     });
 
-
-    data.value.push(...Array.from(uniqueData).map(item => {
+    data.value = Array.from(uniqueData).map(item => {
       const parsedItem = JSON.parse(item);
       return {
         ...parsedItem,
         likes: parseInt(parsedItem.likes)
       }
-    }));
+    });
 
   } else if (Message.Message === 'StopRedBook') {
 
