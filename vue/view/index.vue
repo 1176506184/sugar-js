@@ -2839,7 +2839,7 @@ async function collect_xiaohongshu() {
   let activeId = await getActiveId();
   chrome.tabs.create(
       {
-        url: "/html/out.html#/DouyinTruvid?activeId=" + activeId,
+        url: "/html/out.html#/Xiaohongshu?activeId=" + activeId,
         active: true,
       },
       (tab) => {

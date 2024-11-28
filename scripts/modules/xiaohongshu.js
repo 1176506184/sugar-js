@@ -4,6 +4,10 @@ let userName = '';
 const url = location.href;
 let hasMore = true
 let history = []
+let historyNum = 0
+let max = 10000
+let frameId = ''
+let toolId = ''
 
 setTimeout(() => {
     document.querySelectorAll('script').forEach((r) => {
@@ -19,7 +23,7 @@ setTimeout(() => {
                     title: item.noteCard.displayTitle,
                     article_url: location.origin + location.pathname + '/' + item.noteCard.noteId + '?xsec_token=' + item.noteCard.xsecToken,
                     post_url: location.origin + location.pathname + '/' + item.noteCard.noteId + '?xsec_token=' + item.noteCard.xsecToken,
-                    likes: item.noteCard.interactInfo.likedCount,
+                    likes: dealNum(item.noteCard.interactInfo.likedCount),
                     article_type: item.noteCard.type === 'normal' ? 2 : 3
                 }
             }))
@@ -41,7 +45,7 @@ window.addEventListener('message', function (res) {
                     title: item.display_title,
                     article_url: location.origin + location.pathname + '/' + item.note_id + '?xsec_token=' + item.xsec_token,
                     post_url: location.origin + location.pathname + '/' + item.note_id + '?xsec_token=' + item.xsec_token,
-                    likes: item.interact_info.liked_count,
+                    likes: dealNum(item.interact_info.liked_count),
                     article_type: item.type === 'normal' ? 2 : 3
                 }
             }))
@@ -52,6 +56,26 @@ window.addEventListener('message', function (res) {
 
 
 function getBlogger() {
+
+    if (location.href.indexOf('/user/profile') === -1) {
+        chrome.runtime.sendMessage({
+            Message: 'CantRedBook',
+            type: 'redBook',
+        }).then(r => {
+
+        })
+        return
+    } else if (document.querySelectorAll('[class="user side-bar-component"] [href*="/user/profile/"]').length === 0) {
+        chrome.runtime.sendMessage({
+            Message: 'CantRedBook',
+            type: 'redBook',
+        }).then(r => {
+
+        })
+        return
+    }
+
+
     chrome.runtime.sendMessage({
         Message: 'redBookBlogger',
         author: document.querySelector('.user-name')?.textContent,
@@ -103,38 +127,31 @@ function xhs_getData() {
 
 async function addMore() {
     window.scrollTo(0, document.body.scrollHeight)
-    await wait(10);
+    await wait(2);
     return hasMore
 }
 
 async function startGetHistory() {
+    let haveMore = await addMore();
+    historyNum += history.length
     chrome.runtime.sendMessage({
         Message: 'redBookData',
         data: JSON.stringify(history)
     }).then(r => {
 
     })
-
     history = []
-
-    let haveMore = await addMore();
-    if (haveMore) {
+    if (haveMore && historyNum < max) {
         await startGetHistory();
     } else {
-
-        chrome.runtime.sendMessage({
-            Message: 'redBookData',
-            data: JSON.stringify(history)
-        }).then(r => {
-
-        })
-
         chrome.runtime.sendMessage({
             Message: 'StopRedBook',
             type: 'redBook',
         }).then(r => {
 
         })
+        history = []
+
     }
 }
 
@@ -184,6 +201,17 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'getDataRedBook') {
         sendResponse({state: 200});
         startGetHistory().then();
+    } else if (Message.Message === 'startCollectHistory') {
+        sendResponse({state: 200});
+        if (Message.max_collect) {
+            max = Message.max_collect;
+            console.log(max)
+        }
+        toolId = Message.toolId;
+        startGetHistory().then();
+    } else if (Message.Message === 'pauseCollectHistory') {
+        sendResponse({state: 200});
+        max = 0;
     } else if (Message.Message === 'collect') {
 
         sendResponse({state: 200});
