@@ -422,6 +422,9 @@
               >
                 {{ lemon8appState.text }}
               </el-button>
+
+              <el-button type="primary" @click="collect_lemon8app">采集历史（新）</el-button>
+
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -2840,6 +2843,18 @@ async function collect_xiaohongshu() {
   chrome.tabs.create(
       {
         url: "/html/out.html#/Xiaohongshu?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {
+      }
+  );
+}
+
+async function collect_lemon8app() {
+  let activeId = await getActiveId();
+  chrome.tabs.create(
+      {
+        url: "/html/out.html#/Lemon8app?activeId=" + activeId,
         active: true,
       },
       (tab) => {

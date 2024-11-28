@@ -44,6 +44,7 @@ import DouyinFrameScroll from '../view/douyinFrameScroll.vue'
 import DouyinVideoCollect from '../view/douyinVideoCollect.vue'
 import CollectZhihu from '../view/collectZhihu.vue'
 import Xiaohongshu from "../view/xiaohongshu.vue";
+import Lemon8app from '../view/Lemon8app.vue'
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -348,6 +349,12 @@ const routes = [
         name: 'Xiaohongshu',
         path: '/Xiaohongshu',
         component: Xiaohongshu,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'Lemon8app',
+        path: '/Lemon8app',
+        component: Lemon8app,
         props: route => ({query: route.query.q}),
         meta: {}
     }
