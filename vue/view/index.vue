@@ -379,24 +379,24 @@
 
           <el-collapse-item title="小红书" name="22">
             <div style="display: flex">
-              <el-select v-if="!redBookState.haveBlogger" v-model="redBookState.lang" placeholder=""
-                         style="width: 100px;margin-right: 10px">
-                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>
-              </el-select>
+<!--              <el-select v-if="!redBookState.haveBlogger" v-model="redBookState.lang" placeholder=""-->
+<!--                         style="width: 100px;margin-right: 10px">-->
+<!--                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>-->
+<!--              </el-select>-->
 
-              <el-button v-if="!redBookState.haveBlogger" type="primary" @click="createBloggerRedBook">{{
-                  redBookState.add_btn_text
-                }}
-              </el-button>
+<!--              <el-button v-if="!redBookState.haveBlogger" type="primary" @click="createBloggerRedBook">{{-->
+<!--                  redBookState.add_btn_text-->
+<!--                }}-->
+<!--              </el-button>-->
 
-              <el-button
-                  v-else
-                  :loading="redBookState.loading"
-                  @click="redBookGetHistory"
-                  type="primary"
-              >
-                {{ redBookState.text }}
-              </el-button>
+<!--              <el-button-->
+<!--                  v-else-->
+<!--                  :loading="redBookState.loading"-->
+<!--                  @click="redBookGetHistory"-->
+<!--                  type="primary"-->
+<!--              >-->
+<!--                {{ redBookState.text }}-->
+<!--              </el-button>-->
 
               <el-button type="primary" @click="collect_xiaohongshu">采集历史（新）</el-button>
 
@@ -406,22 +406,22 @@
           <el-collapse-item title="lemon8app" name="30">
             <div style="display: flex">
 
-              <el-select v-if="!lemon8appState.haveBlogger" v-model="lemon8appState.lang" placeholder=""
-                         style="width: 100px;margin-right: 10px">
-                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>
-              </el-select>
+<!--              <el-select v-if="!lemon8appState.haveBlogger" v-model="lemon8appState.lang" placeholder=""-->
+<!--                         style="width: 100px;margin-right: 10px">-->
+<!--                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>-->
+<!--              </el-select>-->
 
-              <el-button v-if="!lemon8appState.haveBlogger" type="primary" @click="createBloggerLemon">添加博主
-              </el-button>
+<!--              <el-button v-if="!lemon8appState.haveBlogger" type="primary" @click="createBloggerLemon">添加博主-->
+<!--              </el-button>-->
 
-              <el-button
-                  v-else
-                  :loading="lemon8appState.loading"
-                  @click="lemon8appGetHistory"
-                  type="primary"
-              >
-                {{ lemon8appState.text }}
-              </el-button>
+<!--              <el-button-->
+<!--                  v-else-->
+<!--                  :loading="lemon8appState.loading"-->
+<!--                  @click="lemon8appGetHistory"-->
+<!--                  type="primary"-->
+<!--              >-->
+<!--                {{ lemon8appState.text }}-->
+<!--              </el-button>-->
 
               <el-button type="primary" @click="collect_lemon8app">采集历史（新）</el-button>
 
@@ -712,25 +712,25 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "xiaohongshu") {
       activeNames.value.push("22");
       store.commit("changeType", "xiaohongshu");
-      chrome.tabs.query(
-          {
-            active: true,
-            currentWindow: true,
-          },
-          function (tabs) {
-            chrome.tabs.sendMessage(
-                tabs[0].id,
-                {
-                  Message: "getBlogger",
-                },
-                function (response) {
-                  if (response?.state !== 200) {
-                    alert("插件已重新加载，请刷新页面");
-                  }
-                }
-            );
-          }
-      );
+      // chrome.tabs.query(
+      //     {
+      //       active: true,
+      //       currentWindow: true,
+      //     },
+      //     function (tabs) {
+      //       chrome.tabs.sendMessage(
+      //           tabs[0].id,
+      //           {
+      //             Message: "getBlogger",
+      //           },
+      //           function (response) {
+      //             if (response?.state !== 200) {
+      //               alert("插件已重新加载，请刷新页面");
+      //             }
+      //           }
+      //       );
+      //     }
+      // );
       await collect_xhs_blogger();
     } else if (Message.type === "Pinterest") {
       activeNames.value.push("23");
@@ -742,25 +742,25 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "lemon8app") {
       activeNames.value.push("30");
       store.commit("changeType", "lemon8app");
-      chrome.tabs.query(
-          {
-            active: true,
-            currentWindow: true,
-          },
-          function (tabs) {
-            chrome.tabs.sendMessage(
-                tabs[0].id,
-                {
-                  Message: "getBlogger",
-                },
-                function (response) {
-                  if (response?.state !== 200) {
-                    alert("插件已重新加载，请刷新页面");
-                  }
-                }
-            );
-          }
-      );
+      // chrome.tabs.query(
+      //     {
+      //       active: true,
+      //       currentWindow: true,
+      //     },
+      //     function (tabs) {
+      //       chrome.tabs.sendMessage(
+      //           tabs[0].id,
+      //           {
+      //             Message: "getBlogger",
+      //           },
+      //           function (response) {
+      //             if (response?.state !== 200) {
+      //               alert("插件已重新加载，请刷新页面");
+      //             }
+      //           }
+      //       );
+      //     }
+      // );
     } else if (Message.type === "empty") {
       store.commit("changeType", "empty");
     }

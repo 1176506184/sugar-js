@@ -49,7 +49,9 @@ window.addEventListener('message', function (res) {
                     article_type: item.type === 'normal' ? 2 : 3
                 }
             }))
+
             hasMore = JSON.parse(data).data.has_more
+            console.log(hasMore)
         }
     }
 })
@@ -142,7 +144,7 @@ async function startGetHistory() {
 
     })
     history = []
-    if (haveMore && historyNum < max) {
+    if (haveMore && (historyNum < max)) {
         await startGetHistory();
     } else {
         chrome.runtime.sendMessage({
@@ -212,7 +214,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
 
         if (!toolId) {
             toolId = Message.toolId;
-        } else {
+        } else if (parseInt(toolId) !== parseInt(Message.toolId)) {
             return
         }
         startGetHistory().then();

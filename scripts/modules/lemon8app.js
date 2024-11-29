@@ -130,7 +130,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
 
         if (!toolId) {
             toolId = Message.toolId;
-        } else {
+        } else if (parseInt(toolId) !== parseInt(Message.toolId)) {
             return
         }
         startGetHistory().then();
