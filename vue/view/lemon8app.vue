@@ -3,7 +3,7 @@
       style="height: 100vh;margin: 0;padding: 0;border-right: 1px solid #ccc;border-left: 1px solid #ccc;position:relative;">
     <div class="layout_top" style="height: 20px;display: flex;align-items: center;justify-content: flex-start">
       <div>
-        <span style="font-size: 15px;font-weight: bold;margin-right: 5px">FB专页-历史自动采集</span>
+        <span style="font-size: 15px;font-weight: bold;margin-right: 5px">lemmon8app-历史自动采集</span>
       </div>
     </div>
 
@@ -212,7 +212,7 @@ async function createBlogger() {
   // 0：FB专业，1：twitter博主，2：Pinterest，3：头条，4：Instragram，5：Youtube
   // 0繁体 1 英文 2葡语 3日语
   let res = await hHttp(`/BloggerNew/Add`, {
-    platform: 100,
+    platform: 101,
     lang: form.lang,
     name: state.author,
     blogger_url: state.authorLink,
@@ -237,6 +237,7 @@ async function createBlogger() {
 
 
 async function getUserInfoWithRedBook(Message) {
+  console.log(Message)
   if (!!state.author) {
     return
   }
@@ -312,14 +313,15 @@ onMounted(async () => {
 })
 
 async function eventBus(Message) {
-  if (Message.Message === 'redBookBlogger') {
+  console.log(Message)
+  if (Message.Message === 'lemon8appBlogger') {
     await getUserInfoWithRedBook(Message)
   } else if (Message.Message === 'CantRedBook') {
 
     state.isLogin = false
     ElMessage.error('未登录小红书/未在博主页面')
 
-  } else if (Message.Message === 'redBookData') {
+  } else if (Message.Message === 'lemon8appData') {
 
     let tmpToolId = Message.toolId
     if (parseInt(tmpToolId) !== parseInt(toolId)) {
@@ -346,7 +348,7 @@ async function eventBus(Message) {
       }
     });
 
-  } else if (Message.Message === 'StopRedBook') {
+  } else if (Message.Message === 'StopLemon8app') {
 
     state.status = 0;
     await chrome.tabs.update(parseInt(toolId), {

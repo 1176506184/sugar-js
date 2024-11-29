@@ -1,8 +1,14 @@
+let max = 10000
+let history = []
+let historyNum = 0
+let toolId = ''
+
+
 async function addMore() {
     window.scrollTo(0, document.body.scrollHeight)
     if (document.querySelector('.see-more')) {
         document.querySelector('.see-more').click();
-        await wait(10);
+        await wait(5);
         return true
     } else {
         return false
@@ -32,36 +38,39 @@ async function wait(s1, t) {  // 变量，波动范围
     });
 }
 
-let history = []
-
 async function startGetHistory() {
     let list = Array.from(document.querySelectorAll('#user-post .article-list .article_card')).map(item => {
+        let title = item.querySelector('.article_card_main_body_content').textContent;
+        if (!title) {
+            title = item.querySelector('.article_card_main_body_title').textContent
+        }
         return {
-            title: item.querySelector('.article_card_main_body_content').textContent,
+            title,
             article_url: item.href,
             post_url: item.href,
             likes: dealNum(item.querySelector('.article_card_like').textContent),
-            article_type: item.querySelector('.video-badge') ? 3 : 2
+            article_type: item.querySelector('.video-badge') ? 3 : 2,
+            move_total: dealNum(item.querySelector('.article_card_like').textContent)
         }
     });
-    list = list.filter(item => !(history.find(h => h.article_url === item.article_url)));
-    history.push(...list);
-
-
+    list = list.filter(item => !(history.find(h => h.title === item.title)));
+    history.push(...list)
     chrome.runtime.sendMessage({
         Message: 'lemon8appData',
-        data: JSON.stringify(list)
+        data: JSON.stringify(list),
+        toolId
     }).then(r => {
 
     })
 
     let haveMore = await addMore();
-    if (haveMore) {
+    if (haveMore && history.length < max) {
         await startGetHistory();
     } else {
         chrome.runtime.sendMessage({
             Message: 'StopLemon8app',
             type: 'lemon8app',
+            toolId
         }).then(r => {
 
         })
@@ -108,10 +117,29 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             state: 200
         });
     } else if (Message.Message === 'getBlogger') {
-        getBlogger();
         sendResponse({
             state: 200
         });
+        getBlogger();
+    } else if (Message.Message === 'startCollectHistory') {
+        sendResponse({state: 200});
+        if (Message.max_collect) {
+            max = Message.max_collect;
+            console.log(max)
+        }
+
+        if (!toolId) {
+            toolId = Message.toolId;
+        } else {
+            return
+        }
+        startGetHistory().then();
+    } else if (Message.Message === 'pauseCollectHistory') {
+        if (parseInt(Message.toolId) !== parseInt(toolId)) {
+            return
+        }
+        sendResponse({state: 200});
+        max = 0;
     }
 
 });
