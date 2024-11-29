@@ -30,9 +30,6 @@ export default {
     babel({
       exclude: 'node_modules/**'
     }),
-    // commonjs({
-    //     include: /node_modules/
-    // }),
     resolve(),
     typescript(),
     replace({

@@ -3,7 +3,6 @@ import { generate } from './codegen';
 import { transform } from './transform';
 import { sIf } from './transform/sIf';
 import { sFor } from './transform/sFor';
-import { sModel } from './transform/sModel';
 import { sHtml } from './transform/sHtml';
 import { transformEvent } from './transform/transformEvent';
 import { Namespaces, parse } from './parse';
@@ -13,7 +12,6 @@ export function baseCompile (template: string) {
   transform(ast, {
     sIf,
     sFor,
-    sModel,
     sHtml,
     transformEvent
   });

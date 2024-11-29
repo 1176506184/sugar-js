@@ -1,6 +1,7 @@
 export function useState (initValue: any) {
   const queue = createQueue();
   const callbacks = [];
+
   function initDep (dep) {
     callbacks.push(dep);
   }
@@ -19,6 +20,9 @@ export function useState (initValue: any) {
   Object.defineProperty(state, 'value', {
     get () {
       return data.value;
+    },
+    set () {
+      console.warn('Prohibit modifying ref variables');
     }
   });
 

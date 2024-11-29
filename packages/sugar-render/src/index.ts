@@ -48,7 +48,7 @@ export function sugarRender () {
 export function VmDataRefPassive (vm: any) {
   const refObj = {};
   Object.keys(vm).forEach((key) => {
-    if (vm[key]?.sugarReactiveDataType && vm[key].sugarReactiveDataType === 'Ref') {
+    if (vm[key]?.sugarReactiveDataType === 'Ref') {
       Object.defineProperty(refObj, key, {
         get () {
           return vm[key].value;
@@ -112,12 +112,14 @@ export function bindT (vm, data) {
     return nodes;
   }
 
-  vm._c = _c;
-  vm._v = _v;
-  vm._s = _s;
-  vm._e = _e;
-  vm._loop = _loop;
-  vm._html = _html;
+  vm._SUGAR = {
+    _c,
+    _v,
+    _s,
+    _e,
+    _loop,
+    _html
+  };
 }
 
 export function createElement (tag = 'div', data = {}, children = []) {

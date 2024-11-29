@@ -180,11 +180,8 @@ function parseAttribute (context: any, nameSet: any) {
       );
 
       let content = match[2];
-      let isStatic = true;
 
       if (content.startsWith('[')) {
-        isStatic = false;
-
         if (!content.endsWith(']')) {
           content = content.slice(1);
         } else {
@@ -197,10 +194,6 @@ function parseAttribute (context: any, nameSet: any) {
       arg = {
         type: NodeTypes.SIMPLE_EXPRESSION,
         content,
-        isStatic,
-        constType: isStatic
-          ? ConstantTypes.CAN_STRINGIFY
-          : ConstantTypes.NOT_CONSTANT,
         loc
       };
     }
@@ -222,10 +215,6 @@ function parseAttribute (context: any, nameSet: any) {
       exp: value && {
         type: NodeTypes.SIMPLE_EXPRESSION,
         content: value.content,
-        isStatic: false,
-        // Treat as non-constant by default. This can be potentially set to
-        // other values by `transformExpression` to make it eligible for hoisting.
-        constType: ConstantTypes.NOT_CONSTANT,
         loc: value.loc
       },
       arg,
@@ -258,13 +247,6 @@ function getNewPosition (
   );
 }
 
-const enum ConstantTypes {
-  NOT_CONSTANT = 0,
-  CAN_SKIP_PATCH,
-  CAN_HOIST,
-  CAN_STRINGIFY
-}
-
 function parseAttributeValue (context: any) {
   const start = getPos(context);
   let content: string;
@@ -292,8 +274,6 @@ function parseAttributeValue (context: any) {
     if (!match) {
       return undefined;
     }
-    const unexpectedChars = /["'<=`]/g;
-    let m: RegExpExecArray | null;
     content = parseTextData(context, match[0].length);
   }
 

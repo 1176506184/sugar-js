@@ -56,7 +56,6 @@ export default function patch (vm, newVnode) {
           }
         }
       } else if (isComponent(vnode, vm.components)) {
-        console.log(vnode);
         const app = bulkComponent(vnode, vm.components[vnode.tag]);
         vnode.elm = app.vm.$el;
         vnode._sugar = app;

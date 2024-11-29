@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/packages/sugar/src/css/sugar-css.css">
+    <script src="/dist/sugar.js"></script>
+    <script src="/dist/sugar-ui.js"></script>
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 </head>
@@ -111,7 +113,6 @@
     }
 
 </style>
-<script src="/dist/sugar.js"></script>
 <body>
 <div id="app">
 
@@ -143,17 +144,16 @@
 
     <sugar-dialog :model="active" @close="close">
         <div class="menu_fixed_box" :style="'top:' + top + 'vh'">
-            <div s-for="(item,index) in cateList">
+            <div s-for="(item,index) in cateList"
+                 style="border: 1px solid #666;border-radius: 3px;font-size: 13px;color:#666;text-align: center;line-height: 28px;margin: 10px;width: 80px;height: 28px;float: left">
                 {{item}}
             </div>
         </div>
     </sugar-dialog>
 
-    <div s-if="showImageActive">
-        <sugar-dialog :model="showImageActive" @close="closeImage" :instance="htmlRef">
-            <img :src="popImage" style="width: 100%;height: auto"/>
-        </sugar-dialog>
-    </div>
+    <sugar-dialog :model="showImageActive" @close="closeImage" :instance="htmlRef">
+        <img :src="popImage" style="width: 100%;height: auto"/>
+    </sugar-dialog>
 
 </div>
 
@@ -164,12 +164,9 @@
         makeSugar,
         onMounted,
         instance,
-        sugarUI,
         useState,
         useEffect,
-        nextTick,
-        createSSRApp,
-        watch
+        nextTick
     } = SUGAR;
 
     var sugar = makeSugar({
@@ -187,13 +184,13 @@
 
             const [list, setList] = useState([{
                 title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
-                cover: '//cdn.supertime01.com/thumb.ashx?path=%2fdpxs%2f20240520%2f2DA622C0761Ew800h1200.Jpeg&width=150&height=200'
+                cover: 'https://fastly.picsum.photos/id/1044/200/200.jpg?hmac=HB3e6tTss6J_9wexZ1v1psMlccdyQIrHrrijUgWXFhg'
             }, {
                 title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
-                cover: '//cdn.sweetastes.com/thumb.ashx?path=%2fdpxs%2f20221007%2f6F15A9339A07w300h400.Jpeg&width=150&height=200'
+                cover: 'https://picsum.photos/200/200?random=1'
             }, {
                 title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
-                cover: '//cdn.sweetastes.com/thumb.ashx?path=%2fdpxs%2f20221007%2f6F15A9339A07w300h400.Jpeg&width=150&height=200'
+                cover: 'https://picsum.photos/300/200?random=2'
             }]);
 
             const [active, setActive] = useState(false);
@@ -232,7 +229,7 @@
             });
 
             useEffect(() => {
-
+                console.log(showImageActive.value);
             }, [showImageActive]);
 
             return {

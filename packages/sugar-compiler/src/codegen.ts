@@ -23,7 +23,7 @@ export function generate (ast) {
       let elStr = '';
       let ex = false;
 
-      elStr += `_c('${ast.tag}',{ `;
+      elStr += `_SUGAR._c('${ast.tag}',{ `;
 
       elStr += '"attrs":{';
 
@@ -50,21 +50,21 @@ export function generate (ast) {
 
       if (ast.if && !ast.forStatment) {
         ex = true;
-        str = `${ast.if.value} ? ${str + elStr} : _e()`;
+        str = `${ast.if.value} ? ${str + elStr} : _SUGAR._e()`;
       }
 
       if (ast.htmlStatment) {
         ex = true;
-        str += `_html(${ast.htmlStatment.value.content})`;
+        str += `_SUGAR._html(${ast.htmlStatment.value.content})`;
       }
 
       if (!ex) {
         str += elStr;
       }
     } else if (ast.type === NodeTypes.INTERPOLATION) {
-      str += `_v(_s(${ast.content.content}))`;
+      str += `_SUGAR._v(_SUGAR._s(${ast.content.content}))`;
     } else if (ast.type === NodeTypes.TEXT) {
-      str += `_v('${ast.content}')`;
+      str += `_SUGAR._v('${ast.content}')`;
     }
 
     return str;
@@ -75,7 +75,7 @@ export function generate (ast) {
   function transformFor (ast) {
     const forStatment = ast.forStatment;
     const props = ast.props;
-    let son = `_c('${ast.tag}',{ `;
+    let son = `_SUGAR._c('${ast.tag}',{ `;
 
     son += '"attrs":{';
 
@@ -103,11 +103,11 @@ export function generate (ast) {
 
     props.forEach((prop) => {
       if (prop.name === 's-if') {
-        son = `${prop.value.content} ? ${son} : _e()`;
+        son = `${prop.value.content} ? ${son} : _SUGAR._e()`;
       }
     });
 
-    return `..._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
+    return `..._SUGAR._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
         return ${son}
                             },${forStatment.exp})`;
   }
