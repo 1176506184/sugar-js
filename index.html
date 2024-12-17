@@ -123,7 +123,7 @@
         <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
 
-    <div class="article_body">
+    <div class="article_body" s-loading="loading">
         <div class="title">
             {{state.title}}
         </div>
@@ -156,6 +156,8 @@
     </sugar-dialog>
 
 </div>
+
+
 
 </body>
 
@@ -203,6 +205,8 @@
 
             const [top, setTop] = useState(-50);
 
+            const [loading, setLoading] = useState(false);
+
             function close() {
                 setTop(-50);
                 setActive(false);
@@ -244,7 +248,9 @@
                 popImage,
                 showImage,
                 top,
-                cateList
+                cateList,
+                loading,
+                setLoading
             };
         }
     });
@@ -252,7 +258,5 @@
     sugar.install(sugarUI);
 
     sugar.mount('#app');
-
-
 </script>
 </html>

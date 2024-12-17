@@ -20,7 +20,12 @@ export default function patch (vm, newVnode) {
     let domNode;
     if (vnode.tag) {
       if (typeof vnode.tag === 'string' && !isComponent(vnode, vm.components)) {
-        domNode = document.createElement(vnode.tag);
+        if (vnode.tag === 'svg' || vnode.tag === 'path') {
+          domNode = document.createElementNS('http://www.w3.org/2000/svg', vnode.tag);
+        } else {
+          domNode = document.createElement(vnode.tag);
+        }
+
         const {
           data = {}
         } = vnode || {};

@@ -213,4 +213,32 @@ export function deepEqual (obj1, obj2) {
   return true;
 }
 
+export function addCSS (cssText) {
+  const style = document.createElement('style'); // 创建一个style元素
+  const head = document.head || document.getElementsByTagName('head')[0]; // 获取head元素
+  style.type = 'text/css'; // 这里必须显示设置style元素的type属性为text/css，否则在ie中不起作用
+  // @ts-expect-error
+  if (style.styleSheet) { // IE
+    const func = function () {
+      try {
+        // @ts-expect-error
+        style.styleSheet.cssText = cssText;
+      } catch (e) {
+
+      }
+    };
+    // @ts-expect-error
+    if (style.styleSheet.disabled) {
+      setTimeout(func, 10);
+    } else {
+      func();
+    }
+  } else { // w3c
+    // w3c浏览器中只要创建文本节点插入到style元素中就行了
+    const textNode = document.createTextNode(cssText);
+    style.appendChild(textNode);
+  }
+  head.appendChild(style); // 把创建的style元素插入到head中
+}
+
 export * from './nodeOps';

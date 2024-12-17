@@ -1,6 +1,7 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patch from './patch';
 import { escape2Html } from '@sugar/sugar-shared';
+import { nextTick } from '@sugar/sugar-reactive';
 
 export function sugarRender () {
   let render = null;
@@ -10,6 +11,7 @@ export function sugarRender () {
     const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
     const { code } = sugarCompiler(htmlCode);
     render = code;
+    // console.log(code);
     if (vm.ssr) {
       render = vm.ssrRender;
     }
