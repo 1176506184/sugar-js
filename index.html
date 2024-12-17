@@ -123,7 +123,7 @@
         <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
 
-    <div class="article_body" s-loading="loading">
+    <div class="article_body" s-loading="loading" >
         <div class="title">
             {{state.title}}
         </div>
@@ -156,7 +156,6 @@
     </sugar-dialog>
 
 </div>
-
 
 
 </body>
@@ -207,6 +206,8 @@
 
             const [loading, setLoading] = useState(false);
 
+            const [show, setShow] = useState(false);
+
             function close() {
                 setTop(-50);
                 setActive(false);
@@ -250,7 +251,9 @@
                 top,
                 cateList,
                 loading,
-                setLoading
+                setLoading,
+                show,
+                setShow
             };
         }
     });

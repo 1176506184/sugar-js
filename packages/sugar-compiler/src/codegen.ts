@@ -54,18 +54,18 @@ export function generate (ast) {
         str = `${ast.if.value} ? ${str + elStr} : _SUGAR._e()`;
       }
 
-      if (ast.htmlStatment) {
-        ex = true;
-        str += `_SUGAR._html(${ast.htmlStatment.value.content})`;
-      }
-
-      if (ast.loading) {
+      if (ast.loading && !ast.forStatment) {
         ex = true;
         const loadingRender = baseCompile(`<div class="s-loading" s-if="${ast.loading.value}">
         <svg t="1734417183543" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4603" width="30" height="30"><path d="M512 64c247.2 0 448 200.8 448 448h-64c0-212-172-384-384-384V64z m0 832c-212 0-384-172-384-384H64c0 247.2 200.8 448 448 448v-64z" p-id="4604" fill="#8a8a8a"></path></svg>
         </div>`);
         generate(loadingRender);
-        str += `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${elStr},${loadingRender.code}])`;
+        str = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${str + (!ast.if ? elStr : '')},${loadingRender.code}])`;
+      }
+
+      if (ast.htmlStatment) {
+        ex = true;
+        str += `_SUGAR._html(${ast.htmlStatment.value.content})`;
       }
 
       if (!ex) {
@@ -114,6 +114,14 @@ export function generate (ast) {
     props.forEach((prop) => {
       if (prop.name === 's-if') {
         son = `${prop.value.content} ? ${son} : _SUGAR._e()`;
+      }
+
+      if (prop.name === 's-loading') {
+        const loadingRender = baseCompile(`<div class="s-loading" s-if="${ast.loading.value}">
+        <svg t="1734417183543" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4603" width="30" height="30"><path d="M512 64c247.2 0 448 200.8 448 448h-64c0-212-172-384-384-384V64z m0 832c-212 0-384-172-384-384H64c0 247.2 200.8 448 448 448v-64z" p-id="4604" fill="#8a8a8a"></path></svg>
+        </div>`);
+        generate(loadingRender);
+        son = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${son},${loadingRender.code}])`;
       }
     });
 
