@@ -10,43 +10,46 @@ npm install sugar-reactive-js
 
         <div id="app">
 
-            <div class="nav">
-                <div class="web_name">
-                    <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo" alt="">
-                </div>
-                <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
+        <div class="nav">
+            <div class="web_name">
+                <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo" alt="">
             </div>
-        
-            <div class="article_body">
-                <div class="title">
-                    {{state.title}}
-                </div>
-                <div class="content" s-html="state.content" ref="htmlRef">
-                </div>
-            </div>
-        
-            <div class="article_join">
-                <div class="item" s-for="(item,index) in list" :style="index === (list.length - 1) ? 'border:0' : ''">
-                    <div class="image_box">
-                        <img :src="item.cover" @click="showImage(item)"/>
-                    </div>
-                    <div class="label_box">
-                        {{item.title}}
-                    </div>
-                </div>
-            </div>
-        
-            <sugar-dialog :model="active" @close="close" :instance="htmlRef">
-                <div class="menu_fixed_box">
-        
-                </div>
-            </sugar-dialog>
-        
-            <sugar-dialog :model="showImageActive" @close="closeImage">
-                <img :src="popImage" style="width: 100%;height: auto"/>
-            </sugar-dialog>
-        
+            <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
         </div>
+    
+        <div class="article_body" s-loading="loading">
+            <div class="title">
+                {{state.title}}
+            </div>
+            <div class="content" s-html="state.content">
+            </div>
+        </div>
+    
+        <div class="article_join">
+            <div class="item" s-for="(item,index) in list" :style="index === (list.length - 1) ? 'border:0' : ''">
+                <div class="image_box">
+                    <img :src="item.cover" @click="showImage(item)" alt=""/>
+                </div>
+                <div class="label_box">
+                    {{item.title}}
+                </div>
+            </div>
+        </div>
+    
+        <sugar-dialog :model="active" @close="close">
+            <div class="menu_fixed_box" :style="'top:' + top + 'vh'">
+                <div s-for="(item,index) in cateList"
+                     style="border: 1px solid #666;border-radius: 3px;font-size: 13px;color:#666;text-align: center;line-height: 28px;margin: 10px;width: 80px;height: 28px;float: left">
+                    {{item}}
+                </div>
+            </div>
+        </sugar-dialog>
+    
+        <sugar-dialog :model="showImageActive" @close="closeImage" :instance="htmlRef">
+            <img :src="popImage" style="width: 100%;height: auto"/>
+        </sugar-dialog>
+    
+    </div>
 
 
         <script>
@@ -55,11 +58,10 @@ npm install sugar-reactive-js
             const {
                 makeSugar,
                 onMounted,
-                ref,
                 instance,
-                sugarUI,
                 useState,
-                useEffect
+                useEffect,
+                nextTick
             } = SUGAR;
         
             var sugar = makeSugar({
@@ -73,7 +75,18 @@ npm install sugar-reactive-js
                     </p>`
                     });
         
-                    const [list, setList] = useState([]);
+                    const [cateList, setCateList] = useState(['娱乐', '新闻']);
+        
+                    const [list, setList] = useState([{
+                        title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
+                        cover: 'https://fastly.picsum.photos/id/1044/200/200.jpg?hmac=HB3e6tTss6J_9wexZ1v1psMlccdyQIrHrrijUgWXFhg'
+                    }, {
+                        title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
+                        cover: 'https://picsum.photos/200/200?random=1'
+                    }, {
+                        title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
+                        cover: 'https://picsum.photos/300/200?random=2'
+                    }]);
         
                     const [active, setActive] = useState(false);
         
@@ -83,12 +96,20 @@ npm install sugar-reactive-js
         
                     const [popImage, setPopImage] = useState('');
         
+                    const [top, setTop] = useState(-50);
+        
+                    const [loading, setLoading] = useState(false);
+        
                     function close() {
+                        setTop(-50);
                         setActive(false);
                     }
         
                     function open() {
                         setActive(true);
+                        setTimeout(() => {
+                            setTop(0);
+                        }, 200);
                     }
         
                     function closeImage() {
@@ -101,18 +122,12 @@ npm install sugar-reactive-js
                     }
         
                     onMounted(() => {
-                        setList([{
-                            title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
-                            cover: '//cdn.supertime01.com/thumb.ashx?path=%2fdpxs%2f20240520%2f2DA622C0761Ew800h1200.Jpeg&width=150&height=200'
-                        }, {
-                            title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
-                            cover: '//cdn.sweetastes.com/thumb.ashx?path=%2fdpxs%2f20221007%2f6F15A9339A07w300h400.Jpeg&width=150&height=200'
-                        }]);
+        
                     });
         
                     useEffect(() => {
-                        console.log('检测到了', active.value);
-                    }, [active]);
+                        console.log(showImageActive.value);
+                    }, [showImageActive]);
         
                     return {
                         state,
@@ -124,7 +139,11 @@ npm install sugar-reactive-js
                         showImageActive,
                         closeImage,
                         popImage,
-                        showImage
+                        showImage,
+                        top,
+                        cateList,
+                        loading,
+                        setLoading
                     };
                 }
             });
