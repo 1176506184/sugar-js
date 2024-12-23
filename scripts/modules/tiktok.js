@@ -192,7 +192,7 @@ function getVideoFrame() {
                             video: {
                                 duration: item.video.duration,
                                 cover: item.video.cover,
-                                downloadAddr: item.video.downloadAddr
+                                downloadAddr: item.video.downloadAddr ? item.video.downloadAddr : item.video.playAddr,
                             },
                             desc: item.desc,
                             id: item.id
