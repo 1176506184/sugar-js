@@ -106,7 +106,10 @@ function getVideo(type) {
         videoData.push(...Array.from(document.querySelectorAll('ytd-rich-item-renderer')).map((item) => {
             let href = item.querySelector('a#thumbnail')?.href;
             if (!href) {
-                href = item.querySelector('a.ShortsLockupViewModelHostEndpoint.reel-item-endpoint ').href
+                href = item.querySelector('a.ShortsLockupViewModelHostEndpoint.reel-item-endpoint')?.href
+            }
+            if (!href) {
+                href = item.querySelector('a.shortsLockupViewModelHostEndpoint.reel-item-endpoint')?.href
             }
             let id = '';
             if (href.includes('/watch')) {
@@ -123,7 +126,11 @@ function getVideo(type) {
             let playCount = item.querySelector('.inline-metadata-item.style-scope.ytd-video-meta-block')?.textContent;
 
             if (!playCount) {
-                playCount = item.querySelector('.ShortsLockupViewModelHostMetadataSubhead.ShortsLockupViewModelHostOutsideMetadataSubhead .yt-core-attributed-string.yt-core-attributed-string--white-space-pre-wrap').textContent
+                playCount = item.querySelector('.ShortsLockupViewModelHostMetadataSubhead.ShortsLockupViewModelHostOutsideMetadataSubhead .yt-core-attributed-string.yt-core-attributed-string--white-space-pre-wrap')?.textContent
+            }
+
+            if (!playCount) {
+                playCount = item.querySelector('.shortsLockupViewModelHostMetadataSubhead.shortsLockupViewModelHostOutsideMetadataSubhead .yt-core-attributed-string.yt-core-attributed-string--white-space-pre-wrap')?.textContent
             }
 
             return {
