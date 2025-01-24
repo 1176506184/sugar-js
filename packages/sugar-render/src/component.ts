@@ -4,6 +4,7 @@ import { bindAttrAndEvent, bindT, VmDataRefPassive } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patch from './patch';
 import { addComponentCache, getComponentCache } from './componentCache';
+import { componentBindEvent } from './componentBindEvent';
 
 export function bulkComponent (_vnode: any, parentComponent: any) {
   const {
@@ -134,6 +135,7 @@ export function componentRender () {
     const vnode = render.call(VmDataRefPassive(vm));
     bindAttrAndEvent(vm, vnode);
     assembling(vnode, vm.slot);
+    componentBindEvent(vm, vnode);
     patch(vm, vnode);
     vm._vnode = vnode;
   }

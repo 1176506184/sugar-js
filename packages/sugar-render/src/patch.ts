@@ -65,6 +65,7 @@ export default function patch (vm, newVnode) {
         vnode.elm = app.vm.$el;
         vnode._sugar = app;
         domNode = vnode.elm;
+        vnode.elm = app.vm.$el;
       }
     } else if (vnode.text !== undefined) {
       domNode = document.createTextNode(vnode.text);

@@ -7,11 +7,14 @@ export function sugarRender () {
   let render = null;
 
   function mounted<T> (vm: any, data: T) {
-    const serializer = new XMLSerializer();
-    const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
-    const { code } = sugarCompiler(htmlCode);
-    render = code;
-    // console.log(code);
+    if (vm.render) {
+      render = vm.render;
+    } else {
+      const serializer = new XMLSerializer();
+      const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
+      const { code } = sugarCompiler(htmlCode);
+      render = code;
+    }
     if (vm.ssr) {
       render = vm.ssrRender;
     }
@@ -218,7 +221,6 @@ export function bindAttrAndEvent (vm, vnode) {
 }
 
 export function html2Vnode (html) {
-  // console.log(html);
   function work (dom) {
     const attr = {
       attrs: {},

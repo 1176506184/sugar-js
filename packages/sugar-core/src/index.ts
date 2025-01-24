@@ -17,7 +17,7 @@ function makeSugar (options: Core) {
     data,
     $el: null as any,
     appId,
-    components: [],
+    components: [] as any,
     sugar: {},
     slot: options.slot,
     ssr: options.ssr,
@@ -40,7 +40,7 @@ function makeSugar (options: Core) {
     });
   }
 
-  function install (components) {
+  function install (components: any) {
     components.forEach((component) => {
       vm.components[component.name] = component;
       vm.components[component.name].components = vm.components;

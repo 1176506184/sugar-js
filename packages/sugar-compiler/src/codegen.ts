@@ -74,7 +74,7 @@ export function generate (ast) {
     } else if (ast.type === NodeTypes.INTERPOLATION) {
       str += `_SUGAR._v(_SUGAR._s(${ast.content.content}))`;
     } else if (ast.type === NodeTypes.TEXT) {
-      str += `_SUGAR._v('${ast.content}')`;
+      str += `_SUGAR._v(${JSON.stringify(ast.content)})`;
     }
 
     return str;

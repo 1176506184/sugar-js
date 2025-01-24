@@ -8,7 +8,7 @@ import babel from 'rollup-plugin-babel';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-export default {
+export default [{
   input: './packages/sugar/src/main.ts',
   output: [{
     file: isDev ? 'dist/sugar.js' : 'dist/sugar.js',
@@ -38,8 +38,6 @@ export default {
     isDev ? uglify() : null,
     // 热更新 默认监听根文件夹
     isDev ? livereload() : null,
-    // 本地服务器
-    // eslint-disable-next-line multiline-ternary
     isDev ? serve({
       open: true, // 自动打开页面
       port: 8000,
@@ -47,4 +45,4 @@ export default {
       contentBase: ''
     }) : null
   ]
-};
+}];

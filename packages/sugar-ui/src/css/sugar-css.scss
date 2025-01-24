@@ -70,3 +70,60 @@
   justify-content: center;
 
 }
+
+.sugar-image-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.sugar-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sugar-image-preload {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.sugar-pagination {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.sugar-pagination-item {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  background: #F0F2F5;
+  margin-left: 5px;
+  color: #333;
+  font-size: 15px;
+
+  &.active {
+    background: #409EFF;
+    color: #fff;
+  }
+
+  &.right{
+    transform: rotate(180deg);
+  }
+}
