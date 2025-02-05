@@ -1,6 +1,50 @@
 var pending = "lock"
 var fbMax = ""
 var timer = null;
+var facebook_v2_data = []
+
+window.addEventListener('message', function (res) {
+    if (res.data.Message === 'ajax') {
+        if (res.data && res.data.url && (res.data.url.indexOf("/api/graphql/") !== -1)) {
+            try {
+                if (typeof res.data.data === 'string' && res.data.data.includes('"data":{"node":')) {
+                    let result = res.data.data.split('\n')[0];
+                    let labels = res.data.data.split('\n')[1];
+                    let goods = res.data.data.split('\n')[3];
+
+                    let needDealData = null
+                    if (JSON.parse(result).data.node.timeline_list_feed_units) {
+                        needDealData = JSON.parse(result).data.node.timeline_list_feed_units?.edges[0].node.comet_sections.content.story
+                    } else {
+                        needDealData = JSON.parse(result).data.node.group_feed?.edges[0].node.comet_sections.content.story
+                    }
+
+                    console.log(needDealData?.message.text)
+                    console.log(JSON.parse(labels))
+
+                    try {
+                        facebook_v2_data.push({
+                            url: needDealData.wwwURL,
+                            title: needDealData.message.text,
+                            post_id: needDealData.post_id,
+                            media: needDealData.attachments,
+                            comment: JSON.parse(labels).data.node['comet_sections']['feedback']['story']['story_ufi_container']['story']['feedback_context']['interesting_top_level_comments']['0']['comment']['body']['text'],
+                            create_time: JSON.parse(labels).data.node['comet_sections']['context_layout']['story']['comet_sections']['metadata']['0']['story']['creation_time']
+                        })
+                    } catch (e) {
+
+                    }
+
+                }
+            } catch (e) {
+
+                console.log(e);
+            }
+        }
+    }
+});
+
+
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
     console.log(Message)
     if (Message.Message === 'Group') {
@@ -374,7 +418,7 @@ async function dealVideoData() {
         Message: 'Video',
         type: 'facebook',
         data: facebookVideo,
-        author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz")).innerText,
+        author: document.querySelector('div.x1e56ztr.x1xmf6yo h1' + dealClass("x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz"))?.innerText,
     }).then(r => {
 
     })
@@ -411,7 +455,6 @@ window.addEventListener('message', function (res) {
                 } else {
                     try {
                         data = JSON.parse(data);
-                        console.log(data);
                         let result = getData(data);
                         if (result.articleId > 0) {
                             facebookData.push(result);
