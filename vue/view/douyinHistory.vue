@@ -13,7 +13,7 @@
       </el-form-item>
 
       <el-form-item label="博主链接">
-        <el-input v-model="authorLink" readonly></el-input>
+        <el-input v-model="authorLink"></el-input>
       </el-form-item>
 
 
@@ -29,6 +29,7 @@
           </el-form-item>
           <div>
             <el-button type="primary" @click="createBlogger">创建</el-button>
+            <el-button type="primary" @click="checkUrl">查询</el-button>
           </div>
         </div>
       </div>
@@ -119,6 +120,29 @@ const pattern = /^(([0-9]+\.[0-9]{1})|([0-9]+\.[0-9]{2})|([0-9]*[1-9][0-9]*))$/;
 const form = reactive({
   lang: 0
 })
+
+async function checkUrl() {
+  const loadingTask = ElLoading.service({
+    lock: true,
+    text: '正在查询该博主信息',
+    background: 'rgba(0, 0, 0, 0.6)',
+  })
+  let d = await hHttp(`/BloggerNew/getBloggerNewByNameUrl`, {
+    url: authorLink.value,
+    name: author.value
+  })
+  loadingTask.close();
+  if (d.state) {
+    isHaveBlogger.value = true
+    let resData = d.data
+    console.log(resData.id);
+    blogger_id.value = resData.id
+    collect_count.value = resData.capture_count ? resData.capture_count : '0'
+
+    createUserName.value = resData.create_name;
+    createTime.value = resData.create_time.split('T')[0];
+  }
+}
 
 async function startCollect() {
   isNoticeFinished = false;
@@ -318,8 +342,6 @@ function close() {
   chrome.runtime.onMessage.removeListener(dealFbHistory)
   window.close();
 }
-
-
 
 
 // 调发通知接口

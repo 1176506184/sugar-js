@@ -27,7 +27,7 @@ function getData() {
     if (script) {
         const value = JSON.parse(script.innerHTML.replace('window.INIT_STATE = ', ''));
         Object.values(value).forEach(item => {
-            if (item.feeds) {
+            if (item.feeds && item.feeds[0]?.userId) {
                 eid = item.feeds[0].userEid;
                 userid = item.feeds[0].userId;
                 userName = item.feeds[0].userName;
