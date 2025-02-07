@@ -154,30 +154,3 @@ npm install sugar-reactive-js
         
         
         </script>
-
-## SSR
-
-        createSSRApp({
-            render: `<div>
-                    <div @click="change" :style="'font-size:' + state.fontSize + 'px'">{{state.name}}</div>
-                    <div s-for="(item,index) in state.list">{{index}}</div>
-                    </div>`,
-            bulk: () => {
-                        const [state, setState] = useState({
-                            name: '张三',
-                            list: [{}, {}, {}],
-                            fontSize: 14
-                        });
-            
-                        function change() {
-                            setState({
-                                ...state.value,
-                                fontSize: state.value.fontSize + 1
-                            })
-                        }
-                        return {
-                            state,
-                            change
-                        };
-                    }
-        });
