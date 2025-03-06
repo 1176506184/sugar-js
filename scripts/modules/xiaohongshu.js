@@ -289,7 +289,7 @@ async function XHS_Collect_article_list() {
                         if (!if_have) {
                             article_list.push({
                                 vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1],
-                                url: art.querySelectorAll('[class="cover ld mask"],[class="cover mask ld"]')[0].href
+                                url:art.querySelectorAll('[class="cover ld mask"],[class="cover mask ld"]')[0].href
                             });
                             data_list.push({vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1]});
                             article_num++
