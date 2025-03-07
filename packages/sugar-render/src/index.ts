@@ -11,14 +11,10 @@ export function sugarRender () {
     const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
     const { code } = sugarCompiler(htmlCode);
     render = code;
-    // console.log(code);
-    if (vm.ssr) {
-      render = vm.ssrRender;
-    }
     pushUiEffect(vm, data);
   }
 
-  function pushUiEffect (vm, data) {
+  function pushUiEffect (vm: any, data: any) {
     bindT(vm, data);
     Object.values(data).forEach((item: any) => {
       if (typeof item === 'object' && item.sugarRefDataType === 'useState') {
@@ -50,17 +46,13 @@ export function sugarRender () {
 export function VmDataRefPassive (vm: any) {
   const refObj = {};
   Object.keys(vm).forEach((key) => {
-    if (vm[key]?.sugarReactiveDataType === 'Ref') {
+    if (vm[key]?.sugarRefDataType === 'useState') {
       Object.defineProperty(refObj, key, {
         get () {
           return vm[key].value;
         },
         set (val) {
-          if (refObj[key].sugarRefDataType === 'useState') {
-            console.log('useState can not set value in render');
-          } else {
-            vm[key].value = val;
-          }
+          console.log('useState can not set value in render');
         }
       });
     } else {
@@ -218,7 +210,6 @@ export function bindAttrAndEvent (vm, vnode) {
 }
 
 export function html2Vnode (html) {
-  // console.log(html);
   function work (dom) {
     const attr = {
       attrs: {},

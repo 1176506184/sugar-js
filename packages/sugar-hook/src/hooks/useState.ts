@@ -8,7 +8,6 @@ export function useState (initValue: any) {
 
   const state = {
     value: initValue,
-    sugarReactiveDataType: 'Ref',
     sugarRefDataType: 'useState',
     initDep
   };

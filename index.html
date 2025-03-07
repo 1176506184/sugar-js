@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="/packages/sugar/src/css/sugar-css.css">
+    <link rel="stylesheet" href="/dist/sugar.css">
+    <script src="dist/sugar-ui.js"></script>
     <script src="/dist/sugar.js"></script>
-    <script src="/dist/sugar-ui.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="packages/sugar/src/sugar2vue.js"></script>
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 </head>
@@ -122,19 +124,18 @@
         </div>
         <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
-
-    <div class="article_body" s-loading="loading" >
-        <div class="title">
+    <div class="article_body" s-loading="loading">
+        <div class="title" instance="htmlRef">
             {{state.title}}
         </div>
-        <div class="content" s-html="state.content">
+        <div class="content" s-html="state.content" style="font-size: 13px">
         </div>
     </div>
 
     <div class="article_join">
         <div class="item" s-for="(item,index) in list" :style="index === (list.length - 1) ? 'border:0' : ''">
             <div class="image_box">
-                <img :src="item.cover" @click="showImage(item)" alt=""/>
+                <img :src="item.cover" @click="showImage(item)" alt="" @error="imageError"/>
             </div>
             <div class="label_box">
                 {{item.title}}
@@ -161,6 +162,7 @@
 </body>
 
 <script>
+    sugar2vue(SUGAR);
     const {
         makeSugar,
         onMounted,
@@ -169,16 +171,20 @@
         useEffect,
         nextTick
     } = SUGAR;
-
     var sugar = makeSugar({
         bulk() {
+
+            const [checked, setChecked] = useState(false);
 
             const [state, setState] = useState({
                 name: 0,
                 title: '狗狗因為太害怕人類，被安排于兩天后安樂死，幸好她出現了..',
-                content: `<p>自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業<span id="vft" data-wordc="231"></span></p><p style="font-weight: 600; color: #CC6633;font-size:15px !important ">
+                content: `<p>自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業<span id="vft" data-wordc="231"></span></p>
+<p style="font-weight: 600; color: #CC6633;font-size:15px !important ">
                 版權所有，禁止轉載。 違者必究法律責任。
-            </p>`
+            </p>
+<h2>巴拉巴拉</h2>
+`
             });
 
             const [cateList, setCateList] = useState(['娱乐', '新闻']);
@@ -230,12 +236,16 @@
             }
 
             onMounted(() => {
-
+                console.log(htmlRef.value);
             });
 
             useEffect(() => {
                 console.log(showImageActive.value);
             }, [showImageActive]);
+
+            function imageError(e) {
+                // console.log(e.target);
+            }
 
             return {
                 state,
@@ -253,13 +263,15 @@
                 loading,
                 setLoading,
                 show,
-                setShow
+                setShow,
+                imageError,
+                checked,
+                setChecked
             };
         }
     });
-
+    sugarComponent2Vue(sugar);
     sugar.install(sugarUI);
-
     sugar.mount('#app');
 </script>
 </html>

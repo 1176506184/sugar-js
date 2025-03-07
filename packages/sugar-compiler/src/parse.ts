@@ -1,4 +1,5 @@
 import { extend, isArray } from './utils';
+
 export function parse (context: any, ancestors: any) {
   const parent: any = last(ancestors);
   const nodes = [];
@@ -79,7 +80,6 @@ export function parse (context: any, ancestors: any) {
         }
       } else {
         // #6410 normalize windows newlines in <pre>:
-        // in SSR, browsers normalize server-rendered \r\n into a single \n
         // in the DOM
         node.content = node.content.replace(/\r\n/g, '\n');
       }
@@ -158,10 +158,10 @@ function parseAttribute (context: any, nameSet: any) {
       match[1] ||
       (isPropShorthand || startsWith(name, ':')
         ? 'bind'
-        : startsWith(name, '@')
+        : startsWith(name, '@') || startsWith(name, 's-on:')
           ? 'on'
           : 'slot');
-    let arg;
+    let arg: { type: NodeTypes, content: string, loc: { start: any, end: any, source: any } };
     if (match[2]) {
       const isSlot = dirName === 'slot';
       const startOffset = name.lastIndexOf(
@@ -277,7 +277,11 @@ function parseAttributeValue (context: any) {
     content = parseTextData(context, match[0].length);
   }
 
-  return { content, isQuoted, loc: getSelection(context, start) };
+  return {
+    content,
+    isQuoted,
+    loc: getSelection(context, start)
+  };
 }
 
 function pushNode (nodes: any, node: any): void {
@@ -544,8 +548,16 @@ function last<T> (xs: T[]): T | undefined {
 }
 
 function getPos (context) {
-  const { column, line, offset } = context;
-  return { column, line, offset };
+  const {
+    column,
+    line,
+    offset
+  } = context;
+  return {
+    column,
+    line,
+    offset
+  };
 }
 
 export const enum NodeTypes {

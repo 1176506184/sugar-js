@@ -12,9 +12,6 @@ interface Core {
   forArr: any[]
   el?: any
   slot?: any
-  ssr: boolean
-  ssrVNode: any
-  ssrRender: any
 }
 
 export type { Core };

@@ -3,8 +3,6 @@ import { isArray } from '@sugar/sugar-shared';
 import { baseCompile } from './compile';
 
 export function generate (ast) {
-  const cid = 1;
-
   const genElmChildren = (children = []) => {
     let str = '[';
     children.forEach((child, i) => {
@@ -65,7 +63,7 @@ export function generate (ast) {
 
       if (ast.htmlStatment) {
         ex = true;
-        str += `_SUGAR._html(${ast.htmlStatment.value.content})`;
+        str = `_SUGAR._c('div',{attrs:{${dealAttr(props)}},on:{${dealEvent(props)}}},[_SUGAR._html(${ast.htmlStatment.value.content})])`;
       }
 
       if (!ex) {
@@ -74,7 +72,7 @@ export function generate (ast) {
     } else if (ast.type === NodeTypes.INTERPOLATION) {
       str += `_SUGAR._v(_SUGAR._s(${ast.content.content}))`;
     } else if (ast.type === NodeTypes.TEXT) {
-      str += `_SUGAR._v('${ast.content}')`;
+      str += `_SUGAR._v(decodeURIComponent("${encodeURIComponent(ast.content)}"))`;
     }
 
     return str;
@@ -135,11 +133,11 @@ function dealAttr (props) {
   let str = '';
 
   props = props.filter(prop => {
-    return prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && prop.name !== 's-loading';
+    return prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && prop.name !== 's-loading' && prop.name !== 's-html';
   });
 
   props.forEach((prop, index) => {
-    if (prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && prop.name !== 'bind' && prop.name !== 'slot') {
+    if (prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && prop.name !== 'bind' && prop.name !== 'slot' && prop.name !== 's-html') {
       str += `"${prop.name}":"${prop.value.content}"`;
     } else if (prop.name === 'bind') {
       str += `"${prop.arg.content}":${prop.exp.content}`;
