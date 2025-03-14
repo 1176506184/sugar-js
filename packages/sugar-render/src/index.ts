@@ -1,7 +1,6 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patch from './patch';
 import { escape2Html } from '@sugar/sugar-shared';
-import { nextTick } from '@sugar/sugar-reactive';
 
 export function sugarRender () {
   let render = null;

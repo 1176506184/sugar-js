@@ -39,4 +39,5 @@ export function transform (context, helpers) {
   }
 
   work(context);
+  return context;
 }

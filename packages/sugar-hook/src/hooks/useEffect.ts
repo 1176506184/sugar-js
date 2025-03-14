@@ -3,7 +3,7 @@ export function useEffect (fun, deps = [], run = false) {
     console.log(fun.render());
   } else {
     deps.forEach((dep) => {
-      if (typeof dep.initDep === 'function') {
+      if (dep && typeof dep.initDep === 'function') {
         dep.initDep(fun);
       }
     });

@@ -12,9 +12,7 @@ export function parse (context: any, ancestors: any) {
       if (s.length === 1) {
         // 什么都不做
       } else if (s[1] === '/') {
-        if (s.length === 2) {
-
-        } else if (s[2] === '>') {
+        if (s[2] === '>') {
           advanceBy(context, 3);
           continue;
         } else if (/[a-z]/i.test(s[2])) {
@@ -133,7 +131,6 @@ function parseAttributes (context: any, type: any) {
 
 function parseAttribute (context: any, nameSet: any) {
   const start = getPos(context);
-
   const match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source)!;
 
   const name = match[0];

@@ -1,6 +1,8 @@
 import { NodeTypes } from './parse';
 import { isArray } from '@sugar/sugar-shared';
-import { baseCompile } from './compile';
+import { toAst } from './toAst';
+import { transform } from './transform';
+import { sIf } from './transform/sIf';
 
 export function generate (ast) {
   const genElmChildren = (children = []) => {
@@ -54,11 +56,12 @@ export function generate (ast) {
 
       if (ast.loading && !ast.forStatment) {
         ex = true;
-        const loadingRender = baseCompile(`<div class="s-loading" s-if="${ast.loading.value}">
+        const loadingRender = generate(transform(toAst(`<div class="s-loading" s-if="${ast.loading.value}">
         <svg t="1734417183543" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4603" width="30" height="30"><path d="M512 64c247.2 0 448 200.8 448 448h-64c0-212-172-384-384-384V64z m0 832c-212 0-384-172-384-384H64c0 247.2 200.8 448 448 448v-64z" p-id="4604" fill="#8a8a8a"></path></svg>
-        </div>`);
-        generate(loadingRender);
-        str = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${str + (!ast.if ? elStr : '')},${loadingRender.code}])`;
+        </div>`), {
+          sIf
+        }));
+        str = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${str + (!ast.if ? elStr : '')},${loadingRender}])`;
       }
 
       if (ast.htmlStatment) {
@@ -115,11 +118,12 @@ export function generate (ast) {
       }
 
       if (prop.name === 's-loading') {
-        const loadingRender = baseCompile(`<div class="s-loading" s-if="${ast.loading.value}">
+        const loadingRender = generate(transform(toAst(`<div class="s-loading" s-if="${ast.loading.value}">
         <svg t="1734417183543" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4603" width="30" height="30"><path d="M512 64c247.2 0 448 200.8 448 448h-64c0-212-172-384-384-384V64z m0 832c-212 0-384-172-384-384H64c0 247.2 200.8 448 448 448v-64z" p-id="4604" fill="#8a8a8a"></path></svg>
-        </div>`);
-        generate(loadingRender);
-        son = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${son},${loadingRender.code}])`;
+        </div>`), {
+          sIf
+        }));
+        son = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${son},${loadingRender}])`;
       }
     });
 

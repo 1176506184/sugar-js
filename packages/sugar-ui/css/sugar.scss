@@ -87,3 +87,60 @@
   height: 30px;
   background: #ccc;
 }
+
+.sugar-pagination {
+  font-size: 14px;
+}
+
+.sugar-pagination__items {
+  display: flex;
+  justify-content: center;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  padding-inline-start: 0;
+}
+
+.sugar-pagination__item {
+  width: 2rem;
+  min-width: 2rem;
+  height: 2rem;
+  flex: none;
+  background: #F5F5F5;
+  border-radius: 3px 3px 3px 3px;
+  margin: 0 0.25rem;
+  color: #686868;
+  border: none;
+  opacity: 1;
+  font-size: 0.75rem;
+  list-style: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.sugar-pagination__item--active {
+  background: #FB4E4E !important;
+  color: #fff !important;
+}
+
+.sugar-pagination__item button {
+  flex: 1;
+  height: 100%;
+  border: none;
+  padding: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+}
+
+.right_arrow {
+  transform: rotate(180deg);
+}
+
+.sugar-pagination__item svg{
+  width: 30%;
+  height: 30%;
+}

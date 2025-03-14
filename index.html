@@ -6,8 +6,6 @@
     <link rel="stylesheet" href="/dist/sugar.css">
     <script src="dist/sugar-ui.js"></script>
     <script src="/dist/sugar.js"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="packages/sugar/src/sugar2vue.js"></script>
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 </head>
@@ -124,6 +122,8 @@
         </div>
         <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
+    <sugar-pagination :pi="pi" :ps="ps" :total="total" page="2" style="margin-top: 10px" @change="changePage" :btn="true" :show-most="true" :show-sis="true"></sugar-pagination>
+
     <div class="article_body" s-loading="loading">
         <div class="title" instance="htmlRef">
             {{state.title}}
@@ -152,7 +152,7 @@
         </div>
     </sugar-dialog>
 
-    <sugar-dialog :model="showImageActive" @close="closeImage" :instance="htmlRef">
+    <sugar-dialog :model="showImageActive" @close="closeImage" :instance="dialog">
         <img :src="popImage" style="width: 100%;height: auto"/>
     </sugar-dialog>
 
@@ -162,7 +162,6 @@
 </body>
 
 <script>
-    sugar2vue(SUGAR);
     const {
         makeSugar,
         onMounted,
@@ -173,6 +172,10 @@
     } = SUGAR;
     var sugar = makeSugar({
         bulk() {
+
+            const [pi, setPi] = useState(0);
+            const [total, setTotal] = useState(0);
+            const [ps, setPS] = useState(20);
 
             const [checked, setChecked] = useState(false);
 
@@ -203,6 +206,7 @@
             const [active, setActive] = useState(false);
 
             const htmlRef = instance(null);
+            const dialog = instance(null);
 
             const [showImageActive, setShowImageActive] = useState(false);
 
@@ -236,15 +240,19 @@
             }
 
             onMounted(() => {
-                console.log(htmlRef.value);
+                setPi(1);
+                setTotal(1500);
             });
 
             useEffect(() => {
-                console.log(showImageActive.value);
             }, [showImageActive]);
 
             function imageError(e) {
                 // console.log(e.target);
+            }
+
+            function changePage(v){
+                setPi(v)
             }
 
             return {
@@ -266,11 +274,16 @@
                 setShow,
                 imageError,
                 checked,
-                setChecked
+                setChecked,
+                dialog,
+                pi,
+                ps,
+                total,
+                setTotal,
+                changePage
             };
         }
     });
-    sugarComponent2Vue(sugar);
     sugar.install(sugarUI);
     sugar.mount('#app');
 </script>
