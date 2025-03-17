@@ -40,7 +40,7 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
   });
 
   if (_vnode.key && getComponentCache(_vnode.key)) {
-    parentInstance.value = getComponentCache(_vnode.key);
+    parentInstance && (parentInstance.value = getComponentCache(_vnode.key));
     return getComponentCache(_vnode.key);
   }
 

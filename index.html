@@ -122,8 +122,8 @@
         </div>
         <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
-    <div s-for="(item,index) in list" :key="'file'+index">
-        <sugar-upload @change="fileChange(item,index)">
+    <div s-for="(item,index) in list" s-if="showFile">
+        <sugar-upload @change="fileChange(item,index)" :key="'file'+index">
             <sugar-button>上传</sugar-button>
         </sugar-upload>
     </div>
@@ -199,6 +199,7 @@
             const [total, setTotal] = useState(0);
             const [ps, setPS] = useState(20);
             const [fileList, setFileList] = useState([]);
+            const [showFile, setShowFile] = useState(true);
 
             const [checked, setChecked] = useState(false);
             const [text, setText] = useState(`自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
@@ -317,7 +318,9 @@
                 changePage,
                 text,
                 fileChange,
-                fileList
+                fileList,
+                showFile,
+                setShowFile
             };
         }
     });
