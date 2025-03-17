@@ -140,7 +140,42 @@
   transform: rotate(180deg);
 }
 
-.sugar-pagination__item svg{
+.sugar-pagination__item svg {
   width: 30%;
   height: 30%;
+}
+
+.sugar-text {
+  white-space: pre-line;
+  font-size: 14px;
+  color: #333;
+  position: relative;
+}
+
+.sugar-arrow{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  padding-left: 10px;
+}
+
+.sugar-arrow>div{
+  transition: .3s;
+}
+
+.sugar-arrow .open{
+  transform: rotate(180deg);
+}
+
+.sugar-arrow svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.sugar-text__ellipsis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

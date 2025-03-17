@@ -1,7 +1,7 @@
 import { type Core } from './types';
 import { onMounted, mountHandleList, updateActiveId } from '@sugar/sugar-hook';
 import { sugarRender } from '@sugar/sugar-render';
-import { guid } from './utils/guid';
+import { guid } from '@sugar/sugar-shared';
 import { nextTick } from '@sugar/sugar-reactive';
 import { initCSS } from './utils/utils';
 

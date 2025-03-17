@@ -11,7 +11,7 @@ const button = {
 
     function click () {
       setText(text.value + 1);
-      ctx.click();
+      ctx.click?.();
     }
 
     return {

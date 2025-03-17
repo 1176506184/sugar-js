@@ -455,16 +455,6 @@ function parseTextData (context: any, length: any) {
   const rawText = context.source.slice(0, length);
   advanceBy(context, length);
   return rawText;
-  // if (
-  //   !rawText.includes('&')
-  // ) {
-  //   return rawText;
-  // } else {
-  //   // DATA or RCDATA containing "&"". Entity decoding required.
-  //   return context.options.decodeEntities(
-  //     rawText
-  //   );
-  // }
 }
 
 function getSelection (context: any,

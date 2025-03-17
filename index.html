@@ -122,7 +122,29 @@
         </div>
         <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
-    <sugar-pagination :pi="pi" :ps="ps" :total="total" page="2" style="margin-top: 10px" @change="changePage" :btn="true" :show-most="true" :show-sis="true"></sugar-pagination>
+    <div s-for="(item,index) in list" :key="'file'+index">
+        <sugar-upload @change="fileChange(item,index)">
+            <sugar-button>上传</sugar-button>
+        </sugar-upload>
+    </div>
+
+
+    <sugar-text style="margin:20px" rows="3" arrow="true">{{text}}</sugar-text>
+
+    <div>
+
+    </div>
+
+    <sugar-pagination
+            :pi="pi"
+            :ps="ps"
+            :total="total"
+            page="2"
+            style="margin-top: 10px"
+            @change="changePage"
+            :btn="true"
+            :show-most="true">
+    </sugar-pagination>
 
     <div class="article_body" s-loading="loading">
         <div class="title" instance="htmlRef">
@@ -176,8 +198,16 @@
             const [pi, setPi] = useState(0);
             const [total, setTotal] = useState(0);
             const [ps, setPS] = useState(20);
+            const [fileList, setFileList] = useState([]);
 
             const [checked, setChecked] = useState(false);
+            const [text, setText] = useState(`自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
+            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
+            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
+            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
+            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
+            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
+            TVB知名男星內地連續直播12小時！被贊太敬業`);
 
             const [state, setState] = useState({
                 name: 0,
@@ -251,8 +281,12 @@
                 // console.log(e.target);
             }
 
-            function changePage(v){
-                setPi(v)
+            function changePage(v) {
+                setPi(v);
+            }
+
+            function fileChange(e) {
+                console.log(e);
             }
 
             return {
@@ -280,7 +314,10 @@
                 ps,
                 total,
                 setTotal,
-                changePage
+                changePage,
+                text,
+                fileChange,
+                fileList
             };
         }
     });

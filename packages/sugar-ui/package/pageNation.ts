@@ -86,9 +86,13 @@ const pageNation = {
 
       if (pi.value > 1) {
         setCanPrev(true);
+      } else {
+        setCanPrev(false);
       }
       if (pi.value < Math.ceil(total.value / ps.value)) {
         setCanNext(true);
+      } else {
+        setCanNext(false);
       }
       ctx.btn && setShowBtn(ctx.btn.value);
       ctx['show-most'] && setShowMost(ctx['show-most'].value);

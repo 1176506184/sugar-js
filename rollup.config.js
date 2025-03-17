@@ -6,6 +6,7 @@ import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import babel from 'rollup-plugin-babel';
 import copy from 'rollup-plugin-copy';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isUi = process.env.NODE_ENV === 'ui';
@@ -70,7 +71,8 @@ const rollupConfig = isUi ? {
       port: 8000,
       openPage: '/index.html', // 打开的页面
       contentBase: ''
-    }) : null
+    }) : null,
+    visualizer()
   ]
 };
 
