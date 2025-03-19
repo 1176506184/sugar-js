@@ -2,6 +2,10 @@ import { addCSS } from '@sugar/sugar-shared';
 
 export function initCSS () {
   addCSS(`
+      .s-block{
+        display:none;
+      }
+  
       .s-loading{
         position: absolute;
         background: rgba(255,255,255,0.8);

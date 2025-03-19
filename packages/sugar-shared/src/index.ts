@@ -51,8 +51,10 @@ export function escape2Html (str) {
     quot: '"'
   };
 
-  return str.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) {
+  return str.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all: any, t: any) {
     return arrEntities[t];
+  }).replace(/<[^>]+s-on:([^>]+)>/ig, function (match: any, p1: any) {
+    return match.replace(/s-on:/g, '@');
   });
 }
 

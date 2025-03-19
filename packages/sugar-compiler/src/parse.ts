@@ -358,10 +358,7 @@ const enum TagType {
 }
 
 export const enum ElementTypes {
-  ELEMENT,
-  COMPONENT,
-  SLOT,
-  TEMPLATE
+  ELEMENT
 }
 
 export const enum Namespaces {

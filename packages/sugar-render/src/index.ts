@@ -88,7 +88,19 @@ export function bindT (vm, data) {
   }
 
   function _e () {
-    return new VNode();
+    return {
+      tag: 'div',
+      data: {
+        attrs: {
+          class: 's-block'
+        },
+        on: {}
+      },
+      children: [],
+      elm: {
+        _vei: {}
+      }
+    };
   }
 
   function _html (html) {
