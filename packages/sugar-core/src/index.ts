@@ -9,6 +9,7 @@ function makeSugar (options: Core) {
   const appId = guid();
   updateActiveId(appId);
   const data = options.bulk(options.props);
+  const $ = {};
   const { mounted } = sugarRender();
   const vm = {
     render: options.render,
@@ -35,8 +36,12 @@ function makeSugar (options: Core) {
 
   function install (components) {
     components.forEach((component) => {
-      vm.components[component.name] = component;
-      vm.components[component.name].components = vm.components;
+      if (component.name) {
+        vm.components[component.name] = component;
+        vm.components[component.name].components = vm.components;
+      } else if (component.fun) {
+        $[component.fun] = component.bulk;
+      }
     });
   }
 
@@ -44,7 +49,8 @@ function makeSugar (options: Core) {
     vm,
     mount,
     ...data,
-    install
+    install,
+    $
   };
 }
 

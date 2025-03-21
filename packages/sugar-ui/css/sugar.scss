@@ -152,7 +152,7 @@
   position: relative;
 }
 
-.sugar-arrow{
+.sugar-arrow {
   position: absolute;
   right: 0;
   bottom: 0;
@@ -160,11 +160,11 @@
   padding-left: 10px;
 }
 
-.sugar-arrow>div{
+.sugar-arrow > div {
   transition: .3s;
 }
 
-.sugar-arrow .open{
+.sugar-arrow .open {
   transform: rotate(180deg);
 }
 
@@ -178,4 +178,23 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.sugar-toast {
+  z-index: 999999999999;
+  position: fixed;
+  width: auto;
+  height: auto;
+  max-width: 250px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+  color: white;
+  line-height: 25px;
+  padding: 5px 10px;
+  font-size: 15px;
+  transition: 0.3s;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
 }
