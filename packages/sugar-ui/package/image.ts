@@ -1,4 +1,5 @@
-import { useState } from '@sugar/sugar-hook';
+// @ts-expect-error
+const { useState } = SUGAR;
 
 const image = {
   name: 'sugar-image',

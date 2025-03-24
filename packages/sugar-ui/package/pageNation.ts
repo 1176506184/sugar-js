@@ -1,4 +1,5 @@
-import { useEffect, useState } from '@sugar/sugar-hook';
+// @ts-expect-error
+const { useEffect, useState } = SUGAR;
 
 const pageNation = {
   name: 'sugar-pagination',

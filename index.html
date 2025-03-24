@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/dist/sugar.css">
-    <script src="dist/sugar-ui.js"></script>
     <script src="/dist/sugar.js"></script>
+    <script src="dist/sugar-ui.js"></script>
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 </head>
@@ -270,6 +270,8 @@
             onMounted(() => {
                 setPi(1);
                 setTotal(1500);
+                // sugar.$.showMessageBox();
+                // sugar.$.showToast("测试")
             });
 
             useEffect(() => {

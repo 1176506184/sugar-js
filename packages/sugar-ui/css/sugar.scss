@@ -196,5 +196,84 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
 
+.sugar-message-box {
+  padding: 1px;
+  background: #fff;
+  border-radius: 10px;
+  width: 80vw;
+  overflow: hidden;
+  max-width: 320px;
+}
+
+.sugar-message-title {
+  color: #323233;
+  padding-top: 26px;
+  font-weight: bold;
+  line-height: 24px;
+  text-align: center;
+}
+
+.sugar-message-toolbar {
+  user-select: none;
+  display: flex;
+  overflow: hidden;
+}
+
+.sugar-message-box-btn {
+  height: 48px;
+  border-radius: 0;
+  flex: 1;
+  margin: 0;
+  width: 100%;
+  color: #323232;
+  background: #fff;
+  cursor: pointer;
+  transition: opacity .2s;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  border:1px solid #dcdee0;
+  border-right: none;
+}
+
+.sugar-message-box-btn:first-child{
+  border-right: none;
+  border-left: none;
+}
+
+.sugar-message-box-confirm {
+  color: #1989fa;
+}
+
+.sugar-message-box-btn:before {
+  background: #000;
+  border: inherit;
+  border-color: #000;
+  border-radius: inherit;
+  opacity: 0;
+  content: " ";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.sugar-message-box-content {
+  color: #646566;
+  max-height: 60vh;
+  padding: 8px 24px 26px;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  text-align: center;
+  word-wrap: break-word;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  overflow-y: auto;
 }

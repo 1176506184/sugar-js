@@ -1,6 +1,6 @@
-import { useEffect, useState } from '@sugar/sugar-hook';
 import { arrow } from './utils';
-
+// @ts-expect-error
+const { useEffect, useState } = SUGAR;
 const text = {
   name: 'sugar-text',
   render: `<div :class="'sugar-text ' + (open ? '':'sugar-text__ellipsis')" :style="style">

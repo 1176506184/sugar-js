@@ -1,4 +1,5 @@
-import { instance } from '@sugar/sugar-reactive';
+// @ts-expect-error
+const { instance } = SUGAR;
 
 const upload = {
   name: 'sugar-upload',

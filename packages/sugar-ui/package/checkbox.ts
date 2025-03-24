@@ -1,4 +1,5 @@
-import { useEffect, useState, onMounted } from '@sugar/sugar-hook';
+// @ts-expect-error
+const { useEffect, useState, onMounted } = SUGAR;
 
 const checkbox = {
   name: 'sugar-checkbox',

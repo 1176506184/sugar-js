@@ -1,6 +1,6 @@
-import { makeSugar } from '@sugar/sugar-core';
 import dialog from './dialog';
-import { useState } from '@sugar/sugar-hook';
+// @ts-expect-error
+const { makeSugar, useState, onMounted } = SUGAR;
 
 export const message = {
   name: 'sugar-message',
@@ -36,28 +36,29 @@ export const showToast = {
 export const showMessageBox = {
   fun: 'showMessageBox',
   bulk (options = {
-    title: '',
-    content: '',
-    confirmText: '',
-    cancelText: '',
+    title: '提示',
+    content: '这是一条提示的内容',
+    confirmText: '确认',
+    cancelText: '取消',
     confirm: () => {
     },
     cancel: () => {
     }
   }) {
-    const root = document.createElement('div');
+    let root = document.createElement('div');
     document.body.appendChild(root);
-    const MessageApp = makeSugar({
-      render: `<sugar-dialog model="true" @close="cancel">
-                    <div>
-                        <div>
+    let MessageApp = makeSugar({
+      render: `<sugar-dialog :model="show" @close="cancel">
+                    <div class="sugar-message-box">
+                        <div class="sugar-message-title">
                             {{title}}
                         </div>
-                        <div>
+                        <div class="sugar-message-box-content">
                             {{content}}
                         </div>
-                        <div>
-                        
+                        <div class="sugar-message-toolbar">
+                            <div class="sugar-message-box-btn" @click="cancel">{{cancelText}}</div>
+                            <div class="sugar-message-box-btn sugar-message-box-confirm" @click="confirm">{{confirmText}}</div>
                         </div>
                     <div>
                 </sugar-dialog>`,
@@ -65,18 +66,42 @@ export const showMessageBox = {
         const [show, setShow] = useState(true) as any;
 
         function cancel () {
+          options.cancel();
           setShow(false);
+          setTimeout(() => {
+            MessageApp = null;
+            root.remove();
+            root = null;
+          }, 300);
         }
+
+        function confirm () {
+          options.confirm();
+          setShow(false);
+          setTimeout(() => {
+            MessageApp = null;
+            root.remove();
+            root = null;
+          }, 300);
+        }
+
+        onMounted(() => {
+          console.log(options);
+          setShow(true);
+        });
 
         return {
           title: options.title ?? '提示',
           content: options.content ?? '',
           show,
-          cancel
+          cancel,
+          confirm,
+          confirmText: options.confirmText ?? '确定',
+          cancelText: options.cancelText ?? '取消'
         };
       }
     });
-    MessageApp.install(dialog);
+    MessageApp.install([dialog]);
     MessageApp.mount(root);
   }
 };
