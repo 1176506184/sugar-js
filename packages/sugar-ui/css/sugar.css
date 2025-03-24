@@ -234,6 +234,7 @@
   box-sizing: border-box;
   border: 1px solid #dcdee0;
   border-right: none;
+  border-bottom: none;
 }
 
 .sugar-message-box-btn:first-child {
