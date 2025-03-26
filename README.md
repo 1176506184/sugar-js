@@ -19,6 +19,28 @@ const app = makeSugar({
 app.mount('#app')
 ```
 
+## s-for
+    <div s-for="(item,index) in list">
+    </div>
+```js
+    const [list, setList] = useState([]);
+````
+
+## s-for
+    <div s-if="show">
+    </div>
+```js
+    const [show, setShow] = useState(false);
+````
+
+## s-loading
+    <div s-loading="loading">
+    </div>
+```js
+    const [loading, setLoading] = useState(false);
+````
+
+
 ## onMounted
 ```js
 onMounted(()=>{
@@ -112,3 +134,8 @@ app.$.showMessageBox({
   cancelText:'cancel'
 });
 ```
+
+## sugar-back-top
+````js
+<sugar-back-top></sugar-back-top>
+````
