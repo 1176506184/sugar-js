@@ -26,7 +26,7 @@ app.mount('#app')
     const [list, setList] = useState([]);
 ````
 
-## s-for
+## s-if
     <div s-if="show">
     </div>
 ```js
