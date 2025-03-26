@@ -300,4 +300,26 @@
   height: 22px;
 }
 
+.sugar-swiper {
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.sugar-swiper-wrapper {
+  height: 100%;
+  transition-property: transform;
+  display: flex;
+}
+
+.sugar-swiper-item {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
 /*# sourceMappingURL=sugar.css.map */

@@ -132,6 +132,14 @@
 
     <div s-if="false"></div>
 
+    <sugar-swiper>
+        <sugar-swiper-item s-for="(item,index) in list">
+            <div style="height: 100px;display: flex;align-items: center;justify-content: center">
+                {{index}}
+            </div>
+        </sugar-swiper-item>
+    </sugar-swiper>
+
     <sugar-text style="margin:20px" rows="3" arrow="true">{{text}}</sugar-text>
 
     <sugar-pagination

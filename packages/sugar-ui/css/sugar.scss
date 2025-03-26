@@ -298,8 +298,30 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
 }
 
-.sugar-back-top svg{
+.sugar-back-top svg {
   margin-top: 3px;
   width: 22px;
   height: 22px;
+}
+
+.sugar-swiper {
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.sugar-swiper-wrapper {
+  height: 100%;
+  transition-property: transform;
+  display: flex;
+}
+
+.sugar-swiper-item {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }

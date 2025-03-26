@@ -7,8 +7,10 @@ import text from './package/text';
 import upload from './package/upload';
 import { message, showToast, showMessageBox } from './package/message';
 import backTop from './package/backTop';
+import swiper from './package/swiper';
+import swiperItem from './package/swiperItem';
 
-export const sugarUI = [dialog, button, image, checkbox, pageNation, text, upload, showToast, message, showMessageBox, backTop];
+export const sugarUI = [dialog, button, image, checkbox, pageNation, text, upload, showToast, message, showMessageBox, backTop, swiper, swiperItem];
 
 if (typeof window !== 'undefined') {
   (function (global: any) {

@@ -43,7 +43,6 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
     parentInstance && (parentInstance.value = getComponentCache(_vnode.key));
     return getComponentCache(_vnode.key);
   }
-
   const app = makeComponent({
     ..._sugar,
     props,

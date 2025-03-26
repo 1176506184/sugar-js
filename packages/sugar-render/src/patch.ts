@@ -7,6 +7,7 @@ export default function patch (vm, newVnode) {
   if (!oldVnode.elm) {
     oldVnode = emptyNodeAt(oldVnode);
   }
+
   if (isSameNode(oldVnode, newVnode)) {
     patchVnode(newVnode, oldVnode);
   } else {
@@ -83,17 +84,16 @@ export default function patch (vm, newVnode) {
       updateComponent(newVnode, oldVnode);
       return;
     }
-
     newVnode.elm = oldVnode.elm;
     if (newVnode.text) {
       if (oldVnode.text !== newVnode.text) {
         oldVnode.elm.nodeValue = newVnode.text;
       }
     } else if (newVnode.tag) {
-      patchProps(newVnode, oldVnode);
+      patchProps(newVnode, oldVnode, vm);
       if (oldVnode.children?.length) {
         updateChildren(oldVnode.elm, oldVnode.children, newVnode.children);
-      } else {
+      } else if (newVnode.children.length > 0) {
         oldVnode.elm.innerHTML = '';
         for (let i = 0; i < newVnode.children.length; i++) {
           const child = createElement(newVnode.children[i]);
@@ -105,16 +105,16 @@ export default function patch (vm, newVnode) {
     }
   }
 
-  function patchProps (newVnode, oldVnode) {
+  function patchProps (newVnode, oldVnode, vm) {
     const attrs = newVnode.data.attrs;
     const on = newVnode.data.on;
     const oldAttrs = oldVnode.data.attrs;
     const elm = newVnode.elm;
-    patchAttrs(elm, oldAttrs, attrs);
+    patchAttrs(elm, oldAttrs, attrs, vm);
     patchEvents(elm, on);
   }
 
-  function patchAttrs (el, oldAttrs, newAttrs) {
+  function patchAttrs (el, oldAttrs, newAttrs, vm) {
     if (oldAttrs) {
       Object.keys(oldAttrs).forEach((attr) => {
         if (newAttrs[attr] !== oldAttrs[attr]) {
@@ -129,6 +129,10 @@ export default function patch (vm, newVnode) {
       }
       if (!oldAttrs || newAttrs[attr] !== oldAttrs[attr]) {
         el.setAttribute(attr, newAttrs[attr]);
+      }
+
+      if (attr === 'instance') {
+        vm[newAttrs[attr]].value = el;
       }
     });
   }
