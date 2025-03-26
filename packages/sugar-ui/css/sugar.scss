@@ -236,12 +236,12 @@
   position: relative;
   display: inline-flex;
   box-sizing: border-box;
-  border:1px solid #dcdee0;
+  border: 1px solid #dcdee0;
   border-right: none;
   border-bottom: none;
 }
 
-.sugar-message-box-btn:first-child{
+.sugar-message-box-btn:first-child {
   border-right: none;
   border-left: none;
 }
@@ -277,4 +277,29 @@
   -webkit-overflow-scrolling: touch;
   flex: 1;
   overflow-y: auto;
+}
+
+.sugar-back-top {
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: #1989fa;
+  position: fixed;
+  right: 20px;
+  bottom: 100px;
+  z-index: 999;
+  cursor: pointer;
+  transition: all .2s;
+  transform: scale(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+}
+
+.sugar-back-top svg{
+  margin-top: 3px;
+  width: 22px;
+  height: 22px;
 }

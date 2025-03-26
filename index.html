@@ -128,6 +128,8 @@
         </sugar-upload>
     </div>
 
+    <sugar-back-top></sugar-back-top>
+
     <div s-if="false"></div>
 
     <sugar-text style="margin:20px" rows="3" arrow="true">{{text}}</sugar-text>
@@ -174,10 +176,7 @@
     <sugar-dialog :model="showImageActive" @close="closeImage" :instance="dialog">
         <img :src="popImage" style="width: 100%;height: auto"/>
     </sugar-dialog>
-
 </div>
-
-
 </body>
 
 <script>

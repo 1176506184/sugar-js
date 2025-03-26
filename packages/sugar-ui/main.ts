@@ -6,8 +6,9 @@ import pageNation from './package/pageNation';
 import text from './package/text';
 import upload from './package/upload';
 import { message, showToast, showMessageBox } from './package/message';
+import backTop from './package/backTop';
 
-export const sugarUI = [dialog, button, image, checkbox, pageNation, text, upload, showToast, message, showMessageBox];
+export const sugarUI = [dialog, button, image, checkbox, pageNation, text, upload, showToast, message, showMessageBox, backTop];
 
 if (typeof window !== 'undefined') {
   (function (global: any) {
