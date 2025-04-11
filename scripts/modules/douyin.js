@@ -468,19 +468,34 @@ async function videoCollect() {
         })
         document.body.append(node)
         await scrollVideo();
-        node.remove()
     }
 
-    chrome.runtime.sendMessage({
-        Message: 'finish',
-        type: 'douyin',
-        data: douyinData,
-        author: location.href
-    }).then(r => {
+    const data = chunkArray(douyinData,100);
+    console.log(data);
+    for (let i = 0; i < data.length; i++) {
+        await chrome.runtime.sendMessage({
+            Message: 'finish',
+            type: 'douyin',
+            data: data[i],
+            author: location.href,
+            isFinish: i === data.length - 1,
+        }).then(r => {
 
-    })
+        })
+    }
+
 
 }
+
+function chunkArray(array, chunkSize) {
+    const result = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        const chunk = array.slice(i, i + chunkSize);
+        result.push(chunk);
+    }
+    return result;
+}
+
 
 async function scrollVideo() {
     await wait(2);

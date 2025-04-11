@@ -325,6 +325,7 @@ function dealYoutubeVideo(Message) {
 
     return
   } else if (Message.Message === 'communityVideo') {
+    console.log(Message.data)
     data.value = Message.data
     author.value = Message.author
     AllData.value = data.value

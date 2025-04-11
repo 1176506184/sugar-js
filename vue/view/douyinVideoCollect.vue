@@ -106,16 +106,22 @@ async function EventListener(Message) {
     if (collectType.value !== 'first') {
       console.log(Message.data)
       const chunkedArray = chunkArray(Message.data, 100);
-      allSendMap.value = chunkedArray.map((item) => {
+      allSendMap.value.push(...chunkedArray.map((item) => {
         return {
           count: item.length,
-          state: '等待中'
+          state: '等待中',
+          data: item
         }
-      });
-      for (let i = 0; i < chunkedArray.length; i++) {
+      }));
+
+      if (!Message.isFinish) {
+        return;
+      }
+
+      for (let i = 0; i < allSendMap.value.length; i++) {
         allSendMap.value[i].state = '上传中'
         const {msg} = await apiFetch(callBackUrl.value, {
-          aweme_list: chunkedArray[i].map(r => {
+          aweme_list: allSendMap.value[i].data.map(r => {
             return {
               author: {
                 sec_uid: r.author.sec_uid,
