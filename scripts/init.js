@@ -227,7 +227,14 @@ if (location.origin.indexOf("douyin") !== -1) {
     }).then(() => {
         console.log("lemon8app")
     })
-} else if (location.href) {
+} else if (location.href.indexOf('jimeng.jianying.com') != -1) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'jimeng.js'
+    }).then(() => {
+        console.log("jimeng")
+    })
+}else if (location.href) {
     chrome.runtime.sendMessage({
         Message: "loadScript",
         script: 'empty.js'

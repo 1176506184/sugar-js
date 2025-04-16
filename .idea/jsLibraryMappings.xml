@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{@types/chrome}" />
+    <file url="file://$PROJECT_DIR$" libraries="{CollectChrome/node_modules}" />
+    <file url="PROJECT" libraries="{@types/chrome, CollectChrome/node_modules, element-plus}" />
     <includedPredefinedLibrary name="Node.js Core" />
+    <excludedPredefinedLibrary name="uni-api" />
   </component>
 </project>

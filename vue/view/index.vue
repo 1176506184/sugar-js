@@ -379,24 +379,24 @@
 
           <el-collapse-item title="小红书" name="22">
             <div style="display: flex">
-<!--              <el-select v-if="!redBookState.haveBlogger" v-model="redBookState.lang" placeholder=""-->
-<!--                         style="width: 100px;margin-right: 10px">-->
-<!--                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>-->
-<!--              </el-select>-->
+              <!--              <el-select v-if="!redBookState.haveBlogger" v-model="redBookState.lang" placeholder=""-->
+              <!--                         style="width: 100px;margin-right: 10px">-->
+              <!--                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>-->
+              <!--              </el-select>-->
 
-<!--              <el-button v-if="!redBookState.haveBlogger" type="primary" @click="createBloggerRedBook">{{-->
-<!--                  redBookState.add_btn_text-->
-<!--                }}-->
-<!--              </el-button>-->
+              <!--              <el-button v-if="!redBookState.haveBlogger" type="primary" @click="createBloggerRedBook">{{-->
+              <!--                  redBookState.add_btn_text-->
+              <!--                }}-->
+              <!--              </el-button>-->
 
-<!--              <el-button-->
-<!--                  v-else-->
-<!--                  :loading="redBookState.loading"-->
-<!--                  @click="redBookGetHistory"-->
-<!--                  type="primary"-->
-<!--              >-->
-<!--                {{ redBookState.text }}-->
-<!--              </el-button>-->
+              <!--              <el-button-->
+              <!--                  v-else-->
+              <!--                  :loading="redBookState.loading"-->
+              <!--                  @click="redBookGetHistory"-->
+              <!--                  type="primary"-->
+              <!--              >-->
+              <!--                {{ redBookState.text }}-->
+              <!--              </el-button>-->
 
               <el-button type="primary" @click="collect_xiaohongshu">采集历史（新）</el-button>
 
@@ -406,25 +406,35 @@
           <el-collapse-item title="lemon8app" name="30">
             <div style="display: flex">
 
-<!--              <el-select v-if="!lemon8appState.haveBlogger" v-model="lemon8appState.lang" placeholder=""-->
-<!--                         style="width: 100px;margin-right: 10px">-->
-<!--                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>-->
-<!--              </el-select>-->
+              <!--              <el-select v-if="!lemon8appState.haveBlogger" v-model="lemon8appState.lang" placeholder=""-->
+              <!--                         style="width: 100px;margin-right: 10px">-->
+              <!--                <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>-->
+              <!--              </el-select>-->
 
-<!--              <el-button v-if="!lemon8appState.haveBlogger" type="primary" @click="createBloggerLemon">添加博主-->
-<!--              </el-button>-->
+              <!--              <el-button v-if="!lemon8appState.haveBlogger" type="primary" @click="createBloggerLemon">添加博主-->
+              <!--              </el-button>-->
 
-<!--              <el-button-->
-<!--                  v-else-->
-<!--                  :loading="lemon8appState.loading"-->
-<!--                  @click="lemon8appGetHistory"-->
-<!--                  type="primary"-->
-<!--              >-->
-<!--                {{ lemon8appState.text }}-->
-<!--              </el-button>-->
+              <!--              <el-button-->
+              <!--                  v-else-->
+              <!--                  :loading="lemon8appState.loading"-->
+              <!--                  @click="lemon8appGetHistory"-->
+              <!--                  type="primary"-->
+              <!--              >-->
+              <!--                {{ lemon8appState.text }}-->
+              <!--              </el-button>-->
 
               <el-button type="primary" @click="collect_lemon8app">采集历史（新）</el-button>
 
+            </div>
+          </el-collapse-item>
+
+
+          <el-collapse-item title="即梦" name="24">
+            <div style="margin-left: 0px; margin-top: 10px">
+              <el-button
+                  @click="openJimeng"
+                  type="primary">创建FB专页排期 - 采集自动化
+              </el-button>
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -528,6 +538,7 @@
               </el-input>
             </div>
           </el-collapse-item>
+
         </el-collapse>
       </div>
     </div>
@@ -562,7 +573,7 @@ import {http, xhrHttp, sHttp, dHttp, hHttp} from "../utils/request";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(0);
-const owner = ref(1);//yxk xhs
+const owner = ref(0);//yxk xhs
 
 function changeOpen() {
   chrome.storage.local.set(
@@ -739,6 +750,9 @@ const eventBus = async function (Message, sender, sendResponse) {
     } else if (Message.type === "zhihu") {
       activeNames.value.push("25");
       store.commit("changeType", "zhihu");
+    } else if (Message.type === "jimeng") {
+      activeNames.value.push("24");
+      store.commit("changeType", "jimeng");
     } else if (Message.type === "lemon8app") {
       activeNames.value.push("30");
       store.commit("changeType", "lemon8app");
@@ -2843,6 +2857,31 @@ async function collect_xiaohongshu() {
   chrome.tabs.create(
       {
         url: "/html/out.html#/Xiaohongshu?activeId=" + activeId,
+        active: true,
+      },
+      (tab) => {
+      }
+  );
+}
+
+async function openJimeng() {
+  let activeId = await getActiveId();
+  chrome.tabs.sendMessage(
+      activeId,
+      {
+        Message: "start",
+      },
+      function (response) {
+        if (response?.state !== 200) {
+          ElMessage.warning({
+            message: "插件已重新加载，请刷新页面",
+          });
+        }
+      }
+  );
+  chrome.tabs.create(
+      {
+        url: "/html/out.html#/Jimeng?activeId=" + activeId,
         active: true,
       },
       (tab) => {
