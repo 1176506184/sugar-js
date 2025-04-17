@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:s-use="http://www.w3.org/1999/xhtml" xmlns:s-on="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:s-use="http://www.w3.org/1999/xhtml" xmlns:s-on="http://www.w3.org/1999/xhtml" xmlns="">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -89,6 +89,7 @@
         width: 92vw;
         height: 48vw;
         position: relative;
+        overflow: hidden;
     }
 
     .image_box img {
@@ -134,68 +135,70 @@
         </div>
     </sugar-percentage>
 
-<!--    <div s-for="(item,index) in list" s-if="showFile">-->
-<!--        <sugar-upload @change="fileChange(item,index)" :key="'file'+index">-->
-<!--            <sugar-button>上传</sugar-button>-->
-<!--        </sugar-upload>-->
-<!--    </div>-->
+    <div s-for="(item,index) in list" s-if="showFile">
+        <sugar-upload @change="fileChange(item,index)" :key="'file'+index">
+            <sugar-button>上传</sugar-button>
+        </sugar-upload>
+    </div>
 
-<!--    <sugar-back-top></sugar-back-top>-->
+    <sugar-back-top></sugar-back-top>
 
-<!--    <div s-if="false"></div>-->
+    <div s-if="false"></div>
 
-<!--    <sugar-swiper>-->
-<!--        <sugar-swiper-item s-for="(item,index) in list">-->
-<!--            <div style="height: 100px;display: flex;align-items: center;justify-content: center">-->
-<!--                {{index + 1}}-->
-<!--            </div>-->
-<!--        </sugar-swiper-item>-->
-<!--    </sugar-swiper>-->
+    <sugar-swiper>
+        <sugar-swiper-item s-for="(item,index) in list">
+            <div style="height: 100px;display: flex;align-items: center;justify-content: center">
+                {{index + 1}}
+            </div>
+        </sugar-swiper-item>
+    </sugar-swiper>
 
-<!--    <sugar-text style="margin:20px" rows="3" arrow="true">{{text}}</sugar-text>-->
+    <sugar-text style="margin:20px" rows="3" arrow="true">{{text}}</sugar-text>
 
-<!--    <sugar-pagination-->
-<!--            :pi="pi"-->
-<!--            :ps="ps"-->
-<!--            :total="total"-->
-<!--            page="2"-->
-<!--            style="margin-top: 10px"-->
-<!--            @change="changePage"-->
-<!--            :btn="true"-->
-<!--            :show-most="true">-->
-<!--    </sugar-pagination>-->
+    <sugar-pagination
+            :pi="pi"
+            :ps="ps"
+            :total="total"
+            page="2"
+            style="margin-top: 10px"
+            @change="changePage"
+            :btn="true"
+            :show-most="true">
+    </sugar-pagination>
 
-<!--    <div class="article_body" s-loading="loading">-->
-<!--        <div class="title" instance="htmlRef">-->
-<!--            {{state.title}}-->
-<!--        </div>-->
-<!--        <div class="content" s-html="state.content" style="font-size: 13px">-->
-<!--        </div>-->
-<!--    </div>-->
+    <div class="article_body" s-loading="loading">
+        <div class="title" instance="htmlRef">
+            {{state.title}}
+        </div>
+        <div class="content" s-html="state.content" style="font-size: 13px">
+        </div>
+    </div>
 
-<!--    <div class="article_join">-->
-<!--        <div class="item" s-for="(item,index) in list" :style="index === (list.length - 1) ? 'border:0' : ''">-->
-<!--            <div class="image_box">-->
-<!--                <img :src="item.cover" @click="showImage(item)" alt="" @error="imageError"/>-->
-<!--            </div>-->
-<!--            <div class="label_box">-->
-<!--                {{item.title}}-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
+    <div class="article_join">
+        <div class="item" s-for="(item,index) in list" :style="index === (list.length - 1) ? 'border:0' : ''">
+            <div class="image_box">
+                <sugar-lazy>
+                    <img :src="item.cover" @click="showImage(item)" alt="" @error="imageError"/>
+                </sugar-lazy>
+            </div>
+            <div class="label_box">
+                {{item.title}}
+            </div>
+        </div>
+    </div>
 
-<!--    <sugar-dialog :model="active" @close="close" direction="top">-->
-<!--        <div class="menu_fixed_box">-->
-<!--            <div s-for="(item,index) in cateList"-->
-<!--                 style="border: 1px solid #666;border-radius: 3px;font-size: 13px;color:#666;text-align: center;line-height: 28px;margin: 10px;width: 80px;height: 28px;float: left">-->
-<!--                {{item}}-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </sugar-dialog>-->
+    <sugar-dialog :model="active" @close="close" direction="top">
+        <div class="menu_fixed_box">
+            <div s-for="(item,index) in cateList"
+                 style="border: 1px solid #666;border-radius: 3px;font-size: 13px;color:#666;text-align: center;line-height: 28px;margin: 10px;width: 80px;height: 28px;float: left">
+                {{item}}
+            </div>
+        </div>
+    </sugar-dialog>
 
-<!--    <sugar-dialog :model="showImageActive" @close="closeImage" :instance="dialog">-->
-<!--        <img :src="popImage" style="width: 100%;height: auto"/>-->
-<!--    </sugar-dialog>-->
+    <sugar-dialog :model="showImageActive" @close="closeImage" instance="dialog">
+        <img :src="popImage" style="width: 100%;height: auto"/>
+    </sugar-dialog>
 </div>
 </body>
 
