@@ -9,11 +9,15 @@ import { message, showToast, showMessageBox } from './package/message';
 import backTop from './package/backTop';
 import swiper from './package/swiper';
 import swiperItem from './package/swiperItem';
+import percentage from './package/percentage';
+import { store } from './package/store';
 
-export const sugarUI = [dialog, button, image, checkbox, pageNation, text, upload, showToast, message, showMessageBox, backTop, swiper, swiperItem];
-
+export const sugarUI = [percentage, dialog, button, image, checkbox, pageNation, text, upload, showToast, message, showMessageBox, backTop, swiper, swiperItem];
+export { store };
 if (typeof window !== 'undefined') {
   (function (global: any) {
     global.sugarUI = sugarUI;
+    global.sugarStore = store;
+    global.getLoadFinish = store.value.getLoadFinish;
   })(window);
 }

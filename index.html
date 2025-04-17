@@ -122,6 +122,18 @@
         </div>
         <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
+
+    <sugar-percentage id="per_1" sugar-wh="400,300"
+                      background="https://fastly.picsum.photos/id/1044/200/200.jpg?hmac=HB3e6tTss6J_9wexZ1v1psMlccdyQIrHrrijUgWXFhg">
+        <div sugar-wh="300,100" sugar-tb="10,10" sugar-id="1"
+             :style="perS.p1 + ';margin-left:50%;transform: translateX(-50%);background:#fff'">
+            测试啊啊啊
+        </div>
+        <div sugar-wh="300,50" sugar-tb="10,10" sugar-id="2"
+             :style="perS.p2 + ';margin-left:50%;transform: translateX(-50%);background:#333'">
+        </div>
+    </sugar-percentage>
+
     <div s-for="(item,index) in list" s-if="showFile">
         <sugar-upload @change="fileChange(item,index)" :key="'file'+index">
             <sugar-button>上传</sugar-button>
@@ -135,7 +147,7 @@
     <sugar-swiper>
         <sugar-swiper-item s-for="(item,index) in list">
             <div style="height: 100px;display: flex;align-items: center;justify-content: center">
-                {{index}}
+                {{index + 1}}
             </div>
         </sugar-swiper-item>
     </sugar-swiper>
@@ -172,8 +184,8 @@
         </div>
     </div>
 
-    <sugar-dialog :model="active" @close="close">
-        <div class="menu_fixed_box" :style="'top:' + top + 'vh'">
+    <sugar-dialog :model="active" @close="close" direction="top">
+        <div class="menu_fixed_box">
             <div s-for="(item,index) in cateList"
                  style="border: 1px solid #666;border-radius: 3px;font-size: 13px;color:#666;text-align: center;line-height: 28px;margin: 10px;width: 80px;height: 28px;float: left">
                 {{item}}
@@ -188,6 +200,7 @@
 </body>
 
 <script>
+
     const {
         makeSugar,
         onMounted,
@@ -198,10 +211,22 @@
     } = SUGAR;
     var sugar = makeSugar({
         bulk() {
+            const [perS, setPerS] = useState({
+                p1: '',
+                p2: ''
+            });
 
-            const [pi, setPi] = useState(0);
-            const [total, setTotal] = useState(0);
-            const [ps, setPS] = useState(20);
+            onMounted(() => {
+                const wt = getLoadFinish('per_1');
+                setPerS({
+                    p1: wt[1],
+                    p2: wt[2]
+                });
+            });
+
+            const [pi, setPi] = useState(1);
+            const [total, setTotal] = useState(1500);
+            const [ps, setPS] = useState(10);
             const [fileList, setFileList] = useState([]);
             const [showFile, setShowFile] = useState(true);
 
@@ -254,15 +279,11 @@
             const [show, setShow] = useState(false);
 
             function close() {
-                setTop(-50);
                 setActive(false);
             }
 
             function open() {
                 setActive(true);
-                setTimeout(() => {
-                    setTop(0);
-                }, 200);
             }
 
             function closeImage() {
@@ -273,13 +294,6 @@
                 setPopImage(item.cover);
                 setShowImageActive(true);
             }
-
-            onMounted(() => {
-                setPi(1);
-                setTotal(1500);
-                // sugar.$.showMessageBox();
-                // sugar.$.showToast("测试")
-            });
 
             useEffect(() => {
             }, [showImageActive]);
@@ -326,7 +340,8 @@
                 fileChange,
                 fileList,
                 showFile,
-                setShowFile
+                setShowFile,
+                perS
             };
         }
     });

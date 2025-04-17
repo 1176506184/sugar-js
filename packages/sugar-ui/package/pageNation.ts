@@ -1,5 +1,5 @@
 // @ts-expect-error
-const { useEffect, useState } = SUGAR;
+const { useEffect, useState, onMounted, nextTick } = SUGAR;
 
 const pageNation = {
   name: 'sugar-pagination',
@@ -77,7 +77,13 @@ const pageNation = {
       return [...front, f, ...end];
     }
 
+    update();
+
     useEffect(() => {
+      update();
+    }, [ctx.ps, ctx.pi, ctx.total, ctx.btn, ctx.page, ctx['show-most'], ctx['show-sis']], true);
+
+    function update () {
       setPs(ctx.ps.value);
       setPi(ctx.pi.value);
       setTotal(ctx.total.value);
@@ -103,7 +109,7 @@ const pageNation = {
       if (showMost.value && !page.value.includes(Math.ceil(total.value / ps.value))) {
         setPage([...page.value, Math.ceil(total.value / ps.value)]);
       }
-    }, [ctx.ps, ctx.pi, ctx.total, ctx.btn, ctx.page, ctx['show-most'], ctx['show-sis']]);
+    }
 
     return {
       pi,

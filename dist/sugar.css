@@ -65,6 +65,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.3s linear;
 }
 
 .sugar-checkbox-container {
@@ -130,6 +131,7 @@
   background: transparent;
   font: inherit;
   color: inherit;
+  outline: none;
 }
 
 .right_arrow {
