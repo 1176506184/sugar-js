@@ -989,15 +989,11 @@ function getComponentCache(key) {
 
 function bulkComponent(_vnode, parentComponent) {
     const { data: { attrs, on }, children } = _vnode;
-    let parentInstance = null;
     const _sugar = deepClone(parentComponent);
     const props = {};
     const slot = children;
     Object.keys(attrs).forEach((propName) => {
-        if (propName === 'instance') {
-            parentInstance = attrs[propName];
-        }
-        else {
+        if (propName !== 'instance') {
             const [tempGet, tempSet] = useState(attrs[propName]);
             props[propName] = tempGet;
             props[propName + '_sugar_setState'] = tempSet;
@@ -1014,15 +1010,11 @@ function bulkComponent(_vnode, parentComponent) {
         }
     });
     if (_vnode.key && getComponentCache(_vnode.key)) {
-        parentInstance && (parentInstance.value = getComponentCache(_vnode.key));
         return getComponentCache(_vnode.key);
     }
     const app = makeComponent(Object.assign(Object.assign({}, _sugar), { props,
         slot }));
     app.mount();
-    if (parentInstance) {
-        parentInstance.value = app;
-    }
     _vnode.key && addComponentCache(app, _vnode.key);
     return app;
 }
@@ -1144,6 +1136,7 @@ function patch(vm, newVnode) {
         }
     }
     function createElement(vnode) {
+        var _a;
         let domNode;
         if (vnode.tag) {
             if (typeof vnode.tag === 'string' && !isComponent(vnode, vm.components)) {
@@ -1161,7 +1154,9 @@ function patch(vm, newVnode) {
                         const value = attrs[key];
                         domNode.setAttribute(key, value);
                         if (key === 'instance') {
-                            vm[value].value = domNode;
+                            if ((_a = vm[value]) === null || _a === void 0 ? void 0 : _a.value) {
+                                vm[value].value = domNode;
+                            }
                         }
                     }
                 }
@@ -1205,6 +1200,7 @@ function patch(vm, newVnode) {
         var _a;
         if (isComponent(newVnode, vm.components)) {
             updateComponent(newVnode, oldVnode);
+            bindComponentInstance(newVnode, vm);
             return;
         }
         newVnode.elm = oldVnode.elm;
@@ -1253,7 +1249,9 @@ function patch(vm, newVnode) {
                 el.setAttribute(attr, newAttrs[attr]);
             }
             if (attr === 'instance') {
-                vm[newAttrs[attr]].value = el;
+                if (vm[newAttrs[attr]]) {
+                    vm[newAttrs[attr]].value = el;
+                }
             }
         });
     }
@@ -1412,6 +1410,20 @@ function clearEmptyVnode(Vnodes) {
     return Vnodes.filter((Vnode) => {
         return Vnode.tag || Vnode.text === '' || Vnode.text || Vnode.elm;
     });
+}
+function bindComponentInstance(vNode, vm) {
+    const data = vNode.data;
+    if (data) {
+        const attrs = data.attrs;
+        if (attrs.instance) {
+            vm[attrs.instance].value = vNode.elm;
+        }
+    }
+    if (vNode.children) {
+        vNode.children.forEach((child) => {
+            bindComponentInstance(child, vm);
+        });
+    }
 }
 let VNode$1 = class VNode {
     constructor(tag, data, children, elm) {

@@ -41,7 +41,7 @@ export default function patch (vm, newVnode) {
             const value = attrs[key];
             domNode.setAttribute(key, value);
             if (key === 'instance') {
-              vm[value].value = domNode;
+              if (vm[value]?.value) { vm[value].value = domNode; }
             }
           }
         }
@@ -82,6 +82,7 @@ export default function patch (vm, newVnode) {
   function patchVnode (newVnode, oldVnode) {
     if (isComponent(newVnode, vm.components)) {
       updateComponent(newVnode, oldVnode);
+      bindComponentInstance(newVnode, vm);
       return;
     }
     newVnode.elm = oldVnode.elm;
@@ -132,7 +133,7 @@ export default function patch (vm, newVnode) {
       }
 
       if (attr === 'instance') {
-        vm[newAttrs[attr]].value = el;
+        if (vm[newAttrs[attr]]) { vm[newAttrs[attr]].value = el; }
       }
     });
   }
@@ -291,6 +292,21 @@ function clearEmptyVnode (Vnodes) {
   return Vnodes.filter((Vnode) => {
     return Vnode.tag || Vnode.text === '' || Vnode.text || Vnode.elm;
   });
+}
+
+function bindComponentInstance (vNode: any, vm: any) {
+  const data = vNode.data;
+  if (data) {
+    const attrs = data.attrs;
+    if (attrs.instance) {
+      vm[attrs.instance].value = vNode.elm;
+    }
+  }
+  if (vNode.children) {
+    vNode.children.forEach((child: any) => {
+      bindComponentInstance(child, vm);
+    });
+  }
 }
 
 class VNode {

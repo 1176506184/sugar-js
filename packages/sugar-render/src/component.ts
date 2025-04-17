@@ -14,16 +14,14 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
     children
   }: any = _vnode;
 
-  let parentInstance = null;
+  const parentInstance = null;
 
   const _sugar = deepClone(parentComponent);
   const props = {};
   const slot = children;
 
   Object.keys(attrs).forEach((propName) => {
-    if (propName === 'instance') {
-      parentInstance = attrs[propName];
-    } else {
+    if (propName !== 'instance') {
       const [tempGet, tempSet] = useState(attrs[propName]);
       props[propName] = tempGet;
       props[propName + '_sugar_setState'] = tempSet;
@@ -40,7 +38,6 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
   });
 
   if (_vnode.key && getComponentCache(_vnode.key)) {
-    parentInstance && (parentInstance.value = getComponentCache(_vnode.key));
     return getComponentCache(_vnode.key);
   }
   const app = makeComponent({
