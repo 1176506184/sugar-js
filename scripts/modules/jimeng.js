@@ -11,6 +11,8 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         start()
     } else if (Message.Message === 'success') {
         showToast('添加成功');
+    } else if (Message.Message === 'pushed') {
+        showToast('图片已存在');
     }
     sendResponse({state: 200});
 })
@@ -23,7 +25,7 @@ function start() {
             r.setAttribute('sugar-finish', 'true');
             const download = document.createElement('div');
             download.innerHTML = '添加'
-            download.style = 'cursor:pointer;font-size:16px;color:#333;font-weight:bold;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;display:flex;justify-content:center;align-items:center;;background:rgba(255,255,255,0.8);border-radius:10px;'
+            download.style = 'cursor:pointer;font-size:16px;color:#fff;font-weight:bold;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;display:flex;justify-content:center;align-items:center;;background:#35ccff;border-radius:10px;'
             r.appendChild(download)
             download.addEventListener('click', (e) => {
                 r.click();
@@ -59,7 +61,7 @@ function showToast(e) {
     var t = 1 < arguments.length && void 0 !== arguments[1] ? arguments[1] : 1e3
         , n = 2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : document.body
         , o = document.createElement("div");
-    o.style.cssText = "z-index:999999999999;position: fixed;width: auto;height: auto;max-width: 250px;background:rgba(255,255,255,0.6);border-radius:5px;color:#333;line-height:25px;padding:10px 20px;font-size:25px;transition: 0.3s;"
+    o.style.cssText = "z-index:999999999999;position: fixed;width: auto;height: auto;max-width: 250px;background:#35ccff;border-radius:5px;color:#fff;line-height:25px;padding:10px 20px;font-size:25px;transition: 0.3s;"
     o.innerText = e
     n.appendChild(o)
     o.style.top = window.innerHeight / 2 - o.clientHeight / 2 + "px"

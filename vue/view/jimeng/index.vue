@@ -38,14 +38,14 @@
       <el-row gutter="10">
         <el-col :span="12">
           <el-form-item label="语言">
-            <el-select v-model="form.lang" placeholder="" style="width: 100%;">
+            <el-select v-model="form.lang" placeholder="" style="width: 100%;" @change="getPage">
               <el-option v-for="item in langList" :key="item.lang" :label="item.name" :value="item.lang"/>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="FB专页">
-            <el-select-v2 placeholder="FB专业" v-model="form.page_id" filterable clearable style="width: 100%"
+            <el-select-v2 placeholder="FB专页" v-model="form.page_id" filterable clearable style="width: 100%"
                           :options="pages">
             </el-select-v2>
           </el-form-item>
@@ -101,7 +101,7 @@
 
 <script setup>
 import {hHttp, xhrHttp} from "../../utils/request";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {ElMessage} from 'element-plus';
 import draggable from "vuedraggable";
 
@@ -140,6 +140,11 @@ async function eventBus(Message) {
           parseInt(route.query.activeId), {
             Message: 'success'
           }).then()
+    } else {
+      chrome.tabs.sendMessage(
+          parseInt(route.query.activeId), {
+            Message: 'pushed'
+          }).then()
     }
   }
 }
@@ -171,7 +176,7 @@ async function submit() {
     return;
   }
 
-  if (form.value.type === 0 && !form.value.time) {
+  if (form.value.type === 1 && !form.value.time) {
     ElMessage.warning({
       message: '请选择排期时间'
     })
@@ -210,7 +215,9 @@ async function submit() {
 }
 
 function getPage() {
-  xhrHttp(`http://gpt.anyelse.com/callback/capturefacebooklist`, {}, 'post', 'application/json').then((res) => {
+  xhrHttp(`http://gpt.anyelse.com/callback/capturefacebooklist`, {
+    lang:form.value.lang
+  }, 'post', 'application/json').then((res) => {
     pages.value = JSON.parse(res).data.map((item) => {
       return {
         ...item,
