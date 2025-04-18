@@ -162,7 +162,7 @@ async function startGetHistory() {
 chrome.runtime.onMessage.addListener(async function (Message, sender, sendResponse) {
 
     if (Message.Message === 'getData') {
-        sendResponse({state: 200});
+        sendResponse({ state: 200 });
         xhs_getData();
     } else if (Message.Message === 'checkType') {
 
@@ -173,7 +173,7 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         }).then(r => {
 
         })
-        sendResponse({state: 200});
+        sendResponse({ state: 200 });
 
         if (location.href.indexOf('/user/profile') === -1) {
             chrome.runtime.sendMessage({
@@ -203,10 +203,10 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
             state: 200
         });
     } else if (Message.Message === 'getDataRedBook') {
-        sendResponse({state: 200});
+        sendResponse({ state: 200 });
         startGetHistory().then();
     } else if (Message.Message === 'startCollectHistory') {
-        sendResponse({state: 200});
+        sendResponse({ state: 200 });
         if (Message.max_collect) {
             max = Message.max_collect;
             console.log(max)
@@ -222,11 +222,11 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
         if (parseInt(Message.toolId) !== parseInt(toolId)) {
             return
         }
-        sendResponse({state: 200});
+        sendResponse({ state: 200 });
         max = 0;
     } else if (Message.Message === 'collect') {
 
-        sendResponse({state: 200});
+        sendResponse({ state: 200 });
         if (document.querySelectorAll('[class="user side-bar-component"] [href*="/user/profile/"]').length != 0) {
             await XHS_Collect_article_list();
         } else {
@@ -273,7 +273,7 @@ async function XHS_Collect_article_list() {
                             vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1],
                             url: art.querySelectorAll('[class="cover ld mask"],[class="cover mask ld"]')[0].href
                         });
-                        data_list.push({vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1]});
+                        data_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1] });
                         article_num++
                     } else {
                         /**帖子已收录 */
@@ -289,9 +289,9 @@ async function XHS_Collect_article_list() {
                         if (!if_have) {
                             article_list.push({
                                 vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1],
-                                url:art.querySelectorAll('[class="cover ld mask"],[class="cover mask ld"]')[0].href
+                                url: art.querySelectorAll('[class="cover ld mask"],[class="cover mask ld"]')[0].href
                             });
-                            data_list.push({vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1]});
+                            data_list.push({ vid: art.querySelectorAll('[href*="explore"]')[0].href.split('explore/')[1] });
                             article_num++
                         }
                     }
@@ -300,10 +300,10 @@ async function XHS_Collect_article_list() {
             } catch {
             }
 
-            if (article_list.length == 200) {
+            if (article_list.length == 100) {
                 await CallBackData(article_list, article_num, 0, 'article_list', 'continue');
                 article_list = [];
-            } else if (article_num >= 1000) {
+            } else if (article_num >= 200) {
 
                 await CallBackData(article_list, article_num, 0, 'article_list', 'over');
                 return;
