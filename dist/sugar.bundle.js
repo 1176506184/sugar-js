@@ -1134,7 +1134,6 @@ function patch(vm, newVnode) {
         }
     }
     function createElement(vnode) {
-        var _a;
         let domNode;
         if (vnode.tag) {
             if (typeof vnode.tag === 'string' && !isComponent(vnode, vm.components)) {
@@ -1152,7 +1151,7 @@ function patch(vm, newVnode) {
                         const value = attrs[key];
                         domNode.setAttribute(key, value);
                         if (key === 'instance') {
-                            if ((_a = vm[value]) === null || _a === void 0 ? void 0 : _a.value) {
+                            if (vm[value]) {
                                 vm[value].value = domNode;
                             }
                         }

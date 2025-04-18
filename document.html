@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:s-use="http://www.w3.org/1999/xhtml" xmlns:s-on="http://www.w3.org/1999/xhtml" xmlns="">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/dist/sugar.css">
+    <link rel="stylesheet" href="/document.css">
+    <script src="/dist/sugar.js"></script>
+    <script src="dist/sugar-ui.js"></script>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+<div id="app">
+    <header>
+        <img src="/logo.png" alt="" class="logo"/>
+        <div class="logo-title">sugar-js</div>
+        <div class="header-inner">
+            <div class="header-item">
+                本体
+            </div>
+            <div class="header-item">
+                组件
+            </div>
+            <div class="header-item">
+                工具
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="sugar-document-title">
+            快速使用
+        </div>
+        <div class="script-container">
+            <div class="sugar-small-title">初始化</div>
+            const sugarApp = makeSugar({
+            <div style="margin-left: 20px;">
+                bulk(){
+            </div>
+            <div style="margin-left: 40px;">return {</div>
+            <div style="margin-left: 40px;">}</div>
+            <div style="margin-left: 20px;">}</div>
+            })
+
+            sugar.mount('#app');
+
+
+        </div>
+
+        <div class="script-container">
+            <div class="sugar-small-title">useState</div>
+            <div>const [count, setCount] = useState(0);</div>
+            <div>setCount(count.value + 1);</div>
+            <div class="sugar-small-title" style="margin-top: 10px">示例 count:{{count}}</div>
+            <div>
+                <sugar-button @click="setCount(count + 1)">执行</sugar-button>
+            </div>
+        </div>
+
+        <div class="script-container">
+            <div class="sugar-small-title">useEffect</div>
+            <div>const [count, setCount] = useState(0);</div>
+            <div>const [count2, setCount2] = useState(0);</div>
+            <div>setCount(count.value + 1);</div>
+            <div>useEffect(()=>{</div>
+            <div style="margin-left: 20px">setCount2(count.value)</div>
+            <div>},[count])</div>
+            <div class="sugar-small-title" style="margin-top: 10px">示例 count:{{count}} count2:{{count2}}</div>
+            <div>
+                <sugar-button @click="setCount(count + 1)">执行</sugar-button>
+            </div>
+        </div>
+
+        <div class="script-container">
+            <div class="sugar-small-title">onMounted</div>
+            <div>const [count, setCount] = useState(0);</div>
+            <div>onMounted(()=>{
+                <div style="margin-left: 20px">setCount(1);</div>
+                <div style="margin-left: 20px">console.log(count.value);//1</div>
+                <div>})</div>
+            </div>
+        </div>
+
+        <div class="script-container">
+            <div class="sugar-small-title">instance</div>
+            <div>
+                {{instanceHtml}}
+            </div>
+        </div>
+
+        <div class="script-container">
+            <div class="sugar-small-title">nextTick</div>
+            <div>
+                如果你在更新一个state之后想等待更新DOM结束后在进行一些操作请将这些操作用nextTick(()=>{ //这里写要进行的操作
+                })即可
+            </div>
+        </div>
+
+        <div class="sugar-document-title" style="margin-top: 20px;">
+            sugar-ui
+        </div>
+
+        <div class="script-container">
+            <div class="sugar-small-title">sugar-button</div>
+            <div>
+                {{sugarButtonHtml}}
+            </div>
+        </div>
+
+
+        <div class="script-container">
+            <div class="sugar-small-title">sugar-dialog</div>
+            <div>
+                {{sugarDialogHtml}}
+            </div>
+            <sugar-dialog :model="show" @close="setShow(false)">测试</sugar-dialog>
+            <sugar-button @click="setShow(true)">执行</sugar-button>
+        </div>
+
+        <div class="script-container">
+            <div class="sugar-small-title">sugar-upload</div>
+            <div>
+                {{sugarUploadHtml}}
+            </div>
+
+            <sugar-upload @change="fileChange"><sugar-button>上传</sugar-button></sugar-upload>
+        </div>
+
+    </div>
+</div>
+
+<footer style="height: 50px;width: 100%">
+
+</footer>
+
+<script>
+    const {
+        makeSugar,
+        onMounted,
+        instance,
+        useState,
+        useEffect,
+        nextTick
+    } = SUGAR;
+    const sugarApp = makeSugar({
+        bulk() {
+            const [count, setCount] = useState(0);
+            const [count2, setCount2] = useState(0);
+            const [show, setShow] = useState(false);
+            useEffect(() => {
+                setCount2(count.value);
+            }, [count]);
+
+            const instanceHtml = `<div id="test" instance="test"><div>
+    const test = instance();
+    test.value等价于document.querySelector('#test')
+`;
+
+            const sugarDialogHtml = `<sugar-dialog :model="show" @close="setShow(false)">内容</sugar-dialog>
+                        const [show,setShow] = useState(false);
+                        onMounted(()=>{setShow(true)})
+                    `;
+
+            const sugarButtonHtml = `<sugar-button @click="setCount(count + 1)">执行</sugar-button>`;
+
+            const sugarUploadHtml = `<sugar-upload @change="fileChange"><sugar-button>上传</sugar-button></sugar-upload>
+function fileChange(e){
+                const file = e[0];
+                console.log(file)
+            }
+`;
+
+            function fileChange(e){
+                const file = e[0];
+                console.log(file)
+            }
+
+            return {
+                count,
+                setCount,
+                count2,
+                instanceHtml,
+                sugarDialogHtml,
+                show,
+                setShow,
+                sugarButtonHtml,
+                sugarUploadHtml,
+                fileChange
+            };
+        }
+    });
+
+    sugarApp.install(sugarUI);
+    sugarApp.mount('#app');
+</script>
+</body>
+</html>

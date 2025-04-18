@@ -41,7 +41,7 @@ export default function patch (vm, newVnode) {
             const value = attrs[key];
             domNode.setAttribute(key, value);
             if (key === 'instance') {
-              if (vm[value]?.value) { vm[value].value = domNode; }
+              if (vm[value]) { vm[value].value = domNode; }
             }
           }
         }
