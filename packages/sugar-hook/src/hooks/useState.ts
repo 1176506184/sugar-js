@@ -37,6 +37,8 @@ export function useState (initValue: any) {
     }
   };
 
+  setState.sugarRefDataType = 'setState';
+
   return [
     state,
     setState
