@@ -15,7 +15,6 @@ const lazy = {
     const [show, setShow] = useState(false);
     const node = instance();
     onMounted(() => {
-      console.log(node.value);
       window.addEventListener('scroll', () => {
         if (node.value.getBoundingClientRect().top < window.innerHeight) {
           setShow(true);

@@ -187,12 +187,15 @@ export function bindAttrAndEvent (vm, vnode) {
                 return;
               }
             }
-
             const parameters = on[key].parameters;
             if (parameters?.length) {
               on[key].value(...parameters);
             } else {
-              on[key].value(e);
+              if (e.target?.nodeType === 1 && on[key].value?.name === 'setState') {
+                on[key].value(e.target.value);
+              } else {
+                on[key].value(e);
+              }
             }
 
             if (on[key].modifiers.includes('stop')) {

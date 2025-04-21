@@ -117,6 +117,8 @@
 <body>
 <div id="app">
 
+
+
     <div class="nav">
         <div class="web_name">
             <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo" alt="">
@@ -134,6 +136,9 @@
              :style="perS.p2 + ';margin-left:50%;transform: translateX(-50%);background:#333'">
         </div>
     </sugar-percentage>
+
+    <input @input="setTextModel" :value="textModel" placeholder="test"/>
+    <input type="file" @change="fileChange"/>
 
     <div s-for="(item,index) in list" s-if="showFile">
         <sugar-upload @change="fileChange(item,index)" :key="'file'+index">
@@ -217,6 +222,8 @@
 
             const testRef = instance();
             const ttRef = instance();
+
+            const [textModel,setTextModel] = useState('');
 
             const [perS, setPerS] = useState({
                 p1: '',
@@ -317,6 +324,10 @@
                 console.log(e);
             }
 
+            function inputText(e){
+                console.log(e.target.value)
+            }
+
             return {
                 state,
                 active,
@@ -350,7 +361,10 @@
                 setShowFile,
                 perS,
                 testRef,
-                ttRef
+                ttRef,
+                textModel,
+                setTextModel,
+                inputText
             };
         }
     });
