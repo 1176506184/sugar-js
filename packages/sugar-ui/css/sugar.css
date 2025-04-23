@@ -324,4 +324,27 @@
   position: relative;
 }
 
+.sugar-field {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.sugar-field-label {
+  white-space: nowrap;
+  font-size: 15px;
+  color: #333;
+}
+
+.sugar-field-input {
+  outline: none;
+  border: none;
+  text-decoration: none;
+  padding-left: 0;
+  margin-left: 10px;
+  font-size: 15px;
+}
+
 /*# sourceMappingURL=sugar.css.map */

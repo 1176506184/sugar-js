@@ -126,6 +126,12 @@
         <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
 
+    <sugar-field :value="fieldValue" @input="setFieldValue">
+        <div #default>
+测试
+        </div>
+    </sugar-field>
+
     <sugar-percentage instance="ttRef" id="per_1" sugar-wh="400,300"
                       background="https://fastly.picsum.photos/id/1044/200/200.jpg?hmac=HB3e6tTss6J_9wexZ1v1psMlccdyQIrHrrijUgWXFhg">
         <div instance="testRef" sugar-wh="300,100" sugar-tb="10,10" sugar-id="1"
@@ -219,6 +225,8 @@
     } = SUGAR;
     var sugar = makeSugar({
         bulk() {
+
+            const [fieldValue, setFieldValue] = useState('')
 
             const testRef = instance();
             const ttRef = instance();
@@ -364,7 +372,9 @@
                 ttRef,
                 textModel,
                 setTextModel,
-                inputText
+                inputText,
+                fieldValue,
+                setFieldValue
             };
         }
     });

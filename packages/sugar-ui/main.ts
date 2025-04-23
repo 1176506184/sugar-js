@@ -11,9 +11,10 @@ import swiper from './package/swiper';
 import swiperItem from './package/swiperItem';
 import percentage from './package/percentage';
 import lazy from './package/lazy';
+import field from './package/field';
 import { store } from './package/store';
 
-export const sugarUI = [lazy, percentage, dialog, button, image, checkbox, pageNation, text, upload, showToast, message, showMessageBox, backTop, swiper, swiperItem];
+export const sugarUI = [field, lazy, percentage, dialog, button, image, checkbox, pageNation, text, upload, showToast, message, showMessageBox, backTop, swiper, swiperItem];
 export { store };
 if (typeof window !== 'undefined') {
   (function (global: any) {
