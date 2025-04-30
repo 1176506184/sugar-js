@@ -90,8 +90,11 @@
             前往采集页
           </el-button>
 
-          <el-button type="primary" style="margin-right: 10px" @click="submit" :loading="loading">
+          <el-button type="primary" @click="submit(0)" :loading="loading">
             提交
+          </el-button>
+          <el-button type="primary" style="margin-right: 10px" @click="submit(1)" :loading="loading">
+            提交（转繁体）
           </el-button>
         </div>
       </div>
@@ -160,7 +163,7 @@ function close() {
   window.close();
 }
 
-async function submit() {
+async function submit(type) {
 
   if (imageList.value.length === 0) {
     ElMessage.warning({
@@ -198,7 +201,8 @@ async function submit() {
     ddid: localStorage.getItem('ddid'),
     publish_type: form.value.type,
     plan_time: form.value.time,
-    lang: form.value.lang
+    lang: form.value.lang,
+    tofanti:type
   });
   if (state) {
     form.value.title = '';
@@ -216,7 +220,7 @@ async function submit() {
 
 function getPage() {
   xhrHttp(`http://gpt.anyelse.com/callback/capturefacebooklist`, {
-    lang:form.value.lang
+    lang: form.value.lang
   }, 'post', 'application/json').then((res) => {
     pages.value = JSON.parse(res).data.map((item) => {
       return {
