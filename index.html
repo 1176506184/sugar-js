@@ -118,7 +118,6 @@
 <div id="app">
 
 
-
     <div class="nav">
         <div class="web_name">
             <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo" alt="">
@@ -126,11 +125,9 @@
         <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
     </div>
 
-    <sugar-field :value="fieldValue" @input="setFieldValue">
-        <div #default>
-测试
-        </div>
-    </sugar-field>
+    <sugar-picker :options="options"></sugar-picker>
+
+    <sugar-field :value="fieldValue" @input="setFieldValue"></sugar-field>
 
     <sugar-percentage instance="ttRef" id="per_1" sugar-wh="400,300"
                       background="https://fastly.picsum.photos/id/1044/200/200.jpg?hmac=HB3e6tTss6J_9wexZ1v1psMlccdyQIrHrrijUgWXFhg">
@@ -226,12 +223,32 @@
     var sugar = makeSugar({
         bulk() {
 
-            const [fieldValue, setFieldValue] = useState('')
+            const options = [[{
+                key: 0,
+                value: '选项1'
+            }, {
+                key: 1,
+                value: '选项2'
+            }, {
+                key: 2,
+                value: '选项3'
+            }],[{
+                key: 0,
+                value: '选项1'
+            }, {
+                key: 1,
+                value: '选项2'
+            }, {
+                key: 2,
+                value: '选项3'
+            }]];
+
+            const [fieldValue, setFieldValue] = useState('');
 
             const testRef = instance();
             const ttRef = instance();
 
-            const [textModel,setTextModel] = useState('');
+            const [textModel, setTextModel] = useState('');
 
             const [perS, setPerS] = useState({
                 p1: '',
@@ -332,8 +349,8 @@
                 console.log(e);
             }
 
-            function inputText(e){
-                console.log(e.target.value)
+            function inputText(e) {
+                console.log(e.target.value);
             }
 
             return {
@@ -374,7 +391,8 @@
                 setTextModel,
                 inputText,
                 fieldValue,
-                setFieldValue
+                setFieldValue,
+                options
             };
         }
     });

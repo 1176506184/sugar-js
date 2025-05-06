@@ -112,7 +112,7 @@ export function componentRender () {
     update(vm);
 
     Object.values(data).forEach((item: any) => {
-      if (typeof item === 'object' && item.sugarRefDataType === 'useState') {
+      if (typeof item === 'object' && item?.sugarRefDataType === 'useState') {
         item.initDep(() => {
           update(vm);
         });

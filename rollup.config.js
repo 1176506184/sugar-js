@@ -7,6 +7,7 @@ import livereload from 'rollup-plugin-livereload';
 import babel from 'rollup-plugin-babel';
 import copy from 'rollup-plugin-copy';
 import { visualizer } from 'rollup-plugin-visualizer';
+import strip from 'rollup-plugin-strip';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isUi = process.env.NODE_ENV === 'ui';
@@ -61,6 +62,12 @@ const rollupConfig = isUi ? {
     replace({
       ENV: JSON.stringify(process.env.NODE_ENV || 'development')
     }),
+    // eslint-disable-next-line multiline-ternary
+    !isDev ? strip({
+      include: '**/*.js', // 包含的文件
+      debugger: true, // 移除 debugger 语句
+      functions: ['console.*'] // 移除 console 语句
+    }) : null,
     !isDev ? uglify() : null,
     // 热更新 默认监听根文件夹
     isDev ? livereload() : null,
