@@ -133,7 +133,6 @@ export default function patch (vm, newVnode) {
       }
 
       if (attr === 'instance') {
-        console.log(newAttrs[attr]);
         if (vm[newAttrs[attr]]) { vm[newAttrs[attr]].value = el; }
       }
     });

@@ -1,3 +1,4 @@
+import { nextTick } from '@sugar/sugar-reactive';
 export function useState (initValue: any) {
   const queue = createQueue();
   const callbacks = [];
@@ -31,7 +32,7 @@ export function useState (initValue: any) {
       for (let i = 0; i < callbacks.length; i++) {
         queue.pushQueue(callbacks[i]);
       }
-      setTimeout(() => {
+      nextTick(() => {
         queue.flushQueue();
       });
     }
@@ -48,7 +49,7 @@ export function useState (initValue: any) {
 function createQueue () {
   const queue = [];
 
-  function pushQueue (dep) {
+  function pushQueue (dep: any) {
     queue.push(dep);
   }
 
@@ -59,7 +60,7 @@ function createQueue () {
     }
   }
 
-  function uniqueArray (arr) {
+  function uniqueArray (arr: any) {
     return [...new Set(arr)];
   }
 

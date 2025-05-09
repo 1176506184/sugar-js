@@ -115,98 +115,15 @@
 
 </style>
 <body>
-<div id="app">
-
-
-    <div class="nav">
-        <div class="web_name">
-            <img src="//store.44finefood.com/logo/2022-04-27/306EFED3C8A8.png" class="headling_logo" alt="">
-        </div>
-        <img src="https://666.44finefood.com/Content/images/menu.svg" class="menu" @click="open" alt=""/>
-    </div>
-
-    <sugar-picker :options="options"></sugar-picker>
-
-    <sugar-field :value="fieldValue" @input="setFieldValue"></sugar-field>
-
-    <sugar-percentage instance="ttRef" id="per_1" sugar-wh="400,300"
-                      background="https://fastly.picsum.photos/id/1044/200/200.jpg?hmac=HB3e6tTss6J_9wexZ1v1psMlccdyQIrHrrijUgWXFhg">
-        <div instance="testRef" sugar-wh="300,100" sugar-tb="10,10" sugar-id="1"
-             :style="perS.p1 + ';margin-left:50%;transform: translateX(-50%);background:#fff'">
-            测试啊啊啊
-        </div>
-        <div sugar-wh="300,50" sugar-tb="10,10" sugar-id="2"
-             :style="perS.p2 + ';margin-left:50%;transform: translateX(-50%);background:#333'">
-        </div>
-    </sugar-percentage>
-
-    <input @input="setTextModel" :value="textModel" placeholder="test"/>
-    <input type="file" @change="fileChange"/>
-
-    <div s-for="(item,index) in list" s-if="showFile">
-        <sugar-upload @change="fileChange(item,index)" :key="'file'+index">
-            <sugar-button>上传</sugar-button>
-        </sugar-upload>
-    </div>
-
-    <sugar-back-top></sugar-back-top>
-
-    <div s-if="false"></div>
-
-    <sugar-swiper>
-        <sugar-swiper-item s-for="(item,index) in list">
-            <div style="height: 100px;display: flex;align-items: center;justify-content: center">
-                {{index + 1}}
+<div id="app" style="width: 100%;height: 100vh;">
+    <div :style="style">
+        <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;">
+            <div style="font-size: 20px;">
+                {{signal}}
             </div>
-        </sugar-swiper-item>
-    </sugar-swiper>
-
-    <sugar-text style="margin:20px" rows="3" arrow="true">{{text}}</sugar-text>
-
-    <sugar-pagination
-            :pi="pi"
-            :ps="ps"
-            :total="total"
-            page="2"
-            style="margin-top: 10px"
-            @change="changePage"
-            :btn="true"
-            :show-most="true">
-    </sugar-pagination>
-
-    <div class="article_body" s-loading="loading">
-        <div class="title" instance="htmlRef">
-            {{state.title}}
-        </div>
-        <div class="content" s-html="state.content" style="font-size: 13px">
+            <sugar-button @click="signalAdd">ce</sugar-button>
         </div>
     </div>
-
-    <div class="article_join">
-        <div class="item" s-for="(item,index) in list" :style="index === (list.length - 1) ? 'border:0' : ''">
-            <div class="image_box">
-                <sugar-lazy>
-                    <img :src="item.cover" @click="showImage(item)" alt="" @error="imageError"/>
-                </sugar-lazy>
-            </div>
-            <div class="label_box">
-                {{item.title}}
-            </div>
-        </div>
-    </div>
-
-    <sugar-dialog :model="active" @close="close" direction="top">
-        <div class="menu_fixed_box">
-            <div s-for="(item,index) in cateList"
-                 style="border: 1px solid #666;border-radius: 3px;font-size: 13px;color:#666;text-align: center;line-height: 28px;margin: 10px;width: 80px;height: 28px;float: left">
-                {{item}}
-            </div>
-        </div>
-    </sugar-dialog>
-
-    <sugar-dialog :model="showImageActive" @close="closeImage" instance="dialog">
-        <img :src="popImage" style="width: 100%;height: auto"/>
-    </sugar-dialog>
 </div>
 </body>
 
@@ -218,181 +135,24 @@
         instance,
         useState,
         useEffect,
-        nextTick
+        nextTick,
+        useSignal
     } = SUGAR;
     var sugar = makeSugar({
         bulk() {
 
-            const options = [[{
-                key: 0,
-                value: '选项1'
-            }, {
-                key: 1,
-                value: '选项2'
-            }, {
-                key: 2,
-                value: '选项3'
-            }],[{
-                key: 0,
-                value: '选项1'
-            }, {
-                key: 1,
-                value: '选项2'
-            }, {
-                key: 2,
-                value: '选项3'
-            }]];
+            const signal = useSignal(0);
+            const style = useSignal('width: 100%;height: 100%;');
 
-            const [fieldValue, setFieldValue] = useState('');
-
-            const testRef = instance();
-            const ttRef = instance();
-
-            const [textModel, setTextModel] = useState('');
-
-            const [perS, setPerS] = useState({
-                p1: '',
-                p2: ''
-            });
-
-            onMounted(() => {
-                const wt = getLoadFinish('per_1');
-                setPerS({
-                    p1: wt[1],
-                    p2: wt[2]
-                });
-            });
-
-            const [pi, setPi] = useState(1);
-            const [total, setTotal] = useState(1500);
-            const [ps, setPS] = useState(10);
-            const [fileList, setFileList] = useState([]);
-            const [showFile, setShowFile] = useState(true);
-
-            const [checked, setChecked] = useState(false);
-            const [text, setText] = useState(`自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
-            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
-            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
-            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
-            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
-            TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！
-            TVB知名男星內地連續直播12小時！被贊太敬業`);
-
-            const [state, setState] = useState({
-                name: 0,
-                title: '狗狗因為太害怕人類，被安排于兩天后安樂死，幸好她出現了..',
-                content: `<p>自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業自曝遭富婆大額打賞！TVB知名男星內地連續直播12小時！被贊太敬業<span id="vft" data-wordc="231"></span></p>
-<p style="font-weight: 600; color: #CC6633;font-size:15px !important ">
-                版權所有，禁止轉載。 違者必究法律責任。
-            </p>
-<h2>巴拉巴拉</h2>
-`
-            });
-
-            const [cateList, setCateList] = useState(['娱乐', '新闻']);
-
-            const [list, setList] = useState([{
-                title: '你要悄悄的變好，然後驚豔所有人：真正厲害的人，會懂得「蘑菇定律」！',
-                cover: 'https://fastly.picsum.photos/id/1044/200/200.jpg?hmac=HB3e6tTss6J_9wexZ1v1psMlccdyQIrHrrijUgWXFhg'
-            }, {
-                title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
-                cover: 'https://picsum.photos/200/200?random=1'
-            }, {
-                title: '#耽美 釣系yyds！汪嘰的雅正徹底離家出走了',
-                cover: 'https://picsum.photos/300/200?random=2'
-            }]);
-
-            const [active, setActive] = useState(false);
-
-            const htmlRef = instance(null);
-            const dialog = instance(null);
-
-            const [showImageActive, setShowImageActive] = useState(false);
-
-            const [popImage, setPopImage] = useState('');
-
-            const [top, setTop] = useState(-50);
-
-            const [loading, setLoading] = useState(false);
-
-            const [show, setShow] = useState(false);
-
-            function close() {
-                setActive(false);
+            function signalAdd() {
+                signal.value++;
             }
 
-            function open() {
-                setActive(true);
-            }
-
-            function closeImage() {
-                setShowImageActive(false);
-            }
-
-            function showImage(item) {
-                setPopImage(item.cover);
-                setShowImageActive(true);
-            }
-
-            useEffect(() => {
-            }, [showImageActive]);
-
-            function imageError(e) {
-                // console.log(e.target);
-            }
-
-            function changePage(v) {
-                setPi(v);
-            }
-
-            function fileChange(e) {
-                console.log(e);
-            }
-
-            function inputText(e) {
-                console.log(e.target.value);
-            }
 
             return {
-                state,
-                active,
-                list,
-                close,
-                open,
-                htmlRef,
-                showImageActive,
-                closeImage,
-                popImage,
-                showImage,
-                top,
-                cateList,
-                loading,
-                setLoading,
-                show,
-                setShow,
-                imageError,
-                checked,
-                setChecked,
-                dialog,
-                pi,
-                ps,
-                total,
-                setTotal,
-                changePage,
-                text,
-                fileChange,
-                fileList,
-                showFile,
-                setShowFile,
-                perS,
-                testRef,
-                ttRef,
-                textModel,
-                setTextModel,
-                inputText,
-                fieldValue,
-                setFieldValue,
-                options
+                signal,
+                signalAdd,
+                style
             };
         }
     });

@@ -175,44 +175,12 @@ export function deepClone (value, weakMap = new WeakMap(), strict = false) {
   return newObj;
 }
 
-export function guid () {
+export function guid (): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     const r = Math.random() * 16 | 0;
-    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
-}
-
-export function deepEqual (obj1, obj2) {
-  // 如果两者引用相同，则直接返回true
-  if (obj1 === obj2) return true;
-
-  // 如果两者类型不同，或者其中之一不是对象，则它们不相等
-  const type1 = typeof obj1;
-  const type2 = typeof obj2;
-  if (type1 !== 'object' || type2 !== 'object') return false;
-
-  // 对于数组和普通对象做不同的处理
-  if (Array.isArray(obj1)) {
-    if (!Array.isArray(obj2) || obj1.length !== obj2.length) return false;
-    for (let i = 0; i < obj1.length; i++) {
-      if (!deepEqual(obj1[i], obj2[i])) return false;
-    }
-  } else {
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
-
-    // 检查键的数量是否相等
-    if (keys1.length !== keys2.length) return false;
-
-    // 遍历所有键并递归比较每个值
-    for (const key of keys1) {
-      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) return false;
-    }
-  }
-
-  // 所有检查通过，表示两个对象深度相等
-  return true;
 }
 
 export function addCSS (cssText) {

@@ -15,12 +15,10 @@ export function sugarRender () {
 
   function pushUiEffect (vm: any, data: any) {
     bindT(vm, data);
-    Object.values(data).forEach((item: any) => {
-      if (typeof item === 'object' && item?.sugarRefDataType === 'useState') {
-        item.initDep(() => {
-          update(vm);
-        });
-      }
+    Object.values(data).filter((item: any) => typeof item === 'object' && item?.sugarRefDataType === 'useState').forEach((item: any) => {
+      item.initDep(() => {
+        update(vm);
+      });
     });
     vm.forceUpdate = function () {
       update(vm);

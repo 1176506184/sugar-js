@@ -20,11 +20,10 @@ const picker = {
     const pickerRefs = instance();
     useEffect(() => {
       setOptions(ctx.options.value);
-      console.log(options.value);
     }, [ctx.options], true);
 
     onMounted(() => {
-      console.log(pickerRefs.value);
+
     });
 
     return {

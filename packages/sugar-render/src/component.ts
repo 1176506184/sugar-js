@@ -129,7 +129,7 @@ export function componentRender () {
   function update (vm) {
     const vnode = render.call(VmDataRefPassive(vm));
     bindAttrAndEvent(vm, vnode);
-    assembling(vnode, vm.slot);
+    vm.slot.length && assembling(vnode, vm.slot);
     patch(vm, vnode);
     vm._vnode = vnode;
   }

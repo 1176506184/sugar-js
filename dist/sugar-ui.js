@@ -64,7 +64,7 @@
                         {{son.value}}
                     </div>
                 </div>
-           </div>`,bulk(e){const[t,a]=ee([]),l=ae();return le(()=>{a(e.options.value),console.log(t.value)},[e.options],!0),te(()=>{console.log(l.value)}),{options:t,pickerRefs:l}}},{name:"sugar-field",render:`<div class="sugar-field">
+           </div>`,bulk(e){const[t,a]=ee([]);var l=ae();return le(()=>{a(e.options.value)},[e.options],!0),te(()=>{}),{options:t,pickerRefs:l}}},{name:"sugar-field",render:`<div class="sugar-field">
             <slot name="label" instance="labelRef"></slot>
             <div class="sugar-field-label" s-if="showLabel">{{label}}</div>
             <slot name="default" instance="defaultRef"></slot>

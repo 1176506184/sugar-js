@@ -1,7 +1,9 @@
-let mountHandleList = {};
-let ActiveId = '';
+import { type MountHandleList, type MountHandler } from '../types';
 
-function onMounted (handle) {
+let mountHandleList: MountHandleList = {};
+let ActiveId: string = '';
+
+function onMounted (handle: MountHandler) {
   if (!mountHandleList[ActiveId]) {
     mountHandleList[ActiveId] = [];
   }
@@ -12,7 +14,7 @@ function onMounted (handle) {
   });
 }
 
-function updateActiveId (id) {
+function updateActiveId (id: string) {
   ActiveId = id;
 }
 
