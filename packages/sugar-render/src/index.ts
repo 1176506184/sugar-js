@@ -179,7 +179,7 @@ export function bindAttrAndEvent (vm, vnode) {
       if (Object.hasOwnProperty.call(on, key)) {
         if (on[key].value && !on[key].isStatic) {
           on[key].value = vm.data[on[key].value];
-          on[key].fun = function (e) {
+          on[key].fun = function (e: any) {
             if (on[key].modifiers.includes('self')) {
               if (e.target !== e.currentTarget) {
                 return;
@@ -189,7 +189,7 @@ export function bindAttrAndEvent (vm, vnode) {
             if (parameters?.length) {
               on[key].value(...parameters);
             } else {
-              if (e.target?.nodeType === 1 && on[key].value?.sugarRefDataType === 'setState') {
+              if (e?.target?.nodeType === 1 && on[key].value?.sugarRefDataType === 'setState') {
                 on[key].value(e.target.value);
               } else {
                 on[key].value(e);

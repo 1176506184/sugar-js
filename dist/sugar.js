@@ -21,6 +21,22 @@
         ActiveId = id;
     }
 
+    function useEffect(fun, deps = [], run = false) {
+        if (typeof fun === 'object') {
+            console.log(fun.render());
+        }
+        else {
+            deps.forEach((dep) => {
+                if (dep && typeof dep.initDep === 'function') {
+                    dep.initDep(fun);
+                }
+            });
+        }
+        if (run) {
+            fun();
+        }
+    }
+
     function instance() {
         const result = {};
         const data = {
@@ -57,82 +73,6 @@
             }
         });
         timerFunc();
-    }
-
-    function useState(initValue) {
-        const queue = createQueue$1();
-        const callbacks = [];
-        function initDep(dep) {
-            callbacks.push(dep);
-        }
-        const state = {
-            value: initValue,
-            sugarRefDataType: 'useState',
-            initDep
-        };
-        const data = {
-            value: initValue
-        };
-        Object.defineProperty(state, 'value', {
-            get() {
-                return data.value;
-            },
-            set() {
-                console.warn('Prohibit modifying ref variables');
-            }
-        });
-        const setState = (newState) => {
-            if (data.value !== newState) {
-                data.value = newState;
-                for (let i = 0; i < callbacks.length; i++) {
-                    queue.pushQueue(callbacks[i]);
-                }
-                nextTick(() => {
-                    queue.flushQueue();
-                });
-            }
-        };
-        setState.sugarRefDataType = 'setState';
-        return [
-            state,
-            setState
-        ];
-    }
-    function createQueue$1() {
-        const queue = [];
-        function pushQueue(dep) {
-            queue.push(dep);
-        }
-        function flushQueue() {
-            if (queue.length > 0) {
-                uniqueArray(queue).forEach((dep) => dep());
-                queue.length = 0;
-            }
-        }
-        function uniqueArray(arr) {
-            return [...new Set(arr)];
-        }
-        return {
-            queue,
-            pushQueue,
-            flushQueue
-        };
-    }
-
-    function useEffect(fun, deps = [], run = false) {
-        if (typeof fun === 'object') {
-            console.log(fun.render());
-        }
-        else {
-            deps.forEach((dep) => {
-                if (dep && typeof dep.initDep === 'function') {
-                    dep.initDep(fun);
-                }
-            });
-        }
-        if (run) {
-            fun();
-        }
     }
 
     function useSignal(initValue) {
@@ -1091,10 +1031,9 @@
         const props = {};
         const slot = children;
         Object.keys(attrs).forEach((propName) => {
+            console.log(attrs);
             if (propName !== 'instance') {
-                const [tempGet, tempSet] = useState(attrs[propName]);
-                props[propName] = tempGet;
-                props[propName + '_sugar_setState'] = tempSet;
+                props[propName] = useSignal(attrs[propName]);
             }
         });
         Object.keys(on).forEach((propName) => {
@@ -1467,7 +1406,7 @@
         Object.keys(oldVnode._sugar.vm.props).forEach(prop => {
             const { attrs, on } = newVnode.data;
             if (Object.keys(attrs).includes(prop)) {
-                oldVnode._sugar.vm.props[prop + '_sugar_setState'](newVnode.data.attrs[prop]);
+                oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
             }
             else if (Object.keys(on).includes(prop)) {
                 if (newVnode.data.on[prop].parameters) {
@@ -1695,7 +1634,7 @@
                                 on[key].value(...parameters);
                             }
                             else {
-                                if (((_a = e.target) === null || _a === void 0 ? void 0 : _a.nodeType) === 1 && ((_b = on[key].value) === null || _b === void 0 ? void 0 : _b.sugarRefDataType) === 'setState') {
+                                if (((_a = e === null || e === void 0 ? void 0 : e.target) === null || _a === void 0 ? void 0 : _a.nodeType) === 1 && ((_b = on[key].value) === null || _b === void 0 ? void 0 : _b.sugarRefDataType) === 'setState') {
                                     on[key].value(e.target.value);
                                 }
                                 else {
@@ -1845,7 +1784,6 @@
                 onMounted,
                 makeSugar,
                 instance,
-                useState,
                 useEffect,
                 nextTick,
                 useSignal
@@ -1859,7 +1797,6 @@
     exports.onMounted = onMounted;
     exports.useEffect = useEffect;
     exports.useSignal = useSignal;
-    exports.useState = useState;
 
 }));
 //# sourceMappingURL=sugar.js.map

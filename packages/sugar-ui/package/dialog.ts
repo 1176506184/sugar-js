@@ -1,5 +1,8 @@
-// @ts-expect-error
-const { useEffect, useState } = SUGAR;
+const {
+  useEffect,
+  useSignal
+  // @ts-expect-error
+} = SUGAR;
 
 const dialog = {
   name: 'sugar-dialog',
@@ -11,35 +14,37 @@ const dialog = {
         </div>
 </div>`,
   bulk (ctx) {
-    const [show, setShow]: any = useState(false);
-    const [opacity, setOpacity]: any = useState(0);
-    const direction = ctx.direction?.value ?? 'center';
-    const [style, setStyle]: any = useState('');
-    const [transform, setTransform] = useState(getInitDirection(direction));
+    const show: any = useSignal(ctx.model.value);
+    const opacity: any = useSignal(0);
+    const direction: any = ctx.direction?.value ?? 'center';
+    const style: any = useSignal('');
+    const transform: any = useSignal(getInitDirection(direction));
     useEffect(() => {
       if (ctx.model.value) {
-        setShow(true);
+        show.value = true;
         setTimeout(() => {
-          setOpacity(1);
+          opacity.value = 1;
+          style.value = `opacity:${opacity.value};`;
+          console.log(style);
         }, 50);
       } else {
-        setOpacity(0);
+        opacity.value = 0;
+        style.value = `opacity:${opacity.value};`;
         setTimeout(() => {
           if (!ctx.model.value) {
-            setShow(false);
+            show.value = false;
           }
         }, 300);
       }
 
-      setStyle(`opacity:${opacity.value};`);
       if (show.value) {
         setTimeout(() => {
-          setTransform(getInitDirection(direction, show.value));
+          transform.value = getInitDirection(direction, show.value);
         }, 50);
       } else {
-        setTransform(getInitDirection(direction, show.value));
+        transform.value = getInitDirection(direction, show.value);
       }
-    }, [ctx.model, opacity, show], true);
+    }, [ctx.model], true);
 
     function close () {
       ctx.close();

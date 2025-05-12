@@ -1,6 +1,6 @@
 import { makeSugar, onMounted } from '@sugar/sugar-core';
 import { instance, nextTick } from '@sugar/sugar-reactive';
-import { useState, useEffect, useSignal } from '@sugar/sugar-hook';
+import { useEffect, useSignal } from '@sugar/sugar-hook';
 
 if (typeof window !== 'undefined') {
   (function (global: any) {
@@ -8,7 +8,6 @@ if (typeof window !== 'undefined') {
       onMounted,
       makeSugar,
       instance,
-      useState,
       useEffect,
       nextTick,
       useSignal
@@ -20,7 +19,6 @@ export {
   makeSugar,
   onMounted,
   instance,
-  useState,
   useEffect,
   nextTick,
   useSignal

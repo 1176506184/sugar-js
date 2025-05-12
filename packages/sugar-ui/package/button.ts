@@ -1,5 +1,5 @@
 // @ts-expect-error
-const { useState } = SUGAR;
+const { useSignal } = SUGAR;
 
 const button = {
   name: 'sugar-button',
@@ -8,17 +8,13 @@ const button = {
                     <slot name="label"></slot>
                  </button>`,
   bulk (ctx) {
-    const [text, setText]: any = useState(0);
-
-    function click () {
-      setText(text.value + 1);
-      ctx.click?.();
+    function click (e: any) {
+      ctx.click?.(e);
     }
 
     return {
       click,
-      ctx,
-      text
+      ctx
     };
   }
 };

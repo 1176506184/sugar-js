@@ -1,5 +1,5 @@
 import { deepClone, guid } from '@sugar/sugar-shared';
-import { mountHandleList, updateActiveId, useState } from '@sugar/sugar-hook';
+import { mountHandleList, updateActiveId, useSignal } from '@sugar/sugar-hook';
 import { bindAttrAndEvent, bindT, VmDataRefPassive } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patch from './patch';
@@ -21,10 +21,9 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
   const slot = children;
 
   Object.keys(attrs).forEach((propName) => {
+    console.log(attrs);
     if (propName !== 'instance') {
-      const [tempGet, tempSet] = useState(attrs[propName]);
-      props[propName] = tempGet;
-      props[propName + '_sugar_setState'] = tempSet;
+      props[propName] = useSignal(attrs[propName]);
     }
   });
   Object.keys(on).forEach((propName) => {

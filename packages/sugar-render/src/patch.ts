@@ -250,7 +250,7 @@ export function updateComponent (newVnode: any, oldVnode: any) {
       on
     } = newVnode.data;
     if (Object.keys(attrs).includes(prop)) {
-      oldVnode._sugar.vm.props[prop + '_sugar_setState'](newVnode.data.attrs[prop]);
+      oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
     } else if (Object.keys(on).includes(prop)) {
       if (newVnode.data.on[prop].parameters) {
         oldVnode._sugar.vm.props[prop] = function () {
