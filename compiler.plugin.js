@@ -92,7 +92,7 @@ function parseAttributes(context, type) {
       continue;
     }
     const attr = parseAttribute(context, attributeNames);
-    if (attr.name === "s-if") {
+    if (["s-if", "s-html"].includes(attr.name)) {
       attr.value.content = bindCtx(attr.value.content);
     }
     if (attr.name === "s-for") {

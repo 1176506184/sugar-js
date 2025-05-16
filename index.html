@@ -115,10 +115,11 @@
 
 </style>
 <body>
-<div id="app" style="width: 100%;height: 100vh;">
+<div id="app" style="width: 100%;height: 200vh;">
     <div :style="'a'+style">
         {{signal}}
     </div>
+    <input s-model="value"/>
     <sugar-button @click="open">展示</sugar-button>
     <sugar-dialog :model="show" @close="close">
         <div style="width: 100px;height: 100px;background: #fff"></div>
@@ -137,9 +138,13 @@
     <div s-for="(item,index) in list">
         {{item}}
     </div>
+    <sugar-back-top></sugar-back-top>
+    <sugar-upload @change="fileChange">
+        <sugar-button>上传</sugar-button>
+    </sugar-upload>
 </div>
 </body>
-
+const files = []
 <script>
 
     const {
@@ -154,8 +159,9 @@
     var sugar = makeSugar({
         bulk() {
 
-            const list = useSignal([1,2,3]);
-            const index = useSignal(0)
+            const list = useSignal([1, 2, 3]);
+            const index = useSignal(0);
+            const value = useSignal("");
 
             const pi = useSignal(1);
             const ps = useSignal(10);
@@ -185,6 +191,10 @@
                 console.log(signal.value);
             }, [signal]);
 
+            function fileChange(e) {
+                console.log(e);
+            }
+
             return {
                 signal,
                 signalAdd,
@@ -197,7 +207,9 @@
                 ps,
                 total,
                 list,
-                index
+                index,
+                fileChange,
+                value
             };
         }
     });

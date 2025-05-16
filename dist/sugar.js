@@ -253,7 +253,7 @@
                 continue;
             }
             const attr = parseAttribute(context, attributeNames);
-            if (attr.name === 's-if') {
+            if (['s-if', 's-html'].includes(attr.name)) {
                 attr.value.content = bindCtx(attr.value.content);
             }
             if (attr.name === 's-for') {
@@ -1702,7 +1702,6 @@
                     if (on[key].value && !on[key].isStatic) {
                         on[key].value = vm.data[on[key].value];
                         on[key].fun = function (e) {
-                            var _a, _b;
                             if (on[key].modifiers.includes('self')) {
                                 if (e.target !== e.currentTarget) {
                                     return;
@@ -1713,12 +1712,7 @@
                                 on[key].value(...parameters);
                             }
                             else {
-                                if (((_a = e === null || e === void 0 ? void 0 : e.target) === null || _a === void 0 ? void 0 : _a.nodeType) === 1 && ((_b = on[key].value) === null || _b === void 0 ? void 0 : _b.sugarRefDataType) === 'setState') {
-                                    on[key].value(e.target.value);
-                                }
-                                else {
-                                    on[key].value(e);
-                                }
+                                on[key].value(e);
                             }
                             if (on[key].modifiers.includes('stop')) {
                                 e.stopPropagation();
