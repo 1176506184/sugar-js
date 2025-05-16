@@ -3,6 +3,7 @@ var isArray = Array.isArray;
 var extend = Object.assign;
 
 // packages/sugar-compiler/src/parse.ts
+var globalScope = /* @__PURE__ */ new Set([]);
 function parse(context, ancestors) {
   const parent = last(ancestors);
   const nodes = [];
@@ -77,6 +78,13 @@ function parse(context, ancestors) {
 function parseAttributes(context, type) {
   const props = [];
   const attributeNames = /* @__PURE__ */ new Set();
+  const firstTagMatch = context.source.slice(0, context.source.indexOf(">")).match(/s-for\s*=\s*["']\s*\(([^)]+)\)\s+in\s+[^"']+["']/);
+  if (firstTagMatch) {
+    const aliases = firstTagMatch[1].split(",").map((s) => s.trim());
+    for (const alias of aliases) {
+      globalScope.add(alias);
+    }
+  }
   while (context.source.length > 0 && !startsWith(context.source, ">") && !startsWith(context.source, "/>")) {
     if (startsWith(context.source, "/")) {
       advanceBy(context, 1);
@@ -84,6 +92,13 @@ function parseAttributes(context, type) {
       continue;
     }
     const attr = parseAttribute(context, attributeNames);
+    if (attr.name === "s-if") {
+      attr.value.content = bindCtx(attr.value.content);
+    }
+    if (attr.name === "s-for") {
+      const tar = attr.value.content.split(" in ");
+      attr.value.content = tar[0] + " in " + bindCtx(tar[1]);
+    }
     if (attr.type === 6 /* ATTRIBUTE */ && attr.value && attr.name === "class") {
       attr.value.content = attr.value.content.replace(/\s+/g, " ").trim();
     }
@@ -160,7 +175,7 @@ function parseAttribute(context, nameSet) {
       name: dirName,
       exp: value && {
         type: 4 /* SIMPLE_EXPRESSION */,
-        content: value.content,
+        content: dirName === "bind" ? bindCtx(value.content) : value.content,
         loc: value.loc
       },
       arg,
@@ -257,6 +272,7 @@ function parseTag(context, type, parent) {
     advanceBy(context, isSelfClosing ? 2 : 1);
   }
   if (type === 1 /* End */) {
+    globalScope.clear();
     return;
   }
   const tagType = 0 /* ELEMENT */;
@@ -321,7 +337,7 @@ function parseInterpolation(context) {
     type: 5 /* INTERPOLATION */,
     content: {
       type: 4 /* SIMPLE_EXPRESSION */,
-      content,
+      content: bindCtx(content),
       loc: getSelection(context, innerStart, innerEnd)
     },
     loc: getSelection(context, start)
@@ -414,6 +430,100 @@ function getPos(context) {
     line,
     offset
   };
+}
+var jsGlobals = /* @__PURE__ */ new Set([
+  // 原始值
+  "true",
+  "false",
+  "null",
+  "undefined",
+  "NaN",
+  "Infinity",
+  // 基本对象
+  "Object",
+  "Function",
+  "Boolean",
+  "Symbol",
+  "Error",
+  "EvalError",
+  "InternalError",
+  "RangeError",
+  "ReferenceError",
+  "SyntaxError",
+  "TypeError",
+  "URIError",
+  // 数字与数学
+  "Number",
+  "BigInt",
+  "Math",
+  "Date",
+  // 文本处理
+  "String",
+  "RegExp",
+  // Indexed collections
+  "Array",
+  "Int8Array",
+  "Uint8Array",
+  "Uint8ClampedArray",
+  "Int16Array",
+  "Uint16Array",
+  "Int32Array",
+  "Uint32Array",
+  "Float32Array",
+  "Float64Array",
+  // Keyed collections
+  "Map",
+  "Set",
+  "WeakMap",
+  "WeakSet",
+  // Structured data
+  "ArrayBuffer",
+  "SharedArrayBuffer",
+  "Atomics",
+  "DataView",
+  "JSON",
+  // Control abstraction objects
+  "Promise",
+  "Generator",
+  "GeneratorFunction",
+  "AsyncFunction",
+  // Reflection
+  "Reflect",
+  "Proxy",
+  // Web APIs & runtime globals
+  "window",
+  "globalThis",
+  "console",
+  "alert",
+  "setTimeout",
+  "setInterval",
+  "clearTimeout",
+  "clearInterval",
+  "requestAnimationFrame",
+  "cancelAnimationFrame",
+  // DOM
+  "document",
+  "location",
+  "history",
+  "navigator",
+  // 新语言关键字等
+  "await",
+  "async",
+  "arguments",
+  "this"
+]);
+function bindCtx(code) {
+  return code.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b/g, (match, varName, offset, fullText) => {
+    const before = fullText.slice(0, offset);
+    const inSingleQuotes = /'[^']*$/.test(before) && /[^']*'/.test(fullText.slice(offset));
+    const inDoubleQuotes = /"[^"]*$/.test(before) && /[^"]*"/.test(fullText.slice(offset));
+    const inBacktick = /`[^`]*$/.test(before) && /[^`]*`/.test(fullText.slice(offset));
+    if (inSingleQuotes || inDoubleQuotes || inBacktick) return match;
+    const prevChar = fullText[offset - 1];
+    if (prevChar === "." || prevChar === ":") return match;
+    if (globalScope.has(varName) || jsGlobals.has(varName)) return match;
+    return `_ctx_.${varName}`;
+  });
 }
 
 // packages/sugar-compiler/src/toAst.ts
@@ -532,7 +642,7 @@ function generate(ast) {
       }
       if (ast2.if && !ast2.forStatment) {
         ex = true;
-        str = `${bindCtx(ast2.if.value)} ? ${str + elStr} : _ctx_._SUGAR._e()`;
+        str = `${ast2.if.value} ? ${str + elStr} : _ctx_._SUGAR._e()`;
       }
       if (ast2.loading && !ast2.forStatment) {
         ex = true;
@@ -545,13 +655,13 @@ function generate(ast) {
       }
       if (ast2.htmlStatment) {
         ex = true;
-        str = `_ctx_._SUGAR._c('div',{attrs:{${dealAttr(props)}},on:{${dealEvent(props)}}},[_ctx_._SUGAR._html(_ctx_.${ast2.htmlStatment.value.content})])`;
+        str = `_ctx_._SUGAR._c('div',{attrs:{${dealAttr(props)}},on:{${dealEvent(props)}}},[_ctx_._SUGAR._html(${ast2.htmlStatment.value.content})])`;
       }
       if (!ex) {
         str += elStr;
       }
     } else if (ast2.type === 5 /* INTERPOLATION */) {
-      str += `_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.${ast2.content.content}))`;
+      str += `_ctx_._SUGAR._v(_ctx_._SUGAR._s(${ast2.content.content}))`;
     } else if (ast2.type === 2 /* TEXT */) {
       str += `_ctx_._SUGAR._v(decodeURIComponent("${encodeURIComponent(ast2.content)}"))`;
     }
@@ -580,7 +690,7 @@ function generate(ast) {
     }
     props.forEach((prop) => {
       if (prop.name === "s-if") {
-        son = `${bindCtx(prop.value.content)} ? ${son} : _ctx_._SUGAR._e()`;
+        son = `${prop.value.content} ? ${son} : _ctx_._SUGAR._e()`;
       }
       if (prop.name === "s-loading") {
         const loadingRender = generate(transform(toAst(`<div class="s-loading" s-if="${ast2.loading.value}">
@@ -597,11 +707,6 @@ function generate(ast) {
   }
 }
 function dealAttr(props) {
-  props.forEach((prop) => {
-    if (["bind"].includes(prop.name)) {
-      prop.exp.content = bindCtx(prop.exp.content);
-    }
-  });
   let str = "";
   props = props.filter((prop) => {
     return prop.name !== "s-if" && prop.name !== "s-for" && prop.name !== "on" && prop.name !== "s-loading" && prop.name !== "s-html";
@@ -646,9 +751,6 @@ function Array2String(arr) {
   return arr.map((a) => {
     return `"${a}"`;
   });
-}
-function bindCtx(code) {
-  return code.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b(?!\s*:)/g, "_ctx_.$1");
 }
 
 // packages/sugar-compiler/src/transform/sFor.ts

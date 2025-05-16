@@ -14,7 +14,6 @@ const dialog = {
           </div>
         </div>`,
   bulk (ctx) {
-    console.log(ctx);
     const show: any = useSignal(ctx.model.value);
     const opacity: any = useSignal(0);
     const direction: any = ctx.direction?.value ?? 'center';

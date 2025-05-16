@@ -1,4 +1,6 @@
-import { extend, isArray } from './utils';
+import { extend, isArray, parseForAlias } from './utils';
+
+const globalScope = new Set<string>([]);
 
 export function parse (context: any, ancestors: any) {
   const parent: any = last(ancestors);
@@ -102,6 +104,16 @@ export function parse (context: any, ancestors: any) {
 function parseAttributes (context: any, type: any) {
   const props = [];
   const attributeNames = new Set<string>();
+
+  // ✅ 提前检查当前标签是否含有 s-for="(item,index) in xxx"
+  const firstTagMatch = context.source.slice(0, context.source.indexOf('>')).match(/s-for\s*=\s*["']\s*\(([^)]+)\)\s+in\s+[^"']+["']/);
+  if (firstTagMatch) {
+    const aliases = firstTagMatch[1].split(',').map(s => s.trim());
+    for (const alias of aliases) {
+      globalScope.add(alias);
+    }
+  }
+
   while (context.source.length > 0 &&
   !startsWith(context.source, '>') &&
   !startsWith(context.source, '/>')) {
@@ -112,6 +124,14 @@ function parseAttributes (context: any, type: any) {
     }
 
     const attr = parseAttribute(context, attributeNames);
+    if (attr.name === 's-if') {
+      attr.value.content = bindCtx(attr.value.content);
+    }
+
+    if (attr.name === 's-for') {
+      const tar = attr.value.content.split(' in ');
+      attr.value.content = tar[0] + ' in ' + bindCtx(tar[1]);
+    }
 
     if (
       attr.type === NodeTypes.ATTRIBUTE &&
@@ -211,7 +231,7 @@ function parseAttribute (context: any, nameSet: any) {
       name: dirName,
       exp: value && {
         type: NodeTypes.SIMPLE_EXPRESSION,
-        content: value.content,
+        content: dirName === 'bind' ? bindCtx(value.content) : value.content,
         loc: value.loc
       },
       arg,
@@ -336,6 +356,7 @@ function parseTag (context, type, parent) {
   }
 
   if (type === TagType.End) {
+    globalScope.clear();
     return;
   }
 
@@ -421,7 +442,7 @@ function parseInterpolation (context) {
     type: NodeTypes.INTERPOLATION,
     content: {
       type: NodeTypes.SIMPLE_EXPRESSION,
-      content,
+      content: bindCtx(content),
       loc: getSelection(context, innerStart, innerEnd)
     },
     loc: getSelection(context, start)
@@ -556,4 +577,69 @@ export const enum NodeTypes {
   COMPOUND_EXPRESSION,
   COMPONENT,
   SLOT
+}
+
+// JavaScript 内置全局变量和关键字白名单
+const jsGlobals = new Set([
+  // 原始值
+  'true', 'false', 'null', 'undefined', 'NaN', 'Infinity',
+
+  // 基本对象
+  'Object', 'Function', 'Boolean', 'Symbol', 'Error', 'EvalError',
+  'InternalError', 'RangeError', 'ReferenceError', 'SyntaxError',
+  'TypeError', 'URIError',
+
+  // 数字与数学
+  'Number', 'BigInt', 'Math', 'Date',
+
+  // 文本处理
+  'String', 'RegExp',
+
+  // Indexed collections
+  'Array', 'Int8Array', 'Uint8Array', 'Uint8ClampedArray',
+  'Int16Array', 'Uint16Array', 'Int32Array', 'Uint32Array',
+  'Float32Array', 'Float64Array',
+
+  // Keyed collections
+  'Map', 'Set', 'WeakMap', 'WeakSet',
+
+  // Structured data
+  'ArrayBuffer', 'SharedArrayBuffer', 'Atomics', 'DataView', 'JSON',
+
+  // Control abstraction objects
+  'Promise', 'Generator', 'GeneratorFunction', 'AsyncFunction',
+
+  // Reflection
+  'Reflect', 'Proxy',
+
+  // Web APIs & runtime globals
+  'window', 'globalThis', 'console', 'alert', 'setTimeout', 'setInterval',
+  'clearTimeout', 'clearInterval', 'requestAnimationFrame', 'cancelAnimationFrame',
+
+  // DOM
+  'document', 'location', 'history', 'navigator',
+
+  // 新语言关键字等
+  'await', 'async', 'arguments', 'this'
+]);
+
+function bindCtx (code: string): string {
+  return code.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b/g, (match, varName, offset, fullText) => {
+    // 1. 跳过字符串内的变量
+    const before = fullText.slice(0, offset);
+    const inSingleQuotes = /'[^']*$/.test(before) && /[^']*'/.test(fullText.slice(offset));
+    const inDoubleQuotes = /"[^"]*$/.test(before) && /[^"]*"/.test(fullText.slice(offset));
+    const inBacktick = /`[^`]*$/.test(before) && /[^`]*`/.test(fullText.slice(offset));
+    if (inSingleQuotes || inDoubleQuotes || inBacktick) return match;
+
+    // 2. 排除属性访问，例如 obj.key 中的 key
+    const prevChar = fullText[offset - 1];
+    if (prevChar === '.' || prevChar === ':') return match;
+
+    // 3. 排除全局作用域变量、JS 内置变量
+    if (globalScope.has(varName) || jsGlobals.has(varName)) return match;
+
+    // 4. 默认加 _ctx_
+    return `_ctx_.${varName}`;
+  });
 }

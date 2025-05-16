@@ -123,6 +123,20 @@
     <sugar-dialog :model="show" @close="close">
         <div style="width: 100px;height: 100px;background: #fff"></div>
     </sugar-dialog>
+    <sugar-pagination
+            :pi="pi"
+            :ps="ps"
+            :total="total"
+            page="2"
+            style="margin-top: 10px"
+            @change="changePage"
+            :btn="true"
+            :show-most="true">
+    </sugar-pagination>
+    {{index}}
+    <div s-for="(item,index) in list">
+        {{item}}
+    </div>
 </div>
 </body>
 
@@ -139,6 +153,17 @@
     } = SUGAR;
     var sugar = makeSugar({
         bulk() {
+
+            const list = useSignal([1,2,3]);
+            const index = useSignal(0)
+
+            const pi = useSignal(1);
+            const ps = useSignal(10);
+            const total = useSignal(100);
+
+            function changePage(e) {
+                pi.value = e;
+            }
 
             const signal = useSignal(0);
             const style = useSignal('width: 100%;');
@@ -166,7 +191,13 @@
                 style,
                 show,
                 close,
-                open
+                open,
+                changePage,
+                pi,
+                ps,
+                total,
+                list,
+                index
             };
         }
     });

@@ -19,7 +19,7 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
   const _sugar = deepClone(parentComponent);
   const props = {};
   const slot = children;
-
+  console.log(attrs);
   Object.keys(attrs).forEach((propName) => {
     if (propName !== 'instance') {
       props[propName] = useSignal(attrs[propName]);

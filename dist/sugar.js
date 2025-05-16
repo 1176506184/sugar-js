@@ -133,6 +133,7 @@
     const isArray$1 = Array.isArray;
     const extend = Object.assign;
 
+    const globalScope = new Set([]);
     function parse(context, ancestors) {
         const parent = last(ancestors);
         const nodes = [];
@@ -235,6 +236,14 @@
     function parseAttributes(context, type) {
         const props = [];
         const attributeNames = new Set();
+        // ✅ 提前检查当前标签是否含有 s-for="(item,index) in xxx"
+        const firstTagMatch = context.source.slice(0, context.source.indexOf('>')).match(/s-for\s*=\s*["']\s*\(([^)]+)\)\s+in\s+[^"']+["']/);
+        if (firstTagMatch) {
+            const aliases = firstTagMatch[1].split(',').map(s => s.trim());
+            for (const alias of aliases) {
+                globalScope.add(alias);
+            }
+        }
         while (context.source.length > 0 &&
             !startsWith(context.source, '>') &&
             !startsWith(context.source, '/>')) {
@@ -244,6 +253,13 @@
                 continue;
             }
             const attr = parseAttribute(context, attributeNames);
+            if (attr.name === 's-if') {
+                attr.value.content = bindCtx(attr.value.content);
+            }
+            if (attr.name === 's-for') {
+                const tar = attr.value.content.split(' in ');
+                attr.value.content = tar[0] + ' in ' + bindCtx(tar[1]);
+            }
             if (attr.type === 6 /* NodeTypes.ATTRIBUTE */ &&
                 attr.value &&
                 attr.name === 'class') {
@@ -318,7 +334,7 @@
                 name: dirName,
                 exp: value && {
                     type: 4 /* NodeTypes.SIMPLE_EXPRESSION */,
-                    content: value.content,
+                    content: dirName === 'bind' ? bindCtx(value.content) : value.content,
                     loc: value.loc
                 },
                 arg,
@@ -416,6 +432,7 @@
             advanceBy(context, isSelfClosing ? 2 : 1);
         }
         if (type === 1 /* TagType.End */) {
+            globalScope.clear();
             return;
         }
         const tagType = 0 /* ElementTypes.ELEMENT */;
@@ -481,7 +498,7 @@
             type: 5 /* NodeTypes.INTERPOLATION */,
             content: {
                 type: 4 /* NodeTypes.SIMPLE_EXPRESSION */,
-                content,
+                content: bindCtx(content),
                 loc: getSelection(context, innerStart, innerEnd)
             },
             loc: getSelection(context, start)
@@ -571,6 +588,58 @@
             line,
             offset
         };
+    }
+    // JavaScript 内置全局变量和关键字白名单
+    const jsGlobals = new Set([
+        // 原始值
+        'true', 'false', 'null', 'undefined', 'NaN', 'Infinity',
+        // 基本对象
+        'Object', 'Function', 'Boolean', 'Symbol', 'Error', 'EvalError',
+        'InternalError', 'RangeError', 'ReferenceError', 'SyntaxError',
+        'TypeError', 'URIError',
+        // 数字与数学
+        'Number', 'BigInt', 'Math', 'Date',
+        // 文本处理
+        'String', 'RegExp',
+        // Indexed collections
+        'Array', 'Int8Array', 'Uint8Array', 'Uint8ClampedArray',
+        'Int16Array', 'Uint16Array', 'Int32Array', 'Uint32Array',
+        'Float32Array', 'Float64Array',
+        // Keyed collections
+        'Map', 'Set', 'WeakMap', 'WeakSet',
+        // Structured data
+        'ArrayBuffer', 'SharedArrayBuffer', 'Atomics', 'DataView', 'JSON',
+        // Control abstraction objects
+        'Promise', 'Generator', 'GeneratorFunction', 'AsyncFunction',
+        // Reflection
+        'Reflect', 'Proxy',
+        // Web APIs & runtime globals
+        'window', 'globalThis', 'console', 'alert', 'setTimeout', 'setInterval',
+        'clearTimeout', 'clearInterval', 'requestAnimationFrame', 'cancelAnimationFrame',
+        // DOM
+        'document', 'location', 'history', 'navigator',
+        // 新语言关键字等
+        'await', 'async', 'arguments', 'this'
+    ]);
+    function bindCtx(code) {
+        return code.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b/g, (match, varName, offset, fullText) => {
+            // 1. 跳过字符串内的变量
+            const before = fullText.slice(0, offset);
+            const inSingleQuotes = /'[^']*$/.test(before) && /[^']*'/.test(fullText.slice(offset));
+            const inDoubleQuotes = /"[^"]*$/.test(before) && /[^"]*"/.test(fullText.slice(offset));
+            const inBacktick = /`[^`]*$/.test(before) && /[^`]*`/.test(fullText.slice(offset));
+            if (inSingleQuotes || inDoubleQuotes || inBacktick)
+                return match;
+            // 2. 排除属性访问，例如 obj.key 中的 key
+            const prevChar = fullText[offset - 1];
+            if (prevChar === '.' || prevChar === ':')
+                return match;
+            // 3. 排除全局作用域变量、JS 内置变量
+            if (globalScope.has(varName) || jsGlobals.has(varName))
+                return match;
+            // 4. 默认加 _ctx_
+            return `_ctx_.${varName}`;
+        });
     }
 
     const NO = (tag) => false;
@@ -832,7 +901,7 @@
                 }
                 if (ast.if && !ast.forStatment) {
                     ex = true;
-                    str = `${bindCtx(ast.if.value)} ? ${str + elStr} : _ctx_._SUGAR._e()`;
+                    str = `${ast.if.value} ? ${str + elStr} : _ctx_._SUGAR._e()`;
                 }
                 if (ast.loading && !ast.forStatment) {
                     ex = true;
@@ -845,14 +914,14 @@
                 }
                 if (ast.htmlStatment) {
                     ex = true;
-                    str = `_ctx_._SUGAR._c('div',{attrs:{${dealAttr(props)}},on:{${dealEvent(props)}}},[_ctx_._SUGAR._html(_ctx_.${ast.htmlStatment.value.content})])`;
+                    str = `_ctx_._SUGAR._c('div',{attrs:{${dealAttr(props)}},on:{${dealEvent(props)}}},[_ctx_._SUGAR._html(${ast.htmlStatment.value.content})])`;
                 }
                 if (!ex) {
                     str += elStr;
                 }
             }
             else if (ast.type === 5 /* NodeTypes.INTERPOLATION */) {
-                str += `_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.${ast.content.content}))`;
+                str += `_ctx_._SUGAR._v(_ctx_._SUGAR._s(${ast.content.content}))`;
             }
             else if (ast.type === 2 /* NodeTypes.TEXT */) {
                 str += `_ctx_._SUGAR._v(decodeURIComponent("${encodeURIComponent(ast.content)}"))`;
@@ -883,7 +952,7 @@
             }
             props.forEach((prop) => {
                 if (prop.name === 's-if') {
-                    son = `${bindCtx(prop.value.content)} ? ${son} : _ctx_._SUGAR._e()`;
+                    son = `${prop.value.content} ? ${son} : _ctx_._SUGAR._e()`;
                 }
                 if (prop.name === 's-loading') {
                     const loadingRender = generate(transform(toAst(`<div class="s-loading" s-if="${ast.loading.value}">
@@ -900,11 +969,6 @@
         }
     }
     function dealAttr(props) {
-        props.forEach((prop) => {
-            if (['bind'].includes(prop.name)) {
-                prop.exp.content = bindCtx(prop.exp.content);
-            }
-        });
         let str = '';
         props = props.filter(prop => {
             return prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && prop.name !== 's-loading' && prop.name !== 's-html';
@@ -951,9 +1015,6 @@
         return arr.map((a) => {
             return `"${a}"`;
         });
-    }
-    function bindCtx(code) {
-        return code.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b(?!\s*:)/g, '_ctx_.$1');
     }
 
     function sFor(context, prop) {
@@ -1044,6 +1105,7 @@
         const _sugar = deepClone(parentComponent);
         const props = {};
         const slot = children;
+        console.log(attrs);
         Object.keys(attrs).forEach((propName) => {
             if (propName !== 'instance') {
                 props[propName] = useSignal(attrs[propName]);
@@ -1212,7 +1274,6 @@
                     // 处理监听事件
                     for (const key in on) {
                         if (Object.hasOwnProperty.call(on, key)) {
-                            console.log(on[key]);
                             if (on[key].value) {
                                 const event = on[key].fun;
                                 event && domNode.addEventListener(key, event);
