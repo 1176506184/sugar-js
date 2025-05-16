@@ -734,16 +734,51 @@ var sugarCompilePlugin = () => {
     name: "sugar-compile",
     transform(code, id) {
       if (!id.endsWith(".ts")) return null;
-      const renderRegex = /render:\s*`([\s\S]*?)`/g;
-      const transformedCode = code.replace(renderRegex, (match, templateContent) => {
-        const { code: code2, root } = sugarCompiler(templateContent);
-        return `render: ${code2},
-                headTag: '${root.tag}'`;
-      });
+      let result = "";
+      let lastIndex = 0;
+      const renderPattern = /render:\s*([`'"])/g;
+      let match;
+      while ((match = renderPattern.exec(code)) !== null) {
+        const quote = match[1];
+        const quoteStart = renderPattern.lastIndex;
+        const start = match.index;
+        let i = quoteStart;
+        let escaped = false;
+        let templateEnd = -1;
+        while (i < code.length) {
+          const char = code[i];
+          if (!escaped && char === quote) {
+            templateEnd = i;
+            break;
+          }
+          escaped = !escaped && char === "\\";
+          if (char !== "\\") escaped = false;
+          i++;
+        }
+        if (templateEnd === -1) {
+          continue;
+        }
+        const templateContent = code.slice(quoteStart, templateEnd);
+        let compiledCode = "() => null";
+        let headTag = "div";
+        try {
+          const compiled = sugarCompiler(templateContent);
+          compiledCode = compiled.code;
+          headTag = compiled.root?.tag ?? "div";
+        } catch (e) {
+          console.warn("[sugar-compile] Error compiling template:", id);
+          console.warn("[sugar-compile] Failed to compile template:", e);
+        }
+        result += code.slice(lastIndex, start);
+        result += `render: ${compiledCode},
+headTag: '${headTag}'`;
+        lastIndex = templateEnd + 1;
+        renderPattern.lastIndex = templateEnd + 1;
+      }
+      result += code.slice(lastIndex);
       return {
-        code: transformedCode,
+        code: result,
         map: null
-        // 如果需要 sourceMap，可以生成对应的映射
       };
     }
   };

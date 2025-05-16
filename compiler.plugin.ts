@@ -1,26 +1,73 @@
 import { sugarCompiler } from '@sugar/sugar-compiler';
-
 const sugarCompilePlugin = () => {
   return {
     name: 'sugar-compile',
-    transform (code, id) {
-      if (!id.endsWith('.ts')) return null; // 只处理 .ts 文件
+    transform(code, id) {
+      if (!id.endsWith('.ts')) return null;
 
-      // 正则匹配 render 字段中的模板字符串
-      const renderRegex = /render:\s*`([\s\S]*?)`/g;
-      const transformedCode = code.replace(renderRegex, (match, templateContent) => {
-        // 使用 sugar-compiler 编译模板并返回渲染函数
-        const { code, root } = sugarCompiler(templateContent);
-        return `render: ${code},
-                headTag: '${root.tag}'`;
-      });
+      let result = '';
+      let lastIndex = 0;
+
+      const renderPattern = /render:\s*([`'"])/g;
+      let match;
+
+      while ((match = renderPattern.exec(code)) !== null) {
+        const quote = match[1];
+        const quoteStart = renderPattern.lastIndex; // 当前位置：在引号之后
+        const start = match.index;
+
+        let i = quoteStart;
+        let escaped = false;
+        let templateEnd = -1;
+
+        while (i < code.length) {
+          const char = code[i];
+
+          if (!escaped && char === quote) {
+            templateEnd = i;
+            break;
+          }
+
+          escaped = !escaped && char === '\\';
+          if (char !== '\\') escaped = false;
+
+          i++;
+        }
+
+        if (templateEnd === -1) {
+          continue; // 未找到闭合引号，跳过
+        }
+
+        const templateContent = code.slice(quoteStart, templateEnd);
+
+        let compiledCode: any = '() => null';
+        let headTag = 'div';
+
+        try {
+          const compiled = sugarCompiler(templateContent);
+          compiledCode = compiled.code;
+          headTag = compiled.root?.tag ?? 'div';
+        } catch (e) {
+          console.warn('[sugar-compile] Error compiling template:', id)
+          console.warn('[sugar-compile] Failed to compile template:', e);
+        }
+
+        result += code.slice(lastIndex, start);
+        result += `render: ${compiledCode},\nheadTag: '${headTag}'`;
+
+        lastIndex = templateEnd + 1;
+        renderPattern.lastIndex = templateEnd + 1;
+      }
+
+      result += code.slice(lastIndex);
 
       return {
-        code: transformedCode,
-        map: null // 如果需要 sourceMap，可以生成对应的映射
+        code: result,
+        map: null
       };
     }
   };
 };
+
 
 export default sugarCompilePlugin;
