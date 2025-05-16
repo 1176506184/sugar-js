@@ -1,11 +1,125 @@
-!function(e,l){"object"==typeof exports&&"undefined"!=typeof module?l(exports):"function"==typeof define&&define.amd?define(["exports"],l):l((e="undefined"!=typeof globalThis?globalThis:e||self).Sugar={})}(this,function(e){"use strict";SUGAR;const{useEffect:i,useSignal:c}=SUGAR,l=[{name:"sugar-button",render:`<button class="sugar-button" style="margin: 5px 5px 0;" @click="click">
-                    <slot name="default"></slot>
-                    <slot name="label"></slot>
-                 </button>`,bulk(t){return{click:function(e){var l;null!=(l=t.click)&&l.call(t,e)},ctx:t}}},{name:"sugar-dialog",render:`<div>
-        <div class="sugar-dialog-mode" :style="style" s-if="show" @click.self="close">
-            <div class="sugar-dialog" s-if="show" @click.self="close" :style="'transform:' + transform">
-                <slot name="default"></slot>
-            </div>
-        </div>
-</div>`,bulk(e){var l;const t=c(e.model.value),o=c(0),a=null!=(l=null==(l=e.direction)?void 0:l.value)?l:"center",s=c(""),u=c(n(a));function n(e,l=!1){return"center"!==e&&"top"===e?l?"translateY(0)":"translateY(-100%)":""}return i(()=>{e.model.value?(t.value=!0,setTimeout(()=>{o.value=1,s.value=`opacity:${o.value};`,console.log(s)},50)):(o.value=0,s.value=`opacity:${o.value};`,setTimeout(()=>{e.model.value||(t.value=!1)},300)),t.value?setTimeout(()=>{u.value=n(a,t.value)},50):u.value=n(a,t.value)},[e.model],!0),{show:t,close:function(){e.close()},opacity:o,style:s,transform:u}}}];"undefined"!=typeof window&&(window.sugarUI=l),e.sugarUI=l});
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Sugar = {}));
+})(this, (function (exports) { 'use strict';
+
+    // @ts-expect-error
+    SUGAR;
+    const button = {
+        name: 'sugar-button',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('button',{ "attrs":{"class":"sugar-button","style":"margin: 5px 5px 0;"},"on":{"click":{"value":"click","isStatic":undefined,"modifiers":[]}}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]),_ctx_._SUGAR._c('slot',{ "attrs":{"name":"label"},"on":{}},[])]);
+      
+    },
+                    headTag: 'button',
+        bulk(ctx) {
+            function click(e) {
+                var _a;
+                (_a = ctx.click) === null || _a === void 0 ? void 0 : _a.call(ctx, e);
+            }
+            return {
+                click,
+                ctx
+            };
+        }
+    };
+
+    const { useEffect, useSignal
+    // @ts-expect-error
+     } = SUGAR;
+    const dialog = {
+        name: 'sugar-dialog',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{},"on":{}},[_ctx_.show ? _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-dialog-mode","style":_ctx_.style},"on":{"click":{"value":"close","isStatic":undefined,"modifiers":["self"]}}},[_ctx_.show ? _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-dialog","style":'transform:' + _ctx_.transform},"on":{"click":{"value":"close","isStatic":undefined,"modifiers":["self"]}}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[])]) : _ctx_._SUGAR._e()]) : _ctx_._SUGAR._e()]);
+      
+    },
+                    headTag: 'div',
+        bulk(ctx) {
+            var _a, _b;
+            console.log(ctx);
+            const show = useSignal(ctx.model.value);
+            const opacity = useSignal(0);
+            const direction = (_b = (_a = ctx.direction) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : 'center';
+            const style = useSignal('');
+            const transform = useSignal(getInitDirection(direction));
+            useEffect(() => {
+                if (ctx.model.value) {
+                    show.value = true;
+                    setTimeout(() => {
+                        opacity.value = 1;
+                        style.value = `opacity:${opacity.value};`;
+                        console.log(style);
+                    }, 50);
+                }
+                else {
+                    opacity.value = 0;
+                    style.value = `opacity:${opacity.value};`;
+                    setTimeout(() => {
+                        if (!ctx.model.value) {
+                            show.value = false;
+                        }
+                    }, 300);
+                }
+                if (show.value) {
+                    setTimeout(() => {
+                        transform.value = getInitDirection(direction, show.value);
+                    }, 50);
+                }
+                else {
+                    transform.value = getInitDirection(direction, show.value);
+                }
+            }, [ctx.model], true);
+            function close() {
+                ctx.close();
+            }
+            function getInitDirection(type, show = false) {
+                if (type === 'center') {
+                    return '';
+                }
+                if (type === 'top') {
+                    return show ? 'translateY(0)' : 'translateY(-100%)';
+                }
+                return '';
+            }
+            return {
+                show,
+                close,
+                opacity,
+                style,
+                transform
+            };
+        }
+    };
+
+    const sugarUI = [button, dialog];
+    if (typeof window !== 'undefined') {
+        (function (global) {
+            global.sugarUI = sugarUI;
+        })(window);
+    }
+
+    exports.sugarUI = sugarUI;
+
+}));
 //# sourceMappingURL=sugar-ui.js.map

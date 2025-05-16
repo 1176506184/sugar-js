@@ -7,9 +7,13 @@ export function sugarRender () {
 
   function mounted<T> (vm: any, data: T) {
     const serializer = new XMLSerializer();
-    const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
-    const { code } = sugarCompiler(htmlCode);
-    render = code;
+    if (!vm.render) {
+      const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
+      const { code } = sugarCompiler(htmlCode);
+      render = code;
+    } else {
+      render = vm.render;
+    }
     pushUiEffect(vm, data);
   }
 

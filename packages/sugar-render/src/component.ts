@@ -21,7 +21,6 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
   const slot = children;
 
   Object.keys(attrs).forEach((propName) => {
-    console.log(attrs);
     if (propName !== 'instance') {
       props[propName] = useSignal(attrs[propName]);
     }
@@ -67,7 +66,8 @@ export function makeComponent (instance) {
     components: instance.components ? instance.components : [],
     sugar: {},
     slot: instance.slot,
-    props: instance.props
+    props: instance.props,
+    headTag: instance.headTag || 'div'
   };
 
   function mount () {
@@ -99,14 +99,9 @@ export function componentRender () {
   let render = null;
 
   function mounted (vm, data) {
-    const htmlCode = vm.render;
-    const {
-      code,
-      root
-    } = sugarCompiler(htmlCode);
-    vm.$el = document.createElement(root.tag);
+    vm.$el = document.createElement(vm.headTag);
     vm._vnode = vm.$el;
-    render = code;
+    render = vm.render;
     bindT(vm, data);
     update(vm);
 

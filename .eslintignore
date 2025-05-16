@@ -4,4 +4,6 @@
 **/*.json
 **/*.md
 **/*.html
+compiler.plugin.ts
+*.config.*
 dist

@@ -24,7 +24,7 @@ export function generate (ast) {
       let elStr = '';
       let ex = false;
 
-      elStr += `_SUGAR._c('${ast.tag}',{ `;
+      elStr += `_ctx_._SUGAR._c('${ast.tag}',{ `;
 
       elStr += '"attrs":{';
 
@@ -51,7 +51,7 @@ export function generate (ast) {
 
       if (ast.if && !ast.forStatment) {
         ex = true;
-        str = `${ast.if.value} ? ${str + elStr} : _SUGAR._e()`;
+        str = `${bindCtx(ast.if.value)} ? ${str + elStr} : _ctx_._SUGAR._e()`;
       }
 
       if (ast.loading && !ast.forStatment) {
@@ -61,21 +61,21 @@ export function generate (ast) {
         </div>`), {
           sIf
         }));
-        str = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${str + (!ast.if ? elStr : '')},${loadingRender}])`;
+        str = `_ctx_._SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${str + (!ast.if ? elStr : '')},${loadingRender}])`;
       }
 
       if (ast.htmlStatment) {
         ex = true;
-        str = `_SUGAR._c('div',{attrs:{${dealAttr(props)}},on:{${dealEvent(props)}}},[_SUGAR._html(${ast.htmlStatment.value.content})])`;
+        str = `_ctx_._SUGAR._c('div',{attrs:{${dealAttr(props)}},on:{${dealEvent(props)}}},[_ctx_._SUGAR._html(_ctx_.${ast.htmlStatment.value.content})])`;
       }
 
       if (!ex) {
         str += elStr;
       }
     } else if (ast.type === NodeTypes.INTERPOLATION) {
-      str += `_SUGAR._v(_SUGAR._s(${ast.content.content}))`;
+      str += `_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.${ast.content.content}))`;
     } else if (ast.type === NodeTypes.TEXT) {
-      str += `_SUGAR._v(decodeURIComponent("${encodeURIComponent(ast.content)}"))`;
+      str += `_ctx_._SUGAR._v(decodeURIComponent("${encodeURIComponent(ast.content)}"))`;
     }
 
     return str;
@@ -86,7 +86,7 @@ export function generate (ast) {
   function transformFor (ast) {
     const forStatment = ast.forStatment;
     const props = ast.props;
-    let son = `_SUGAR._c('${ast.tag}',{ `;
+    let son = `_ctx_._SUGAR._c('${ast.tag}',{ `;
 
     son += '"attrs":{';
 
@@ -114,7 +114,7 @@ export function generate (ast) {
 
     props.forEach((prop) => {
       if (prop.name === 's-if') {
-        son = `${prop.value.content} ? ${son} : _SUGAR._e()`;
+        son = `${bindCtx(prop.value.content)} ? ${son} : _ctx_._SUGAR._e()`;
       }
 
       if (prop.name === 's-loading') {
@@ -123,17 +123,22 @@ export function generate (ast) {
         </div>`), {
           sIf
         }));
-        son = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${son},${loadingRender}])`;
+        son = `_ctx_._SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${son},${loadingRender}])`;
       }
     });
 
-    return `..._SUGAR._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
+    return `..._ctx_._SUGAR._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
         return ${son}
                             },${forStatment.exp})`;
   }
 }
 
 function dealAttr (props) {
+  props.forEach((prop) => {
+    if (['bind'].includes(prop.name)) {
+      prop.exp.content = bindCtx(prop.exp.content);
+    }
+  });
   let str = '';
 
   props = props.filter(prop => {
@@ -190,4 +195,8 @@ function Array2String (arr) {
   return arr.map((a: any) => {
     return `"${a}"`;
   });
+}
+
+function bindCtx (code) {
+  return code.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b(?!\s*:)/g, '_ctx_.$1');
 }

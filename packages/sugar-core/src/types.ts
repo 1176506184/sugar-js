@@ -8,7 +8,7 @@ interface Core {
   appId?: any
   components?: any
   pId?: any
-  ctx?: Object
+  ctx?: object
   forArr?: any[]
   el?: any
   slot?: any

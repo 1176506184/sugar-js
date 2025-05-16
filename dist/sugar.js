@@ -813,7 +813,7 @@
             if (ast.type === 1 || ast.type === 10 /* NodeTypes.SLOT */) {
                 let elStr = '';
                 let ex = false;
-                elStr += `_SUGAR._c('${ast.tag}',{ `;
+                elStr += `_ctx_._SUGAR._c('${ast.tag}',{ `;
                 elStr += '"attrs":{';
                 elStr += dealAttr(props);
                 elStr += '},"on":{';
@@ -832,7 +832,7 @@
                 }
                 if (ast.if && !ast.forStatment) {
                     ex = true;
-                    str = `${ast.if.value} ? ${str + elStr} : _SUGAR._e()`;
+                    str = `${bindCtx(ast.if.value)} ? ${str + elStr} : _ctx_._SUGAR._e()`;
                 }
                 if (ast.loading && !ast.forStatment) {
                     ex = true;
@@ -841,21 +841,21 @@
         </div>`), {
                         sIf
                     }));
-                    str = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${str + (!ast.if ? elStr : '')},${loadingRender}])`;
+                    str = `_ctx_._SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${str + (!ast.if ? elStr : '')},${loadingRender}])`;
                 }
                 if (ast.htmlStatment) {
                     ex = true;
-                    str = `_SUGAR._c('div',{attrs:{${dealAttr(props)}},on:{${dealEvent(props)}}},[_SUGAR._html(${ast.htmlStatment.value.content})])`;
+                    str = `_ctx_._SUGAR._c('div',{attrs:{${dealAttr(props)}},on:{${dealEvent(props)}}},[_ctx_._SUGAR._html(_ctx_.${ast.htmlStatment.value.content})])`;
                 }
                 if (!ex) {
                     str += elStr;
                 }
             }
             else if (ast.type === 5 /* NodeTypes.INTERPOLATION */) {
-                str += `_SUGAR._v(_SUGAR._s(${ast.content.content}))`;
+                str += `_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.${ast.content.content}))`;
             }
             else if (ast.type === 2 /* NodeTypes.TEXT */) {
-                str += `_SUGAR._v(decodeURIComponent("${encodeURIComponent(ast.content)}"))`;
+                str += `_ctx_._SUGAR._v(decodeURIComponent("${encodeURIComponent(ast.content)}"))`;
             }
             return str;
         }
@@ -863,7 +863,7 @@
         function transformFor(ast) {
             const forStatment = ast.forStatment;
             const props = ast.props;
-            let son = `_SUGAR._c('${ast.tag}',{ `;
+            let son = `_ctx_._SUGAR._c('${ast.tag}',{ `;
             son += '"attrs":{';
             son += dealAttr(props);
             son += '},"on":{';
@@ -883,7 +883,7 @@
             }
             props.forEach((prop) => {
                 if (prop.name === 's-if') {
-                    son = `${prop.value.content} ? ${son} : _SUGAR._e()`;
+                    son = `${bindCtx(prop.value.content)} ? ${son} : _ctx_._SUGAR._e()`;
                 }
                 if (prop.name === 's-loading') {
                     const loadingRender = generate(transform(toAst(`<div class="s-loading" s-if="${ast.loading.value}">
@@ -891,15 +891,20 @@
         </div>`), {
                         sIf
                     }));
-                    son = `_SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${son},${loadingRender}])`;
+                    son = `_ctx_._SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${son},${loadingRender}])`;
                 }
             });
-            return `..._SUGAR._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
+            return `..._ctx_._SUGAR._loop((${forStatment.item}${forStatment.index ? ',' + forStatment.index : ''})=>{
         return ${son}
                             },${forStatment.exp})`;
         }
     }
     function dealAttr(props) {
+        props.forEach((prop) => {
+            if (['bind'].includes(prop.name)) {
+                prop.exp.content = bindCtx(prop.exp.content);
+            }
+        });
         let str = '';
         props = props.filter(prop => {
             return prop.name !== 's-if' && prop.name !== 's-for' && prop.name !== 'on' && prop.name !== 's-loading' && prop.name !== 's-html';
@@ -946,6 +951,9 @@
         return arr.map((a) => {
             return `"${a}"`;
         });
+    }
+    function bindCtx(code) {
+        return code.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b(?!\s*:)/g, '_ctx_.$1');
     }
 
     function sFor(context, prop) {
@@ -1004,11 +1012,17 @@
             };
         }
         function createFunction(code = '') {
-            return new Function(`
-            with(this) {
-              return ${code};
-            }
-        `);
+            return new Function(`    const _ctx_ = this;
+    const proxy = new Proxy({}, {
+      get(target, prop, receiver) {
+        if (prop in ctx) {
+          return ctx[prop];
+        }
+        throw new ReferenceError(\`Missing variable \${String(prop)} in template\`);
+      }
+    });
+    return ${code.toString()};
+  `);
         }
         return compile(template);
     }
@@ -1031,7 +1045,6 @@
         const props = {};
         const slot = children;
         Object.keys(attrs).forEach((propName) => {
-            console.log(attrs);
             if (propName !== 'instance') {
                 props[propName] = useSignal(attrs[propName]);
             }
@@ -1070,7 +1083,8 @@
             components: instance.components ? instance.components : [],
             sugar: {},
             slot: instance.slot,
-            props: instance.props
+            props: instance.props,
+            headTag: instance.headTag || 'div'
         };
         function mount() {
             var _a;
@@ -1093,11 +1107,9 @@
     function componentRender() {
         let render = null;
         function mounted(vm, data) {
-            const htmlCode = vm.render;
-            const { code, root } = sugarCompiler(htmlCode);
-            vm.$el = document.createElement(root.tag);
+            vm.$el = document.createElement(vm.headTag);
             vm._vnode = vm.$el;
-            render = code;
+            render = vm.render;
             bindT(vm, data);
             update(vm);
             Object.values(data).forEach((item) => {
@@ -1200,6 +1212,7 @@
                     // 处理监听事件
                     for (const key in on) {
                         if (Object.hasOwnProperty.call(on, key)) {
+                            console.log(on[key]);
                             if (on[key].value) {
                                 const event = on[key].fun;
                                 event && domNode.addEventListener(key, event);
@@ -1479,9 +1492,14 @@
         let render = null;
         function mounted(vm, data) {
             const serializer = new XMLSerializer();
-            const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
-            const { code } = sugarCompiler(htmlCode);
-            render = code;
+            if (!vm.render) {
+                const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
+                const { code } = sugarCompiler(htmlCode);
+                render = code;
+            }
+            else {
+                render = vm.render;
+            }
             pushUiEffect(vm, data);
         }
         function pushUiEffect(vm, data) {

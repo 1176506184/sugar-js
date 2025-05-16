@@ -116,15 +116,13 @@
 </style>
 <body>
 <div id="app" style="width: 100%;height: 100vh;">
-    <div :style="style">
-        <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;">
-            <div style="font-size: 20px;">
-                {{signal}}
-            </div>
-            <sugar-button @click="signalAdd">ce</sugar-button>
-            <div @click="signalAdd">测试</div>
-        </div>
+    <div :style="'a'+style">
+        {{signal}}
     </div>
+    <sugar-button @click="open">展示</sugar-button>
+    <sugar-dialog :model="show" @close="close">
+        <div style="width: 100px;height: 100px;background: #fff"></div>
+    </sugar-dialog>
 </div>
 </body>
 
@@ -143,21 +141,24 @@
         bulk() {
 
             const signal = useSignal(0);
-            const style = useSignal('width: 100%;height: 100%;');
+            const style = useSignal('width: 100%;');
             const show = useSignal(false);
 
             function signalAdd() {
                 signal.value++;
-                console.log(signal.value)
             }
 
             function close() {
                 show.value = false;
             }
 
-            function signalAdd1() {
-                signal.value++;
+            function open() {
+                show.value = true;
             }
+
+            useEffect(() => {
+                console.log(signal.value);
+            }, [signal]);
 
             return {
                 signal,
@@ -165,7 +166,7 @@
                 style,
                 show,
                 close,
-                signalAdd1
+                open
             };
         }
     });

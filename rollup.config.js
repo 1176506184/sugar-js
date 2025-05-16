@@ -1,13 +1,14 @@
 import replace from 'rollup-plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
-import { uglify } from 'rollup-plugin-uglify';
+import {uglify} from 'rollup-plugin-uglify';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import babel from 'rollup-plugin-babel';
 import copy from 'rollup-plugin-copy';
-import { visualizer } from 'rollup-plugin-visualizer';
+import {visualizer} from 'rollup-plugin-visualizer';
 import strip from 'rollup-plugin-strip';
+import sugarCompilePlugin from './compiler.plugin.js';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isUi = process.env.NODE_ENV === 'ui';
@@ -21,17 +22,21 @@ const rollupConfig = isUi ? {
   }],
   plugins: [
     babel({
+      plugins: ['@babel/plugin-transform-with-statement'],
       exclude: 'node_modules/**'
     }),
+    sugarCompilePlugin(),
     resolve(),
     typescript(),
     replace({
       ENV: JSON.stringify(process.env.NODE_ENV || 'development')
     }),
-    uglify(),
     copy({
       targets: [
-        { src: './packages/sugar-ui/css/sugar.css', dest: 'dist' } // 复制 src/assets 文件夹到 dist/assets 文件夹
+        {
+          src: './packages/sugar-ui/css/sugar.css',
+          dest: 'dist'
+        } // 复制 src/assets 文件夹到 dist/assets 文件夹
       ]
     })
   ]

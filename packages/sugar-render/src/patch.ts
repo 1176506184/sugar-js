@@ -49,6 +49,7 @@ export default function patch (vm, newVnode) {
         // 处理监听事件
         for (const key in on) {
           if (Object.hasOwnProperty.call(on, key)) {
+            console.log(on[key]);
             if (on[key].value) {
               const event = on[key].fun;
               event && domNode.addEventListener(key, event);

@@ -7,13 +7,14 @@ const {
 const dialog = {
   name: 'sugar-dialog',
   render: `<div>
-        <div class="sugar-dialog-mode" :style="style" s-if="show" @click.self="close">
-            <div class="sugar-dialog" s-if="show" @click.self="close" :style="'transform:' + transform">
-                <slot name="default"></slot>
-            </div>
-        </div>
-</div>`,
+          <div class="sugar-dialog-mode" :style="style" s-if="show" @click.self="close">
+              <div class="sugar-dialog" s-if="show" @click.self="close" :style="'transform:' + transform">
+                  <slot name="default"></slot>
+              </div>
+          </div>
+        </div>`,
   bulk (ctx) {
+    console.log(ctx);
     const show: any = useSignal(ctx.model.value);
     const opacity: any = useSignal(0);
     const direction: any = ctx.direction?.value ?? 'center';
