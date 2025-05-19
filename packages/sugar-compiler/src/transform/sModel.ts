@@ -1,5 +1,4 @@
 export function sModel (context, prop) {
-  console.log(context);
   context.props.push({
     type: 7,
     name: 'on',
