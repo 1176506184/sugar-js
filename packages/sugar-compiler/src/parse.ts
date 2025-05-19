@@ -1,4 +1,4 @@
-import { extend, isArray } from './utils';
+import { extend, isArray, isStaticExpression } from './utils';
 
 const globalScope = new Set<string>([]);
 
@@ -231,8 +231,9 @@ function parseAttribute (context: any, nameSet: any) {
       name: dirName,
       exp: value && {
         type: NodeTypes.SIMPLE_EXPRESSION,
-        content: dirName === 'bind' ? bindCtx(value.content) : value.content,
-        loc: value.loc
+        content: bindCtx(value.content),
+        loc: value.loc,
+        isStatic: !isStaticExpression(value.content)
       },
       arg,
       modifiers,

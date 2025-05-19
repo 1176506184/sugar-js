@@ -166,7 +166,7 @@ function dealEvent (props) {
 
   props.forEach((prop, index) => {
     if (prop.name === 'on') {
-      let funString = `_ctx_.${prop.exp.content}`;
+      let funString = `${prop.exp.content}`;
 
       if (prop.exp.isStatic) {
         funString = `(e)=>{${prop.exp.content}}`;

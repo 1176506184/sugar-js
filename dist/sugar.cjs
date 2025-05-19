@@ -135,6 +135,27 @@ function useState(initValue) {
 
 const isArray$1 = Array.isArray;
 const extend = Object.assign;
+// 判断一个字符串是否是合法的变量标识符（不能包含操作符、点、括号等）
+function isSimpleIdentifier(exp) {
+    return /^[A-Za-z_$][\w$]*$/.test(exp);
+}
+// 判断表达式是否是“静态的”（即可以在编译期确定的）
+function isStaticExpression(exp) {
+    // 1. 如果是合法的变量名：静态（如 @click="handleClick"）
+    if (isSimpleIdentifier(exp)) {
+        return true;
+    }
+    // 2. 如果包含函数调用、操作符、箭头函数等，认为是动态
+    // 这只是一个简单的启发式判断
+    const dynamicKeywords = ['(', ')', '=>', '+', '-', '*', '/', '.', '[', ']'];
+    for (const keyword of dynamicKeywords) {
+        if (exp.includes(keyword)) {
+            return false;
+        }
+    }
+    // 默认认为是静态
+    return true;
+}
 
 const globalScope = new Set([]);
 function parse(context, ancestors) {
@@ -337,8 +358,9 @@ function parseAttribute(context, nameSet) {
             name: dirName,
             exp: value && {
                 type: 4 /* NodeTypes.SIMPLE_EXPRESSION */,
-                content: dirName === 'bind' ? bindCtx(value.content) : value.content,
-                loc: value.loc
+                content: bindCtx(value.content),
+                loc: value.loc,
+                isStatic: !isStaticExpression(value.content)
             },
             arg,
             modifiers,
@@ -1002,7 +1024,7 @@ function dealEvent(props) {
     });
     props.forEach((prop, index) => {
         if (prop.name === 'on') {
-            let funString = `_ctx_.${prop.exp.content}`;
+            let funString = `${prop.exp.content}`;
             if (prop.exp.isStatic) {
                 funString = `(e)=>{${prop.exp.content}}`;
             }

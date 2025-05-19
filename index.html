@@ -116,7 +116,7 @@
 </style>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
-    <div :style="'a'+style">
+    <div :style="'a'+style" @click="signal++">
         {{signal}}
     </div>
     <input s-model="value.name"/>

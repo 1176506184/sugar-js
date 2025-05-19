@@ -1,6 +1,21 @@
 // packages/sugar-compiler/src/utils.ts
 var isArray = Array.isArray;
 var extend = Object.assign;
+function isSimpleIdentifier(exp) {
+  return /^[A-Za-z_$][\w$]*$/.test(exp);
+}
+function isStaticExpression(exp) {
+  if (isSimpleIdentifier(exp)) {
+    return true;
+  }
+  const dynamicKeywords = ["(", ")", "=>", "+", "-", "*", "/", ".", "[", "]"];
+  for (const keyword of dynamicKeywords) {
+    if (exp.includes(keyword)) {
+      return false;
+    }
+  }
+  return true;
+}
 
 // packages/sugar-compiler/src/parse.ts
 var globalScope = /* @__PURE__ */ new Set([]);
@@ -175,8 +190,9 @@ function parseAttribute(context, nameSet) {
       name: dirName,
       exp: value && {
         type: 4 /* SIMPLE_EXPRESSION */,
-        content: dirName === "bind" ? bindCtx(value.content) : value.content,
-        loc: value.loc
+        content: bindCtx(value.content),
+        loc: value.loc,
+        isStatic: !isStaticExpression(value.content)
       },
       arg,
       modifiers,
@@ -735,7 +751,7 @@ function dealEvent(props) {
   });
   props.forEach((prop, index) => {
     if (prop.name === "on") {
-      let funString = `_ctx_.${prop.exp.content}`;
+      let funString = `${prop.exp.content}`;
       if (prop.exp.isStatic) {
         funString = `(e)=>{${prop.exp.content}}`;
       }
