@@ -1,4 +1,4 @@
-import { extend, isArray, parseForAlias } from './utils';
+import { extend, isArray } from './utils';
 
 const globalScope = new Set<string>([]);
 

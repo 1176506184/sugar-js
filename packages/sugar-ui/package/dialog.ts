@@ -1,7 +1,6 @@
 const {
   useEffect,
   useSignal
-  // @ts-expect-error
 } = SUGAR;
 
 const dialog = {

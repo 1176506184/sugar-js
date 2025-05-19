@@ -1,8 +1,4 @@
-import { useState } from './utils';
-const {
-  onMounted
-  // @ts-expect-error
-} = SUGAR;
+const { onMounted, useState } = SUGAR;
 const BackTop = {
   name: 'sugar-back-top',
   render: `<div class="sugar-back-top" @click="goTop" :style="scale">

@@ -39,7 +39,8 @@ const rollupConfig = isUi ? {
           dest: 'dist'
         } // 复制 src/assets 文件夹到 dist/assets 文件夹
       ]
-    })
+    }),
+    uglify()
   ]
 } : {
   input: './packages/sugar/src/main.ts',

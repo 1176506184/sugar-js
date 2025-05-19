@@ -6,4 +6,5 @@
 **/*.html
 compiler.plugin.ts
 *.config.*
+global.d.ts
 dist

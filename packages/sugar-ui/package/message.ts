@@ -3,7 +3,6 @@ const {
   makeSugar,
   useSignal,
   onMounted
-  // @ts-expect-error
 } = SUGAR;
 
 export const showToast = {

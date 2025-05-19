@@ -1,7 +1,5 @@
-import { arrow as arrowFun, useState } from './utils';
-
-// @ts-expect-error
-const { useEffect } = SUGAR;
+import { arrow as arrowFun } from './utils';
+const { useEffect, useState } = SUGAR;
 const text = {
   name: 'sugar-text',
   render: `<div :class="'sugar-text ' + (open ? '':'sugar-text__ellipsis')" :style="style">

@@ -6,6 +6,7 @@ import { sFor } from './transform/sFor';
 import { sHtml } from './transform/sHtml';
 import { sLoading } from './transform/sLoading';
 import { transformEvent } from './transform/transformEvent';
+import { sModel } from './transform/sModel';
 
 export function baseCompile (template: string) {
   const ast = toAst(template);
@@ -14,7 +15,8 @@ export function baseCompile (template: string) {
     sFor,
     sHtml,
     sLoading,
-    transformEvent
+    transformEvent,
+    sModel
   });
 
   return {

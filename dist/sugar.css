@@ -327,8 +327,7 @@
 .sugar-field {
   display: flex;
   align-items: center;
-  height: 44px;
-  padding: 0 10px;
+  padding: 10px;
   box-sizing: border-box;
 }
 
@@ -343,8 +342,13 @@
   border: none;
   text-decoration: none;
   padding-left: 0;
-  margin-left: 10px;
   font-size: 15px;
+}
+
+.sugar-field-input-container {
+  vertical-align: middle;
+  word-wrap: break-word;
+  margin-left: 10px;
 }
 
 /*# sourceMappingURL=sugar.css.map */

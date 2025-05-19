@@ -16,5 +16,5 @@
   "exclude": [
     "node_modules"
   ],
-  "include": ["src", "packages", ".eslintrc.cjs", "rollup.config.js"]
+  "include": ["src", "packages", ".eslintrc.cjs", "rollup.config.js", "global.d.ts"]
 }

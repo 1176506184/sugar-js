@@ -1,8 +1,6 @@
-import { useState } from './utils';
-
 const {
-  useEffect
-  // @ts-expect-error
+  useEffect,
+  useState
 } = SUGAR;
 
 const pageNation = {
@@ -23,7 +21,6 @@ const pageNation = {
       </div>
   `,
   bulk (ctx: any) {
-    console.log(ctx);
     const [pi, setPi] = useState(1) as any;
     const [ps, setPs] = useState(20) as any;
     const [total, setTotal] = useState(0) as any;

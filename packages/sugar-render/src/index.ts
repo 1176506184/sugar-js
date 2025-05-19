@@ -193,7 +193,11 @@ export function bindAttrAndEvent (vm, vnode) {
             if (parameters?.length) {
               on[key].value(...parameters);
             } else {
-              on[key].value(e);
+              if (on[key].value.sugarRefDataType === 'useState') {
+                on[key].value.value = e.target.value;
+              } else {
+                on[key].value(e);
+              }
             }
 
             if (on[key].modifiers.includes('stop')) {

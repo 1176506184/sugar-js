@@ -16,6 +16,10 @@ export function transform (context, helpers) {
         helpers.sHtml(context, prop);
       }
 
+      if (prop.name === 's-model') {
+        helpers.sModel(context, prop);
+      }
+
       if (prop.name === 's-loading') {
         helpers.sLoading(context, prop);
       }

@@ -329,29 +329,33 @@
   position: relative;
 }
 
-.sugar-field{
+.sugar-field {
   display: flex;
   align-items: center;
-  height: 44px;
-  padding:0 10px;
+  padding: 10px;
   box-sizing: border-box;
 }
 
-.sugar-field-label{
+.sugar-field-label {
   white-space: nowrap;
   font-size: 15px;
-  color:#333;
+  color: #333;
 }
 
-.sugar-field-input{
+.sugar-field-input {
   outline: none;
-  border:none;
+  border: none;
   text-decoration: none;
   padding-left: 0;
-  margin-left: 10px;
   font-size: 15px;
 }
 
-.sugar-picker_container{
+.sugar-field-input-container {
+  vertical-align: middle;
+  word-wrap: break-word;
+  margin-left: 10px;
+}
+
+.sugar-picker_container {
 
 }

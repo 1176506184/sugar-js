@@ -1,4 +1,3 @@
-// @ts-expect-error
 const { instance } = SUGAR;
 
 const upload = {
