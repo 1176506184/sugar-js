@@ -4,7 +4,8 @@ export function sModel (context, prop) {
     name: 'on',
     exp: {
       type: 4,
-      content: 'value'
+      content: `_ctx_.${prop.value.content} = e.target.value`,
+      isStatic: true
     },
     arg: {
       type: 4,

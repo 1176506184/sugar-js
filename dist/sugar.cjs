@@ -1056,13 +1056,13 @@ function transformEvent(content, prop) {
 }
 
 function sModel(context, prop) {
-    console.log(context);
     context.props.push({
         type: 7,
         name: 'on',
         exp: {
             type: 4,
-            content: 'value'
+            content: `_ctx_.${prop.value.content} = e.target.value`,
+            isStatic: true
         },
         arg: {
             type: 4,
@@ -1592,6 +1592,7 @@ function sugarRender() {
         if (!vm.render) {
             const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
             const { code } = sugarCompiler(htmlCode);
+            console.log(code);
             render = code;
         }
         else {
@@ -1624,31 +1625,30 @@ function sugarRender() {
     };
 }
 function VmDataRefPassive(vm) {
-    const refObj = {};
-    Object.keys(vm).forEach((key) => {
-        var _a;
-        if (((_a = vm[key]) === null || _a === void 0 ? void 0 : _a.sugarRefDataType) === 'useState') {
-            Object.defineProperty(refObj, key, {
-                get() {
-                    return vm[key].value;
-                },
-                set(val) {
-                    console.log('useState can not set value in render');
-                }
-            });
-        }
-        else {
-            Object.defineProperty(refObj, key, {
-                get() {
-                    return vm[key];
-                },
-                set(val) {
-                    vm[key] = val;
-                }
-            });
+    return new Proxy(vm, {
+        get(target, prop, receiver) {
+            const val = Reflect.get(target, prop, receiver);
+            if (isSignal(val)) {
+                return val.value;
+            }
+            else {
+                return val;
+            }
+        },
+        set(target, prop, newValue, receiver) {
+            const val = Reflect.get(target, prop, receiver);
+            if (isSignal(val)) {
+                val.value = newValue;
+            }
+            else {
+                Reflect.set(target, prop, newValue);
+            }
+            return true;
         }
     });
-    return refObj;
+}
+function isSignal(value) {
+    return value.sugarRefDataType === 'useState';
 }
 function bindT(vm, data) {
     Object.keys(data).forEach((key) => {
