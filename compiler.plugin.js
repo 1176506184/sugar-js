@@ -577,6 +577,9 @@ function transform(context, helpers) {
       if (prop.name === "s-html") {
         helpers.sHtml(context2, prop);
       }
+      if (prop.name === "s-model") {
+        helpers.sModel(context2, prop);
+      }
       if (prop.name === "s-loading") {
         helpers.sLoading(context2, prop);
       }
@@ -732,7 +735,7 @@ function dealEvent(props) {
   });
   props.forEach((prop, index) => {
     if (prop.name === "on") {
-      let funString = `"${prop.exp.content}"`;
+      let funString = `_ctx_.${prop.exp.content}`;
       if (prop.exp.isStatic) {
         funString = `(e)=>{${prop.exp.content}}`;
       }
@@ -789,6 +792,37 @@ function transformEvent(content, prop) {
   }
 }
 
+// packages/sugar-compiler/src/transform/sModel.ts
+function sModel(context, prop) {
+  context.props.push({
+    type: 7,
+    name: "on",
+    exp: {
+      type: 4,
+      content: `_ctx_.${prop.value.content} = e.target.value`,
+      isStatic: true
+    },
+    arg: {
+      type: 4,
+      content: "input"
+    },
+    modifiers: []
+  });
+  context.props.push({
+    type: 7,
+    name: "bind",
+    exp: {
+      type: 4,
+      content: `_ctx_.${prop.value.content}`
+    },
+    arg: {
+      type: 4,
+      content: "value"
+    },
+    modifiers: []
+  });
+}
+
 // packages/sugar-compiler/src/compile.ts
 function baseCompile(template) {
   const ast = toAst(template);
@@ -797,7 +831,8 @@ function baseCompile(template) {
     sFor,
     sHtml,
     sLoading,
-    transformEvent
+    transformEvent,
+    sModel
   });
   return {
     root: ast,

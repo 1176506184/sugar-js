@@ -1000,7 +1000,7 @@ function dealEvent(props) {
     });
     props.forEach((prop, index) => {
         if (prop.name === 'on') {
-            let funString = `"${prop.exp.content}"`;
+            let funString = `_ctx_.${prop.exp.content}`;
             if (prop.exp.isStatic) {
                 funString = `(e)=>{${prop.exp.content}}`;
             }
@@ -1734,7 +1734,6 @@ function bindAttrAndEvent(vm, vnode) {
         for (const key in on) {
             if (Object.hasOwnProperty.call(on, key)) {
                 if (on[key].value && !on[key].isStatic) {
-                    on[key].value = vm.data[on[key].value];
                     on[key].fun = function (e) {
                         if (on[key].modifiers.includes('self')) {
                             if (e.target !== e.currentTarget) {
@@ -1746,12 +1745,7 @@ function bindAttrAndEvent(vm, vnode) {
                             on[key].value(...parameters);
                         }
                         else {
-                            if (on[key].value.sugarRefDataType === 'useState') {
-                                on[key].value.value = e.target.value;
-                            }
-                            else {
-                                on[key].value(e);
-                            }
+                            on[key].value(e);
                         }
                         if (on[key].modifiers.includes('stop')) {
                             e.stopPropagation();
