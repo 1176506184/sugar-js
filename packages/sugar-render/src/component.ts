@@ -158,3 +158,12 @@ export function componentRender () {
     mounted
   };
 }
+
+export function Component (options: any) {
+  const { code, root } = sugarCompiler(options.render);
+  return {
+    ...options,
+    render: code,
+    headTag: root.tag
+  };
+}

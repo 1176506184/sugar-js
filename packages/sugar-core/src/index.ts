@@ -1,7 +1,7 @@
 import { type Core } from './types';
 import { onMounted, mountHandleList, updateActiveId } from '@sugar/sugar-hook';
 import { sugarRender } from '@sugar/sugar-render';
-import { guid } from '@sugar/sugar-shared';
+import { guid, isArray } from '@sugar/sugar-shared';
 import { nextTick } from '@sugar/sugar-reactive';
 import { initCSS } from './utils/utils';
 
@@ -35,6 +35,9 @@ function makeSugar (options: Core) {
   }
 
   function install (components) {
+    if (!isArray(components)) {
+      components = [components];
+    }
     components.forEach((component) => {
       if (component.name) {
         vm.components[component.name] = component;

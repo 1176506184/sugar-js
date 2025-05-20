@@ -1286,6 +1286,10 @@ function componentRender() {
         mounted
     };
 }
+function Component(options) {
+    const { code, root } = sugarCompiler(options.render);
+    return Object.assign(Object.assign({}, options), { render: code, headTag: root.tag });
+}
 
 function patch(vm, newVnode) {
     var _a;
@@ -1612,7 +1616,6 @@ function sugarRender() {
         if (!vm.render) {
             const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
             const { code } = sugarCompiler(htmlCode);
-            console.log(code);
             render = code;
         }
         else {
@@ -1891,6 +1894,9 @@ function makeSugar(options) {
         });
     }
     function install(components) {
+        if (!isArray(components)) {
+            components = [components];
+        }
         components.forEach((component) => {
             if (component.name) {
                 vm.components[component.name] = component;
@@ -1915,10 +1921,11 @@ if (typeof window !== 'undefined') {
             useEffect,
             nextTick,
             useSignal,
-            useState
+            useState,
+            Component
         };
     })(window);
 }
 
-export { instance, makeSugar, nextTick, onMounted, useEffect, useSignal, useState };
+export { Component, instance, makeSugar, nextTick, onMounted, useEffect, useSignal, useState };
 //# sourceMappingURL=sugar.bundle.js.map

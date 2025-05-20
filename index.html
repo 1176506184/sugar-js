@@ -120,6 +120,7 @@
         {{signal}}
     </div>
     <input s-model="value.name"/>
+    <test></test>
     <sugar-button @click="open">展示</sugar-button>
     <sugar-field></sugar-field>
     <sugar-dialog :model="show" @close="close">
@@ -158,8 +159,19 @@
         useState,
         useEffect,
         nextTick,
-        useSignal
+        useSignal,
+        Component
     } = SUGAR;
+
+    const arrow = Component({
+        name: 'test',
+        render: `<div>测试组件</div>`,
+        bulk(ctx) {
+            return {};
+        }
+    });
+    console.log(arrow)
+
     var sugar = makeSugar({
         bulk() {
 
@@ -221,6 +233,7 @@
         }
     });
     sugar.install(sugarUI);
+    sugar.install(arrow);
     sugar.mount('#app');
 </script>
 </html>
