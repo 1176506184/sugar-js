@@ -124,7 +124,11 @@
     <sugar-button @click="open">展示</sugar-button>
     <sugar-field></sugar-field>
     <sugar-dialog :model="show" @close="close">
-        <div style="width: 100px;height: 100px;background: #fff">{{signal}}</div>
+        <div style="width: 100px;height: 100px;background: #fff">
+            <sugar-button>
+                {{signal}}
+            </sugar-button>
+        </div>
     </sugar-dialog>
     <sugar-pagination
             :pi="pi"
@@ -170,7 +174,6 @@
             return {};
         }
     });
-    console.log(arrow)
 
     var sugar = makeSugar({
         bulk() {
@@ -191,7 +194,7 @@
                 pi.value = e;
             }
 
-            const signal = useSignal(0);
+            const signal = useSignal(3);
             const style = useSignal('width: 100%;');
             const show = useSignal(false);
 
@@ -233,8 +236,8 @@
             };
         }
     });
-    sugar.install(sugarUI);
-    sugar.install(arrow);
     sugar.mount('#app');
+    sugar.install(arrow);
+    sugar.install(sugarUI);
 </script>
 </html>

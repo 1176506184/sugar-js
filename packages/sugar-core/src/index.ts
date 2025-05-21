@@ -19,7 +19,8 @@ function makeSugar (options: Core) {
     appId,
     components: [],
     sugar: {},
-    slot: options.slot
+    slot: options.slot,
+    forceUpdate: () => {}
   };
 
   function mount (el) {
@@ -46,6 +47,7 @@ function makeSugar (options: Core) {
         $[component.fun] = component.bulk;
       }
     });
+    vm.$el && vm.forceUpdate();
   }
 
   return {

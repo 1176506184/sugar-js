@@ -81,8 +81,15 @@ export default function patch (vm, newVnode) {
 
   function patchVnode (newVnode, oldVnode) {
     if (isComponent(newVnode, vm.components)) {
-      updateComponent(newVnode, oldVnode);
-      bindComponentInstance(newVnode, vm);
+      if (!oldVnode._sugar) {
+        const node = createElement(newVnode);
+        nodeOps.insert(node, nodeOps.parentNode(oldVnode.elm), oldVnode.elm);
+        oldVnode.elm.remove();
+        oldVnode.elm = node;
+      } else {
+        updateComponent(newVnode, oldVnode);
+        bindComponentInstance(newVnode, vm);
+      }
       return;
     }
     newVnode.elm = oldVnode.elm;
