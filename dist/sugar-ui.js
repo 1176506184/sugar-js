@@ -1,2 +1,576 @@
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).Sugar={})}(this,function(e){"use strict";const{useEffect:o,useSignal:c}=SUGAR,t={name:"sugar-dialog",render:function(){var e=this;return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),e._SUGAR._c("div",{attrs:{},on:{}},[e.show?e._SUGAR._c("div",{attrs:{class:"sugar-dialog-mode",style:e.style},on:{click:{value:e.close,isStatic:!1,modifiers:["self"]}}},[e.show?e._SUGAR._c("div",{attrs:{class:"sugar-dialog",style:"transform:"+e.transform},on:{click:{value:e.close,isStatic:!1,modifiers:["self"]}}},[e._SUGAR._c("slot",{attrs:{name:"default"},on:{}},[])]):e._SUGAR._e()]):e._SUGAR._e()])},headTag:"div",bulk(e){var t;const a=c(e.model.value),n=c(0),s=null!=(t=null==(t=e.direction)?void 0:t.value)?t:"center",l=c(""),i=c(r(s));function r(e,t=!1){return"center"!==e&&"top"===e?t?"translateY(0)":"translateY(-100%)":""}return o(()=>{e.model.value?(a.value=!0,setTimeout(()=>{n.value=1,l.value=`opacity:${n.value};`,console.log(l)},50)):(n.value=0,l.value=`opacity:${n.value};`,setTimeout(()=>{e.model.value||(a.value=!1)},300)),a.value?setTimeout(()=>{i.value=r(s,a.value)},50):i.value=r(s,a.value)},[e.model],!0),{show:a,close:function(){e.close()},opacity:n,style:l,transform:i}}},{makeSugar:l,useSignal:i,onMounted:r}=SUGAR,{useEffect:w,useState:p}=SUGAR,{onMounted:a,useState:n}=SUGAR;const u={let:"transform: rotate(180deg);",right:"transform: rotate(0deg);",top:"transform: rotate(90deg);",bottom:"transform: rotate(-90deg);"},{useEffect:v,useState:d}=SUGAR,s=SUGAR["instance"],{onMounted:g,instance:_,useState:f}=SUGAR,{onMounted:h,instance:m,useState:S}=SUGAR,R=[{name:"sugar-button",render:function(){var e=this;return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),e._SUGAR._c("button",{attrs:{class:"sugar-button",style:"margin: 5px 5px 0;"},on:{click:{value:e.click,isStatic:!1,modifiers:[]}}},[e._SUGAR._c("slot",{attrs:{name:"default"},on:{}},[]),e._SUGAR._c("slot",{attrs:{name:"label"},on:{}},[])])},headTag:"button",bulk(a){return{click:function(e){var t;null!=(t=a.click)&&t.call(a,e)},ctx:a}}},t,{fun:"showMessageBox",bulk(a={title:"提示",content:"这是一条提示的内容",confirmText:"确认",cancelText:"取消",confirm:()=>{},cancel:()=>{}}){let n=document.createElement("div"),s=(document.body.appendChild(n),l({render:function(){var e=this;return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),e._SUGAR._c("sugar-dialog",{attrs:{model:e.show},on:{close:{value:e.cancel,isStatic:!1,modifiers:[]}}},[e._SUGAR._c("div",{attrs:{class:"sugar-message-box"},on:{}},[e._SUGAR._c("div",{attrs:{class:"sugar-message-title"},on:{}},[e._SUGAR._v(e._SUGAR._s(e.title))]),e._SUGAR._c("div",{attrs:{class:"sugar-message-box-content"},on:{}},[e._SUGAR._v(e._SUGAR._s(e.content))]),e._SUGAR._c("div",{attrs:{class:"sugar-message-toolbar"},on:{}},[e._SUGAR._c("div",{attrs:{class:"sugar-message-box-btn"},on:{click:{value:e.cancel,isStatic:!1,modifiers:[]}}},[e._SUGAR._v(e._SUGAR._s(e.cancelText))]),e._SUGAR._c("div",{attrs:{class:"sugar-message-box-btn sugar-message-box-confirm"},on:{click:{value:e.confirm,isStatic:!1,modifiers:[]}}},[e._SUGAR._v(e._SUGAR._s(e.confirmText))])]),e._SUGAR._c("div",{attrs:{},on:{}},[])])])},headTag:"sugar-dialog",bulk(){var e;const t=i(!1);return r(()=>{t.value=!0}),{title:null!=(e=a.title)?e:"提示",content:null!=(e=a.content)?e:"",show:t,cancel:function(){a.cancel(),t.value=!1,setTimeout(()=>{s=null,n.remove(),n=null},300)},confirm:function(){a.confirm(),t.value=!1,setTimeout(()=>{s=null,n.remove(),n=null},300)},confirmText:null!=(e=a.confirmText)?e:"确定",cancelText:null!=(e=a.cancelText)?e:"取消"}}}));s.install([t]),s.mount(n)}},{fun:"showToast",bulk(e,t=2e3,a=""){let n=document.createElement("div"),s=(document.body.appendChild(n),l({render:function(){var e=this;return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),e._SUGAR._c("div",{attrs:{class:"sugar-toast",style:e.style},on:{}},[e._SUGAR._v(e._SUGAR._s(e.text))])},headTag:"div",bulk(){return{text:e,style:a}}}));s.mount(n),setTimeout(()=>{s=null,n.remove(),n=null},t)}},{name:"sugar-pagination",render:function(){const a=this;return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),a._SUGAR._c("div",{attrs:{class:"sugar-pagination",style:a.style},on:{}},[a._SUGAR._c("ul",{attrs:{class:"sugar-pagination__items"},on:{}},[a.showBtn?a._SUGAR._c("li",{attrs:{class:"sugar-pagination__item"},on:{click:{value:a.prev,isStatic:!1,modifiers:[]}}},[a._SUGAR._c("svg",{attrs:{t:"1741916731985",class:"icon",viewBox:"0 0 1024 1024",version:"1.1",xmlns:"http://www.w3.org/2000/svg","p-id":"2581",width:"100",height:"100"},on:{}},[a._SUGAR._c("path",{attrs:{d:"M719.2 912.6c14.2-14.2 14.2-37.2 0-51.4L371.7 513.8c-2.8-2.9-2.8-7.5 0-10.3L719.2 156c14.2-14.2 14.2-37.2 0-51.4-14.2-14.2-37.2-14.2-51.4 0L320.3 452c-15.6 15.6-23.4 36-23.4 56.5s7.8 41 23.4 56.5l347.4 347.4c14.3 14.3 37.3 14.3 51.5 0.2z",fill:a.canPrev?"#333":"#8a8a8a"},on:{}},[])])]):a._SUGAR._e(),...a._SUGAR._loop((e,t)=>a._SUGAR._c("li",{attrs:{class:a.pi===e?"sugar-pagination__item sugar-pagination__item--active":"sugar-pagination__item"},on:{click:{value:e=>{a.changePage},isStatic:!0,parameters:[e],modifiers:[]}}},[a._SUGAR._c("button",{attrs:{},on:{}},[a._SUGAR._v(a._SUGAR._s(e))])]),a.page),a.showBtn?a._SUGAR._c("li",{attrs:{class:"sugar-pagination__item right_arrow"},on:{click:{value:a.next,isStatic:!1,modifiers:[]}}},[a._SUGAR._c("svg",{attrs:{t:"1741916731985",class:"icon",viewBox:"0 0 1024 1024",version:"1.1",xmlns:"http://www.w3.org/2000/svg","p-id":"2581",width:"100",height:"100"},on:{}},[a._SUGAR._c("path",{attrs:{d:"M719.2 912.6c14.2-14.2 14.2-37.2 0-51.4L371.7 513.8c-2.8-2.9-2.8-7.5 0-10.3L719.2 156c14.2-14.2 14.2-37.2 0-51.4-14.2-14.2-37.2-14.2-51.4 0L320.3 452c-15.6 15.6-23.4 36-23.4 56.5s7.8 41 23.4 56.5l347.4 347.4c14.3 14.3 37.3 14.3 51.5 0.2z",fill:a.canNext?"#333":"#8a8a8a"},on:{}},[])])]):a._SUGAR._e()])])},headTag:"div",bulk(t){const[e,a]=p(1),[n,s]=p(20),[l,i]=p(0),[r,o]=p([1]),[c,u]=p(!1),[v,d]=p(!1),[g,_]=p(!1),[f,h]=p(!1),[,m]=p(!1);function S(){s(t.ps.value),a(t.pi.value),i(t.total.value),o(function(t,a,n){t=Number(t),a=Number(a),n=Number(n);var s=[];for(let e=1;e<=a;e++){var l=t-e;0<l&&s.unshift(l)}var i=[];for(let e=1;e<=a+(a-s.length);e++){var r=t+e;r<=n&&i.push(r)}if(i.length<a){var o=s.length;for(let e=1;e<=a-i.length;e++){var c=t-o-e;0<c&&s.unshift(c)}}return[...s,t,...i]}(e.value,t.page.value,Math.ceil(l.value/n.value))),t["show-sis"]&&m(t["show-sis"].value),1<e.value?d(!0):d(!1),e.value<Math.ceil(l.value/n.value)?u(!0):u(!1),t.btn&&_(t.btn.value),t["show-most"]&&h(t["show-most"].value),f.value&&!r.value.includes(1)&&o([1,...r.value]),f.value&&!r.value.includes(Math.ceil(l.value/n.value))&&o([...r.value,Math.ceil(l.value/n.value)])}return S(),w(()=>{S()},[t.ps,t.pi,t.total,t.btn,t.page,t["show-most"],t["show-sis"]],!0),{pi:e,setPi:a,ps:n,setPs:s,total:l,page:r,style:t.style,canNext:c,canPrev:v,changePage:function(e){t.change(e)},showBtn:g,prev:function(){1<e.value&&t.change(e.value-1)},next:function(){e.value<Math.ceil(l.value/n.value)&&t.change(e.value+1)}}}},{name:"sugar-back-top",render:function(){var e=this;return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),e._SUGAR._c("div",{attrs:{class:"sugar-back-top",style:e.scale},on:{click:{value:e.goTop,isStatic:!1,modifiers:[]}}},[e._SUGAR._c("svg",{attrs:{class:"icon",viewBox:"0 0 1024 1024",xmlns:"http://www.w3.org/2000/svg",width:"100",height:"100"},on:{}},[e._SUGAR._c("path",{attrs:{d:"M832 165.76H192c-26.24 0-48 21.76-48 48s21.76 48 48 48h640c26.24 0 48-21.76 48-48s-21.76-48-48-48zM551.04 376.96A58.688 58.688 0 0 0 512 360.32c-12.8 0-29.44 7.04-38.4 16L254.08 595.84c-18.56 18.56-18.56 49.28 0 67.84s49.28 18.56 67.84 0l142.08-142.08v348.16c0 26.24 21.76 48 48 48s48-21.76 48-48V521.6l142.08 142.08c9.6 9.6 21.76 14.08 33.92 14.08s24.32-4.48 33.92-14.08c18.56-18.56 18.56-49.28 0-67.84L551.04 376.96z","p-id":"2865",fill:"#ffffff"},on:{}},[])])])},headTag:"div",bulk(){const[e,t]=n("");return a(()=>{window.addEventListener("scroll",()=>{400<window.scrollY?t("transform:scale(1)"):t("")})}),{goTop:function(){window.scrollTo({top:0,behavior:"smooth"})},scale:e}}},{name:"sugar-text",render:function(){var e=this;return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),e._SUGAR._c("div",{attrs:{class:"sugar-text "+(open?"":"sugar-text__ellipsis"),style:e.style},on:{}},[e._SUGAR._c("slot",{attrs:{name:"default"},on:{}},[]),e.arrow?e._SUGAR._c("div",{attrs:{class:"sugar-arrow"},on:{click:{value:e.click,isStatic:!1,modifiers:[]}}},[e._SUGAR._c("div",{attrs:{class:e.open?"open":""},on:{}},[e._SUGAR._html(e.arrowHtml)])]):e._SUGAR._e()])},headTag:"div",bulk(t){console.log(t);const[a,n]=d(""),[e,s]=d(!1),[l,i]=d(!1);return v(()=>{var e;n(null!=(e=t.style.value)?e:""),0<t.rows.value&&n(a.value+";"+`-webkit-line-clamp: ${t.rows.value};`),t.arrow&&s(t.arrow.value)},[t.style,t.rows,t.arrow],!0),{style:a,rows:t.rows,arrow:e,open:l,click:function(){i(!l.value)},arrowHtml:`<svg style="${u.bottom}" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="100" height="100"><path d="M719.2 912.6c14.2-14.2 14.2-37.2 0-51.4L371.7 513.8c-2.8-2.9-2.8-7.5 0-10.3L719.2 156c14.2-14.2 14.2-37.2 0-51.4-14.2-14.2-37.2-14.2-51.4 0L320.3 452c-15.6 15.6-23.4 36-23.4 56.5s7.8 41 23.4 56.5l347.4 347.4c14.3 14.3 37.3 14.3 51.5 0.2z" fill="#333"></path></svg>`}}},{name:"sugar-upload",render:function(){var e=this;return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),e._SUGAR._c("div",{attrs:{},on:{click:{value:e.uploadFile,isStatic:!1,modifiers:[]}}},[e._SUGAR._c("slot",{attrs:{name:"default"},on:{}},[]),e._SUGAR._c("input",{attrs:{style:"display: none",instance:"fileRef",type:"file"},on:{change:{value:e.fileInput,isStatic:!1,modifiers:[]}}},[])])},headTag:"div",bulk(a){const n=s();return{fileInput:function(e){var t=[];t.push(...e.target.files),a.change(t),n.value.value=""},fileRef:n,uploadFile:function(){n.value.click()}}}},{name:"sugar-lazy",render:function(){return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),this._SUGAR._c("div",{attrs:{instance:"node"},on:{}},[this.show?this._SUGAR._c("slot",{attrs:{name:"default"},on:{}},[]):this._SUGAR._e()])},headTag:"div",bulk(e){const[t,a]=f(!1),n=_();return g(()=>{window.addEventListener("scroll",()=>{n.value.getBoundingClientRect().top<window.innerHeight&&a(!0)})}),{show:t,node:n}}},{name:"sugar-field",render:function(){var e=this;return new Proxy({},{get(e,t,a){if(t in ctx)return ctx[t];throw new ReferenceError(`Missing variable ${String(t)} in template`)}}),e._SUGAR._c("div",{attrs:{class:"sugar-field"},on:{}},[e._SUGAR._c("slot",{attrs:{name:"label",instance:"labelRef"},on:{}},[]),e.showLabel?e._SUGAR._c("div",{attrs:{class:"sugar-field-label"},on:{}},[e._SUGAR._v(e._SUGAR._s(e.label))]):e._SUGAR._e(),e._SUGAR._c("slot",{attrs:{name:"default",instance:"defaultRef"},on:{}},[]),e._SUGAR._c("div",{attrs:{class:"sugar-field-input-container"},on:{}},[e.showField?e._SUGAR._c("input",{attrs:{class:"sugar-field-input",placeholder:e.placeholder,value:e.value},on:{input:{value:e.onInput,isStatic:!1,modifiers:[]}}},[]):e._SUGAR._e()])])},headTag:"div",bulk(t){var e,a=(null==(a=t.label)?void 0:a.value)||"文本",n=(null==(n=t.placeholder)?void 0:n.value)||"请输入";const s=m(),l=m(),[i,r]=S(!0),[o,c]=S(!0),[u,v]=S((null==(e=t.value)?void 0:e.value)||"");return h(()=>{var e;0<(null==(e=s.value)?void 0:e.children.length)&&r(!1),0<(null==(e=l.value)?void 0:e.children.length)&&c(!1)}),{label:a,labelRef:s,showLabel:i,defaultRef:l,placeholder:n,showField:o,input:t.input,value:u,onInput:function(e){v(e.target.value),t.input(e.target.value)}}}}];"undefined"!=typeof window&&(window.sugarUI=R),e.sugarUI=R});
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Sugar = {}));
+})(this, (function (exports) { 'use strict';
+
+    const button = {
+        name: 'sugar-button',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('button',{ "attrs":{"class":"sugar-button","style":"margin: 5px 5px 0;"},"on":{"click":{"value":_ctx_.click,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]),_ctx_._SUGAR._c('slot',{ "attrs":{"name":"label"},"on":{}},[])]);
+      
+    },
+    headTag: 'button',
+        bulk(ctx) {
+            function click(e) {
+                var _a;
+                (_a = ctx.click) === null || _a === void 0 ? void 0 : _a.call(ctx, e);
+            }
+            return {
+                click,
+                ctx
+            };
+        }
+    };
+
+    const { useEffect: useEffect$2, useSignal: useSignal$1 } = SUGAR;
+    const dialog = {
+        name: 'sugar-dialog',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{},"on":{}},[_ctx_.show ? _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-dialog-mode","style":_ctx_.style},"on":{"click":{"value":_ctx_.close,"isStatic":false,"modifiers":["self"]}}},[_ctx_.show ? _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-dialog","style":'transform:' + _ctx_.transform},"on":{"click":{"value":_ctx_.close,"isStatic":false,"modifiers":["self"]}}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[])]) : _ctx_._SUGAR._e()]) : _ctx_._SUGAR._e()]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            var _a, _b;
+            const show = useSignal$1(ctx.model.value);
+            const opacity = useSignal$1(0);
+            const direction = (_b = (_a = ctx.direction) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : 'center';
+            const style = useSignal$1('');
+            const transform = useSignal$1(getInitDirection(direction));
+            useEffect$2(() => {
+                if (ctx.model.value) {
+                    show.value = true;
+                    setTimeout(() => {
+                        opacity.value = 1;
+                        style.value = `opacity:${opacity.value};`;
+                        console.log(style);
+                    }, 50);
+                }
+                else {
+                    opacity.value = 0;
+                    style.value = `opacity:${opacity.value};`;
+                    setTimeout(() => {
+                        if (!ctx.model.value) {
+                            show.value = false;
+                        }
+                    }, 300);
+                }
+                if (show.value) {
+                    setTimeout(() => {
+                        transform.value = getInitDirection(direction, show.value);
+                    }, 50);
+                }
+                else {
+                    transform.value = getInitDirection(direction, show.value);
+                }
+            }, [ctx.model], true);
+            function close() {
+                ctx.close();
+            }
+            function getInitDirection(type, show = false) {
+                if (type === 'center') {
+                    return '';
+                }
+                if (type === 'top') {
+                    return show ? 'translateY(0)' : 'translateY(-100%)';
+                }
+                return '';
+            }
+            return {
+                show,
+                close,
+                opacity,
+                style,
+                transform
+            };
+        }
+    };
+
+    const { makeSugar, useSignal, onMounted: onMounted$3 } = SUGAR;
+    const showToast = {
+        fun: 'showToast',
+        bulk(text, timeout = 2000, style = '') {
+            let root = document.createElement('div');
+            document.body.appendChild(root);
+            let MessageApp = makeSugar({
+                render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-toast","style":_ctx_.style},"on":{}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.text))]);
+      
+    },
+    headTag: 'div',
+                bulk() {
+                    return {
+                        text,
+                        style
+                    };
+                }
+            });
+            MessageApp.mount(root);
+            setTimeout(() => {
+                MessageApp = null;
+                root.remove();
+                root = null;
+            }, timeout);
+        }
+    };
+    const showMessageBox = {
+        fun: 'showMessageBox',
+        bulk(options = {
+            title: '提示',
+            content: '这是一条提示的内容',
+            confirmText: '确认',
+            cancelText: '取消',
+            confirm: () => {
+            },
+            cancel: () => {
+            }
+        }) {
+            let root = document.createElement('div');
+            document.body.appendChild(root);
+            let MessageApp = makeSugar({
+                render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('sugar-dialog',{ "attrs":{"model":_ctx_.show},"on":{"close":{"value":_ctx_.cancel,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-box"},"on":{}},[_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-title"},"on":{}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.title))]),_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-box-content"},"on":{}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.content))]),_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-toolbar"},"on":{}},[_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-box-btn"},"on":{"click":{"value":_ctx_.cancel,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.cancelText))]),_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-box-btn sugar-message-box-confirm"},"on":{"click":{"value":_ctx_.confirm,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.confirmText))])]),_ctx_._SUGAR._c('div',{ "attrs":{},"on":{}},[])])]);
+      
+    },
+    headTag: 'sugar-dialog',
+                bulk() {
+                    var _a, _b, _c, _d;
+                    const show = useSignal(false);
+                    function cancel() {
+                        options.cancel();
+                        show.value = false;
+                        setTimeout(() => {
+                            MessageApp = null;
+                            root.remove();
+                            root = null;
+                        }, 300);
+                    }
+                    function confirm() {
+                        options.confirm();
+                        show.value = false;
+                        setTimeout(() => {
+                            MessageApp = null;
+                            root.remove();
+                            root = null;
+                        }, 300);
+                    }
+                    onMounted$3(() => {
+                        show.value = true;
+                    });
+                    return {
+                        title: (_a = options.title) !== null && _a !== void 0 ? _a : '提示',
+                        content: (_b = options.content) !== null && _b !== void 0 ? _b : '',
+                        show,
+                        cancel,
+                        confirm,
+                        confirmText: (_c = options.confirmText) !== null && _c !== void 0 ? _c : '确定',
+                        cancelText: (_d = options.cancelText) !== null && _d !== void 0 ? _d : '取消'
+                    };
+                }
+            });
+            MessageApp.install([dialog]);
+            MessageApp.mount(root);
+        }
+    };
+
+    const { useEffect: useEffect$1, useState: useState$4 } = SUGAR;
+    const pageNation = {
+        name: 'sugar-pagination',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-pagination","style":_ctx_.style},"on":{}},[_ctx_._SUGAR._c('ul',{ "attrs":{"class":"sugar-pagination__items"},"on":{}},[_ctx_.showBtn ? _ctx_._SUGAR._c('li',{ "attrs":{"class":"sugar-pagination__item"},"on":{"click":{"value":_ctx_.prev,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('svg',{ "attrs":{"t":"1741916731985","class":"icon","viewBox":"0 0 1024 1024","version":"1.1","xmlns":"http://www.w3.org/2000/svg","p-id":"2581","width":"100","height":"100"},"on":{}},[_ctx_._SUGAR._c('path',{ "attrs":{"d":"M719.2 912.6c14.2-14.2 14.2-37.2 0-51.4L371.7 513.8c-2.8-2.9-2.8-7.5 0-10.3L719.2 156c14.2-14.2 14.2-37.2 0-51.4-14.2-14.2-37.2-14.2-51.4 0L320.3 452c-15.6 15.6-23.4 36-23.4 56.5s7.8 41 23.4 56.5l347.4 347.4c14.3 14.3 37.3 14.3 51.5 0.2z","fill":_ctx_.canPrev?'#333':'#8a8a8a'},"on":{}},[])])]) : _ctx_._SUGAR._e(),..._ctx_._SUGAR._loop((item,index)=>{
+            return _ctx_._SUGAR._c('li',{ "attrs":{"class":_ctx_.pi === item ? 'sugar-pagination__item sugar-pagination__item--active':'sugar-pagination__item'},"on":{"click":{"value":(e)=>{_ctx_.changePage(item);},"isStatic":true,"modifiers":[]}}},[_ctx_._SUGAR._c('button',{ "attrs":{},"on":{}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(item))])])
+                                },_ctx_.page),_ctx_.showBtn ? _ctx_._SUGAR._c('li',{ "attrs":{"class":"sugar-pagination__item right_arrow"},"on":{"click":{"value":_ctx_.next,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('svg',{ "attrs":{"t":"1741916731985","class":"icon","viewBox":"0 0 1024 1024","version":"1.1","xmlns":"http://www.w3.org/2000/svg","p-id":"2581","width":"100","height":"100"},"on":{}},[_ctx_._SUGAR._c('path',{ "attrs":{"d":"M719.2 912.6c14.2-14.2 14.2-37.2 0-51.4L371.7 513.8c-2.8-2.9-2.8-7.5 0-10.3L719.2 156c14.2-14.2 14.2-37.2 0-51.4-14.2-14.2-37.2-14.2-51.4 0L320.3 452c-15.6 15.6-23.4 36-23.4 56.5s7.8 41 23.4 56.5l347.4 347.4c14.3 14.3 37.3 14.3 51.5 0.2z","fill":_ctx_.canNext?'#333':'#8a8a8a'},"on":{}},[])])]) : _ctx_._SUGAR._e()])]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            const [pi, setPi] = useState$4(1);
+            const [ps, setPs] = useState$4(20);
+            const [total, setTotal] = useState$4(0);
+            const [page, setPage] = useState$4([1]);
+            const [canNext, setCanNext] = useState$4(false);
+            const [canPrev, setCanPrev] = useState$4(false);
+            const [showBtn, setShowBtn] = useState$4(false);
+            const [showMost, setShowMost] = useState$4(false);
+            const [showSis, setShowSis] = useState$4(false);
+            function changePage(v) {
+                console.log(v);
+                ctx.change(v);
+            }
+            function prev() {
+                if (pi.value > 1) {
+                    ctx.change(pi.value - 1);
+                }
+            }
+            function next() {
+                if (pi.value < Math.ceil(total.value / ps.value)) {
+                    ctx.change(pi.value + 1);
+                }
+            }
+            function generateNumberParts(f, n, c) {
+                f = Number(f);
+                n = Number(n);
+                c = Number(c);
+                const front = [];
+                for (let i = 1; i <= n; i++) {
+                    const tmp = f - i;
+                    if (tmp > 0) {
+                        front.unshift(tmp);
+                    }
+                }
+                const end = [];
+                for (let i = 1; i <= (n + (n - front.length)); i++) {
+                    const tmp = f + i;
+                    if (tmp <= c) {
+                        end.push(tmp);
+                    }
+                }
+                if (end.length < n) {
+                    const length = front.length;
+                    for (let i = 1; i <= (n - end.length); i++) {
+                        const tmp = f - length - i;
+                        if (tmp > 0) {
+                            front.unshift(tmp);
+                        }
+                    }
+                }
+                return [...front, f, ...end];
+            }
+            update();
+            useEffect$1(() => {
+                update();
+            }, [ctx.ps, ctx.pi, ctx.total, ctx.btn, ctx.page, ctx['show-most'], ctx['show-sis']], true);
+            function update() {
+                setPs(ctx.ps.value);
+                setPi(ctx.pi.value);
+                setTotal(ctx.total.value);
+                setPage(generateNumberParts(pi.value, ctx.page.value, Math.ceil(total.value / ps.value)));
+                ctx['show-sis'] && setShowSis(ctx['show-sis'].value);
+                if (pi.value > 1) {
+                    setCanPrev(true);
+                }
+                else {
+                    setCanPrev(false);
+                }
+                if (pi.value < Math.ceil(total.value / ps.value)) {
+                    setCanNext(true);
+                }
+                else {
+                    setCanNext(false);
+                }
+                ctx.btn && setShowBtn(ctx.btn.value);
+                ctx['show-most'] && setShowMost(ctx['show-most'].value);
+                if (showMost.value && !page.value.includes(1)) {
+                    setPage([1, ...page.value]);
+                }
+                if (showMost.value && !page.value.includes(Math.ceil(total.value / ps.value))) {
+                    setPage([...page.value, Math.ceil(total.value / ps.value)]);
+                }
+            }
+            return {
+                pi,
+                setPi,
+                ps,
+                setPs,
+                total,
+                page,
+                style: ctx.style,
+                canNext,
+                canPrev,
+                changePage,
+                showBtn,
+                prev,
+                next
+            };
+        }
+    };
+
+    const { onMounted: onMounted$2, useState: useState$3 } = SUGAR;
+    const BackTop = {
+        name: 'sugar-back-top',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-back-top","style":_ctx_.scale},"on":{"click":{"value":_ctx_.goTop,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('svg',{ "attrs":{"class":"icon","viewBox":"0 0 1024 1024","xmlns":"http://www.w3.org/2000/svg","width":"100","height":"100"},"on":{}},[_ctx_._SUGAR._c('path',{ "attrs":{"d":"M832 165.76H192c-26.24 0-48 21.76-48 48s21.76 48 48 48h640c26.24 0 48-21.76 48-48s-21.76-48-48-48zM551.04 376.96A58.688 58.688 0 0 0 512 360.32c-12.8 0-29.44 7.04-38.4 16L254.08 595.84c-18.56 18.56-18.56 49.28 0 67.84s49.28 18.56 67.84 0l142.08-142.08v348.16c0 26.24 21.76 48 48 48s48-21.76 48-48V521.6l142.08 142.08c9.6 9.6 21.76 14.08 33.92 14.08s24.32-4.48 33.92-14.08c18.56-18.56 18.56-49.28 0-67.84L551.04 376.96z","p-id":"2865","fill":"#ffffff"},"on":{}},[])])]);
+      
+    },
+    headTag: 'div',
+        bulk() {
+            const [scale, setScale] = useState$3('');
+            onMounted$2(() => {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 400) {
+                        setScale('transform:scale(1)');
+                    }
+                    else {
+                        setScale('');
+                    }
+                });
+            });
+            function goTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+            return {
+                goTop,
+                scale
+            };
+        }
+    };
+
+    function arrow(direction = 'left') {
+        return `<svg style="${arrowMap[direction]}" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="100" height="100"><path d="M719.2 912.6c14.2-14.2 14.2-37.2 0-51.4L371.7 513.8c-2.8-2.9-2.8-7.5 0-10.3L719.2 156c14.2-14.2 14.2-37.2 0-51.4-14.2-14.2-37.2-14.2-51.4 0L320.3 452c-15.6 15.6-23.4 36-23.4 56.5s7.8 41 23.4 56.5l347.4 347.4c14.3 14.3 37.3 14.3 51.5 0.2z" fill="#333"></path></svg>`;
+    }
+    const arrowMap = {
+        let: 'transform: rotate(180deg);',
+        right: 'transform: rotate(0deg);',
+        top: 'transform: rotate(90deg);',
+        bottom: 'transform: rotate(-90deg);'
+    };
+
+    const { useEffect, useState: useState$2 } = SUGAR;
+    const text = {
+        name: 'sugar-text',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":'sugar-text ' + (open ? '':'sugar-text__ellipsis'),"style":_ctx_.style},"on":{}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]),_ctx_.arrow ? _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-arrow"},"on":{"click":{"value":_ctx_.click,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('div',{attrs:{"class":_ctx_.open ? 'open':''},on:{}},[_ctx_._SUGAR._html(_ctx_.arrowHtml)])]) : _ctx_._SUGAR._e()]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            console.log(ctx);
+            const [style, setStyle] = useState$2('');
+            const [arrow$1, setArrow] = useState$2(false);
+            const [open, setOpen] = useState$2(false);
+            useEffect(() => {
+                var _a;
+                setStyle((_a = ctx.style.value) !== null && _a !== void 0 ? _a : '');
+                if (ctx.rows.value > 0) {
+                    setStyle((style.value + ';' + getEllipsis(ctx.rows.value)));
+                }
+                ctx.arrow && setArrow(ctx.arrow.value);
+            }, [ctx.style, ctx.rows, ctx.arrow], true);
+            function getEllipsis(rows) {
+                return `-webkit-line-clamp: ${rows};`;
+            }
+            function click() {
+                setOpen(!open.value);
+            }
+            return {
+                style,
+                rows: ctx.rows,
+                arrow: arrow$1,
+                open,
+                click,
+                arrowHtml: arrow('bottom')
+            };
+        }
+    };
+
+    const { instance: instance$2 } = SUGAR;
+    const upload = {
+        name: 'sugar-upload',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{},"on":{"click":{"value":_ctx_.uploadFile,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]),_ctx_._SUGAR._c('input',{ "attrs":{"style":"display: none","instance":"fileRef","type":"file"},"on":{"change":{"value":_ctx_.fileInput,"isStatic":false,"modifiers":[]}}},[])]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            const fileRef = instance$2();
+            function fileInput(e) {
+                const result = [];
+                result.push(...e.target.files);
+                ctx.change(result);
+                fileRef.value.value = '';
+            }
+            function uploadFile() {
+                fileRef.value.click();
+            }
+            return {
+                fileInput,
+                fileRef,
+                uploadFile
+            };
+        }
+    };
+
+    const { onMounted: onMounted$1, instance: instance$1, useState: useState$1 } = SUGAR;
+    const lazy = {
+        name: 'sugar-lazy',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"instance":"node"},"on":{}},[_ctx_.show ? _ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]) : _ctx_._SUGAR._e()]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            const [show, setShow] = useState$1(false);
+            const node = instance$1();
+            onMounted$1(() => {
+                window.addEventListener('scroll', () => {
+                    if (node.value.getBoundingClientRect().top < window.innerHeight) {
+                        setShow(true);
+                    }
+                });
+            });
+            return {
+                show,
+                node
+            };
+        }
+    };
+
+    const { onMounted, instance, useState } = SUGAR;
+    const field = {
+        name: 'sugar-field',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-field"},"on":{}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"label","instance":"labelRef"},"on":{}},[]),_ctx_.showLabel ? _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-field-label"},"on":{}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.label))]) : _ctx_._SUGAR._e(),_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default","instance":"defaultRef"},"on":{}},[]),_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-field-input-container"},"on":{}},[_ctx_.showField ? _ctx_._SUGAR._c('input',{ "attrs":{"class":"sugar-field-input","placeholder":_ctx_.placeholder,"value":_ctx_.value},"on":{"input":{"value":_ctx_.onInput,"isStatic":false,"modifiers":[]}}},[]) : _ctx_._SUGAR._e()])]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            var _a, _b, _c;
+            const label = ((_a = ctx.label) === null || _a === void 0 ? void 0 : _a.value) || '文本';
+            const placeholder = ((_b = ctx.placeholder) === null || _b === void 0 ? void 0 : _b.value) || '请输入';
+            const labelRef = instance();
+            const defaultRef = instance();
+            const [showLabel, setShowLabel] = useState(true);
+            const [showField, setShowField] = useState(true);
+            const [value, setValue] = useState(((_c = ctx.value) === null || _c === void 0 ? void 0 : _c.value) || '');
+            onMounted(() => {
+                var _a, _b;
+                if (((_a = labelRef.value) === null || _a === void 0 ? void 0 : _a.children.length) > 0) {
+                    setShowLabel(false);
+                }
+                if (((_b = defaultRef.value) === null || _b === void 0 ? void 0 : _b.children.length) > 0) {
+                    setShowField(false);
+                }
+            });
+            function onInput(e) {
+                setValue(e.target.value);
+                ctx.input(e.target.value);
+            }
+            return {
+                label,
+                labelRef,
+                showLabel,
+                defaultRef,
+                placeholder,
+                showField,
+                input: ctx.input,
+                value,
+                onInput
+            };
+        }
+    };
+
+    const sugarUI = [button, dialog, showMessageBox, showToast, pageNation, BackTop, text, upload, lazy, field];
+    if (typeof window !== 'undefined') {
+        (function (global) {
+            global.sugarUI = sugarUI;
+        })(window);
+    }
+
+    exports.sugarUI = sugarUI;
+
+}));
 //# sourceMappingURL=sugar-ui.js.map

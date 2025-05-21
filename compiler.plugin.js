@@ -599,9 +599,6 @@ function transform(context, helpers) {
       if (prop.name === "s-loading") {
         helpers.sLoading(context2, prop);
       }
-      if (prop.name === "on") {
-        helpers.transformEvent(context2, prop);
-      }
     });
     if (context2.tag === "slot") {
       context2.type = 10 /* SLOT */;
@@ -755,7 +752,7 @@ function dealEvent(props) {
       if (prop.exp.isStatic) {
         funString = `(e)=>{${prop.exp.content}}`;
       }
-      str += `"${prop.arg.content}":{"value":${funString},"isStatic":${prop.exp.isStatic}${prop.exp.parameters ? `,"parameters":[${prop.exp.parameters}]` : ""},"modifiers":[${Array2String(prop.modifiers)}]}`;
+      str += `"${prop.arg.content}":{"value":${funString},"isStatic":${prop.exp.isStatic},"modifiers":[${Array2String(prop.modifiers)}]}`;
       if (prop.name === "on" && index < props.length - 1) {
         str += ",";
       }

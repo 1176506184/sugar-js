@@ -167,12 +167,11 @@ function dealEvent (props) {
   props.forEach((prop, index) => {
     if (prop.name === 'on') {
       let funString = `${prop.exp.content}`;
-
       if (prop.exp.isStatic) {
         funString = `(e)=>{${prop.exp.content}}`;
       }
 
-      str += `"${prop.arg.content}":{"value":${funString},"isStatic":${prop.exp.isStatic}${prop.exp.parameters ? `,"parameters":[${prop.exp.parameters}]` : ''},"modifiers":[${Array2String(prop.modifiers)}]}`;
+      str += `"${prop.arg.content}":{"value":${funString},"isStatic":${prop.exp.isStatic},"modifiers":[${Array2String(prop.modifiers)}]}`;
 
       if (prop.name === 'on' && index < props.length - 1) {
         str += ',';

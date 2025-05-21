@@ -124,7 +124,7 @@
     <sugar-button @click="open">展示</sugar-button>
     <sugar-field></sugar-field>
     <sugar-dialog :model="show" @close="close">
-        <div style="width: 100px;height: 100px;background: #fff"></div>
+        <div style="width: 100px;height: 100px;background: #fff">{{signal}}</div>
     </sugar-dialog>
     <sugar-pagination
             :pi="pi"
@@ -187,6 +187,7 @@
             const total = useSignal(100);
 
             function changePage(e) {
+                console.log(pi.value)
                 pi.value = e;
             }
 

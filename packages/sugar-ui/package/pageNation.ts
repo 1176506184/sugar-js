@@ -32,6 +32,7 @@ const pageNation = {
     const [showSis, setShowSis] = useState(false) as any;
 
     function changePage (v) {
+      console.log(v);
       ctx.change(v);
     }
 
