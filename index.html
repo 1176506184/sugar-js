@@ -116,7 +116,7 @@
 </style>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
-    <div :style="'a'+style" @click="signal++">
+    <div :style="'a'+style" @click="signalAdd">
         {{signal}}
     </div>
     <input s-model="value.name"/>
@@ -124,7 +124,7 @@
     <sugar-button @click="open">展示</sugar-button>
     <sugar-field></sugar-field>
     <sugar-dialog :model="show" @close="close">
-        <div style="width: 100px;height: 100px;background: #fff">
+        <div style="width: 150px;height: 100px;background: #fff">
             <sugar-button>
                 {{signal}}
             </sugar-button>
@@ -199,7 +199,7 @@
             const show = useSignal(false);
 
             function signalAdd() {
-                signal.value++;
+                list.value.push(signal.value)
             }
 
             function close() {
@@ -236,8 +236,8 @@
             };
         }
     });
-    sugar.mount('#app');
     sugar.install(arrow);
     sugar.install(sugarUI);
+    sugar.mount('#app');
 </script>
 </html>

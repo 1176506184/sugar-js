@@ -77,35 +77,70 @@
 
     function useSignal(initValue) {
         const callbacks = [];
+        const queue = createQueue();
+        function initDep(dep) {
+            callbacks.push(dep);
+        }
+        // 创建更新触发器
+        function triggerUpdate() {
+            for (let i = 0; i < callbacks.length; i++) {
+                queue.pushQueue(callbacks[i]);
+            }
+            nextTick(() => {
+                queue.flushQueue();
+            });
+        }
+        // 创建响应式代理
+        function deepReactive(value) {
+            if (typeof value !== 'object' || value === null)
+                return value;
+            return new Proxy(value, {
+                get(target, prop, receiver) {
+                    const result = Reflect.get(target, prop, receiver);
+                    // 自动代理嵌套对象
+                    if (typeof result === 'object' && result !== null) {
+                        return deepReactive(result);
+                    }
+                    // 如果是数组方法，拦截变更方法
+                    if (typeof result === 'function' && Array.isArray(target)) {
+                        const mutatingMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
+                        if (mutatingMethods.includes(prop)) {
+                            return (...args) => {
+                                const res = result.apply(target, args);
+                                triggerUpdate();
+                                return res;
+                            };
+                        }
+                    }
+                    return result;
+                },
+                set(target, prop, newVal, receiver) {
+                    const oldVal = Reflect.get(target, prop, receiver);
+                    const result = Reflect.set(target, prop, newVal, receiver);
+                    if (oldVal !== newVal) {
+                        triggerUpdate();
+                    }
+                    return result;
+                }
+            });
+        }
         const data = {
-            value: initValue,
+            value: deepReactive(initValue),
             sugarRefDataType: 'useState',
             initDep
         };
-        const queue = createQueue();
-        // 响应式更新逻辑
-        const handler = {
+        const proxy = new Proxy(data, {
             get(target, prop) {
                 return Reflect.get(target, prop);
             },
             set(target, prop, newValue) {
                 if (prop === 'value' && target.value !== newValue) {
-                    target.value = newValue;
-                    // 触发更新队列
-                    for (let i = 0; i < callbacks.length; i++) {
-                        queue.pushQueue(callbacks[i]);
-                    }
-                    nextTick(() => {
-                        queue.flushQueue();
-                    });
+                    target.value = deepReactive(newValue);
+                    triggerUpdate();
                 }
                 return true;
             }
-        };
-        const proxy = new Proxy(data, handler);
-        function initDep(dep) {
-            callbacks.push(dep);
-        }
+        });
         return proxy;
     }
     // 保留原来的 createQueue

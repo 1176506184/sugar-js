@@ -19,7 +19,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 1,
     '@typescript-eslint/prefer-optional-chain': 1,
     '@typescript-eslint/no-implied-eval': 1,
-    '@typescript-eslint/ban-types': 1,
+    '@typescript-eslint/ban-types': 0,
     '@typescript-eslint/naming-convention': 1,
     'no-new-func': 1,
     semi: [2, 'always'],
