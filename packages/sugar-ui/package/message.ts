@@ -1,7 +1,7 @@
 import dialog from './dialog';
 const {
   makeSugar,
-  useSignal,
+  ref,
   onMounted
 } = SUGAR;
 
@@ -58,7 +58,7 @@ export const showMessageBox = {
                     <div>
                 </sugar-dialog>`,
       bulk () {
-        const show = useSignal(false);
+        const show = ref(false);
 
         function cancel () {
           options.cancel();

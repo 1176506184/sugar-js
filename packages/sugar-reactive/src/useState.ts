@@ -1,7 +1,7 @@
-import useSignal from './useSignal';
+import ref from './ref';
 
 export function useState (initValue) {
-  const data = useSignal(initValue);
+  const data = ref(initValue);
   return [data, (value: any) => {
     data.value = value;
   }];

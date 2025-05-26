@@ -116,6 +116,7 @@
 </style>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
+    {{state.name}}
     <div :style="'a'+style" @click="signalAdd">
         {{signal}}
     </div>
@@ -163,8 +164,9 @@
         useState,
         useEffect,
         nextTick,
-        useSignal,
-        Component
+        ref,
+        Component,
+        reactive
     } = SUGAR;
 
     const arrow = Component({
@@ -178,28 +180,31 @@
     var sugar = makeSugar({
         bulk() {
 
-            const list = useSignal([1, 2, 3]);
-            const index = useSignal(0);
-            const value = useSignal({
+            const state = reactive({
+                name:'测试'
+            })
+            const list = ref([1, 2, 3]);
+            const index = ref(0);
+            const value = ref({
                 name: 'sugar',
                 age: 18
             });
 
-            const pi = useSignal(1);
-            const ps = useSignal(10);
-            const total = useSignal(100);
+            const pi = ref(1);
+            const ps = ref(10);
+            const total = ref(100);
 
             function changePage(e) {
-                console.log(pi.value)
+                console.log(pi.value);
                 pi.value = e;
             }
 
-            const signal = useSignal(3);
-            const style = useSignal('width: 100%;');
-            const show = useSignal(false);
+            const signal = ref(3);
+            const style = ref('width: 100%;');
+            const show = ref(false);
 
             function signalAdd() {
-                list.value.push(signal.value)
+                list.value.push(signal.value);
             }
 
             function close() {
@@ -232,7 +237,8 @@
                 list,
                 index,
                 fileChange,
-                value
+                value,
+                state
             };
         }
     });

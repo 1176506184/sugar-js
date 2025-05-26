@@ -1,6 +1,7 @@
 import { nextTick } from '@sugar/sugar-reactive';
+import { createQueue } from './queue';
 
-export function useSignal<T> (initValue: T) {
+export function ref<T> (initValue: T) {
   const callbacks: Function[] = [];
   const queue = createQueue();
 
@@ -78,30 +79,4 @@ export function useSignal<T> (initValue: T) {
   return proxy;
 }
 
-// 保留原来的 createQueue
-function createQueue () {
-  const queue: Function[] = [];
-
-  function pushQueue (dep: Function) {
-    queue.push(dep);
-  }
-
-  function flushQueue () {
-    if (queue.length > 0) {
-      uniqueArray(queue).forEach((dep) => dep());
-      queue.length = 0;
-    }
-  }
-
-  function uniqueArray (arr: Function[]) {
-    return [...new Set(arr)];
-  }
-
-  return {
-    queue,
-    pushQueue,
-    flushQueue
-  };
-}
-
-export default useSignal;
+export default ref;

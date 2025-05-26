@@ -33,7 +33,7 @@
         }
     };
 
-    const { useEffect: useEffect$2, useSignal: useSignal$1 } = SUGAR;
+    const { useEffect: useEffect$2, ref: ref$1 } = SUGAR;
     const dialog = {
         name: 'sugar-dialog',
         render: function anonymous(
@@ -53,18 +53,17 @@
     headTag: 'div',
         bulk(ctx) {
             var _a, _b;
-            const show = useSignal$1(ctx.model.value);
-            const opacity = useSignal$1(0);
+            const show = ref$1(ctx.model.value);
+            const opacity = ref$1(0);
             const direction = (_b = (_a = ctx.direction) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : 'center';
-            const style = useSignal$1('');
-            const transform = useSignal$1(getInitDirection(direction));
+            const style = ref$1('');
+            const transform = ref$1(getInitDirection(direction));
             useEffect$2(() => {
                 if (ctx.model.value) {
                     show.value = true;
                     setTimeout(() => {
                         opacity.value = 1;
                         style.value = `opacity:${opacity.value};`;
-                        console.log(style);
                     }, 50);
                 }
                 else {
@@ -107,7 +106,7 @@
         }
     };
 
-    const { makeSugar, useSignal, onMounted: onMounted$3 } = SUGAR;
+    const { makeSugar, ref, onMounted: onMounted$3 } = SUGAR;
     const showToast = {
         fun: 'showToast',
         bulk(text, timeout = 2000, style = '') {
@@ -176,7 +175,7 @@
     headTag: 'sugar-dialog',
                 bulk() {
                     var _a, _b, _c, _d;
-                    const show = useSignal(false);
+                    const show = ref(false);
                     function cancel() {
                         options.cancel();
                         show.value = false;

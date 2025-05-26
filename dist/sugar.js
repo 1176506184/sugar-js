@@ -21,157 +21,6 @@
         ActiveId = id;
     }
 
-    function useEffect(fun, deps = [], run = false) {
-        if (typeof fun === 'object') {
-            console.log(fun.render());
-        }
-        else {
-            deps.forEach((dep) => {
-                if (dep && typeof dep.initDep === 'function') {
-                    dep.initDep(fun);
-                }
-            });
-        }
-        if (run) {
-            fun();
-        }
-    }
-
-    function instance() {
-        const result = {};
-        const data = {
-            value: null
-        };
-        return Object.defineProperty(result, 'value', {
-            get() {
-                return data.value;
-            },
-            set(newValue) {
-                if (newValue !== data.value) {
-                    data.value = newValue;
-                }
-            }
-        });
-    }
-
-    const callbacks = [];
-    const timerFunc = () => {
-        setTimeout(flushCallbacks, 0);
-    };
-    function flushCallbacks() {
-        const copies = callbacks.slice(0);
-        callbacks.length = 0;
-        for (let i = 0; i < copies.length; i++) {
-            copies[i]();
-        }
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    function nextTick(cb) {
-        callbacks.push(() => {
-            if (cb) {
-                cb();
-            }
-        });
-        timerFunc();
-    }
-
-    function useSignal(initValue) {
-        const callbacks = [];
-        const queue = createQueue();
-        function initDep(dep) {
-            callbacks.push(dep);
-        }
-        // 创建更新触发器
-        function triggerUpdate() {
-            for (let i = 0; i < callbacks.length; i++) {
-                queue.pushQueue(callbacks[i]);
-            }
-            nextTick(() => {
-                queue.flushQueue();
-            });
-        }
-        // 创建响应式代理
-        function deepReactive(value) {
-            if (typeof value !== 'object' || value === null)
-                return value;
-            return new Proxy(value, {
-                get(target, prop, receiver) {
-                    const result = Reflect.get(target, prop, receiver);
-                    // 自动代理嵌套对象
-                    if (typeof result === 'object' && result !== null) {
-                        return deepReactive(result);
-                    }
-                    // 如果是数组方法，拦截变更方法
-                    if (typeof result === 'function' && Array.isArray(target)) {
-                        const mutatingMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
-                        if (mutatingMethods.includes(prop)) {
-                            return (...args) => {
-                                const res = result.apply(target, args);
-                                triggerUpdate();
-                                return res;
-                            };
-                        }
-                    }
-                    return result;
-                },
-                set(target, prop, newVal, receiver) {
-                    const oldVal = Reflect.get(target, prop, receiver);
-                    const result = Reflect.set(target, prop, newVal, receiver);
-                    if (oldVal !== newVal) {
-                        triggerUpdate();
-                    }
-                    return result;
-                }
-            });
-        }
-        const data = {
-            value: deepReactive(initValue),
-            sugarRefDataType: 'useState',
-            initDep
-        };
-        const proxy = new Proxy(data, {
-            get(target, prop) {
-                return Reflect.get(target, prop);
-            },
-            set(target, prop, newValue) {
-                if (prop === 'value' && target.value !== newValue) {
-                    target.value = deepReactive(newValue);
-                    triggerUpdate();
-                }
-                return true;
-            }
-        });
-        return proxy;
-    }
-    // 保留原来的 createQueue
-    function createQueue() {
-        const queue = [];
-        function pushQueue(dep) {
-            queue.push(dep);
-        }
-        function flushQueue() {
-            if (queue.length > 0) {
-                uniqueArray(queue).forEach((dep) => dep());
-                queue.length = 0;
-            }
-        }
-        function uniqueArray(arr) {
-            return [...new Set(arr)];
-        }
-        return {
-            queue,
-            pushQueue,
-            flushQueue
-        };
-    }
-
-    function useState(initValue) {
-        const data = useSignal(initValue);
-        return [data, (value) => {
-                data.value = value;
-            }];
-    }
-
     const isArray$1 = Array.isArray;
     const extend = Object.assign;
     // 判断一个字符串是否是合法的变量标识符（不能包含操作符、点、括号等）
@@ -1198,6 +1047,223 @@
         return componentCache[key];
     }
 
+    function instance() {
+        const result = {};
+        const data = {
+            value: null
+        };
+        return Object.defineProperty(result, 'value', {
+            get() {
+                return data.value;
+            },
+            set(newValue) {
+                if (newValue !== data.value) {
+                    data.value = newValue;
+                }
+            }
+        });
+    }
+
+    const callbacks = [];
+    const timerFunc = () => {
+        setTimeout(flushCallbacks, 0);
+    };
+    function flushCallbacks() {
+        const copies = callbacks.slice(0);
+        callbacks.length = 0;
+        for (let i = 0; i < copies.length; i++) {
+            copies[i]();
+        }
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    function nextTick(cb) {
+        callbacks.push(() => {
+            if (cb) {
+                cb();
+            }
+        });
+        timerFunc();
+    }
+
+    // 保留原来的 createQueue
+    function createQueue() {
+        const queue = [];
+        function pushQueue(dep) {
+            queue.push(dep);
+        }
+        function flushQueue() {
+            if (queue.length > 0) {
+                uniqueArray(queue).forEach((dep) => dep());
+                queue.length = 0;
+            }
+        }
+        function uniqueArray(arr) {
+            return [...new Set(arr)];
+        }
+        return {
+            queue,
+            pushQueue,
+            flushQueue
+        };
+    }
+
+    function ref(initValue) {
+        const callbacks = [];
+        const queue = createQueue();
+        function initDep(dep) {
+            callbacks.push(dep);
+        }
+        // 创建更新触发器
+        function triggerUpdate() {
+            for (let i = 0; i < callbacks.length; i++) {
+                queue.pushQueue(callbacks[i]);
+            }
+            nextTick(() => {
+                queue.flushQueue();
+            });
+        }
+        // 创建响应式代理
+        function deepReactive(value) {
+            if (typeof value !== 'object' || value === null)
+                return value;
+            return new Proxy(value, {
+                get(target, prop, receiver) {
+                    const result = Reflect.get(target, prop, receiver);
+                    // 自动代理嵌套对象
+                    if (typeof result === 'object' && result !== null) {
+                        return deepReactive(result);
+                    }
+                    // 如果是数组方法，拦截变更方法
+                    if (typeof result === 'function' && Array.isArray(target)) {
+                        const mutatingMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
+                        if (mutatingMethods.includes(prop)) {
+                            return (...args) => {
+                                const res = result.apply(target, args);
+                                triggerUpdate();
+                                return res;
+                            };
+                        }
+                    }
+                    return result;
+                },
+                set(target, prop, newVal, receiver) {
+                    const oldVal = Reflect.get(target, prop, receiver);
+                    const result = Reflect.set(target, prop, newVal, receiver);
+                    if (oldVal !== newVal) {
+                        triggerUpdate();
+                    }
+                    return result;
+                }
+            });
+        }
+        const data = {
+            value: deepReactive(initValue),
+            sugarRefDataType: 'useState',
+            initDep
+        };
+        const proxy = new Proxy(data, {
+            get(target, prop) {
+                return Reflect.get(target, prop);
+            },
+            set(target, prop, newValue) {
+                if (prop === 'value' && target.value !== newValue) {
+                    target.value = deepReactive(newValue);
+                    triggerUpdate();
+                }
+                return true;
+            }
+        });
+        return proxy;
+    }
+
+    function useState(initValue) {
+        const data = ref(initValue);
+        return [data, (value) => {
+                data.value = value;
+            }];
+    }
+
+    function useEffect(fun, deps = [], run = false) {
+        if (typeof fun === 'object') {
+            console.log(fun.render());
+        }
+        else {
+            deps.forEach((dep) => {
+                if (dep && typeof dep.initDep === 'function') {
+                    dep.initDep(fun);
+                }
+            });
+        }
+        if (run) {
+            fun();
+        }
+    }
+
+    function reactive(initValue) {
+        const callbacks = [];
+        const queue = createQueue();
+        function initDep(dep) {
+            callbacks.push(dep);
+        }
+        // 创建更新触发器
+        function triggerUpdate() {
+            for (let i = 0; i < callbacks.length; i++) {
+                queue.pushQueue(callbacks[i]);
+            }
+            nextTick(() => {
+                queue.flushQueue();
+            });
+        }
+        // 创建响应式代理
+        function deepReactive(value) {
+            if (typeof value !== 'object' || value === null)
+                return value;
+            return new Proxy(value, {
+                get(target, prop, receiver) {
+                    const result = Reflect.get(target, prop, receiver);
+                    // 自动代理嵌套对象
+                    if (typeof result === 'object' && result !== null) {
+                        return deepReactive(result);
+                    }
+                    // 如果是数组方法，拦截变更方法
+                    if (typeof result === 'function' && Array.isArray(target)) {
+                        const mutatingMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
+                        if (mutatingMethods.includes(prop)) {
+                            return (...args) => {
+                                const res = result.apply(target, args);
+                                triggerUpdate();
+                                return res;
+                            };
+                        }
+                    }
+                    return result;
+                },
+                set(target, prop, newVal, receiver) {
+                    const oldVal = Reflect.get(target, prop, receiver);
+                    const result = Reflect.set(target, prop, newVal, receiver);
+                    if (oldVal !== newVal) {
+                        triggerUpdate();
+                    }
+                    return result;
+                }
+            });
+        }
+        const data = deepReactive(Object.assign(Object.assign({}, initValue), { initDep }));
+        const proxy = new Proxy(data, {
+            get(target, prop) {
+                return Reflect.get(target, prop);
+            },
+            set(target, prop, newValue) {
+                if (prop === 'value' && target.value !== newValue) {
+                    target.value = deepReactive(newValue);
+                    triggerUpdate();
+                }
+                return true;
+            }
+        });
+        return proxy;
+    }
+
     function bulkComponent(_vnode, parentComponent) {
         const { data: { attrs, on }, children } = _vnode;
         const _sugar = deepClone(parentComponent);
@@ -1205,7 +1271,7 @@
         const slot = children;
         Object.keys(attrs).forEach((propName) => {
             if (propName !== 'instance') {
-                props[propName] = useSignal(attrs[propName]);
+                props[propName] = ref(attrs[propName]);
             }
         });
         Object.keys(on).forEach((propName) => {
@@ -1971,9 +2037,10 @@
                 instance,
                 useEffect,
                 nextTick,
-                useSignal,
+                ref,
                 useState,
-                Component
+                Component,
+                reactive
             };
         })(window);
     }
@@ -1983,8 +2050,9 @@
     exports.makeSugar = makeSugar;
     exports.nextTick = nextTick;
     exports.onMounted = onMounted;
+    exports.reactive = reactive;
+    exports.ref = ref;
     exports.useEffect = useEffect;
-    exports.useSignal = useSignal;
     exports.useState = useState;
 
 }));

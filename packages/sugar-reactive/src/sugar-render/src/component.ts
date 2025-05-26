@@ -1,10 +1,9 @@
 import { deepClone, guid } from '@sugar/sugar-shared';
-import { mountHandleList, updateActiveId } from '@sugar/sugar-hook';
+import { mountHandleList, updateActiveId, useSignal } from '@sugar/sugar-hook';
 import { bindAttrAndEvent, bindT, VmDataRefPassive } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patch from './patch';
 import { addComponentCache, getComponentCache } from './componentCache';
-import { ref } from '@sugar/sugar-reactive';
 
 export function bulkComponent (_vnode: any, parentComponent: any) {
   const {
@@ -22,7 +21,7 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
   const slot = children;
   Object.keys(attrs).forEach((propName) => {
     if (propName !== 'instance') {
-      props[propName] = ref(attrs[propName]);
+      props[propName] = useSignal(attrs[propName]);
     }
   });
   Object.keys(on).forEach((propName) => {
