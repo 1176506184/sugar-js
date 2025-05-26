@@ -573,7 +573,7 @@ import {http, xhrHttp, sHttp, dHttp, hHttp} from "../utils/request";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(0);
-const owner = ref(0);//yxk xhs
+const owner = ref(1);//yxk xhs
 
 function changeOpen() {
   chrome.storage.local.set(

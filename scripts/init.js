@@ -55,7 +55,7 @@ chrome.storage.local.get('open', (res) => {
             || location.href.indexOf('isee.weishi.qq.com') !== -1
             || location.href.indexOf('kuaishou.com') !== -1
             || location.href.indexOf('zhihu.com') !== -1
-            || location.href.indexOf('xiaohongshu.com/') !== -1) {
+            || location.href.indexOf('xiaohongshu.com/') !== -1 || location.href.indexOf('https://www.canva.cn/') !== -1) {
 
             injectedScript('scripts/xhr/xhr.js').then(r => {
 
@@ -233,6 +233,13 @@ if (location.origin.indexOf("douyin") !== -1) {
         script: 'jimeng.js'
     }).then(() => {
         console.log("jimeng")
+    })
+}else if (location.href.indexOf('canva.cn') != -1) {
+    chrome.runtime.sendMessage({
+        Message: "loadScript",
+        script: 'canvas.js'
+    }).then(() => {
+        console.log("canvas")
     })
 }else if (location.href) {
     chrome.runtime.sendMessage({

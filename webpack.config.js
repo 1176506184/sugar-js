@@ -19,12 +19,15 @@ module.exports = {
     mode: NODE_ENV,
     devtool: "source-map",
     optimization: {
-        usedExports: NODE_ENV === 'production', // 启用tree-shaking
+        usedExports: NODE_ENV === 'production'
     },
     output: {
         filename: 'vMin.js',
         path: path.resolve(__dirname, distDir + '/scripts/vue'),
         clean: true
+    },
+    cache: {
+        type: 'filesystem', // 使用文件缓存，提高开发环境构建速度
     },
     module: {
         rules: [{
