@@ -3,7 +3,10 @@ import patch from './patch';
 import { escape2Html } from '@sugar/sugar-shared';
 
 import { Component } from './component';
+import { effect } from '@sugar/sugar-reactive';
+
 export { Component };
+
 export function sugarRender () {
   let render = null;
 
@@ -21,21 +24,14 @@ export function sugarRender () {
 
   function pushUiEffect (vm: any, data: any) {
     bindT(vm, data);
-    Object.values(data).filter((item: any) => typeof item === 'object' && item?.sugarRefDataType === 'useState').forEach((item: any) => {
-      item.initDep(() => {
-        update(vm);
-      });
-    });
-    vm.forceUpdate = function () {
+    effect(() => {
       update(vm);
-    };
-    update(vm);
+    });
   }
 
   function update (vm: any) {
     const vmFiber: any = VmDataRefPassive(vm);
     const vnode = render.call(vmFiber);
-    bindAttrAndEvent(vmFiber, vnode);
     patch(vmFiber, vnode);
     vmFiber._vnode = vnode;
   }
@@ -50,7 +46,7 @@ export function VmDataRefPassive (vm: any) {
   return new Proxy(vm, {
     get (target, prop, receiver) {
       const val = Reflect.get(target, prop, receiver);
-      if (isSignal(val)) {
+      if (isRef(val)) {
         return val.value;
       } else {
         return val;
@@ -58,7 +54,7 @@ export function VmDataRefPassive (vm: any) {
     },
     set (target, prop, newValue, receiver) {
       const val = Reflect.get(target, prop, receiver);
-      if (isSignal(val)) {
+      if (isRef(val)) {
         val.value = newValue;
       } else {
         Reflect.set(target, prop, newValue);
@@ -68,8 +64,8 @@ export function VmDataRefPassive (vm: any) {
   });
 }
 
-function isSignal (value) {
-  return value.sugarRefDataType === 'useState';
+function isRef (value: any) {
+  return !!value.__isRef;
 }
 
 export function bindT (vm, data) {
@@ -165,60 +161,6 @@ export class VNode {
     this.context = undefined;
     this.text = undefined;
     this.key = data?.attrs?.key;
-  }
-}
-
-export function bindAttrAndEvent (vm, vnode) {
-  if (vnode.static) {
-    return;
-  }
-
-  const {
-    data = {}
-  } = vnode || {};
-  const {
-    on = {}
-  } = data;
-  if (vnode?.tag) {
-    // 处理监听事件
-    for (const key in on) {
-      if (Object.hasOwnProperty.call(on, key)) {
-        if (on[key].value && !on[key].isStatic) {
-          on[key].fun = function (e: any) {
-            if (on[key].modifiers.includes('self')) {
-              if (e.target !== e.currentTarget) {
-                return;
-              }
-            }
-            const parameters = on[key].parameters;
-            if (parameters?.length) {
-              on[key].value(...parameters);
-            } else {
-              on[key].value(e);
-            }
-
-            if (on[key].modifiers.includes('stop')) {
-              e.stopPropagation();
-            }
-
-            if (on[key].modifiers.includes('prevent')) {
-              e.preventDefault();
-            }
-          };
-        } else {
-          on[key].fun = on[key].value;
-        }
-      }
-    }
-    if (vnode.children) {
-      for (let i = 0; i < vnode.children.length; i++) {
-        if (vnode.children[i].appId) {
-          bindAttrAndEvent(vm.sugar[vnode.children[i].appId].vm, vnode.children[i]);
-        } else {
-          bindAttrAndEvent(vm, vnode.children[i]);
-        }
-      }
-    }
   }
 }
 

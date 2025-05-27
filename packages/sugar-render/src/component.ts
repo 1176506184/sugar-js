@@ -1,6 +1,6 @@
 import { deepClone, guid } from '@sugar/sugar-shared';
 import { mountHandleList, updateActiveId } from '@sugar/sugar-hook';
-import { bindAttrAndEvent, bindT, VmDataRefPassive } from './index';
+import { bindT, VmDataRefPassive } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patch from './patch';
 import { addComponentCache, getComponentCache } from './componentCache';
@@ -14,8 +14,6 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
     },
     children
   }: any = _vnode;
-
-  const parentInstance = null;
 
   const _sugar = deepClone(parentComponent);
   const props = {};
@@ -44,9 +42,6 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
     slot
   });
   app.mount();
-  if (parentInstance) {
-    parentInstance.value = app;
-  }
   _vnode.key && addComponentCache(app, _vnode.key);
   return app;
 }
@@ -122,7 +117,6 @@ export function componentRender () {
 
   function update (vm) {
     const vnode = render.call(VmDataRefPassive(vm));
-    bindAttrAndEvent(vm, vnode);
     vm.slot.length && assembling(vnode, vm.slot);
     patch(vm, vnode);
     vm._vnode = vnode;

@@ -1058,204 +1058,239 @@ function instance() {
     });
 }
 
-const callbacks = [];
-const timerFunc = () => {
-    setTimeout(flushCallbacks, 0);
+/******************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+/* global Reflect, Promise, SuppressedError, Symbol */
+
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
+typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
+
+const callbacks = [];
+let pending = false;
 function flushCallbacks() {
+    pending = false;
     const copies = callbacks.slice(0);
     callbacks.length = 0;
     for (let i = 0; i < copies.length; i++) {
         copies[i]();
     }
 }
-// eslint-disable-next-line @typescript-eslint/ban-types
 function nextTick(cb) {
-    callbacks.push(() => {
-        if (cb) {
-            cb();
-        }
-    });
-    timerFunc();
-}
-
-// 保留原来的 createQueue
-function createQueue() {
-    const queue = [];
-    function pushQueue(dep) {
-        queue.push(dep);
-    }
-    function flushQueue() {
-        if (queue.length > 0) {
-            uniqueArray(queue).forEach((dep) => dep());
-            queue.length = 0;
-        }
-    }
-    function uniqueArray(arr) {
-        return [...new Set(arr)];
-    }
-    return {
-        queue,
-        pushQueue,
-        flushQueue
-    };
-}
-
-function ref(initValue) {
-    const callbacks = [];
-    const queue = createQueue();
-    function initDep(dep) {
-        callbacks.push(dep);
-    }
-    // 创建更新触发器
-    function triggerUpdate() {
-        for (let i = 0; i < callbacks.length; i++) {
-            queue.pushQueue(callbacks[i]);
-        }
-        nextTick(() => {
-            queue.flushQueue();
-        });
-    }
-    // 创建响应式代理
-    function deepReactive(value) {
-        if (typeof value !== 'object' || value === null)
-            return value;
-        return new Proxy(value, {
-            get(target, prop, receiver) {
-                const result = Reflect.get(target, prop, receiver);
-                // 自动代理嵌套对象
-                if (typeof result === 'object' && result !== null) {
-                    return deepReactive(result);
-                }
-                // 如果是数组方法，拦截变更方法
-                if (typeof result === 'function' && Array.isArray(target)) {
-                    const mutatingMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
-                    if (mutatingMethods.includes(prop)) {
-                        return (...args) => {
-                            const res = result.apply(target, args);
-                            triggerUpdate();
-                            return res;
-                        };
-                    }
-                }
-                return result;
-            },
-            set(target, prop, newVal, receiver) {
-                const oldVal = Reflect.get(target, prop, receiver);
-                const result = Reflect.set(target, prop, newVal, receiver);
-                if (oldVal !== newVal) {
-                    triggerUpdate();
-                }
-                return result;
+    return __awaiter(this, void 0, void 0, function* () {
+        let _resolve;
+        callbacks.push(() => {
+            if (cb) {
+                cb();
+            }
+            else if (_resolve) {
+                _resolve();
             }
         });
-    }
-    const data = {
-        value: deepReactive(initValue),
-        sugarRefDataType: 'useState',
-        initDep
-    };
-    const proxy = new Proxy(data, {
-        get(target, prop) {
-            return Reflect.get(target, prop);
-        },
-        set(target, prop, newValue) {
-            if (prop === 'value' && target.value !== newValue) {
-                target.value = deepReactive(newValue);
-                triggerUpdate();
-            }
-            return true;
+        if (!pending) {
+            pending = true;
+            void Promise.resolve().then(flushCallbacks);
+        }
+        if (!cb) {
+            return yield new Promise((resolve, reject) => {
+                // 保存resolve到callbacks数组中
+                _resolve = resolve;
+            });
         }
     });
-    return proxy;
 }
 
-function useState(initValue) {
-    const data = ref(initValue);
-    return [data, (value) => {
-            data.value = value;
-        }];
+const jobQueue = new Set();
+let isFlushing = false;
+function queueJob(job) {
+    jobQueue.add(job);
+    if (!isFlushing) {
+        isFlushing = true;
+        void Promise.resolve().then(() => {
+            for (const job of jobQueue)
+                job();
+            jobQueue.clear();
+            isFlushing = false;
+        });
+    }
 }
 
-function useEffect(fun, deps = [], run = false) {
-    if (typeof fun === 'object') {
-        console.log(fun.render());
+// dep.ts（依赖收集器）
+const targetMap = new WeakMap();
+let activeEffect = null;
+function effect(fn) {
+    const wrapper = () => {
+        activeEffect = wrapper;
+        fn();
+        activeEffect = null;
+    };
+    wrapper();
+    return wrapper;
+}
+function track(target, key) {
+    if (!activeEffect)
+        return;
+    let depsMap = targetMap.get(target);
+    if (!depsMap) {
+        depsMap = new Map();
+        targetMap.set(target, depsMap);
+    }
+    let deps = depsMap.get(key);
+    if (!deps) {
+        deps = new Set();
+        depsMap.set(key, deps);
+    }
+    deps.add(activeEffect);
+}
+function trigger(target, key) {
+    const depsMap = targetMap.get(target);
+    if (!depsMap)
+        return;
+    const effects = depsMap.get(key);
+    if (!effects)
+        return;
+    for (const effect of effects) {
+        queueJob(effect); // 全局调度
+    }
+}
+// watch 实现
+function watch(source, cb) {
+    // 定义一个内部副作用函数，读取source触发依赖收集
+    let getter;
+    if (typeof source === 'function') {
+        getter = source;
+    }
+    else if (source && typeof source === 'object' && 'value' in source) {
+        getter = () => source.value;
     }
     else {
-        deps.forEach((dep) => {
-            if (dep && typeof dep.initDep === 'function') {
-                dep.initDep(fun);
-            }
-        });
+        throw new Error('watch: source must be a function or ref object');
     }
-    if (run) {
-        fun();
+    let oldValue;
+    // 定义副作用函数，触发getter获取值，执行回调
+    function onEffect() {
+        const newValue = getter();
+        if (newValue !== oldValue) {
+            cb(newValue, oldValue);
+            oldValue = newValue;
+        }
     }
+    // 初始执行一次，建立依赖关系
+    effect(() => {
+        oldValue = getter();
+    });
+    // 注册副作用函数，响应式数据变化时触发
+    effect(onEffect);
 }
 
-function reactive(initValue) {
-    const callbacks = [];
-    const queue = createQueue();
-    function initDep(dep) {
-        callbacks.push(dep);
-    }
-    // 创建更新触发器
-    function triggerUpdate() {
-        for (let i = 0; i < callbacks.length; i++) {
-            queue.pushQueue(callbacks[i]);
-        }
-        nextTick(() => {
-            queue.flushQueue();
-        });
-    }
-    // 创建响应式代理
-    function deepReactive(value) {
-        if (typeof value !== 'object' || value === null)
+// ref.ts
+function ref(rawValue) {
+    let value = rawValue;
+    return {
+        get value() {
+            track(this, 'value');
             return value;
-        return new Proxy(value, {
-            get(target, prop, receiver) {
-                const result = Reflect.get(target, prop, receiver);
-                // 自动代理嵌套对象
-                if (typeof result === 'object' && result !== null) {
-                    return deepReactive(result);
-                }
-                // 如果是数组方法，拦截变更方法
-                if (typeof result === 'function' && Array.isArray(target)) {
-                    const mutatingMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
-                    if (mutatingMethods.includes(prop)) {
-                        return (...args) => {
-                            const res = result.apply(target, args);
-                            triggerUpdate();
-                            return res;
-                        };
-                    }
-                }
-                return result;
-            },
-            set(target, prop, newVal, receiver) {
-                const oldVal = Reflect.get(target, prop, receiver);
-                const result = Reflect.set(target, prop, newVal, receiver);
-                if (oldVal !== newVal) {
-                    triggerUpdate();
-                }
-                return result;
+        },
+        set value(newVal) {
+            if (newVal !== value) {
+                value = newVal;
+                trigger(this, 'value');
+            }
+        },
+        __isRef: true
+    };
+}
+
+function useEffect(effect, deps, immediate = false) {
+    // 记录上一次依赖的值，用于对比
+    let prevDeps = [];
+    // 用于获取每个响应式对象的当前值（假设ref对象有.value，reactive直接用）
+    function getDepValue(dep) {
+        if (dep && typeof dep === 'object' && 'value' in dep) {
+            return dep.value; // ref
+        }
+        return dep; // reactive 或普通对象
+    }
+    // 判断两个依赖数组是否相等（浅比较）
+    function depsChanged(newDeps, oldDeps) {
+        if (newDeps.length !== oldDeps.length)
+            return true;
+        for (let i = 0; i < newDeps.length; i++) {
+            if (newDeps[i] !== oldDeps[i])
+                return true;
+        }
+        return false;
+    }
+    // 执行一次effect并保存依赖
+    function runEffect() {
+        effect();
+        prevDeps = deps.map(getDepValue);
+    }
+    // 这里模拟响应式依赖监听
+    // 假设你有一个全局watcher注册接口 watch(reactive, callback)
+    // 监听每个依赖对象变化，检测是否触发effect
+    // 先执行一次，如果immediate为true
+    if (immediate) {
+        runEffect();
+    }
+    else {
+        // 初始保存依赖
+        prevDeps = deps.map(getDepValue);
+    }
+    // 监听依赖变化
+    deps.forEach(dep => {
+        watch(dep, () => {
+            // 依赖变化时，先取最新依赖值
+            const newDeps = deps.map(getDepValue);
+            if (depsChanged(newDeps, prevDeps)) {
+                effect();
+                prevDeps = newDeps;
             }
         });
-    }
-    const data = deepReactive(Object.assign(Object.assign({}, initValue), { initDep }));
-    const proxy = new Proxy(data, {
-        get(target, prop) {
-            return Reflect.get(target, prop);
+    });
+}
+
+// reactive.ts
+function reactive(target) {
+    return new Proxy(target, {
+        get(obj, key, receiver) {
+            const res = Reflect.get(obj, key, receiver);
+            track(obj, key);
+            return typeof res === 'object' && res !== null ? reactive(res) : res;
         },
-        set(target, prop, newValue) {
-            if (prop === 'value' && target.value !== newValue) {
-                target.value = deepReactive(newValue);
-                triggerUpdate();
+        set(obj, key, value, receiver) {
+            const oldVal = obj[key];
+            const res = Reflect.set(obj, key, value, receiver);
+            if (oldVal !== value) {
+                trigger(obj, key);
             }
-            return true;
+            return res;
         }
     });
-    return proxy;
 }
 
 function bulkComponent(_vnode, parentComponent) {
@@ -1346,7 +1381,6 @@ function componentRender() {
     }
     function update(vm) {
         const vnode = render.call(VmDataRefPassive(vm));
-        bindAttrAndEvent(vm, vnode);
         vm.slot.length && assembling(vnode, vm.slot);
         patch(vm, vnode);
         vm._vnode = vnode;
@@ -1456,6 +1490,9 @@ function patch(vm, newVnode) {
                 vnode.elm = app.vm.$el;
                 vnode._sugar = app;
                 domNode = vnode.elm;
+                if (vnode.data.attrs.instance) {
+                    vm[vnode.data.attrs.instance].value = app;
+                }
             }
         }
         else if (vnode.text !== undefined) {
@@ -1734,20 +1771,13 @@ function sugarRender() {
     }
     function pushUiEffect(vm, data) {
         bindT(vm, data);
-        Object.values(data).filter((item) => typeof item === 'object' && (item === null || item === void 0 ? void 0 : item.sugarRefDataType) === 'useState').forEach((item) => {
-            item.initDep(() => {
-                update(vm);
-            });
-        });
-        vm.forceUpdate = function () {
+        effect(() => {
             update(vm);
-        };
-        update(vm);
+        });
     }
     function update(vm) {
         const vmFiber = VmDataRefPassive(vm);
         const vnode = render.call(vmFiber);
-        bindAttrAndEvent(vmFiber, vnode);
         patch(vmFiber, vnode);
         vmFiber._vnode = vnode;
     }
@@ -1760,7 +1790,7 @@ function VmDataRefPassive(vm) {
     return new Proxy(vm, {
         get(target, prop, receiver) {
             const val = Reflect.get(target, prop, receiver);
-            if (isSignal(val)) {
+            if (isRef(val)) {
                 return val.value;
             }
             else {
@@ -1769,7 +1799,7 @@ function VmDataRefPassive(vm) {
         },
         set(target, prop, newValue, receiver) {
             const val = Reflect.get(target, prop, receiver);
-            if (isSignal(val)) {
+            if (isRef(val)) {
                 val.value = newValue;
             }
             else {
@@ -1779,8 +1809,8 @@ function VmDataRefPassive(vm) {
         }
     });
 }
-function isSignal(value) {
-    return value.sugarRefDataType === 'useState';
+function isRef(value) {
+    return !!value.__isRef;
 }
 function bindT(vm, data) {
     Object.keys(data).forEach((key) => {
@@ -1855,55 +1885,6 @@ class VNode {
         this.context = undefined;
         this.text = undefined;
         this.key = (_a = data === null || data === void 0 ? void 0 : data.attrs) === null || _a === void 0 ? void 0 : _a.key;
-    }
-}
-function bindAttrAndEvent(vm, vnode) {
-    if (vnode.static) {
-        return;
-    }
-    const { data = {} } = vnode || {};
-    const { on = {} } = data;
-    if (vnode === null || vnode === void 0 ? void 0 : vnode.tag) {
-        // 处理监听事件
-        for (const key in on) {
-            if (Object.hasOwnProperty.call(on, key)) {
-                if (on[key].value && !on[key].isStatic) {
-                    on[key].fun = function (e) {
-                        if (on[key].modifiers.includes('self')) {
-                            if (e.target !== e.currentTarget) {
-                                return;
-                            }
-                        }
-                        const parameters = on[key].parameters;
-                        if (parameters === null || parameters === void 0 ? void 0 : parameters.length) {
-                            on[key].value(...parameters);
-                        }
-                        else {
-                            on[key].value(e);
-                        }
-                        if (on[key].modifiers.includes('stop')) {
-                            e.stopPropagation();
-                        }
-                        if (on[key].modifiers.includes('prevent')) {
-                            e.preventDefault();
-                        }
-                    };
-                }
-                else {
-                    on[key].fun = on[key].value;
-                }
-            }
-        }
-        if (vnode.children) {
-            for (let i = 0; i < vnode.children.length; i++) {
-                if (vnode.children[i].appId) {
-                    bindAttrAndEvent(vm.sugar[vnode.children[i].appId].vm, vnode.children[i]);
-                }
-                else {
-                    bindAttrAndEvent(vm, vnode.children[i]);
-                }
-            }
-        }
     }
 }
 function html2Vnode(html) {
@@ -1995,7 +1976,7 @@ function makeSugar(options) {
         initCSS();
         vm._vnode = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
         mounted(vm, data);
-        nextTick(() => {
+        void nextTick(() => {
             var _a;
             (_a = mountHandleList[appId]) === null || _a === void 0 ? void 0 : _a.forEach((item) => {
                 item.fun();
@@ -2032,12 +2013,11 @@ if (typeof window !== 'undefined') {
             useEffect,
             nextTick,
             ref,
-            useState,
             Component,
             reactive
         };
     })(window);
 }
 
-export { Component, instance, makeSugar, nextTick, onMounted, reactive, ref, useEffect, useState };
+export { Component, instance, makeSugar, nextTick, onMounted, reactive, ref, useEffect };
 //# sourceMappingURL=sugar.bundle.js.map

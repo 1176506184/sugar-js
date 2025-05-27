@@ -41,7 +41,9 @@ export default function patch (vm, newVnode) {
             const value = attrs[key];
             domNode.setAttribute(key, value);
             if (key === 'instance') {
-              if (vm[value]) { vm[value].value = domNode; }
+              if (vm[value]) {
+                vm[value].value = domNode;
+              }
             }
           }
         }
@@ -69,6 +71,9 @@ export default function patch (vm, newVnode) {
         vnode.elm = app.vm.$el;
         vnode._sugar = app;
         domNode = vnode.elm;
+        if (vnode.data.attrs.instance) {
+          vm[vnode.data.attrs.instance].value = app;
+        }
       }
     } else if (vnode.text !== undefined) {
       domNode = document.createTextNode(vnode.text);
@@ -140,7 +145,9 @@ export default function patch (vm, newVnode) {
       }
 
       if (attr === 'instance') {
-        if (vm[newAttrs[attr]]) { vm[newAttrs[attr]].value = el; }
+        if (vm[newAttrs[attr]]) {
+          vm[newAttrs[attr]].value = el;
+        }
       }
     });
   }
@@ -293,6 +300,15 @@ function patchEvents (el, newOn) {
     _vei[eventName] = newOn[eventName].fun;
     el.addEventListener(eventName, newOn[eventName].fun);
   });
+}
+
+function wrapEvent (fn, modifiers = []) {
+  return function (e) {
+    if (modifiers.includes('self') && e.target !== e.currentTarget) return;
+    if (modifiers.includes('stop')) e.stopPropagation();
+    if (modifiers.includes('prevent')) e.preventDefault();
+    return fn(e);
+  };
 }
 
 function clearEmptyVnode (Vnodes) {

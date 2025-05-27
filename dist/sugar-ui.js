@@ -33,7 +33,7 @@
         }
     };
 
-    const { useEffect: useEffect$2, ref: ref$1 } = SUGAR;
+    const { useEffect: useEffect$2, ref: ref$3 } = SUGAR;
     const dialog = {
         name: 'sugar-dialog',
         render: function anonymous(
@@ -53,11 +53,11 @@
     headTag: 'div',
         bulk(ctx) {
             var _a, _b;
-            const show = ref$1(ctx.model.value);
-            const opacity = ref$1(0);
+            const show = ref$3(ctx.model.value);
+            const opacity = ref$3(0);
             const direction = (_b = (_a = ctx.direction) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : 'center';
-            const style = ref$1('');
-            const transform = ref$1(getInitDirection(direction));
+            const style = ref$3('');
+            const transform = ref$3(getInitDirection(direction));
             useEffect$2(() => {
                 if (ctx.model.value) {
                     show.value = true;
@@ -106,7 +106,7 @@
         }
     };
 
-    const { makeSugar, ref, onMounted: onMounted$3 } = SUGAR;
+    const { makeSugar, ref: ref$2, onMounted: onMounted$4 } = SUGAR;
     const showToast = {
         fun: 'showToast',
         bulk(text, timeout = 2000, style = '') {
@@ -175,7 +175,7 @@
     headTag: 'sugar-dialog',
                 bulk() {
                     var _a, _b, _c, _d;
-                    const show = ref(false);
+                    const show = ref$2(false);
                     function cancel() {
                         options.cancel();
                         show.value = false;
@@ -194,7 +194,7 @@
                             root = null;
                         }, 300);
                     }
-                    onMounted$3(() => {
+                    onMounted$4(() => {
                         show.value = true;
                     });
                     return {
@@ -244,7 +244,6 @@
             const [showMost, setShowMost] = useState$4(false);
             const [showSis, setShowSis] = useState$4(false);
             function changePage(v) {
-                console.log(v);
                 ctx.change(v);
             }
             function prev() {
@@ -335,7 +334,7 @@
         }
     };
 
-    const { onMounted: onMounted$2, useState: useState$3 } = SUGAR;
+    const { onMounted: onMounted$3, useState: useState$3 } = SUGAR;
     const BackTop = {
         name: 'sugar-back-top',
         render: function anonymous(
@@ -355,7 +354,7 @@
     headTag: 'div',
         bulk() {
             const [scale, setScale] = useState$3('');
-            onMounted$2(() => {
+            onMounted$3(() => {
                 window.addEventListener('scroll', () => {
                     if (window.scrollY > 400) {
                         setScale('transform:scale(1)');
@@ -436,7 +435,7 @@
         }
     };
 
-    const { instance: instance$2 } = SUGAR;
+    const { instance: instance$3 } = SUGAR;
     const upload = {
         name: 'sugar-upload',
         render: function anonymous(
@@ -455,7 +454,7 @@
     },
     headTag: 'div',
         bulk(ctx) {
-            const fileRef = instance$2();
+            const fileRef = instance$3();
             function fileInput(e) {
                 const result = [];
                 result.push(...e.target.files);
@@ -473,7 +472,7 @@
         }
     };
 
-    const { onMounted: onMounted$1, instance: instance$1, useState: useState$1 } = SUGAR;
+    const { onMounted: onMounted$2, instance: instance$2, useState: useState$1 } = SUGAR;
     const lazy = {
         name: 'sugar-lazy',
         render: function anonymous(
@@ -493,8 +492,8 @@
     headTag: 'div',
         bulk(ctx) {
             const [show, setShow] = useState$1(false);
-            const node = instance$1();
-            onMounted$1(() => {
+            const node = instance$2();
+            onMounted$2(() => {
                 window.addEventListener('scroll', () => {
                     if (node.value.getBoundingClientRect().top < window.innerHeight) {
                         setShow(true);
@@ -508,7 +507,7 @@
         }
     };
 
-    const { onMounted, instance, useState } = SUGAR;
+    const { onMounted: onMounted$1, instance: instance$1, useState } = SUGAR;
     const field = {
         name: 'sugar-field',
         render: function anonymous(
@@ -530,12 +529,12 @@
             var _a, _b, _c;
             const label = ((_a = ctx.label) === null || _a === void 0 ? void 0 : _a.value) || '文本';
             const placeholder = ((_b = ctx.placeholder) === null || _b === void 0 ? void 0 : _b.value) || '请输入';
-            const labelRef = instance();
-            const defaultRef = instance();
+            const labelRef = instance$1();
+            const defaultRef = instance$1();
             const [showLabel, setShowLabel] = useState(true);
             const [showField, setShowField] = useState(true);
             const [value, setValue] = useState(((_c = ctx.value) === null || _c === void 0 ? void 0 : _c.value) || '');
-            onMounted(() => {
+            onMounted$1(() => {
                 var _a, _b;
                 if (((_a = labelRef.value) === null || _a === void 0 ? void 0 : _a.children.length) > 0) {
                     setShowLabel(false);
@@ -562,10 +561,75 @@
         }
     };
 
-    const sugarUI = [button, dialog, showMessageBox, showToast, pageNation, BackTop, text, upload, lazy, field];
+    const { ref: ref$1 } = SUGAR;
+    const store = ref$1({
+        percentage: {},
+        getPercentage,
+        sugarWh
+    });
+    function getPercentage(node, pid) {
+        const width = node.getAttribute('sugar-wh').split(',')[0];
+        const height = node.getAttribute('sugar-wh').split(',')[1];
+        const top = node.getAttribute('sugar-tb').split(',')[0];
+        const bottom = node.getAttribute('sugar-tb').split(',')[1];
+        const pNode = document.querySelector(`#${pid}`);
+        const pw = pNode.getAttribute('sugar-wh').split(',')[0];
+        const ph = pNode.getAttribute('sugar-wh').split(',')[1];
+        return `width:${(width / pw * 100).toFixed(2)}%;height:${(height / ph * 100).toFixed(2)}%;margin-top:${(top / ph * 100).toFixed(2)}%;margin-bottom:${(bottom / ph * 100).toFixed(2)}%`;
+    }
+    function sugarWh(pid) {
+        const result = {};
+        const ids = Array.from(document.querySelectorAll(`#${pid} [sugar-id]`));
+        for (let i = 0; i < ids.length; i++) {
+            result[ids[i].getAttribute('sugar-id')] = getPercentage(ids[i], pid);
+        }
+        return result;
+    }
+
+    const { ref, instance, onMounted } = SUGAR;
+    const percentage = {
+        name: 'sugar-percentage',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"style":"width:100%;height:100%%;position:relative","id":_ctx_.id,"sugar-wh":_ctx_.sugarWh},"on":{}},[_ctx_._SUGAR._c('img',{ "attrs":{"alt":"","src":_ctx_.background,"style":"width: 100%;height: 100%","instance":"bg","id":'bg' + _ctx_.id},"on":{}},[]),_ctx_._SUGAR._c('div',{ "attrs":{"style":"position: absolute;top:0;left: 0;right: 0;bottom: 0"},"on":{}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[])])]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            const bg = instance();
+            if (!store.value.percentage[ctx.id.value]) {
+                store.value = Object.assign(Object.assign({}, store.value), { percentage: Object.assign(Object.assign({}, store.value.percentage), { [ctx.id.value]: {
+                            id: ctx.id.value
+                        } }) });
+            }
+            onMounted(() => {
+                store.value = Object.assign(Object.assign({}, store.value), { percentage: Object.assign(Object.assign({}, store.value.percentage), { [ctx.id.value]: {
+                            id: ctx.id.value
+                        } }) });
+            });
+            return {
+                background: ctx.background,
+                id: ctx.id,
+                bg,
+                sugarWh: ctx['sugar-wh']
+            };
+        }
+    };
+
+    const sugarUI = [button, dialog, showMessageBox, showToast, pageNation, BackTop, text, upload, lazy, field, percentage];
     if (typeof window !== 'undefined') {
         (function (global) {
             global.sugarUI = sugarUI;
+            global.sugarWh = sugarWh;
         })(window);
     }
 

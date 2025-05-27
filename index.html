@@ -116,52 +116,17 @@
 </style>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
-    {{state.name}}
-    <div :style="'a'+style" @click="signalAdd">
-        {{signal}}
-    </div>
-    <input s-model="value.name"/>
-    <test></test>
-    <sugar-button @click="open">展示</sugar-button>
-    <sugar-field></sugar-field>
-    <sugar-dialog :model="show" @close="close">
-        <div style="width: 150px;height: 100px;background: #fff">
-            <sugar-button>
-                {{signal}}
-            </sugar-button>
-        </div>
+    <sugar-dialog :model="show" @close="close" instance="dialogRef">
+
     </sugar-dialog>
-    <sugar-pagination
-            :pi="pi"
-            :ps="ps"
-            :total="total"
-            page="2"
-            style="margin-top: 10px"
-            @change="changePage"
-            :btn="true"
-            :show-most="true">
-    </sugar-pagination>
-    {{index}}
-    <div s-for="(item,index) in list">
-        {{item}}
-    </div>
-    <sugar-back-top></sugar-back-top>
-    <sugar-upload @change="fileChange">
-        <sugar-button>上传</sugar-button>
-    </sugar-upload>
-    <div style="width: 100%;height: 100vh"></div>
-    <sugar-lazy>
-        测试
-    </sugar-lazy>
+    <sugar-button @click="open">打开</sugar-button>
 </div>
 </body>
 <script>
-
     const {
         makeSugar,
         onMounted,
         instance,
-        useState,
         useEffect,
         nextTick,
         ref,
@@ -180,65 +145,27 @@
     var sugar = makeSugar({
         bulk() {
 
-            const state = reactive({
-                name:'测试'
-            })
-            const list = ref([1, 2, 3]);
-            const index = ref(0);
-            const value = ref({
-                name: 'sugar',
-                age: 18
-            });
-
-            const pi = ref(1);
-            const ps = ref(10);
-            const total = ref(100);
-
-            function changePage(e) {
-                console.log(pi.value);
-                pi.value = e;
-            }
-
-            const signal = ref(3);
-            const style = ref('width: 100%;');
             const show = ref(false);
-
-            function signalAdd() {
-                list.value.push(signal.value);
-            }
-
-            function close() {
+            const dialogRef = instance();
+            function close(){
                 show.value = false;
             }
 
-            function open() {
+            useEffect(()=>{
+                console.log(show.value)
+                console.log(dialogRef.value)
+            },[show])
+
+            function open(){
+                console.log(show.value)
                 show.value = true;
             }
 
-            useEffect(() => {
-                console.log(signal.value);
-            }, [signal]);
-
-            function fileChange(e) {
-                console.log(e);
-            }
-
             return {
-                signal,
-                signalAdd,
-                style,
                 show,
                 close,
                 open,
-                changePage,
-                pi,
-                ps,
-                total,
-                list,
-                index,
-                fileChange,
-                value,
-                state
+                dialogRef
             };
         }
     });
