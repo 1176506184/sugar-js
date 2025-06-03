@@ -116,6 +116,9 @@
 </style>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
+    <div s-for="(item,index) in list">
+        {{item}}{{index}}
+    </div>
     <sugar-dialog :model="show" @close="close">
         <slot #default>
             <div style="width: 100px;height: 100px;background: #FFFFFF">123</div>
@@ -129,7 +132,6 @@
         makeSugar,
         onMounted,
         instance,
-        useEffect,
         nextTick,
         ref,
         Component,
@@ -140,6 +142,7 @@
         bulk() {
             const show = ref(false);
             const dialogRef = instance();
+            const list = ref([1, 2, 3, 4]);
 
             function close() {
                 show.value = false;
@@ -153,7 +156,8 @@
                 show,
                 close,
                 open,
-                dialogRef
+                dialogRef,
+                list
             };
         }
     });
