@@ -125,6 +125,17 @@
         </slot>
     </sugar-dialog>
     <sugar-button @click="open">打开</sugar-button>
+    <sugar-back-top></sugar-back-top>
+    <sugar-pagination
+            :pi="pi"
+            :ps="ps"
+            :total="total"
+            page="2"
+            style="margin-top: 10px"
+            @change="changePage"
+            :btn="true"
+            :show-most="true">
+    </sugar-pagination>
 </div>
 </body>
 <script>
@@ -152,12 +163,25 @@
                 show.value = true;
             }
 
+            const pi = ref(1);
+            const ps = ref(10);
+            const total = ref(100);
+
+            function changePage(e) {
+                console.log(pi.value);
+                pi.value = e;
+            }
+
             return {
                 show,
                 close,
                 open,
                 dialogRef,
-                list
+                list,
+                pi,
+                ps,
+                total,
+                changePage
             };
         }
     });

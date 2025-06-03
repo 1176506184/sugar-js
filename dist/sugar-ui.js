@@ -33,7 +33,7 @@
         }
     };
 
-    const { ref, watch } = SUGAR;
+    const { ref: ref$2, watch: watch$1 } = SUGAR;
     const dialog = {
         name: 'sugar-dialog',
         render: function anonymous(
@@ -53,12 +53,12 @@
     headTag: 'div',
         bulk(ctx) {
             var _a;
-            const show = ref(ctx.model);
-            const opacity = ref(0);
+            const show = ref$2(ctx.model);
+            const opacity = ref$2(0);
             const direction = (_a = ctx.direction) !== null && _a !== void 0 ? _a : 'center';
-            const style = ref('');
-            const transform = ref(getInitDirection(direction));
-            watch(ctx.model, (newValue) => {
+            const style = ref$2('');
+            const transform = ref$2(getInitDirection(direction));
+            watch$1(ctx.model, (newValue) => {
                 console.log(ctx.model);
                 if (ctx.model) {
                     show.value = true;
@@ -107,7 +107,157 @@
         }
     };
 
-    const sugarUI = [button, dialog];
+    const { onMounted, ref: ref$1 } = SUGAR;
+    const BackTop = {
+        name: 'sugar-back-top',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-back-top","style":_ctx_.scale},"on":{"click":{"value":_ctx_.goTop,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('svg',{ "attrs":{"class":"icon","viewBox":"0 0 1024 1024","xmlns":"http://www.w3.org/2000/svg","width":"100","height":"100"},"on":{}},[_ctx_._SUGAR._c('path',{ "attrs":{"d":"M832 165.76H192c-26.24 0-48 21.76-48 48s21.76 48 48 48h640c26.24 0 48-21.76 48-48s-21.76-48-48-48zM551.04 376.96A58.688 58.688 0 0 0 512 360.32c-12.8 0-29.44 7.04-38.4 16L254.08 595.84c-18.56 18.56-18.56 49.28 0 67.84s49.28 18.56 67.84 0l142.08-142.08v348.16c0 26.24 21.76 48 48 48s48-21.76 48-48V521.6l142.08 142.08c9.6 9.6 21.76 14.08 33.92 14.08s24.32-4.48 33.92-14.08c18.56-18.56 18.56-49.28 0-67.84L551.04 376.96z","p-id":"2865","fill":"#ffffff"},"on":{}},[])])]);
+      
+    },
+    headTag: 'div',
+        bulk() {
+            const scale = ref$1('');
+            onMounted(() => {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 400) {
+                        scale.value = 'transform:scale(1)';
+                    }
+                    else {
+                        scale.value = '';
+                    }
+                });
+            });
+            function goTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+            return {
+                goTop,
+                scale
+            };
+        }
+    };
+
+    const { watch, ref } = SUGAR;
+    const pageNation = {
+        name: 'sugar-pagination',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-pagination","style":_ctx_.style},"on":{}},[_ctx_._SUGAR._c('ul',{ "attrs":{"class":"sugar-pagination__items"},"on":{}},[_ctx_.showBtn ? _ctx_._SUGAR._c('li',{ "attrs":{"class":"sugar-pagination__item"},"on":{"click":{"value":_ctx_.prev,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('svg',{ "attrs":{"t":"1741916731985","class":"icon","viewBox":"0 0 1024 1024","version":"1.1","xmlns":"http://www.w3.org/2000/svg","p-id":"2581","width":"100","height":"100"},"on":{}},[_ctx_._SUGAR._c('path',{ "attrs":{"d":"M719.2 912.6c14.2-14.2 14.2-37.2 0-51.4L371.7 513.8c-2.8-2.9-2.8-7.5 0-10.3L719.2 156c14.2-14.2 14.2-37.2 0-51.4-14.2-14.2-37.2-14.2-51.4 0L320.3 452c-15.6 15.6-23.4 36-23.4 56.5s7.8 41 23.4 56.5l347.4 347.4c14.3 14.3 37.3 14.3 51.5 0.2z","fill":_ctx_.canPrev?'#333':'#8a8a8a'},"on":{}},[])])]) : _ctx_._SUGAR._e(),..._ctx_._SUGAR._loop((item,index)=>{
+            return _ctx_._SUGAR._c('li',{ "attrs":{"class":_ctx_.pi === item ? 'sugar-pagination__item sugar-pagination__item--active':'sugar-pagination__item'},"on":{"click":{"value":(e)=>{_ctx_.changePage(item);},"isStatic":true,"modifiers":[]}}},[_ctx_._SUGAR._c('button',{ "attrs":{},"on":{}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(item))])])
+                                },_ctx_.page),_ctx_.showBtn ? _ctx_._SUGAR._c('li',{ "attrs":{"class":"sugar-pagination__item right_arrow"},"on":{"click":{"value":_ctx_.next,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('svg',{ "attrs":{"t":"1741916731985","class":"icon","viewBox":"0 0 1024 1024","version":"1.1","xmlns":"http://www.w3.org/2000/svg","p-id":"2581","width":"100","height":"100"},"on":{}},[_ctx_._SUGAR._c('path',{ "attrs":{"d":"M719.2 912.6c14.2-14.2 14.2-37.2 0-51.4L371.7 513.8c-2.8-2.9-2.8-7.5 0-10.3L719.2 156c14.2-14.2 14.2-37.2 0-51.4-14.2-14.2-37.2-14.2-51.4 0L320.3 452c-15.6 15.6-23.4 36-23.4 56.5s7.8 41 23.4 56.5l347.4 347.4c14.3 14.3 37.3 14.3 51.5 0.2z","fill":_ctx_.canNext?'#333':'#8a8a8a'},"on":{}},[])])]) : _ctx_._SUGAR._e()])]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            const pi = ref(1);
+            const ps = ref(20);
+            const total = ref(0);
+            const page = ref([1]);
+            const canNext = ref(false);
+            const canPrev = ref(false);
+            const showBtn = ref(false);
+            const showMost = ref(false);
+            function changePage(v) {
+                ctx.change(v);
+            }
+            function prev() {
+                if (pi.value > 1) {
+                    ctx.change(pi.value - 1);
+                }
+            }
+            function next() {
+                if (pi.value < Math.ceil(total.value / ps.value)) {
+                    ctx.change(pi.value + 1);
+                }
+            }
+            function generateNumberParts(f, n, c) {
+                f = Number(f);
+                n = Number(n);
+                c = Number(c);
+                const front = [];
+                for (let i = 1; i <= n; i++) {
+                    const tmp = f - i;
+                    if (tmp > 0) {
+                        front.unshift(tmp);
+                    }
+                }
+                const end = [];
+                for (let i = 1; i <= (n + (n - front.length)); i++) {
+                    const tmp = f + i;
+                    if (tmp <= c) {
+                        end.push(tmp);
+                    }
+                }
+                if (end.length < n) {
+                    const length = front.length;
+                    for (let i = 1; i <= (n - end.length); i++) {
+                        const tmp = f - length - i;
+                        if (tmp > 0) {
+                            front.unshift(tmp);
+                        }
+                    }
+                }
+                return [...front, f, ...end];
+            }
+            update();
+            watch(ctx, () => {
+                update();
+            });
+            function update() {
+                ps.value = ctx.ps;
+                pi.value = ctx.pi;
+                total.value = ctx.total;
+                page.value = generateNumberParts(pi.value, ctx.page, Math.ceil(total.value / ps.value));
+                canPrev.value = pi.value > 1;
+                canNext.value = pi.value < Math.ceil(total.value / ps.value);
+                ctx.btn && (showBtn.value = ctx.btn);
+                ctx['show-most'] && (showMost.value = ctx['show-most']);
+                if (showMost.value && !page.value.includes(1)) {
+                    page.value = [1, ...page.value];
+                }
+                if (showMost.value && !page.value.includes(Math.ceil(total.value / ps.value))) {
+                    page.value = [...page.value, Math.ceil(total.value / ps.value)];
+                }
+            }
+            return {
+                pi,
+                ps,
+                total,
+                page,
+                style: ctx.style,
+                canNext,
+                canPrev,
+                changePage,
+                showBtn,
+                prev,
+                next
+            };
+        }
+    };
+
+    const sugarUI = [button, dialog, BackTop, pageNation];
     if (typeof window !== 'undefined') {
         (function (global) {
             global.sugarUI = sugarUI;
