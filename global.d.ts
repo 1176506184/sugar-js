@@ -3,6 +3,6 @@ declare const SUGAR: {
   useState: <T>(initValue: T) => [T, (value: T) => void]
   ref: <T>(initValue: T) => { value: T };
   instance: () => any,
-  useEffect: (callback: () => void | (() => void), deps?: any[], run?: boolean) => void;
-  makeSugar: (options: any) => any
+  makeSugar: (options: any) => any,
+  watch: (source: any, callback: (newValue:any,oldValue:any) => void) => void;
 };

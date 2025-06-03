@@ -4,7 +4,7 @@ import { bindT, VmDataRefPassive } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patch from './patch';
 import { addComponentCache, getComponentCache } from './componentCache';
-import { ref } from '@sugar/sugar-reactive';
+import { effect, reactive, ref } from '@sugar/sugar-reactive';
 
 export function bulkComponent (_vnode: any, parentComponent: any) {
   const {
@@ -16,20 +16,22 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
   }: any = _vnode;
 
   const _sugar = deepClone(parentComponent);
-  const props = {};
+  const props = reactive({
+
+  });
   const slot = children;
   Object.keys(attrs).forEach((propName) => {
     if (propName !== 'instance') {
-      props[propName] = ref(attrs[propName]);
+      props[propName] = attrs[propName];
     }
   });
   Object.keys(on).forEach((propName) => {
     if (on[propName].parameters) {
       props[propName] = function () {
-        on[propName].fun(...on[propName].parameters);
+        on[propName].value(...on[propName].parameters);
       };
     } else {
-      props[propName] = on[propName].fun;
+      props[propName] = on[propName].value;
     }
   });
 
@@ -71,6 +73,10 @@ export function makeComponent (instance) {
       item.fun();
       item.used = true;
     });
+
+    effect(() => {
+      update();
+    });
   }
 
   function updateSlot (slot) {
@@ -98,20 +104,9 @@ export function componentRender () {
     vm._vnode = vm.$el;
     render = vm.render;
     bindT(vm, data);
-    update(vm);
-
-    Object.values(data).forEach((item: any) => {
-      if (typeof item === 'object' && item?.sugarRefDataType === 'useState') {
-        item.initDep(() => {
-          update(vm);
-        });
-      }
-    });
-
     vm.forceUpdate = function () {
       update(vm);
     };
-    update(vm);
     return vm.forceUpdate;
   }
 
@@ -155,7 +150,10 @@ export function componentRender () {
 }
 
 export function Component (options: any) {
-  const { code, root } = sugarCompiler(options.render);
+  const {
+    code,
+    root
+  } = sugarCompiler(options.render);
   return {
     ...options,
     render: code,

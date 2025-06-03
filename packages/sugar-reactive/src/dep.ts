@@ -50,12 +50,14 @@ export function trigger (target: object, key: string | symbol) {
 function watch (source, cb) {
   // 定义一个内部副作用函数，读取source触发依赖收集
   let getter;
+
   if (typeof source === 'function') {
     getter = source;
-  } else if (source && typeof source === 'object' && 'value' in source) {
+  } else if (isRef(source)) {
     getter = () => source.value;
   } else {
-    throw new Error('watch: source must be a function or ref object');
+    // 支持 reactive 对象
+    getter = () => traverse(source);
   }
 
   let oldValue;
@@ -63,19 +65,33 @@ function watch (source, cb) {
   // 定义副作用函数，触发getter获取值，执行回调
   function onEffect () {
     const newValue = getter();
-    if (newValue !== oldValue) {
-      cb(newValue, oldValue);
-      oldValue = newValue;
-    }
+    cb(newValue, oldValue);
+    oldValue = newValue;
   }
-
-  // 初始执行一次，建立依赖关系
-  effect(() => {
-    oldValue = getter();
-  });
 
   // 注册副作用函数，响应式数据变化时触发
   effect(onEffect);
+}
+
+function isRef (r) {
+  return r && typeof r === 'object' && r.__isRef === true;
+}
+
+function traverse (value, seen = new Set()) {
+  if (typeof value !== 'object' || value === null || seen.has(value)) return;
+
+  seen.add(value);
+
+  if (isRef(value)) {
+    // 👇 递归访问 ref 的 .value
+    traverse(value.value, seen);
+  } else {
+    for (const key in value) {
+      traverse(value[key], seen);
+    }
+  }
+
+  return value;
 }
 
 export { watch };

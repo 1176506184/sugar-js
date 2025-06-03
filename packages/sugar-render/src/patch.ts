@@ -1,13 +1,13 @@
 import { isDef, isUndef, nodeOps } from '@sugar/sugar-shared';
 import { isComponent } from './utils';
 import { bulkComponent } from './component';
+import * as console from 'node:console';
 
 export default function patch (vm, newVnode) {
   let oldVnode = vm._vnode;
   if (!oldVnode.elm) {
     oldVnode = emptyNodeAt(oldVnode);
   }
-
   if (isSameNode(oldVnode, newVnode)) {
     patchVnode(newVnode, oldVnode);
   } else {
@@ -51,8 +51,9 @@ export default function patch (vm, newVnode) {
         // 处理监听事件
         for (const key in on) {
           if (Object.hasOwnProperty.call(on, key)) {
+            console.log(on[key]);
             if (on[key].value) {
-              const event = on[key].fun;
+              const event = on[key].value;
               event && domNode.addEventListener(key, event);
               _vei[key] = event;
             }
@@ -264,14 +265,14 @@ export function updateComponent (newVnode: any, oldVnode: any) {
       on
     } = newVnode.data;
     if (Object.keys(attrs).includes(prop)) {
-      oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
+      oldVnode._sugar.vm.props[prop] = newVnode.data.attrs[prop];
     } else if (Object.keys(on).includes(prop)) {
       if (newVnode.data.on[prop].parameters) {
         oldVnode._sugar.vm.props[prop] = function () {
-          newVnode.data.on[prop].fun(...newVnode.data.on[prop].parameters);
+          newVnode.data.on[prop].value(...newVnode.data.on[prop].parameters);
         };
       } else {
-        oldVnode._sugar.vm.props[prop] = newVnode.data.on[prop].fun;
+        oldVnode._sugar.vm.props[prop] = newVnode.data.on[prop].value;
       }
     }
   });
@@ -297,8 +298,8 @@ function patchEvents (el, newOn) {
     el.removeEventListener(eventName, _vei[eventName]);
   });
   Object.keys(newOn).forEach((eventName) => {
-    _vei[eventName] = newOn[eventName].fun;
-    el.addEventListener(eventName, newOn[eventName].fun);
+    _vei[eventName] = newOn[eventName].value;
+    el.addEventListener(eventName, newOn[eventName].value);
   });
 }
 

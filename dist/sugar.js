@@ -1,10 +1,29 @@
 
 (function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-    typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Sugar = {}));
-})(this, (function (exports) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('node:console')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'node:console'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Sugar = {}, global.console));
+})(this, (function (exports, console) { 'use strict';
+
+    function _interopNamespaceDefault(e) {
+        var n = Object.create(null);
+        if (e) {
+            Object.keys(e).forEach(function (k) {
+                if (k !== 'default') {
+                    var d = Object.getOwnPropertyDescriptor(e, k);
+                    Object.defineProperty(n, k, d.get ? d : {
+                        enumerable: true,
+                        get: function () { return e[k]; }
+                    });
+                }
+            });
+        }
+        n.default = e;
+        return Object.freeze(n);
+    }
+
+    var console__namespace = /*#__PURE__*/_interopNamespaceDefault(console);
 
     let mountHandleList = {};
     let ActiveId = '';
@@ -1190,27 +1209,40 @@
         if (typeof source === 'function') {
             getter = source;
         }
-        else if (source && typeof source === 'object' && 'value' in source) {
+        else if (isRef$1(source)) {
             getter = () => source.value;
         }
         else {
-            throw new Error('watch: source must be a function or ref object');
+            // 支持 reactive 对象
+            getter = () => traverse(source);
         }
         let oldValue;
         // 定义副作用函数，触发getter获取值，执行回调
         function onEffect() {
             const newValue = getter();
-            if (newValue !== oldValue) {
-                cb(newValue, oldValue);
-                oldValue = newValue;
-            }
+            cb(newValue, oldValue);
+            oldValue = newValue;
         }
-        // 初始执行一次，建立依赖关系
-        effect(() => {
-            oldValue = getter();
-        });
         // 注册副作用函数，响应式数据变化时触发
         effect(onEffect);
+    }
+    function isRef$1(r) {
+        return r && typeof r === 'object' && r.__isRef === true;
+    }
+    function traverse(value, seen = new Set()) {
+        if (typeof value !== 'object' || value === null || seen.has(value))
+            return;
+        seen.add(value);
+        if (isRef$1(value)) {
+            // 👇 递归访问 ref 的 .value
+            traverse(value.value, seen);
+        }
+        else {
+            for (const key in value) {
+                traverse(value[key], seen);
+            }
+        }
+        return value;
     }
 
     // ref.ts
@@ -1229,55 +1261,6 @@
             },
             __isRef: true
         };
-    }
-
-    function useEffect(effect, deps, immediate = false) {
-        // 记录上一次依赖的值，用于对比
-        let prevDeps = [];
-        // 用于获取每个响应式对象的当前值（假设ref对象有.value，reactive直接用）
-        function getDepValue(dep) {
-            if (dep && typeof dep === 'object' && 'value' in dep) {
-                return dep.value; // ref
-            }
-            return dep; // reactive 或普通对象
-        }
-        // 判断两个依赖数组是否相等（浅比较）
-        function depsChanged(newDeps, oldDeps) {
-            if (newDeps.length !== oldDeps.length)
-                return true;
-            for (let i = 0; i < newDeps.length; i++) {
-                if (newDeps[i] !== oldDeps[i])
-                    return true;
-            }
-            return false;
-        }
-        // 执行一次effect并保存依赖
-        function runEffect() {
-            effect();
-            prevDeps = deps.map(getDepValue);
-        }
-        // 这里模拟响应式依赖监听
-        // 假设你有一个全局watcher注册接口 watch(reactive, callback)
-        // 监听每个依赖对象变化，检测是否触发effect
-        // 先执行一次，如果immediate为true
-        if (immediate) {
-            runEffect();
-        }
-        else {
-            // 初始保存依赖
-            prevDeps = deps.map(getDepValue);
-        }
-        // 监听依赖变化
-        deps.forEach(dep => {
-            watch(dep, () => {
-                // 依赖变化时，先取最新依赖值
-                const newDeps = deps.map(getDepValue);
-                if (depsChanged(newDeps, prevDeps)) {
-                    effect();
-                    prevDeps = newDeps;
-                }
-            });
-        });
     }
 
     // reactive.ts
@@ -1302,21 +1285,21 @@
     function bulkComponent(_vnode, parentComponent) {
         const { data: { attrs, on }, children } = _vnode;
         const _sugar = deepClone(parentComponent);
-        const props = {};
+        const props = reactive({});
         const slot = children;
         Object.keys(attrs).forEach((propName) => {
             if (propName !== 'instance') {
-                props[propName] = ref(attrs[propName]);
+                props[propName] = attrs[propName];
             }
         });
         Object.keys(on).forEach((propName) => {
             if (on[propName].parameters) {
                 props[propName] = function () {
-                    on[propName].fun(...on[propName].parameters);
+                    on[propName].value(...on[propName].parameters);
                 };
             }
             else {
-                props[propName] = on[propName].fun;
+                props[propName] = on[propName].value;
             }
         });
         if (_vnode.key && getComponentCache(_vnode.key)) {
@@ -1353,6 +1336,9 @@
                 item.fun();
                 item.used = true;
             });
+            effect(() => {
+                update();
+            });
         }
         function updateSlot(slot) {
             vm.slot = slot;
@@ -1371,18 +1357,9 @@
             vm._vnode = vm.$el;
             render = vm.render;
             bindT(vm, data);
-            update(vm);
-            Object.values(data).forEach((item) => {
-                if (typeof item === 'object' && (item === null || item === void 0 ? void 0 : item.sugarRefDataType) === 'useState') {
-                    item.initDep(() => {
-                        update(vm);
-                    });
-                }
-            });
             vm.forceUpdate = function () {
                 update(vm);
             };
-            update(vm);
             return vm.forceUpdate;
         }
         function update(vm) {
@@ -1475,8 +1452,9 @@
                     // 处理监听事件
                     for (const key in on) {
                         if (Object.hasOwnProperty.call(on, key)) {
+                            console__namespace.log(on[key]);
                             if (on[key].value) {
-                                const event = on[key].fun;
+                                const event = on[key].value;
                                 event && domNode.addEventListener(key, event);
                                 _vei[key] = event;
                             }
@@ -1692,16 +1670,16 @@
         Object.keys(oldVnode._sugar.vm.props).forEach(prop => {
             const { attrs, on } = newVnode.data;
             if (Object.keys(attrs).includes(prop)) {
-                oldVnode._sugar.vm.props[prop].value = newVnode.data.attrs[prop];
+                oldVnode._sugar.vm.props[prop] = newVnode.data.attrs[prop];
             }
             else if (Object.keys(on).includes(prop)) {
                 if (newVnode.data.on[prop].parameters) {
                     oldVnode._sugar.vm.props[prop] = function () {
-                        newVnode.data.on[prop].fun(...newVnode.data.on[prop].parameters);
+                        newVnode.data.on[prop].value(...newVnode.data.on[prop].parameters);
                     };
                 }
                 else {
-                    oldVnode._sugar.vm.props[prop] = newVnode.data.on[prop].fun;
+                    oldVnode._sugar.vm.props[prop] = newVnode.data.on[prop].value;
                 }
             }
         });
@@ -1724,8 +1702,8 @@
             el.removeEventListener(eventName, _vei[eventName]);
         });
         Object.keys(newOn).forEach((eventName) => {
-            _vei[eventName] = newOn[eventName].fun;
-            el.addEventListener(eventName, newOn[eventName].fun);
+            _vei[eventName] = newOn[eventName].value;
+            el.addEventListener(eventName, newOn[eventName].value);
         });
     }
     function clearEmptyVnode(Vnodes) {
@@ -2016,11 +1994,11 @@
                 onMounted,
                 makeSugar,
                 instance,
-                useEffect,
                 nextTick,
                 ref,
                 Component,
-                reactive
+                reactive,
+                watch
             };
         })(window);
     }
@@ -2032,7 +2010,7 @@
     exports.onMounted = onMounted;
     exports.reactive = reactive;
     exports.ref = ref;
-    exports.useEffect = useEffect;
+    exports.watch = watch;
 
 }));
 //# sourceMappingURL=sugar.js.map

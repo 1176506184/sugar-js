@@ -116,8 +116,10 @@
 </style>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
-    <sugar-dialog :model="show" @close="close" instance="dialogRef">
-
+    <sugar-dialog :model="show" @close="close">
+        <slot #default>
+            <div style="width: 100px;height: 100px;background: #FFFFFF">123</div>
+        </slot>
     </sugar-dialog>
     <sugar-button @click="open">打开</sugar-button>
 </div>
@@ -131,33 +133,19 @@
         nextTick,
         ref,
         Component,
-        reactive
+        reactive,
+        watch
     } = SUGAR;
-
-    const arrow = Component({
-        name: 'test',
-        render: `<div>测试组件</div>`,
-        bulk(ctx) {
-            return {};
-        }
-    });
-
     var sugar = makeSugar({
         bulk() {
-
             const show = ref(false);
             const dialogRef = instance();
-            function close(){
+
+            function close() {
                 show.value = false;
             }
 
-            useEffect(()=>{
-                console.log(show.value)
-                console.log(dialogRef.value)
-            },[show])
-
-            function open(){
-                console.log(show.value)
+            function open() {
                 show.value = true;
             }
 
@@ -169,7 +157,6 @@
             };
         }
     });
-    sugar.install(arrow);
     sugar.install(sugarUI);
     sugar.mount('#app');
 </script>

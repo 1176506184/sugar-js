@@ -1,6 +1,6 @@
 const {
-  useEffect,
-  ref
+  ref,
+  watch
 } = SUGAR;
 
 const dialog = {
@@ -13,13 +13,14 @@ const dialog = {
           </div>
         </div>`,
   bulk (ctx) {
-    const show: any = ref(ctx.model.value);
+    const show: any = ref(ctx.model);
     const opacity: any = ref(0);
-    const direction: any = ctx.direction?.value ?? 'center';
+    const direction: any = ctx.direction ?? 'center';
     const style: any = ref('');
     const transform: any = ref(getInitDirection(direction));
-    useEffect(() => {
-      if (ctx.model.value) {
+    watch(ctx.model, (newValue) => {
+      console.log(ctx.model);
+      if (ctx.model) {
         show.value = true;
         setTimeout(() => {
           opacity.value = 1;
@@ -42,7 +43,7 @@ const dialog = {
       } else {
         transform.value = getInitDirection(direction, show.value);
       }
-    }, [ctx.model], true);
+    });
 
     function close () {
       ctx.close();

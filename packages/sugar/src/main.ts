@@ -1,5 +1,5 @@
 import { makeSugar, onMounted } from '@sugar/sugar-core';
-import { instance, nextTick, useEffect, ref, reactive } from '@sugar/sugar-reactive';
+import { instance, nextTick, ref, reactive, watch } from '@sugar/sugar-reactive';
 import { Component } from '@sugar/sugar-render';
 
 if (typeof window !== 'undefined') {
@@ -8,11 +8,11 @@ if (typeof window !== 'undefined') {
       onMounted,
       makeSugar,
       instance,
-      useEffect,
       nextTick,
       ref,
       Component,
-      reactive
+      reactive,
+      watch
     };
   })(window);
 }
@@ -21,9 +21,9 @@ export {
   makeSugar,
   onMounted,
   instance,
-  useEffect,
   nextTick,
   ref,
   Component,
-  reactive
+  reactive,
+  watch
 };
