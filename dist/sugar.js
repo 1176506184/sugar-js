@@ -1,29 +1,10 @@
 
 (function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('node:console')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'node:console'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Sugar = {}, global.console));
-})(this, (function (exports, console) { 'use strict';
-
-    function _interopNamespaceDefault(e) {
-        var n = Object.create(null);
-        if (e) {
-            Object.keys(e).forEach(function (k) {
-                if (k !== 'default') {
-                    var d = Object.getOwnPropertyDescriptor(e, k);
-                    Object.defineProperty(n, k, d.get ? d : {
-                        enumerable: true,
-                        get: function () { return e[k]; }
-                    });
-                }
-            });
-        }
-        n.default = e;
-        return Object.freeze(n);
-    }
-
-    var console__namespace = /*#__PURE__*/_interopNamespaceDefault(console);
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Sugar = {}));
+})(this, (function (exports) { 'use strict';
 
     let mountHandleList = {};
     let ActiveId = '';
@@ -1452,7 +1433,7 @@
                     // 处理监听事件
                     for (const key in on) {
                         if (Object.hasOwnProperty.call(on, key)) {
-                            console__namespace.log(on[key]);
+                            console.log(on[key]);
                             if (on[key].value) {
                                 const event = on[key].value;
                                 event && domNode.addEventListener(key, event);

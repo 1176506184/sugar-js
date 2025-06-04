@@ -1,7 +1,6 @@
 import { isDef, isUndef, nodeOps } from '@sugar/sugar-shared';
 import { isComponent } from './utils';
 import { bulkComponent } from './component';
-import * as console from 'node:console';
 
 export default function patch (vm, newVnode) {
   let oldVnode = vm._vnode;

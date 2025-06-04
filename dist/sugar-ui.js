@@ -33,7 +33,7 @@
         }
     };
 
-    const { ref: ref$2, watch: watch$1 } = SUGAR;
+    const { ref: ref$4, watch: watch$1 } = SUGAR;
     const dialog = {
         name: 'sugar-dialog',
         render: function anonymous(
@@ -53,11 +53,11 @@
     headTag: 'div',
         bulk(ctx) {
             var _a;
-            const show = ref$2(ctx.model);
-            const opacity = ref$2(0);
+            const show = ref$4(ctx.model);
+            const opacity = ref$4(0);
             const direction = (_a = ctx.direction) !== null && _a !== void 0 ? _a : 'center';
-            const style = ref$2('');
-            const transform = ref$2(getInitDirection(direction));
+            const style = ref$4('');
+            const transform = ref$4(getInitDirection(direction));
             watch$1(ctx.model, (newValue) => {
                 console.log(ctx.model);
                 if (ctx.model) {
@@ -107,7 +107,7 @@
         }
     };
 
-    const { onMounted, ref: ref$1 } = SUGAR;
+    const { onMounted: onMounted$2, ref: ref$3 } = SUGAR;
     const BackTop = {
         name: 'sugar-back-top',
         render: function anonymous(
@@ -126,8 +126,8 @@
     },
     headTag: 'div',
         bulk() {
-            const scale = ref$1('');
-            onMounted(() => {
+            const scale = ref$3('');
+            onMounted$2(() => {
                 window.addEventListener('scroll', () => {
                     if (window.scrollY > 400) {
                         scale.value = 'transform:scale(1)';
@@ -150,7 +150,7 @@
         }
     };
 
-    const { watch, ref } = SUGAR;
+    const { watch, ref: ref$2 } = SUGAR;
     const pageNation = {
         name: 'sugar-pagination',
         render: function anonymous(
@@ -171,14 +171,14 @@
     },
     headTag: 'div',
         bulk(ctx) {
-            const pi = ref(1);
-            const ps = ref(20);
-            const total = ref(0);
-            const page = ref([1]);
-            const canNext = ref(false);
-            const canPrev = ref(false);
-            const showBtn = ref(false);
-            const showMost = ref(false);
+            const pi = ref$2(1);
+            const ps = ref$2(20);
+            const total = ref$2(0);
+            const page = ref$2([1]);
+            const canNext = ref$2(false);
+            const canPrev = ref$2(false);
+            const showBtn = ref$2(false);
+            const showMost = ref$2(false);
             function changePage(v) {
                 ctx.change(v);
             }
@@ -257,7 +257,186 @@
         }
     };
 
-    const sugarUI = [button, dialog, BackTop, pageNation];
+    const { makeSugar, ref: ref$1, onMounted: onMounted$1 } = SUGAR;
+    const showToast = {
+        fun: 'showToast',
+        bulk(text, timeout = 2000, style = '') {
+            let root = document.createElement('div');
+            document.body.appendChild(root);
+            let MessageApp = makeSugar({
+                render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-toast","style":_ctx_.style},"on":{}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.text))]);
+      
+    },
+    headTag: 'div',
+                bulk() {
+                    return {
+                        text,
+                        style
+                    };
+                }
+            });
+            MessageApp.mount(root);
+            setTimeout(() => {
+                MessageApp = null;
+                root.remove();
+                root = null;
+            }, timeout);
+        }
+    };
+    const showMessageBox = {
+        fun: 'showMessageBox',
+        bulk(options = {
+            title: '提示',
+            content: '这是一条提示的内容',
+            confirmText: '确认',
+            cancelText: '取消',
+            confirm: () => {
+            },
+            cancel: () => {
+            }
+        }) {
+            let root = document.createElement('div');
+            document.body.appendChild(root);
+            let MessageApp = makeSugar({
+                render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('sugar-dialog',{ "attrs":{"model":_ctx_.show},"on":{"close":{"value":_ctx_.cancel,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-box"},"on":{}},[_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-title"},"on":{}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.title))]),_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-box-content"},"on":{}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.content))]),_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-toolbar"},"on":{}},[_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-box-btn"},"on":{"click":{"value":_ctx_.cancel,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.cancelText))]),_ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-message-box-btn sugar-message-box-confirm"},"on":{"click":{"value":_ctx_.confirm,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._v(_ctx_._SUGAR._s(_ctx_.confirmText))])]),_ctx_._SUGAR._c('div',{ "attrs":{},"on":{}},[])])]);
+      
+    },
+    headTag: 'sugar-dialog',
+                bulk() {
+                    var _a, _b, _c, _d;
+                    const show = ref$1(false);
+                    function cancel() {
+                        options.cancel();
+                        show.value = false;
+                        setTimeout(() => {
+                            MessageApp.vm.$el.remove();
+                            MessageApp = null;
+                            root = null;
+                        }, 300);
+                    }
+                    function confirm() {
+                        options.confirm();
+                        show.value = false;
+                        setTimeout(() => {
+                            MessageApp = null;
+                            root.remove();
+                            root = null;
+                        }, 300);
+                    }
+                    onMounted$1(() => {
+                        show.value = true;
+                    });
+                    return {
+                        title: (_a = options.title) !== null && _a !== void 0 ? _a : '提示',
+                        content: (_b = options.content) !== null && _b !== void 0 ? _b : '',
+                        show,
+                        cancel,
+                        confirm,
+                        confirmText: (_c = options.confirmText) !== null && _c !== void 0 ? _c : '确定',
+                        cancelText: (_d = options.cancelText) !== null && _d !== void 0 ? _d : '取消'
+                    };
+                }
+            });
+            MessageApp.install([dialog]);
+            MessageApp.mount(root);
+        }
+    };
+
+    const { onMounted, instance: instance$1, ref } = SUGAR;
+    const lazy = {
+        name: 'sugar-lazy',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"instance":"node"},"on":{}},[_ctx_.show ? _ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]) : _ctx_._SUGAR._e()]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            const show = ref(false);
+            const node = instance$1();
+            onMounted(() => {
+                window.addEventListener('scroll', () => {
+                    if (node.value.getBoundingClientRect().top < window.innerHeight) {
+                        show.value = true;
+                    }
+                });
+            });
+            return {
+                show,
+                node
+            };
+        }
+    };
+
+    const { instance } = SUGAR;
+    const upload = {
+        name: 'sugar-upload',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{},"on":{"click":{"value":_ctx_.uploadFile,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]),_ctx_._SUGAR._c('input',{ "attrs":{"style":"display: none","instance":"fileRef","type":"file"},"on":{"change":{"value":_ctx_.fileInput,"isStatic":false,"modifiers":[]}}},[])]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            const fileRef = instance();
+            function fileInput(e) {
+                const result = [];
+                result.push(...e.target.files);
+                ctx.change(result);
+                fileRef.value.value = '';
+            }
+            function uploadFile() {
+                fileRef.value.click();
+            }
+            return {
+                fileInput,
+                fileRef,
+                uploadFile
+            };
+        }
+    };
+
+    const sugarUI = [button, dialog, BackTop, pageNation, showMessageBox, showToast, upload, lazy];
     if (typeof window !== 'undefined') {
         (function (global) {
             global.sugarUI = sugarUI;

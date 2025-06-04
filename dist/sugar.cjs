@@ -2,27 +2,6 @@
 (function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 'use strict';
 
-var console = require('node:console');
-
-function _interopNamespaceDefault(e) {
-    var n = Object.create(null);
-    if (e) {
-        Object.keys(e).forEach(function (k) {
-            if (k !== 'default') {
-                var d = Object.getOwnPropertyDescriptor(e, k);
-                Object.defineProperty(n, k, d.get ? d : {
-                    enumerable: true,
-                    get: function () { return e[k]; }
-                });
-            }
-        });
-    }
-    n.default = e;
-    return Object.freeze(n);
-}
-
-var console__namespace = /*#__PURE__*/_interopNamespaceDefault(console);
-
 let mountHandleList = {};
 let ActiveId = '';
 function onMounted(handle) {
@@ -1450,7 +1429,7 @@ function patch(vm, newVnode) {
                 // 处理监听事件
                 for (const key in on) {
                     if (Object.hasOwnProperty.call(on, key)) {
-                        console__namespace.log(on[key]);
+                        console.log(on[key]);
                         if (on[key].value) {
                             const event = on[key].value;
                             event && domNode.addEventListener(key, event);
