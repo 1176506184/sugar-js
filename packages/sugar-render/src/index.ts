@@ -15,6 +15,7 @@ export function sugarRender () {
     if (!vm.render) {
       const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
       const { code } = sugarCompiler(htmlCode);
+      console.log(code);
       render = code;
     } else {
       render = vm.render;

@@ -41,7 +41,13 @@ function isStaticExpression(exp) {
     return true;
 }
 
-const globalScope = new Set([]);
+const scopeStack = [];
+function enterScope(newScope) {
+    scopeStack.push(newScope);
+}
+function exitScope() {
+    scopeStack.pop();
+}
 function parse(context, ancestors) {
     const parent = last(ancestors);
     const nodes = [];
@@ -148,9 +154,10 @@ function parseAttributes(context, type) {
     const firstTagMatch = context.source.slice(0, context.source.indexOf('>')).match(/s-for\s*=\s*["']\s*\(([^)]+)\)\s+in\s+[^"']+["']/);
     if (firstTagMatch) {
         const aliases = firstTagMatch[1].split(',').map(s => s.trim());
-        for (const alias of aliases) {
-            globalScope.add(alias);
-        }
+        enterScope(aliases);
+    }
+    else if (type === 0) {
+        enterScope([]);
     }
     while (context.source.length > 0 &&
         !startsWith(context.source, '>') &&
@@ -341,7 +348,7 @@ function parseTag(context, type, parent) {
         advanceBy(context, isSelfClosing ? 2 : 1);
     }
     if (type === 1 /* TagType.End */) {
-        globalScope.clear();
+        exitScope();
         return;
     }
     const tagType = 0 /* ElementTypes.ELEMENT */;
@@ -544,11 +551,26 @@ function bindCtx(code) {
         if (prevChar === '.' || prevChar === ':')
             return match;
         // 3. 排除全局作用域变量、JS 内置变量
-        if (globalScope.has(varName) || jsGlobals.has(varName))
+        if (hasScope(varName) || jsGlobals.has(varName))
             return match;
         // 4. 默认加 _ctx_
         return `_ctx_.${varName}`;
     });
+}
+function flattenArray(arr) {
+    const result = [];
+    for (const item of arr) {
+        if (Array.isArray(item)) {
+            result.push(...flattenArray(item));
+        }
+        else {
+            result.push(item);
+        }
+    }
+    return result;
+}
+function hasScope(name) {
+    return flattenArray(scopeStack).includes(name);
 }
 
 const NO = (tag) => false;
@@ -1701,6 +1723,7 @@ function sugarRender() {
         if (!vm.render) {
             const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
             const { code } = sugarCompiler(htmlCode);
+            console.log(code);
             render = code;
         }
         else {

@@ -1,6 +1,14 @@
 import { extend, isArray, isStaticExpression } from './utils';
 
-const globalScope = new Set<string>([]);
+const scopeStack: any[] = [];
+
+function enterScope (newScope: any) {
+  scopeStack.push(newScope);
+}
+
+function exitScope () {
+  scopeStack.pop();
+}
 
 export function parse (context: any, ancestors: any) {
   const parent: any = last(ancestors);
@@ -104,14 +112,13 @@ export function parse (context: any, ancestors: any) {
 function parseAttributes (context: any, type: any) {
   const props = [];
   const attributeNames = new Set<string>();
-
   // ✅ 提前检查当前标签是否含有 s-for="(item,index) in xxx"
   const firstTagMatch = context.source.slice(0, context.source.indexOf('>')).match(/s-for\s*=\s*["']\s*\(([^)]+)\)\s+in\s+[^"']+["']/);
   if (firstTagMatch) {
     const aliases = firstTagMatch[1].split(',').map(s => s.trim());
-    for (const alias of aliases) {
-      globalScope.add(alias);
-    }
+    enterScope(aliases);
+  } else if (type === 0) {
+    enterScope([]);
   }
 
   while (context.source.length > 0 &&
@@ -357,7 +364,7 @@ function parseTag (context, type, parent) {
   }
 
   if (type === TagType.End) {
-    globalScope.clear();
+    exitScope();
     return;
   }
 
@@ -638,9 +645,27 @@ function bindCtx (code: string): string {
     if (prevChar === '.' || prevChar === ':') return match;
 
     // 3. 排除全局作用域变量、JS 内置变量
-    if (globalScope.has(varName) || jsGlobals.has(varName)) return match;
+    if (hasScope(varName) || jsGlobals.has(varName)) return match;
 
     // 4. 默认加 _ctx_
     return `_ctx_.${varName}`;
   });
+}
+
+function flattenArray (arr: any[]): any[] {
+  const result: any[] = [];
+
+  for (const item of arr) {
+    if (Array.isArray(item)) {
+      result.push(...flattenArray(item));
+    } else {
+      result.push(item);
+    }
+  }
+
+  return result;
+}
+
+function hasScope (name: string): boolean {
+  return flattenArray(scopeStack).includes(name);
 }
