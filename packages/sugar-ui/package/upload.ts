@@ -1,13 +1,14 @@
-const { instance } = SUGAR;
+const { ref } = SUGAR;
 
 const upload = {
   name: 'sugar-upload',
   render: `<div @click="uploadFile">
                 <slot name="default"></slot>
-                <input style="display: none" @change="fileInput" instance="fileRef" type="file"/>
+                <input style="display: none" @change="fileInput" ref="fileRef" type="file"/>
            </div>`,
   bulk (ctx: any) {
-    const fileRef = instance();
+    const fileRef = ref(null);
+
     function fileInput (e) {
       const result = [];
       result.push(...e.target.files);

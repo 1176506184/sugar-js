@@ -119,7 +119,12 @@
     <div s-for="(item,index) in list">
         {{item}}{{index}}
     </div>
-    <sugar-dialog :model="show" @close="close">
+    <sugar-row>
+        <sugar-col :span="4"></sugar-col>
+        <sugar-col :span="4"></sugar-col>
+        <sugar-col :span="16"></sugar-col>
+    </sugar-row>
+    <sugar-dialog :model="show" @close="close" ref="dialogRef">
         <slot #default>
             <div style="width: 100px;height: 100px;background: #FFFFFF">123</div>
         </slot>
@@ -139,7 +144,7 @@
     <sugar-upload>
         <sugar-button>上传</sugar-button>
     </sugar-upload>
-    <div style="margin-top: 100vh">
+    <div style="margin-top: 100vh" ref="nodeRef">
         <sugar-lazy>
             <div>测试</div>
         </sugar-lazy>
@@ -150,7 +155,6 @@
     const {
         makeSugar,
         onMounted,
-        instance,
         nextTick,
         ref,
         Component,
@@ -160,7 +164,8 @@
     var sugar = makeSugar({
         bulk() {
             const show = ref(false);
-            const dialogRef = instance();
+            const nodeRef = ref(null);
+            const dialogRef = ref(null);
             const list = ref([1, 2, 3, 4]);
 
             function close() {
@@ -176,9 +181,13 @@
             const total = ref(100);
 
             function changePage(e) {
-                console.log(pi.value);
                 pi.value = e;
+                console.log(pi.value);
             }
+
+            onMounted(() => {
+                console.log(nodeRef.value, dialogRef.value);
+            });
 
             return {
                 show,
@@ -189,7 +198,8 @@
                 pi,
                 ps,
                 total,
-                changePage
+                changePage,
+                nodeRef
             };
         }
     });

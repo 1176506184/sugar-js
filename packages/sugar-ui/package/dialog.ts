@@ -19,7 +19,6 @@ const dialog = {
     const style: any = ref('');
     const transform: any = ref(getInitDirection(direction));
     watch(ctx.model, (newValue) => {
-      console.log(ctx.model);
       if (ctx.model) {
         show.value = true;
         setTimeout(() => {

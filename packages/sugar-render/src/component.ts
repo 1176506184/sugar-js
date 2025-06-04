@@ -4,7 +4,7 @@ import { bindT, VmDataRefPassive } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
 import patch from './patch';
 import { addComponentCache, getComponentCache } from './componentCache';
-import { effect, reactive, ref } from '@sugar/sugar-reactive';
+import { effect, reactive } from '@sugar/sugar-reactive';
 
 export function bulkComponent (_vnode: any, parentComponent: any) {
   const {
@@ -21,7 +21,7 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
   });
   const slot = children;
   Object.keys(attrs).forEach((propName) => {
-    if (propName !== 'instance') {
+    if (propName !== 'ref') {
       props[propName] = attrs[propName];
     }
   });

@@ -33,7 +33,7 @@
         }
     };
 
-    const { ref: ref$4, watch: watch$1 } = SUGAR;
+    const { ref: ref$5, watch: watch$1 } = SUGAR;
     const dialog = {
         name: 'sugar-dialog',
         render: function anonymous(
@@ -53,13 +53,12 @@
     headTag: 'div',
         bulk(ctx) {
             var _a;
-            const show = ref$4(ctx.model);
-            const opacity = ref$4(0);
+            const show = ref$5(ctx.model);
+            const opacity = ref$5(0);
             const direction = (_a = ctx.direction) !== null && _a !== void 0 ? _a : 'center';
-            const style = ref$4('');
-            const transform = ref$4(getInitDirection(direction));
+            const style = ref$5('');
+            const transform = ref$5(getInitDirection(direction));
             watch$1(ctx.model, (newValue) => {
-                console.log(ctx.model);
                 if (ctx.model) {
                     show.value = true;
                     setTimeout(() => {
@@ -107,7 +106,7 @@
         }
     };
 
-    const { onMounted: onMounted$2, ref: ref$3 } = SUGAR;
+    const { onMounted: onMounted$2, ref: ref$4 } = SUGAR;
     const BackTop = {
         name: 'sugar-back-top',
         render: function anonymous(
@@ -126,7 +125,7 @@
     },
     headTag: 'div',
         bulk() {
-            const scale = ref$3('');
+            const scale = ref$4('');
             onMounted$2(() => {
                 window.addEventListener('scroll', () => {
                     if (window.scrollY > 400) {
@@ -150,7 +149,7 @@
         }
     };
 
-    const { watch, ref: ref$2 } = SUGAR;
+    const { watch, ref: ref$3 } = SUGAR;
     const pageNation = {
         name: 'sugar-pagination',
         render: function anonymous(
@@ -171,14 +170,14 @@
     },
     headTag: 'div',
         bulk(ctx) {
-            const pi = ref$2(1);
-            const ps = ref$2(20);
-            const total = ref$2(0);
-            const page = ref$2([1]);
-            const canNext = ref$2(false);
-            const canPrev = ref$2(false);
-            const showBtn = ref$2(false);
-            const showMost = ref$2(false);
+            const pi = ref$3(1);
+            const ps = ref$3(20);
+            const total = ref$3(0);
+            const page = ref$3([1]);
+            const canNext = ref$3(false);
+            const canPrev = ref$3(false);
+            const showBtn = ref$3(false);
+            const showMost = ref$3(false);
             function changePage(v) {
                 ctx.change(v);
             }
@@ -257,7 +256,7 @@
         }
     };
 
-    const { makeSugar, ref: ref$1, onMounted: onMounted$1 } = SUGAR;
+    const { makeSugar, ref: ref$2, onMounted: onMounted$1 } = SUGAR;
     const showToast = {
         fun: 'showToast',
         bulk(text, timeout = 2000, style = '') {
@@ -326,7 +325,7 @@
     headTag: 'sugar-dialog',
                 bulk() {
                     var _a, _b, _c, _d;
-                    const show = ref$1(false);
+                    const show = ref$2(false);
                     function cancel() {
                         options.cancel();
                         show.value = false;
@@ -364,7 +363,7 @@
         }
     };
 
-    const { onMounted, instance: instance$1, ref } = SUGAR;
+    const { onMounted, ref: ref$1 } = SUGAR;
     const lazy = {
         name: 'sugar-lazy',
         render: function anonymous(
@@ -378,13 +377,13 @@
             throw new ReferenceError(`Missing variable ${String(prop)} in template`);
           }
         });
-        return _ctx_._SUGAR._c('div',{ "attrs":{"instance":"node"},"on":{}},[_ctx_.show ? _ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]) : _ctx_._SUGAR._e()]);
+        return _ctx_._SUGAR._c('div',{ "attrs":{"ref":"node"},"on":{}},[_ctx_.show ? _ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]) : _ctx_._SUGAR._e()]);
       
     },
     headTag: 'div',
         bulk(ctx) {
-            const show = ref(false);
-            const node = instance$1();
+            const show = ref$1(false);
+            const node = ref$1(null);
             onMounted(() => {
                 window.addEventListener('scroll', () => {
                     if (node.value.getBoundingClientRect().top < window.innerHeight) {
@@ -399,7 +398,7 @@
         }
     };
 
-    const { instance } = SUGAR;
+    const { ref } = SUGAR;
     const upload = {
         name: 'sugar-upload',
         render: function anonymous(
@@ -413,12 +412,12 @@
             throw new ReferenceError(`Missing variable ${String(prop)} in template`);
           }
         });
-        return _ctx_._SUGAR._c('div',{ "attrs":{},"on":{"click":{"value":_ctx_.uploadFile,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]),_ctx_._SUGAR._c('input',{ "attrs":{"style":"display: none","instance":"fileRef","type":"file"},"on":{"change":{"value":_ctx_.fileInput,"isStatic":false,"modifiers":[]}}},[])]);
+        return _ctx_._SUGAR._c('div',{ "attrs":{},"on":{"click":{"value":_ctx_.uploadFile,"isStatic":false,"modifiers":[]}}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[]),_ctx_._SUGAR._c('input',{ "attrs":{"style":"display: none","ref":"fileRef","type":"file"},"on":{"change":{"value":_ctx_.fileInput,"isStatic":false,"modifiers":[]}}},[])]);
       
     },
     headTag: 'div',
         bulk(ctx) {
-            const fileRef = instance();
+            const fileRef = ref(null);
             function fileInput(e) {
                 const result = [];
                 result.push(...e.target.files);
@@ -436,7 +435,53 @@
         }
     };
 
-    const sugarUI = [button, dialog, BackTop, pageNation, showMessageBox, showToast, upload, lazy];
+    const row = {
+        name: 'sugar-row',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":"sugar-row"},"on":{}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[])]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            return {};
+        }
+    };
+
+    const col = {
+        name: 'sugar-col',
+        render: function anonymous(
+    ) {
+        const _ctx_ = this;
+        new Proxy({}, {
+          get(target, prop, receiver) {
+            if (prop in ctx) {
+              return ctx[prop];
+            }
+            throw new ReferenceError(`Missing variable ${String(prop)} in template`);
+          }
+        });
+        return _ctx_._SUGAR._c('div',{ "attrs":{"class":'sugar-col sugar-col-' + _ctx_.span},"on":{}},[_ctx_._SUGAR._c('slot',{ "attrs":{"name":"default"},"on":{}},[])]);
+      
+    },
+    headTag: 'div',
+        bulk(ctx) {
+            return {
+                span: ctx.span
+            };
+        }
+    };
+
+    const sugarUI = [button, dialog, BackTop, pageNation, showMessageBox, showToast, upload, lazy, row, col];
     if (typeof window !== 'undefined') {
         (function (global) {
             global.sugarUI = sugarUI;

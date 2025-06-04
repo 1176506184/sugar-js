@@ -1047,23 +1047,6 @@
         return componentCache[key];
     }
 
-    function instance() {
-        const result = {};
-        const data = {
-            value: null
-        };
-        return Object.defineProperty(result, 'value', {
-            get() {
-                return data.value;
-            },
-            set(newValue) {
-                if (newValue !== data.value) {
-                    data.value = newValue;
-                }
-            }
-        });
-    }
-
     /******************************************************************************
     Copyright (c) Microsoft Corporation.
 
@@ -1269,7 +1252,7 @@
         const props = reactive({});
         const slot = children;
         Object.keys(attrs).forEach((propName) => {
-            if (propName !== 'instance') {
+            if (propName !== 'ref') {
                 props[propName] = attrs[propName];
             }
         });
@@ -1422,10 +1405,8 @@
                         if (Object.hasOwnProperty.call(attrs, key)) {
                             const value = attrs[key];
                             domNode.setAttribute(key, value);
-                            if (key === 'instance') {
-                                if (vm[value]) {
-                                    vm[value].value = domNode;
-                                }
+                            if (key === 'ref' && value in vm) {
+                                vm[value] = domNode;
                             }
                         }
                     }
@@ -1433,7 +1414,6 @@
                     // 处理监听事件
                     for (const key in on) {
                         if (Object.hasOwnProperty.call(on, key)) {
-                            console.log(on[key]);
                             if (on[key].value) {
                                 const event = on[key].value;
                                 event && domNode.addEventListener(key, event);
@@ -1455,8 +1435,8 @@
                     vnode.elm = app.vm.$el;
                     vnode._sugar = app;
                     domNode = vnode.elm;
-                    if (vnode.data.attrs.instance) {
-                        vm[vnode.data.attrs.instance].value = app;
+                    if (vnode.data.attrs.ref && vnode.data.attrs.ref in vm) {
+                        vm[vnode.data.attrs.ref] = app;
                     }
                 }
             }
@@ -1529,10 +1509,8 @@
                 if (!oldAttrs || newAttrs[attr] !== oldAttrs[attr]) {
                     el.setAttribute(attr, newAttrs[attr]);
                 }
-                if (attr === 'instance') {
-                    if (vm[newAttrs[attr]]) {
-                        vm[newAttrs[attr]].value = el;
-                    }
+                if (attr === 'ref' && newAttrs[attr] in vm) {
+                    vm[newAttrs[attr]] = el;
                 }
             });
         }
@@ -1696,8 +1674,8 @@
         const data = vNode.data;
         if (data) {
             const attrs = data.attrs;
-            if (attrs.instance) {
-                vm[attrs.instance].value = vNode.elm;
+            if (attrs.ref && vm[attrs.ref] in vm) {
+                vm[attrs.ref] = vNode.elm;
             }
         }
         if (vNode.children) {
@@ -1775,7 +1753,7 @@
         });
     }
     function isRef(value) {
-        return !!value.__isRef;
+        return !!(value === null || value === void 0 ? void 0 : value.__isRef);
     }
     function bindT(vm, data) {
         Object.keys(data).forEach((key) => {
@@ -1974,7 +1952,6 @@
             global.SUGAR = {
                 onMounted,
                 makeSugar,
-                instance,
                 nextTick,
                 ref,
                 Component,
@@ -1985,7 +1962,6 @@
     }
 
     exports.Component = Component;
-    exports.instance = instance;
     exports.makeSugar = makeSugar;
     exports.nextTick = nextTick;
     exports.onMounted = onMounted;

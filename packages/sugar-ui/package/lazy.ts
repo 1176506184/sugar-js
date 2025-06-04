@@ -1,16 +1,15 @@
 const {
   onMounted,
-  instance,
   ref
 } = SUGAR;
 const lazy = {
   name: 'sugar-lazy',
-  render: `<div instance="node">
+  render: `<div ref="node">
                  <slot name="default" s-if="show" ></slot>
            </div>`,
   bulk (ctx) {
     const show = ref(false);
-    const node = instance();
+    const node = ref(null);
     onMounted(() => {
       window.addEventListener('scroll', () => {
         if (node.value.getBoundingClientRect().top < window.innerHeight) {

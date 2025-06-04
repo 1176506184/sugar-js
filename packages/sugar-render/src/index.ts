@@ -65,7 +65,7 @@ export function VmDataRefPassive (vm: any) {
 }
 
 function isRef (value: any) {
-  return !!value.__isRef;
+  return !!value?.__isRef;
 }
 
 export function bindT (vm, data) {
