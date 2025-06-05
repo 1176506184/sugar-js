@@ -1659,9 +1659,6 @@ function updateComponent(newVnode, oldVnode) {
         }
     });
     oldVnode._sugar.updateSlot(newVnode.children);
-    if (oldVnode._sugar) {
-        oldVnode._sugar.forceUpdate();
-    }
     newVnode.elm = oldVnode.elm;
     newVnode._sugar = oldVnode._sugar;
 }
@@ -1721,7 +1718,6 @@ function sugarRender() {
         if (!vm.render) {
             const htmlCode = vm.render ? vm.render : escape2Html(serializer.serializeToString(vm.$el));
             const { code } = sugarCompiler(htmlCode);
-            console.log(code);
             render = code;
         }
         else {

@@ -271,9 +271,6 @@ export function updateComponent (newVnode: any, oldVnode: any) {
     }
   });
   oldVnode._sugar.updateSlot(newVnode.children);
-  if (oldVnode._sugar) {
-    oldVnode._sugar.forceUpdate();
-  }
   newVnode.elm = oldVnode.elm;
   newVnode._sugar = oldVnode._sugar;
 }
@@ -295,15 +292,6 @@ function patchEvents (el, newOn) {
     _vei[eventName] = newOn[eventName].value;
     el.addEventListener(eventName, newOn[eventName].value);
   });
-}
-
-function wrapEvent (fn, modifiers = []) {
-  return function (e) {
-    if (modifiers.includes('self') && e.target !== e.currentTarget) return;
-    if (modifiers.includes('stop')) e.stopPropagation();
-    if (modifiers.includes('prevent')) e.preventDefault();
-    return fn(e);
-  };
 }
 
 function clearEmptyVnode (Vnodes) {
