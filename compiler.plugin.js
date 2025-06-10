@@ -18,7 +18,13 @@ function isStaticExpression(exp) {
 }
 
 // packages/sugar-compiler/src/parse.ts
-var globalScope = /* @__PURE__ */ new Set([]);
+var scopeStack = [];
+function enterScope(newScope) {
+  scopeStack.push(newScope);
+}
+function exitScope() {
+  scopeStack.pop();
+}
 function parse(context, ancestors) {
   const parent = last(ancestors);
   const nodes = [];
@@ -96,9 +102,9 @@ function parseAttributes(context, type) {
   const firstTagMatch = context.source.slice(0, context.source.indexOf(">")).match(/s-for\s*=\s*["']\s*\(([^)]+)\)\s+in\s+[^"']+["']/);
   if (firstTagMatch) {
     const aliases = firstTagMatch[1].split(",").map((s) => s.trim());
-    for (const alias of aliases) {
-      globalScope.add(alias);
-    }
+    enterScope(aliases);
+  } else if (type === 0) {
+    enterScope([]);
   }
   while (context.source.length > 0 && !startsWith(context.source, ">") && !startsWith(context.source, "/>")) {
     if (startsWith(context.source, "/")) {
@@ -288,7 +294,7 @@ function parseTag(context, type, parent) {
     advanceBy(context, isSelfClosing ? 2 : 1);
   }
   if (type === 1 /* End */) {
-    globalScope.clear();
+    exitScope();
     return;
   }
   const tagType = 0 /* ELEMENT */;
@@ -537,9 +543,23 @@ function bindCtx(code) {
     if (inSingleQuotes || inDoubleQuotes || inBacktick) return match;
     const prevChar = fullText[offset - 1];
     if (prevChar === "." || prevChar === ":") return match;
-    if (globalScope.has(varName) || jsGlobals.has(varName)) return match;
+    if (hasScope(varName) || jsGlobals.has(varName)) return match;
     return `_ctx_.${varName}`;
   });
+}
+function flattenArray(arr) {
+  const result = [];
+  for (const item of arr) {
+    if (Array.isArray(item)) {
+      result.push(...flattenArray(item));
+    } else {
+      result.push(item);
+    }
+  }
+  return result;
+}
+function hasScope(name) {
+  return flattenArray(scopeStack).includes(name);
 }
 
 // packages/sugar-compiler/src/toAst.ts

@@ -1349,10 +1349,11 @@
             return vm.forceUpdate;
         }
         function update(vm) {
+            const vmFiber = VmDataRefPassive(vm);
             const vnode = render.call(VmDataRefPassive(vm));
             vm.slot.length && assembling(vnode, vm.slot);
-            patch(vm, vnode);
-            vm._vnode = vnode;
+            patch(vmFiber, vnode);
+            vmFiber._vnode = vnode;
         }
         function assembling(_n, slot) {
             _n.children.forEach((child, index) => {

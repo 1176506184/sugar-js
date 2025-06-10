@@ -16,9 +16,7 @@ export function bulkComponent (_vnode: any, parentComponent: any) {
   }: any = _vnode;
 
   const _sugar = deepClone(parentComponent);
-  const props = reactive({
-
-  });
+  const props = reactive({});
   const slot = children;
   Object.keys(attrs).forEach((propName) => {
     if (propName !== 'ref') {
@@ -111,10 +109,11 @@ export function componentRender () {
   }
 
   function update (vm) {
+    const vmFiber: any = VmDataRefPassive(vm);
     const vnode = render.call(VmDataRefPassive(vm));
     vm.slot.length && assembling(vnode, vm.slot);
-    patch(vm, vnode);
-    vm._vnode = vnode;
+    patch(vmFiber, vnode);
+    vmFiber._vnode = vnode;
   }
 
   function assembling (_n, slot) {
