@@ -95,7 +95,7 @@ export default function patch (vm, newVnode) {
       return;
     }
     newVnode.elm = oldVnode.elm;
-    if (newVnode.text) {
+    if (newVnode.text !== undefined) {
       if (oldVnode.text !== newVnode.text) {
         oldVnode.elm.nodeValue = newVnode.text;
       }

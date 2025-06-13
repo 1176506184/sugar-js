@@ -425,7 +425,6 @@
                 fileRef.value.value = '';
             }
             function uploadFile() {
-                console.log(fileRef);
                 fileRef.value.click();
             }
             return {

@@ -116,8 +116,9 @@
 </style>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
+    <input s-model="item"/>
 
-    <button @click.stop="open"></button>
+    <button @click="open"></button>
     <div s-for="(item,index) in list">
         <div>
             {{index}}
