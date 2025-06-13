@@ -308,6 +308,7 @@
 
           <el-collapse-item title="综合采集" name="8">
             <div>
+
               <el-button @click="collectWeb" type="primary">网站采集</el-button>
               <el-button @click="collectWebFrame" type="primary"
               >网站采集（新）
@@ -325,6 +326,8 @@
               >小说图标生成
               </el-button
               >
+
+              <el-button @click="collectFont" type="primary" style="margin-top:10px;margin-left:0">字体采集</el-button>
             </div>
           </el-collapse-item>
 
@@ -1611,6 +1614,18 @@ function collectWeb() {
     name: "WebCollect",
     query: {},
   });
+}
+
+async function collectFont() {
+  let activeId = await getActiveId();
+   chrome.tabs.create(
+        {
+          url: "/html/out.html#/Canva?activeId=" + activeId,
+          active: true,
+        },
+        (tab) => {
+        }
+    );
 }
 
 async function collectFBVideo() {

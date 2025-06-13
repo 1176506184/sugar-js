@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "通用采集工具",
-  "version": "7.9.3",
+  "version": "7.9.4",
   "description": "通用采集工具",
   "icons": {
     "16": "icon.png",
@@ -53,7 +53,8 @@
     "notifications",
     "storage",
     "scripting",
-    "windows"
+    "windows",
+    "downloads"
   ],
   "host_permissions": [
     "<all_urls>",

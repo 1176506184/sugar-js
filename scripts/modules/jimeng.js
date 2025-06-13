@@ -21,6 +21,11 @@ function start() {
     console.log('--开始采集--');
     setInterval(() => {
         const images = Array.from(document.querySelectorAll('[class*="imageContainer"]')).filter(r => r.getAttribute('sugar-finish') !== 'true');
+        const images2 = Array.from(document.querySelectorAll('[data-apm-action="ai-generated-image-record-card"]')).map((r) => {
+            r.parentNode.parentNode.style.position = 'relative'
+            return r.parentNode.parentNode;
+        }).filter(r => r.getAttribute('sugar-finish') !== 'true');
+        images.push(...images2);
         images.forEach(r => {
             r.setAttribute('sugar-finish', 'true');
             const download = document.createElement('div');
@@ -28,14 +33,19 @@ function start() {
             download.style = 'cursor:pointer;font-size:16px;color:#fff;font-weight:bold;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;display:flex;justify-content:center;align-items:center;;background:#35ccff;border-radius:10px;'
             r.appendChild(download)
             download.addEventListener('click', (e) => {
-                r.click();
+                if (r.querySelector('img')) {
+                    r.querySelector('img')?.click();
+                } else {
+                    r.click();
+                }
                 findImage().then(src => {
                     console.log(src);
                     chrome.runtime.sendMessage({
                         Message: 'image',
                         data: src
                     }).then()
-                    document.querySelector('.lv-modal-wrapper [class*="back-"] svg').parentNode.click();
+                    document.querySelector('[class*="close-button"]')?.click();
+                    document.querySelector('.lv-modal-wrapper [class*="back-"] svg')?.parentNode.click();
                 })
                 e.stopPropagation();
             })
@@ -48,7 +58,10 @@ function start() {
 async function findImage() {
     return new Promise((r) => {
         let timer = setInterval(() => {
-            const src = document.querySelector('[data-apm-action="record-detail-image-detail-image-container"]')?.src;
+            let src = document.querySelector('[data-apm-action="record-detail-image-detail-image-container"]')?.src;
+            if (!src) {
+                src = document.querySelector('[data-apm-action="ai-generated-image-detail-card"]')?.src;
+            }
             if (src) {
                 clearInterval(timer);
                 r(src);
