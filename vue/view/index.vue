@@ -101,6 +101,10 @@
               >
                 自动采最新
               </el-button>
+
+              <el-button type="primary" style="margin-top: 10px;margin-left: 0">
+                提取评论
+              </el-button>
             </div>
           </el-collapse-item>
 
@@ -576,7 +580,7 @@ import {http, xhrHttp, sHttp, dHttp, hHttp} from "../utils/request";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 
 const open = ref(0);
-const owner = ref(1);//yxk xhs
+const owner = ref(0);//yxk xhs
 
 function changeOpen() {
   chrome.storage.local.set(
