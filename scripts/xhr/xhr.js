@@ -223,7 +223,7 @@ if (location.href.indexOf('x.com') !== -1 || location.href.indexOf('instagram') 
             var send = XHR.send;
             XHR.send = function (postData) {
                 setTimeout(() => {
-                    if (this._url && (this._url.includes("aweme/v1/web/aweme/post/?device_platform=webapp") || this._url.includes("/aweme/v1/web/tab/feed/?device_platform=webapp"))) {
+                    if (this._url && (this._url.includes("/aweme/v1/web/comment/list") ||this._url.includes("aweme/v1/web/aweme/post/?device_platform=webapp") || this._url.includes("/aweme/v1/web/tab/feed/?device_platform=webapp"))) {
                         window.postMessage({
                             Message: 'ajax',
                             url: this.responseURL,

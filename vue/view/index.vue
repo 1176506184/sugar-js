@@ -102,7 +102,7 @@
                 自动采最新
               </el-button>
 
-              <el-button type="primary" style="margin-top: 10px;margin-left: 0">
+              <el-button @click="collectComment" type="primary" style="margin-top: 10px;margin-left: 0">
                 提取评论
               </el-button>
             </div>
@@ -1858,6 +1858,18 @@ async function collectDouyinFrame() {
         }
     );
   }
+}
+
+async function collectComment(){
+   let activeId = await getActiveId();
+  chrome.tabs.create(
+        {
+          url: "/html/out.html#/douyinComment?activeId=" + activeId,
+          active: true,
+        },
+        (tab) => {
+        }
+  );
 }
 
 async function collectTiktokFrameScroll() {

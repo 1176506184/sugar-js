@@ -47,6 +47,7 @@ import Xiaohongshu from "../view/xiaohongshu.vue";
 import Lemon8app from '../view/Lemon8app.vue'
 import Jimeng from '../view/jimeng/index.vue'
 import Canva from '../view/canva.vue'
+import DouyinComment from '../view/douyinComment.vue'
 
 import novel from "../view/novel.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -369,6 +370,12 @@ const routes = [
         name: 'Canva',
         path: '/Canva',
         component: Canva,
+        props: route => ({query: route.query.q}),
+        meta: {}
+    }, {
+        name: 'DouyinComment',
+        path: '/DouyinComment',
+        component: DouyinComment,
         props: route => ({query: route.query.q}),
         meta: {}
     }

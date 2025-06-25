@@ -1,5 +1,6 @@
 const videoData = [];
 const godComment = [];
+let globalComments = [];
 
 //抖音自动采最新
 let isOnload = false;
@@ -8,6 +9,84 @@ let isCollected = false;
 let collectVideoType = 'first'
 let collectVideoHasMore = 1
 let collectVideoStop = false
+
+function sendGlobalComment(){
+    console.log(godComment);
+    let video = document.querySelector('div[data-e2e="feed-active-video"] video');
+
+    if (!video) {
+        video = document.querySelector('video')
+    }
+
+    let url = video.childNodes[0]?.src;
+
+    let pic = document.querySelector('div[data-e2e="feed-active-video"] .background img')
+
+    if (!pic) {
+        pic = document.querySelector('.background')
+    }
+
+    let author = document.querySelector('div[data-e2e="feed-active-video"] div[data-e2e="feed-video-nickname"]')?.innerText;
+
+    if (!author) {
+        author = document.querySelector('div[data-e2e="feed-video-nickname"]')?.innerText;
+    }
+
+    if (!author) {
+        document.querySelectorAll('div[data-e2e="user-info"] a[href*="/user/"]').forEach(d => {
+            if (d.innerText) {
+                author = d.innerText
+            }
+        })
+    }
+
+    let author_url = document.querySelector('div[data-e2e="feed-active-video"] a[href*="/user/"][data-e2e="video-avatar"]')?.href;
+
+    if (!author_url) {
+        author_url = document.querySelector('a[href*="/user/"][data-e2e="video-avatar"]')?.href;
+    }
+
+    let title = document.querySelector('div[data-e2e="feed-active-video"] div.title')?.innerText;
+
+    if (!title) {
+        title = document.querySelector('div.title')?.innerText;
+    }
+
+    if (!title) {
+        title = document.querySelector(`div[data-e2e="detail-video-info"] h2`)?.innerText;
+    }
+
+    if (!title) {
+        title = document.querySelector(`div[data-e2e="detail-video-info"] h1`)?.innerText;
+    }
+
+    let realVideoData = {}
+    let reUrl = ``;
+    if (document.querySelector('div[data-e2e="detail-video-info"]')) {
+        reUrl = `https://douyin.com/video/${document.querySelector('div[data-e2e="detail-video-info"]').getAttribute("data-e2e-aweme-id")}`
+    } else if (document.querySelector('div[data-e2e="feed-active-video"] div[data-e2e="video-info"]')) {
+        reUrl = `https://douyin.com/video/${document.querySelector('div[data-e2e="feed-active-video"] div[data-e2e="video-info"]').getAttribute("data-e2e-aweme-id")}`;
+    } else {
+        reUrl = location.href;
+    }
+
+    let aweme_id = document.querySelector('div[data-e2e="feed-active-video"] div[data-e2e="video-info"]')?.getAttribute("data-e2e-aweme-id");
+    if (!aweme_id) {
+        document.querySelector('div[data-e2e="detail-video-info"]')?.getAttribute("data-e2e-aweme-id")
+    }
+    chrome.runtime.sendMessage({
+            Message: 'video',
+            data: globalComments,
+            domData: {
+                url: reUrl,
+                video: url,
+                author_url: author_url,
+                title: title,
+                author: author,
+                pic: pic?.src,
+            }
+        })
+}
 
 function getVideo() {
 
@@ -195,27 +274,28 @@ let truvid_data = []
 
 window.addEventListener('message', function (res) {
     if (res.data.Message === 'ajax') {
-        if (res.data.url && (res.data.url.indexOf("aweme/v1/web/aweme/post/?device_platform=webapp") !== -1 || res.data.url.indexOf("/aweme/v1/web/tab/feed/?device_platform=webapp") !== -1)) {
+        if (res.data.url && (res.data.url.indexOf("aweme/v1/web/aweme/post/?device_platform=webapp") !== -1 || res.data.url.indexOf("/aweme/v1/web/tab/feed/?device_platform=webapp") !== -1 )) {
             videoData.push(JSON.parse(res.data.data))
             truvid_data.push(...JSON.parse(res.data.data).aweme_list)
             douyinData.push(...JSON.parse(res.data.data).aweme_list)
             collectVideoHasMore = JSON.parse(res.data.data).has_more
-            console.log(douyinData)
         }
+        if(res.data.url && res.data.url.indexOf("/aweme/v1/web/comment/list") !== -1){
+            globalComments.push(JSON.parse(res.data.data))
+        }
+
         try {
             getComment(JSON.parse(res.data.data))
         } catch (e) {
-            // console.log(e);
+
         }
     }
 })
-
 
 function getComment(data) {
     if (typeof data === 'object' && data !== null && data !== undefined) {
         Object.keys(data).forEach(key => {
             if (key === "comments") {
-                console.log(data[key])
                 godComment.push(...data[key]);
             } else if (typeof data[key] === 'object') {
                 getComment(data[key]);
@@ -271,6 +351,9 @@ chrome.runtime.onMessage.addListener(async function (Message, sender, sendRespon
     } else if (Message.Message === 'videoTruvid') {
         sendResponse({state: 200});
         truvidData();
+    } else if (Message.Message === 'getComment') {
+        sendResponse({state: 200});
+        sendGlobalComment();
     } else if (Message.Message === 'video_frame') {
         let noLoad = !isOnload
         if (noLoad) {
