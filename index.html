@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:s-use="http://www.w3.org/1999/xhtml" xmlns:s-on="http://www.w3.org/1999/xhtml" xmlns="">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/dist/sugar.umd.js"></script>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+<div id="app" style="width: 100%;height: 200vh;">
+    <ex-span>
+        <div>
+            {{text}}
+        </div>
+    </ex-span>
+</div>
+</body>
+<script>
+    const {
+        makeSugar,
+        onMounted,
+        nextTick,
+        ref,
+        Component,
+        reactive,
+        watch
+    } = SUGAR;
+
+    var exSpan = Component({
+        name: 'ex-span',
+        render: `<span class="exSpan">
+                    <slot name="default"></slot>
+                </span>`,
+        bulk(ctx) {
+            return {
+                name: 'exSpan'
+            };
+        }
+    });
+
+    var sugar = makeSugar({
+        bulk() {
+            const text = ref('Hello world');
+
+            return {
+                text
+            };
+        }
+    });
+    sugar.use(exSpan);
+    sugar.mount('#app');
+</script>
+</html>

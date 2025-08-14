@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "module": "esnext",
+    "target": "esnext",
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "paths": {
+      "@sugar/*": [
+        "packages/*/src"
+      ]
+    }
+  },
+  "include": [
+    "packages/**/*.ts",
+    "eslint.config.js",
+    "global.d.ts"
+    // 确保指向存在的 TypeScript 文件
+  ],
+  "exclude": [
+    "node_modules"
+    // 排除 node_modules 目录
+  ]
+}
