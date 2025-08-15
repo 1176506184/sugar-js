@@ -47,8 +47,7 @@ export function makeComponent(instance: any) {
   const appId = guid();
   updateActiveId(appId);
   const data = instance.bulk(instance.props);
-  const { mounted } = componentRender();
-  let update: any = null;
+  const { mounted, update } = componentRender();
   const vm = {
     render: instance.render,
     _vnode: null,
@@ -63,24 +62,24 @@ export function makeComponent(instance: any) {
   };
 
   function mount() {
-    update = mounted(vm, data);
+    mounted(vm, data);
     mountHandleList[appId]?.forEach((item: any) => {
       item.fun();
       item.used = true;
     });
 
     effect(() => {
-      update();
+      update(vm);
     });
+  }
+
+  function forceUpdate() {
+    update(vm);
   }
 
   function updateSlot(slot: any) {
     vm.slot = slot;
-    update();
-  }
-
-  function forceUpdate() {
-    update();
+    update(vm);
   }
 
   return {
@@ -103,7 +102,6 @@ export function componentRender() {
     vm.forceUpdate = function () {
       update(vm);
     };
-    return vm.forceUpdate;
   }
 
   function update(vm: any) {
@@ -115,29 +113,27 @@ export function componentRender() {
   }
 
   function assembling(_n: any, slot: any) {
-    _n.children.forEach((child: any, index: any) => {
-      if (child.tag === 'slot' && child.data.attrs?.name === 'default' && isDefault(slot)) {
-        _n.children.splice(index, 1, ...slot);
-      } else if (child.tag === 'slot' && child.data.attrs?.name) {
-        const NamedSlots = slot.filter((s: any) => {
+    console.log(slot);
+    for (let i = 0; i < _n.children.length; i++) {
+      const child = _n.children[i];
+      if (child.tag === 'slot' && child.data.attrs?.name) {
+        const NamedSlot = slot.find((s: any) => {
           return s.data?.attrs.slot === child.data.attrs.name;
         });
-        _n.children.splice(index, 1, ...NamedSlots);
+        updateSlot(child, NamedSlot, _n.children);
       } else if (child.tag === 'slot' && !child.data.attrs?.name) {
-        const NoNamedSlots = slot.filter((s: any) => {
+        const NoNamedSlots = slot.find((s: any) => {
           return !s.data?.attrs.slot;
         });
-        _n.children.splice(index, 1, ...NoNamedSlots);
+        updateSlot(child, NoNamedSlots, _n.children);
       } else if (child.children?.length) {
         assembling(child, slot);
       }
-    });
+    }
   }
 
-  function isDefault(slots: any) {
-    return slots.filter((slot: any) => {
-      return slot.data?.attrs?.slot;
-    });
+  function updateSlot(oldSlot: any, newSlot: any, parent: any[]) {
+    parent.splice(parent.indexOf(oldSlot), 1, ...newSlot.children);
   }
 
   return {

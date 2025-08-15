@@ -3,34 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="/dist/sugar.umd.js"></script>
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 </head>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
     <ex-span>
-        <div>
+        <template #default>
+            <span>{{test}}</span>
+        </template>
+        <template #content>
             {{text}}
-        </div>
+            {{num}}
+        </template>
     </ex-span>
+    测试一下
 </div>
 </body>
-<script>
-    const {
-        makeSugar,
-        onMounted,
+<script type="module">
+    import {
+        makeSugar, onMounted,
         nextTick,
         ref,
         Component,
         reactive,
         watch
-    } = SUGAR;
+    } from "./packages/sugar/src/main";
 
     var exSpan = Component({
         name: 'ex-span',
         render: `<span class="exSpan">
                     <slot name="default"></slot>
+                    <slot name="content"></slot>
                 </span>`,
         bulk(ctx) {
             return {
@@ -42,13 +46,18 @@
     var sugar = makeSugar({
         bulk() {
             const text = ref('Hello world');
+            const num = ref(0)
+            const test = ref('test');
 
             return {
-                text
+                text,
+                num,
+                test
             };
         }
     });
     sugar.use(exSpan);
     sugar.mount('#app');
+    window.sugar = sugar
 </script>
 </html>

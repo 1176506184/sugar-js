@@ -48,7 +48,6 @@ export default function patch(vm: any, newVnode: any) {
         for (const key in on) {
           if (Object.hasOwnProperty.call(on, key)) {
             if (on[key].value) {
-              console.log(on[key]);
               const event = (e: Event) => {
                 on[key].value(e);
                 if (on[key].modifiers.includes('stop')) {

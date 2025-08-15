@@ -18,7 +18,6 @@ export function effect(fn: EffectFn) {
 
 export function track(target: object, key: string | symbol) {
   if (!activeEffect) return;
-
   let depsMap = targetMap.get(target);
   if (!depsMap) {
     depsMap = new Map();
