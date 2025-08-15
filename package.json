@@ -1,8 +1,7 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "description": "sugar-js update v2",
-  "main": "index.js",
   "author": "tangfeifan",
   "license": "MIT",
   "private": false,
@@ -13,6 +12,8 @@
     "lint": "npx eslint --fix",
     "clean": "rimraf packages/**/**/*.js packages/**/**/*.js.map"
   },
+  "main": "dist/sugar.umd.js",
+  "module": "dist/sugar.es.js",
   "types": "global.d.ts",
   "dependencies": {
     "@types/node": "^24.2.1",
