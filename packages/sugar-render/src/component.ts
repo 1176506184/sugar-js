@@ -113,7 +113,6 @@ export function componentRender() {
   }
 
   function assembling(_n: any, slot: any) {
-    console.log(slot);
     for (let i = 0; i < _n.children.length; i++) {
       const child = _n.children[i];
       if (child.tag === 'slot' && child.data.attrs?.name) {
@@ -121,11 +120,6 @@ export function componentRender() {
           return s.data?.attrs.slot === child.data.attrs.name;
         });
         updateSlot(child, NamedSlot, _n.children);
-      } else if (child.tag === 'slot' && !child.data.attrs?.name) {
-        const NoNamedSlots = slot.find((s: any) => {
-          return !s.data?.attrs.slot;
-        });
-        updateSlot(child, NoNamedSlots, _n.children);
       } else if (child.children?.length) {
         assembling(child, slot);
       }

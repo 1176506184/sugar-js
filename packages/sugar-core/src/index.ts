@@ -5,11 +5,11 @@ import { guid, isArray } from '@sugar/sugar-shared';
 import { nextTick } from '@sugar/sugar-reactive';
 import { initCSS } from './utils/utils';
 
-function makeSugar(options: Core) {
+function createApp(options: Core) {
   const appId = guid();
   updateActiveId(appId);
   const data = options.bulk(options.props);
-  const $ = {};
+  const $: any = {};
   const { mounted } = sugarRender();
   const vm = {
     render: options.render,
@@ -17,13 +17,13 @@ function makeSugar(options: Core) {
     data,
     $el: null as any,
     appId,
-    components: [],
+    components: [] as any,
     sugar: {},
     slot: options.slot,
     forceUpdate: () => {},
   };
 
-  function mount(el) {
+  function mount(el: string | HTMLElement) {
     initCSS();
     vm._vnode = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;
     mounted(vm, data);
@@ -59,4 +59,4 @@ function makeSugar(options: Core) {
   };
 }
 
-export { makeSugar, onMounted, updateActiveId, mountHandleList };
+export { createApp, onMounted, updateActiveId, mountHandleList };

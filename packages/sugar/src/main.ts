@@ -1,4 +1,4 @@
-import { makeSugar, onMounted } from '@sugar/sugar-core';
+import { createApp, onMounted } from '@sugar/sugar-core';
 import { nextTick, ref, reactive, watch } from '@sugar/sugar-reactive';
 import { Component } from '@sugar/sugar-render';
 
@@ -6,7 +6,7 @@ if (typeof window !== 'undefined') {
   (function (global: any) {
     global.SUGAR = {
       onMounted,
-      makeSugar,
+      createApp,
       nextTick,
       ref,
       Component,
@@ -16,4 +16,4 @@ if (typeof window !== 'undefined') {
   })(window);
 }
 
-export { makeSugar, onMounted, nextTick, ref, Component, reactive, watch };
+export { createApp, onMounted, nextTick, ref, Component, reactive, watch };
