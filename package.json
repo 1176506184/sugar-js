@@ -1,6 +1,6 @@
 {
   "name": "sugar-reactive-js",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "sugar-js update v2",
   "main": "index.js",
   "author": "tangfeifan",
@@ -13,6 +13,7 @@
     "lint": "npx eslint --fix",
     "clean": "rimraf packages/**/**/*.js packages/**/**/*.js.map"
   },
+  "types": "global.d.ts",
   "dependencies": {
     "@types/node": "^24.2.1",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
