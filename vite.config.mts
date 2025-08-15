@@ -24,6 +24,7 @@ export default defineConfig({
             entry: 'packages/sugar/src/main.ts',  // 入口文件
             name: 'Sugar',     // 库的全局变量名
             fileName: (format) => `sugar.${format}.js`,  // 输出文件名
+            formats: ['es', 'umd', 'cjs'] // 加上 'cjs'
         },
         rollupOptions: {
             external: [],  // 如果有外部依赖，可以在此处指定

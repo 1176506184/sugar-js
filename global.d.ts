@@ -7,3 +7,6 @@ declare const SUGAR: {
     watch: (source: any, callback: (newValue: any, oldValue: any) => void) => void;
     nextTick: (callback: () => void) => void
 };
+
+export {createApp, onMounted, nextTick, ref, Component, reactive, watch} from './packages/sugar/src/main'
+export {sugarCompiler} from '@sugar/sugar-compiler'
