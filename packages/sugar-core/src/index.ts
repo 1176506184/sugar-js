@@ -17,7 +17,7 @@ function createApp(options: Core) {
     data,
     $el: null as any,
     appId,
-    components: [] as any,
+    components: (options.components || []) as any,
     sugar: {},
     slot: options.slot,
     forceUpdate: () => {},

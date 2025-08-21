@@ -127,6 +127,10 @@ export function componentRender() {
   }
 
   function updateSlot(oldSlot: any, newSlot: any, parent: any[]) {
+    if (!newSlot) {
+      parent.splice(parent.indexOf(oldSlot), 1, []);
+      return;
+    }
     parent.splice(parent.indexOf(oldSlot), 1, ...newSlot.children);
   }
 
