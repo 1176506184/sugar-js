@@ -23,6 +23,13 @@ function createApp(options: Core) {
     forceUpdate: () => {},
   };
 
+  if (isArray(vm.components)) {
+    vm.components = vm.components.reduce((acc, cur) => {
+      acc[cur.name] = cur;
+      return acc;
+    }, {});
+  }
+
   function mount(el: string | HTMLElement) {
     initCSS();
     vm._vnode = vm.$el = typeof el === 'string' ? document.querySelector(`${el}`) : el;

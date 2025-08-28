@@ -1,4 +1,4 @@
-import { deepClone, guid } from '@sugar/sugar-shared';
+import { deepClone, guid, isArray } from '@sugar/sugar-shared';
 import { mountHandleList, updateActiveId } from '@sugar/sugar-hook';
 import { bindT, VmDataRefPassive } from './index';
 import { sugarCompiler } from '@sugar/sugar-compiler';
@@ -61,6 +61,13 @@ export function makeComponent(instance: any) {
     headTag: instance.headTag || 'div',
   };
 
+  if (isArray(vm.components)) {
+    vm.components = vm.components.reduce((acc, cur) => {
+      acc[cur.name] = cur;
+      return acc;
+    }, {});
+  }
+
   function mount() {
     mounted(vm, data);
     mountHandleList[appId]?.forEach((item: any) => {
@@ -115,7 +122,9 @@ export function componentRender() {
   function assembling(_n: any, slot: any) {
     for (let i = 0; i < _n.children.length; i++) {
       const child = _n.children[i];
-      if (child.tag === 'slot' && child.data.attrs?.name) {
+      if (child.tag === 'slot' && isDefault(slot) && child.data.attrs?.name === 'default') {
+        _n.children.splice(0, 1, ...slot);
+      } else if (child.tag === 'slot' && child.data.attrs?.name) {
         const NamedSlot = slot.find((s: any) => {
           return s.data?.attrs.slot === child.data.attrs.name;
         });
@@ -124,6 +133,12 @@ export function componentRender() {
         assembling(child, slot);
       }
     }
+  }
+
+  function isDefault(slot: any) {
+    return !slot.find((s: any) => {
+      return !!s.data?.attrs.slot;
+    });
   }
 
   function updateSlot(oldSlot: any, newSlot: any, parent: any[]) {
