@@ -30,7 +30,7 @@ function wt() {
 }
 function St(t, e) {
   const n = ot(e), i = [];
-  for (; !Dt(t, e); ) {
+  for (; !Wt(t, e); ) {
     const o = t.source;
     let f;
     if (_(o, t.options.delimiters[0]))
@@ -49,7 +49,7 @@ function St(t, e) {
           continue;
         } else
           f = dt(t);
-      else /[a-z]/i.test(o[1]) ? f = Wt(t, e) : o[1] === "!" && (f = dt(t));
+      else /[a-z]/i.test(o[1]) ? f = Ht(t, e) : o[1] === "!" && (f = dt(t));
     if (f || (f = qt(t)), Nt(f))
       for (let l = 0; l < f.length; l++)
         ut(i, f[l]);
@@ -102,7 +102,7 @@ function Ct(t, e) {
   const n = O(t), c = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(t.source)[0];
   e.add(c), S(t, c.length);
   let r;
-  /^[\t\r\n\f ]*=/.test(t.source) && (k(t), S(t, 1), k(t), r = Ht(t));
+  /^[\t\r\n\f ]*=/.test(t.source) && (k(t), S(t, 1), k(t), r = Dt(t));
   const o = A(t, n);
   if (!t.inVPre && /^(v-[A-Za-z0-9-]|:|\.|@|#)/.test(c)) {
     const f = /(?:^v-([a-z0-9-]+))?(?:(?::|^\.|^@|^#)(\[[^\]]+\]|[^\.]+))?(.+)?$/i.exec(c), l = _(c, "."), s = f[1] || (l || _(c, ":") ? "bind" : _(c, "@") || _(c, "s-on:") ? "on" : "slot");
@@ -161,7 +161,7 @@ function at(t, e, n) {
     n
   );
 }
-function Ht(t) {
+function Dt(t) {
   const e = O(t);
   let n;
   const i = t.source[0], c = i === '"' || i === "'";
@@ -191,7 +191,7 @@ function ut(t, e) {
   }
   t.push(e);
 }
-function Wt(t, e) {
+function Ht(t, e) {
   ot(e);
   const n = Z(
     t,
@@ -238,7 +238,7 @@ function dt(t) {
     loc: A(t, e)
   };
 }
-function Dt(t, e) {
+function Wt(t, e) {
   const n = t.source;
   if (_(n, "</")) {
     for (let i = e.length - 1; i >= 0; --i)
@@ -425,7 +425,7 @@ function vt(t) {
 function Zt(t) {
   return vt(st).includes(t);
 }
-const H = (t) => !1;
+const D = (t) => !1;
 function J(t) {
   const e = Jt(t);
   return St(e, [])[0];
@@ -441,9 +441,9 @@ function Jt(t) {
     inVPre: !1,
     options: {
       delimiters: ["{{", "}}"],
-      isVoidTag: H,
-      isPreTag: H,
-      isCustomElement: H,
+      isVoidTag: D,
+      isPreTag: D,
+      isCustomElement: D,
       getNamespace: (e, n) => Et.HTML
     }
   };
@@ -461,7 +461,7 @@ const x = {
 function mt(t) {
   return t != null;
 }
-function W(t) {
+function H(t) {
   return t == null;
 }
 function Yt(t) {
@@ -571,7 +571,7 @@ function F(t) {
     const f = r.props;
     if (r.type === 1 || r.type === v.SLOT) {
       let l = "", s = !1;
-      if (l += `_ctx_._SUGAR._c('${r.tag}',{ `, l += '"attrs":{', l += D(f), l += '},"on":{', l += X(f), l += "}},", r.children ? l += e(r.children) : l += "[]", l += ")", r.forStatment && (s = !0, o += c(r)), r.if && !r.forStatment && (s = !0, o = `${r.if.value} ? ${o + l} : _ctx_._SUGAR._e()`), r.loading && !r.forStatment) {
+      if (l += `_ctx_._SUGAR._c('${r.tag}',{ `, l += '"attrs":{', l += W(f), l += '},"on":{', l += X(f), l += "}},", r.children ? l += e(r.children) : l += "[]", l += ")", r.forStatment && (s = !0, o += c(r)), r.if && !r.forStatment && (s = !0, o = `${r.if.value} ? ${o + l} : _ctx_._SUGAR._e()`), r.loading && !r.forStatment) {
         s = !0;
         const a = F(
           Y(
@@ -585,14 +585,14 @@ function F(t) {
         );
         o = `_ctx_._SUGAR._c('div',{attrs:{style:'position:relative'},on:{}},[${o + (r.if ? "" : l)},${a}])`;
       }
-      r.htmlStatment && (s = !0, o = `_ctx_._SUGAR._c('div',{attrs:{${D(f)}},on:{${X(f)}}},[_ctx_._SUGAR._html(${r.htmlStatment.value.content})])`), s || (o += l);
+      r.htmlStatment && (s = !0, o = `_ctx_._SUGAR._c('div',{attrs:{${W(f)}},on:{${X(f)}}},[_ctx_._SUGAR._html(${r.htmlStatment.value.content})])`), s || (o += l);
     } else r.type === v.INTERPOLATION ? o += `_ctx_._SUGAR._v(_ctx_._SUGAR._s(${r.content.content}))` : r.type === v.TEXT && (o += `_ctx_._SUGAR._v(decodeURIComponent("${encodeURIComponent(r.content)}"))`);
     return o;
   }
   return n(t);
   function i(r, o, f) {
     let l = `_ctx_._SUGAR._c('${r}',{`;
-    return l += '"attrs":{', l += D(o), l += '},"on":{', l += X(o), l += "}},[", f.forEach((s, a) => {
+    return l += '"attrs":{', l += W(o), l += '},"on":{', l += X(o), l += "}},[", f.forEach((s, a) => {
       l += F(s), a < f.length - 1 && (l += ",");
     }), l += "])", o.forEach((s) => {
       if (s.name === "s-if" && (l = `${s.value.content} ? ${l} : _ctx_._SUGAR._e()`), s.name === "s-loading" && s.value) {
@@ -615,7 +615,7 @@ function F(t) {
     },${o.exp})`;
   }
 }
-function D(t) {
+function W(t) {
   let e = "";
   return t = t.filter((n) => n.name !== "s-if" && n.name !== "s-for" && n.name !== "on" && n.name !== "s-loading" && n.name !== "s-html"), t.forEach((n, i) => {
     n.name !== "s-if" && n.name !== "s-for" && n.name !== "on" && n.name !== "bind" && n.name !== "slot" && n.name !== "s-html" ? e += `"${n.name}":"${n.value.content}"` : n.name === "bind" ? e += `"${n.arg.content}":${n.exp.content}` : n.name === "slot" && (e += `"slot":"${n.arg.content}"`), n.name !== "s-if" && n.name !== "s-for" && n.name !== "on" && i < t.length - 1 && (e += ",");
@@ -891,30 +891,35 @@ function ge(t) {
 }
 function he() {
   let t = null;
-  function e(r, o) {
-    r.$el = document.createElement(r.headTag), r._vnode = r.$el, t = r.render, jt(r, o), r.forceUpdate = function() {
-      n(r);
+  function e(o, f) {
+    o.$el = document.createElement(o.headTag), o._vnode = o.$el, t = o.render, jt(o, f), o.forceUpdate = function() {
+      n(o);
     };
   }
-  function n(r) {
-    const o = it(r), f = t.call(it(r));
-    r.slot.length && i(f, r.slot), Pt(o, f), o._vnode = f;
+  function n(o) {
+    const f = it(o), l = t.call(it(o));
+    o.slot.length && i(l, o.slot), Pt(f, l), f._vnode = l;
   }
-  function i(r, o) {
-    for (let f = 0; f < r.children.length; f++) {
-      const l = r.children[f];
-      if (l.tag === "slot" && l.data.attrs?.name) {
-        const s = o.find((a) => a.data?.attrs.slot === l.data.attrs.name);
-        c(l, s, r.children);
-      } else l.children?.length && i(l, o);
+  function i(o, f) {
+    for (let l = 0; l < o.children.length; l++) {
+      const s = o.children[l];
+      if (s.tag === "slot" && c(f) && s.data.attrs?.name === "default")
+        o.children.splice(0, 1, ...f);
+      else if (s.tag === "slot" && s.data.attrs?.name) {
+        const a = f.find((u) => u.data?.attrs.slot === s.data.attrs.name);
+        r(s, a, o.children);
+      } else s.children?.length && i(s, f);
     }
   }
-  function c(r, o, f) {
-    if (!o) {
-      f.splice(f.indexOf(r), 1, []);
+  function c(o) {
+    return !o.find((f) => !!f.data?.attrs.slot);
+  }
+  function r(o, f, l) {
+    if (!f) {
+      l.splice(l.indexOf(o), 1, []);
       return;
     }
-    f.splice(f.indexOf(r), 1, ...o.children);
+    l.splice(l.indexOf(o), 1, ...f.children);
   }
   return {
     update: n,
@@ -1006,9 +1011,9 @@ function Pt(t, e) {
     a = ht(a), u = ht(u);
     let d = 0, g = a.length - 1, p = 0, m = u.length - 1, h = a[d], E = a[g], y = u[p], $ = u[m], z, j, L, C;
     for (; d <= g && p <= m; )
-      !h || !a[d] ? h = a[++d] : !E || !a[g] ? E = a[--g] : !y || !u[p] ? y = u[++p] : !$ || !u[m] ? $ = u[--m] : I(y, h) ? (c(y, h), h = a[++d], y = u[++p]) : I(y, E) ? (c(y, E), s.insertBefore(E.elm, h.elm), E = a[--g], y = u[++p]) : I($, h) ? (c($, h), s.insertBefore(h.elm, E.elm.nextSibling), h = a[++d], $ = u[--m]) : I($, E) ? (c($, E), E = a[--g], $ = u[--m]) : (W(z) && (z = l(a, d, g)), j = mt(y.key) ? z[y.key] : null, W(j) ? (s.insertBefore(i(y), h.elm), y = u[++p]) : (L = a[j], I(L, y) ? (c(y, L), a[j] = void 0, s.insertBefore(L.elm, h.elm)) : s.insertBefore(i(y), h.elm), y = u[++p]));
+      !h || !a[d] ? h = a[++d] : !E || !a[g] ? E = a[--g] : !y || !u[p] ? y = u[++p] : !$ || !u[m] ? $ = u[--m] : I(y, h) ? (c(y, h), h = a[++d], y = u[++p]) : I(y, E) ? (c(y, E), s.insertBefore(E.elm, h.elm), E = a[--g], y = u[++p]) : I($, h) ? (c($, h), s.insertBefore(h.elm, E.elm.nextSibling), h = a[++d], $ = u[--m]) : I($, E) ? (c($, E), E = a[--g], $ = u[--m]) : (H(z) && (z = l(a, d, g)), j = mt(y.key) ? z[y.key] : null, H(j) ? (s.insertBefore(i(y), h.elm), y = u[++p]) : (L = a[j], I(L, y) ? (c(y, L), a[j] = void 0, s.insertBefore(L.elm, h.elm)) : s.insertBefore(i(y), h.elm), y = u[++p]));
     if (d > g)
-      for (C = W(u[m + 1]) ? null : u[m + 1].elm; p <= m; p++)
+      for (C = H(u[m + 1]) ? null : u[m + 1].elm; p <= m; p++)
         C ? s.insertBefore(i(u[p]), C) : s.append(i(u[p]));
     if (p > m)
       for (let M = d; M <= g; M++)

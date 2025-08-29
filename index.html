@@ -8,10 +8,8 @@
 </head>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
-    <ex-span>
-        测试一下
-    </ex-span>
-    {{text}}
+    <ex-span s-if="show"></ex-span>
+    <button @click="close" style="width: 100px;height: 20px">测试</button>
 </div>
 </body>
 <script type="module">
@@ -26,35 +24,34 @@
 
     var exSpan = Component({
         name: 'ex-span',
-        render: `<span class="exSpan">
-                    <slot name="default"></slot>
-                    <slot name="content"></slot>
-                </span>`,
+        render: `<span class="exSpan" @click="num += 1">{{num}}</span>`,
         bulk(ctx) {
+            const num = ref(0);
+            function add(){
+                num.value += 1
+            }
             return {
-                name: 'exSpan'
+                name: 'exSpan',
+                num,
+                add
             };
         }
     });
 
     var sugar = createApp({
         bulk() {
-            const text = ref('Hello world');
-            const num = ref(0)
-            const test = ref('test');
+            const show = ref(true)
 
-            watch(test, (newValue, oldValue) => {
-                console.log(newValue, oldValue)
-            })
+            function close() {
+                show.value = !show.value
+            }
 
             return {
-                text,
-                num,
-                test
+                show,
+                close
             };
         }
     });
-    console.log(exSpan)
     sugar.use(exSpan)
     sugar.mount('#app');
     window.sugar = sugar

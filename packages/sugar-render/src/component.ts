@@ -29,7 +29,6 @@ export function bulkComponent(_vnode: any, parentComponent: any) {
       props[propName] = on[propName].value;
     }
   });
-
   if (_vnode.key && getComponentCache(_vnode.key)) {
     return getComponentCache(_vnode.key);
   }
