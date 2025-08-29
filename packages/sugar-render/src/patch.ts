@@ -10,7 +10,6 @@ export default function patch(vm: any, newVnode: any) {
   if (isSameNode(oldVnode, newVnode)) {
     patchVnode(newVnode, oldVnode);
   } else {
-    console.log(oldVnode.elm?.parentNode, newVnode);
     if (oldVnode.elm?.parentNode && newVnode) {
       nodeOps.insert(
         createElement(newVnode),

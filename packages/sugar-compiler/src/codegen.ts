@@ -159,15 +159,6 @@ function dealAttr(props: any) {
       prop.name !== 's-html'
     );
   });
-  if (!props.find((r: any) => r.name === 'key')) {
-    props.push({
-      name: 'key',
-      value: {
-        content: `_SUGAR_KEY_${key++}`,
-        isStatic: true,
-      },
-    });
-  }
 
   props.forEach((prop: any, index: number) => {
     if (
