@@ -21,6 +21,7 @@ function createApp(options: Core) {
     sugar: {},
     slot: options.slot,
     forceUpdate: () => {},
+    use,
   };
 
   if (isArray(vm.components)) {

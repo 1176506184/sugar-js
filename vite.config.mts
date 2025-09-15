@@ -20,6 +20,7 @@ export default defineConfig({
         },
     },
     build: {
+        sourcemap: true,
         lib: {
             entry: 'packages/sugar/src/main.ts',  // 入口文件
             name: 'Sugar',     // 库的全局变量名

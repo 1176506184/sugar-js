@@ -8,8 +8,9 @@
 </head>
 <body>
 <div id="app" style="width: 100%;height: 200vh;">
-    <ex-span s-if="show"></ex-span>
-    <button @click="close" style="width: 100px;height: 20px">测试</button>
+    {{show}}
+   <component :is="exSpan"></component>
+    {{show}}
 </div>
 </body>
 <script type="module">
@@ -24,19 +25,32 @@
 
     var exSpan = Component({
         name: 'ex-span',
-        render: `<span class="exSpan" @click="num += 1">{{num}}</span>`,
+        render: `<div>这里是组件com2的开始<component :is="com2"></component>这里是组件com2的结束</div>`,
         bulk(ctx) {
             const num = ref(0);
-            function add(){
+
+            function add() {
                 num.value += 1
             }
+
             return {
                 name: 'exSpan',
                 num,
-                add
+                add,
+                com2
             };
         }
     });
+
+    var com2 = Component({
+        name:'test',
+        render:`<div>{{name}}</div>`,
+        bulk(ctx) {
+            return {
+                name:'test'
+            }
+        }
+    })
 
     var sugar = createApp({
         bulk() {
@@ -48,11 +62,11 @@
 
             return {
                 show,
-                close
+                close,
+                exSpan
             };
         }
     });
-    sugar.use(exSpan)
     sugar.mount('#app');
     window.sugar = sugar
 </script>

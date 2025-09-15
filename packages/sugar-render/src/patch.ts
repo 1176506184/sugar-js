@@ -26,7 +26,15 @@ export default function patch(vm: any, newVnode: any) {
     let domNode;
     if (vnode.tag) {
       if (typeof vnode.tag === 'string' && !isComponent(vnode, vm.components)) {
-        if (vnode.tag === 'svg' || vnode.tag === 'path') {
+        if (vnode.tag === 'component' && vnode.data.attrs.is) {
+          const app = bulkComponent(vnode, vnode.data.attrs.is);
+          vnode.elm = app.vm.$el;
+          vnode._sugar = app;
+          domNode = vnode.elm;
+          if (vnode.data.attrs.ref && vnode.data.attrs.ref in vm) {
+            vm[vnode.data.attrs.ref] = app;
+          }
+        } else if (vnode.tag === 'svg' || vnode.tag === 'path') {
           domNode = document.createElementNS('http://www.w3.org/2000/svg', vnode.tag);
         } else {
           domNode = document.createElement(vnode.tag);
@@ -73,7 +81,7 @@ export default function patch(vm: any, newVnode: any) {
           }
         }
       } else if (isComponent(vnode, vm.components)) {
-        const app = bulkComponent(vnode, vm.components[vnode.tag]);
+        const app = bulkComponent(vnode, vm.components[getComponentName(vnode, vm)]);
         vnode.elm = app.vm.$el;
         vnode._sugar = app;
         domNode = vnode.elm;
@@ -88,6 +96,15 @@ export default function patch(vm: any, newVnode: any) {
     }
     vnode.elm = domNode;
     return domNode;
+  }
+
+  function getComponentName(vnode: any, vm: any) {
+    if (vnode.tag === 'component') {
+      vm.use(vnode.data.attrs.is);
+      return vnode.data.attrs.is.name;
+    } else {
+      return vnode.tag;
+    }
   }
 
   function patchVnode(newVnode: any, oldVnode: any) {

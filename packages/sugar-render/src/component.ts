@@ -47,6 +47,7 @@ export function makeComponent(instance: any) {
   updateActiveId(appId);
   const data = instance.bulk(instance.props);
   const { mounted, update } = componentRender();
+  const $: any = {};
   const vm = {
     render: instance.render,
     _vnode: null,
@@ -58,6 +59,7 @@ export function makeComponent(instance: any) {
     slot: instance.slot,
     props: instance.props,
     headTag: instance.headTag || 'div',
+    use,
   };
 
   if (isArray(vm.components)) {
@@ -66,6 +68,12 @@ export function makeComponent(instance: any) {
       return acc;
     }, {});
   }
+
+  Object.values(data).forEach((d: any) => {
+    if (d.headTag && d.render && d.name && d.bulk) {
+      use(d);
+    }
+  });
 
   function mount() {
     mounted(vm, data);
@@ -88,12 +96,28 @@ export function makeComponent(instance: any) {
     update(vm);
   }
 
+  function use(components: any) {
+    if (!isArray(components)) {
+      components = [components];
+    }
+    components.forEach((component: any) => {
+      if (component.name) {
+        vm.components[component.name] = component;
+        vm.components[component.name].components = vm.components;
+      } else if (component.fun) {
+        $[component.fun] = component.bulk;
+      }
+    });
+  }
+
   return {
     vm,
     mount,
     ...data,
     updateSlot,
     forceUpdate,
+    use,
+    $,
   };
 }
 
