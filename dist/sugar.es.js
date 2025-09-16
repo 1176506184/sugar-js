@@ -866,7 +866,8 @@ function he(t) {
     slot: t.slot,
     props: t.props,
     headTag: t.headTag || "div",
-    use: c
+    use: c,
+    parent: t.parent
   };
   R(s.components) && (s.components = s.components.reduce((f, m) => (f[m.name] = m, f), {})), Object.values(n).forEach((f) => {
     f.headTag && f.render && f.name && f.bulk && c(f);

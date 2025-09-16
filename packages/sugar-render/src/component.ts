@@ -12,7 +12,7 @@ export function bulkComponent(_vnode: any, parentComponent: any) {
     children,
   }: any = _vnode;
 
-  const _sugar = deepClone(parentComponent);
+  const _sugar: any = deepClone(parentComponent);
   const props: any = reactive({});
   const slot = children;
   Object.keys(attrs).forEach((propName) => {
@@ -60,6 +60,7 @@ export function makeComponent(instance: any) {
     props: instance.props,
     headTag: instance.headTag || 'div',
     use,
+    parent: instance.parent,
   };
 
   if (isArray(vm.components)) {
