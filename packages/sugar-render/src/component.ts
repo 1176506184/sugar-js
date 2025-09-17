@@ -6,7 +6,7 @@ import patch from './patch';
 import { addComponentCache, getComponentCache } from './componentCache';
 import { effect, reactive } from '@sugar/sugar-reactive';
 
-export function bulkComponent(_vnode: any, parentComponent: any) {
+export function bulkComponent(_vnode: any, parentComponent: any, parent: any) {
   const {
     data: { attrs, on },
     children,
@@ -36,6 +36,7 @@ export function bulkComponent(_vnode: any, parentComponent: any) {
     ..._sugar,
     props,
     slot,
+    parent,
   });
   app.mount();
   _vnode.key && addComponentCache(app, _vnode.key);
@@ -60,7 +61,7 @@ export function makeComponent(instance: any) {
     props: instance.props,
     headTag: instance.headTag || 'div',
     use,
-    parent: instance.parent,
+    parent: instance.parent.parent ? instance.parent.parent : instance.parent,
   };
 
   if (isArray(vm.components)) {
@@ -69,6 +70,9 @@ export function makeComponent(instance: any) {
       return acc;
     }, {});
   }
+  Object.values(vm.parent.components).forEach((d: any) => {
+    use(d);
+  });
 
   Object.values(data).forEach((d: any) => {
     if (d.headTag && d.render && d.name && d.bulk) {

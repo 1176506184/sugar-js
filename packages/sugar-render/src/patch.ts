@@ -27,7 +27,7 @@ export default function patch(vm: any, newVnode: any) {
     if (vnode.tag) {
       if (typeof vnode.tag === 'string' && !isComponent(vnode, vm.components)) {
         if (vnode.tag === 'component' && vnode.data.attrs.is) {
-          const app = bulkComponent(vnode, vnode.data.attrs.is);
+          const app = bulkComponent(vnode, vnode.data.attrs.is, vm);
           vnode.elm = app.vm.$el;
           vnode._sugar = app;
           domNode = vnode.elm;
@@ -81,7 +81,7 @@ export default function patch(vm: any, newVnode: any) {
           }
         }
       } else if (isComponent(vnode, vm.components)) {
-        const app = bulkComponent(vnode, vm.components[getComponentName(vnode, vm)]);
+        const app = bulkComponent(vnode, vm.components[getComponentName(vnode, vm)], vm);
         vnode.elm = app.vm.$el;
         vnode._sugar = app;
         domNode = vnode.elm;
