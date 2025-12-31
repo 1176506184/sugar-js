@@ -1,4 +1,4 @@
-const callbacks = [];
+const callbacks: (() => void)[] = [];
 let pending = false;
 
 function flushCallbacks() {
@@ -11,12 +11,12 @@ function flushCallbacks() {
 }
 
 export async function nextTick(cb: Function) {
-  let _resolve;
+  let resolvePromise: any;
   callbacks.push(() => {
     if (cb) {
       cb();
-    } else if (_resolve) {
-      _resolve();
+    } else if (resolvePromise) {
+      resolvePromise();
     }
   });
   if (!pending) {
@@ -25,9 +25,9 @@ export async function nextTick(cb: Function) {
   }
 
   if (!cb) {
-    return await new Promise((resolve, reject) => {
+    return await new Promise((resolve) => {
       // 保存resolve到callbacks数组中
-      _resolve = resolve;
+      resolvePromise = resolve;
     });
   }
 }

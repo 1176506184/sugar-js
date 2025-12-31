@@ -142,12 +142,12 @@ export function componentRender() {
   function update(vm: any) {
     const vmFiber: any = VmDataRefPassive(vm);
     const vnode = render.call(VmDataRefPassive(vm));
-    vm.slot.length && assembling(vnode, vm.slot);
+    vm.slot.length && assembling(vnode, vm.slot, vm);
     patch(vmFiber, vnode);
     vmFiber._vnode = vnode;
   }
 
-  function assembling(_n: any, slot: any) {
+  function assembling(_n: any, slot: any, vm: any) {
     for (let i = 0; i < _n.children.length; i++) {
       const child = _n.children[i];
       if (child.tag === 'slot' && isDefault(slot) && child.data.attrs?.name === 'default') {
@@ -156,9 +156,9 @@ export function componentRender() {
         const NamedSlot = slot.find((s: any) => {
           return s.data?.attrs.slot === child.data.attrs.name;
         });
-        updateSlot(child, NamedSlot, _n.children);
+        updateSlot(child, NamedSlot, _n.children, vm);
       } else if (child.children?.length) {
-        assembling(child, slot);
+        assembling(child, slot, vm);
       }
     }
   }
@@ -169,7 +169,7 @@ export function componentRender() {
     });
   }
 
-  function updateSlot(oldSlot: any, newSlot: any, parent: any[]) {
+  function updateSlot(oldSlot: any, newSlot: any, parent: any[], vm: any) {
     if (!newSlot) {
       parent.splice(parent.indexOf(oldSlot), 1, []);
       return;

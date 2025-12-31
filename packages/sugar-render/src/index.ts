@@ -26,10 +26,10 @@ export function sugarRender() {
   }
 
   function update(vm: any) {
-    const vmFiber: any = VmDataRefPassive(vm);
-    const vnode = render?.call(vmFiber);
-    patch(vmFiber, vnode);
-    vmFiber._vnode = vnode;
+    const vmData: any = VmDataRefPassive(vm);
+    const vnode = render?.call(vmData);
+    patch(vmData, vnode);
+    vmData._vnode = vnode;
   }
 
   return {

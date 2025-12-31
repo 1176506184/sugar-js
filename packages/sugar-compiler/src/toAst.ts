@@ -1,11 +1,13 @@
 import { Namespaces, parse } from './parse';
+
 export const NO = (tag: string) => false;
+
 export function toAst(template: string) {
   const context = createBaseContent(template);
   return parse(context, [])[0];
 }
 
-function createBaseContent(content) {
+function createBaseContent(content: any) {
   return {
     column: 1,
     line: 1,

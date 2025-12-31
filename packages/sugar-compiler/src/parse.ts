@@ -12,7 +12,7 @@ function exitScope() {
 
 export function parse(context: any, ancestors: any) {
   const parent: any = last(ancestors);
-  const nodes = [];
+  const nodes: any = [];
   while (!isEnd(context, ancestors)) {
     const s = context.source;
     let node: any;
@@ -114,7 +114,7 @@ function parseAttributes(context: any, type: any) {
     .slice(0, context.source.indexOf('>'))
     .match(/s-for\s*=\s*["']\s*\(([^)]+)\)\s+in\s+[^"']+["']/);
   if (firstTagMatch) {
-    const aliases = firstTagMatch[1].split(',').map((s) => s.trim());
+    const aliases = firstTagMatch[1].split(',').map((s: string) => s.trim());
     enterScope(aliases);
   } else if (type === 0) {
     enterScope([]);
@@ -131,7 +131,7 @@ function parseAttributes(context: any, type: any) {
       continue;
     }
 
-    const attr = parseAttribute(context, attributeNames);
+    const attr: any = parseAttribute(context, attributeNames);
     if (['s-if', 's-html'].includes(attr.name)) {
       attr.value.content = bindCtx(attr.value.content);
     }

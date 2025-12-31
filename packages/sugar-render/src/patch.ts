@@ -166,7 +166,6 @@ export default function patch(vm: any, newVnode: any) {
       if (!oldAttrs || newAttrs[attr] !== oldAttrs[attr]) {
         el.setAttribute(attr, newAttrs[attr]);
       }
-
       if (attr === 'ref' && newAttrs[attr] in vm) {
         vm[newAttrs[attr]] = el;
       }
@@ -307,21 +306,35 @@ function isSameNode(o: any, n: any) {
 }
 
 function patchEvents(el: any, newOn: any) {
-  const _vei = el._vei || (el._vei = {});
-  Object.keys(_vei).forEach((eventName) => {
-    el.removeEventListener(eventName, _vei[eventName]);
-  });
+  // vei = Vue Event Invokers
+  const vei = el._vei || (el._vei = {});
+
   Object.keys(newOn).forEach((eventName) => {
-    _vei[eventName] = (e: Event) => {
-      if (newOn[eventName].modifiers.includes('stop')) {
-        e.stopPropagation();
+    const nextValue = newOn[eventName].value;
+    let invoker = vei[eventName];
+
+    if (nextValue) {
+      if (!invoker) {
+        // 1. 如果没有 invoker，创建一个并绑定到 DOM
+        invoker = vei[eventName] = (e: Event) => {
+          // 这里的 invoker.value 是动态的
+          invoker.value(e);
+          // 你之前的修饰符逻辑也可以写在这里
+          if (newOn[eventName].modifiers.includes('stop')) e.stopPropagation();
+        };
+        // 挂载真正的处理函数到 invoker 属性上
+        invoker.value = nextValue;
+        // 真正的事件监听只注册一次
+        el.addEventListener(eventName, invoker);
+      } else {
+        // 2. 如果已经有了，直接替换引用的函数，不操作 DOM！
+        invoker.value = nextValue;
       }
-      if (newOn[eventName].modifiers.includes('prevent')) {
-        e.preventDefault();
-      }
-      newOn[eventName].value(e);
-    };
-    el.addEventListener(eventName, _vei[eventName]);
+    } else if (invoker) {
+      // 3. 如果新值不存在但旧的还在，移除监听
+      el.removeEventListener(eventName, invoker);
+      vei[eventName] = undefined;
+    }
   });
 }
 
