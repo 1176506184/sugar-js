@@ -53,7 +53,7 @@ export default function patch(vm: any, newVnode: any) {
             }
           }
         }
-        const _vei = domNode._vei || (domNode._vei = {});
+        const _sei = domNode._sei || (domNode._sei = {});
         // 处理监听事件
         for (const key in on) {
           if (Object.hasOwnProperty.call(on, key)) {
@@ -68,7 +68,7 @@ export default function patch(vm: any, newVnode: any) {
                 }
               };
               domNode.addEventListener(key, event);
-              _vei[key] = event;
+              _sei[key] = event;
             }
           }
         }
@@ -306,17 +306,16 @@ function isSameNode(o: any, n: any) {
 }
 
 function patchEvents(el: any, newOn: any) {
-  // vei = Vue Event Invokers
-  const vei = el._vei || (el._vei = {});
+  const sei = el._sei || (el._sei = {});
 
   Object.keys(newOn).forEach((eventName) => {
     const nextValue = newOn[eventName].value;
-    let invoker = vei[eventName];
+    let invoker = sei[eventName];
 
     if (nextValue) {
       if (!invoker) {
         // 1. 如果没有 invoker，创建一个并绑定到 DOM
-        invoker = vei[eventName] = (e: Event) => {
+        invoker = sei[eventName] = (e: Event) => {
           // 这里的 invoker.value 是动态的
           invoker.value(e);
           // 你之前的修饰符逻辑也可以写在这里
@@ -333,7 +332,7 @@ function patchEvents(el: any, newOn: any) {
     } else if (invoker) {
       // 3. 如果新值不存在但旧的还在，移除监听
       el.removeEventListener(eventName, invoker);
-      vei[eventName] = undefined;
+      sei[eventName] = undefined;
     }
   });
 }
