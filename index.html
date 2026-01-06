@@ -45,12 +45,14 @@
         }
     });
 
+    window.exSpan = exSpan
+
     var com2 = Component({
         name: 'test',
         render: `<div>{{name}}</div>`,
         bulk(ctx) {
             return {
-                name: 'test'
+                name: '组件2'
             }
         }
     })
@@ -64,10 +66,6 @@
 
 
             const sugarRef = ref(null)
-
-            onMounted(() => {
-                console.log(sugarRef)
-            })
 
             return {
                 name: 'test2',
